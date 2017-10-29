@@ -8,11 +8,9 @@ import lejos.robotics.chassis.WheeledChassis;
 import lejos.robotics.geometry.Line;
 import lejos.robotics.geometry.Rectangle;
 import lejos.robotics.localization.MCLPoseProvider;
+import lejos.robotics.mapping.EV3NavigationModel;
 import lejos.robotics.mapping.LineMap;
-import lejos.robotics.navigation.DestinationUnreachableException;
-import lejos.robotics.navigation.MovePilot;
-import lejos.robotics.navigation.Navigator;
-import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import lejos.robotics.pathfinding.ShortestPathFinder;
 import utils.Config;
@@ -29,6 +27,8 @@ public class MyNavigator {
     //TODO : Test and understand values
     private static final int NUMBER_OF_PARTICLES = 200;
     private static final int MAP_BORDER = 10;
+    private static final float INITIAL_RADIUS_NOISE = 1;
+    private static final float INITIAL_HEADING_NOISE = 1;
 
     //TODO : Map actual surface
     private static final Rectangle BOUNDING_RECTANGLE = new Rectangle(0, 0, 0, 0);
@@ -36,12 +36,15 @@ public class MyNavigator {
             new Line(0, 0, 0, 0),
             new Line(0, 0, 0, 0)
     };
+    private static final Pose STARTING_POSE = new Pose(0, 0, 0);
+
 
     private static final LineMap map = new LineMap(LINES, BOUNDING_RECTANGLE);
     private static final ShortestPathFinder pathFinder = new ShortestPathFinder(map);
 
     private static MCLPoseProvider poseProvider;
     private static Navigator navigator;
+    private static EV3NavigationModel ev3Model;
 
     static {
         MovePilot pilot = createMovePilot();
@@ -52,8 +55,15 @@ public class MyNavigator {
         RangeScanner scanner = new FixedRangeScanner(pilot, finder);
 
         poseProvider = new MCLPoseProvider(pilot, scanner, map, NUMBER_OF_PARTICLES, MAP_BORDER);
+        poseProvider.setInitialPose(STARTING_POSE, INITIAL_RADIUS_NOISE, INITIAL_HEADING_NOISE);
 
         navigator = new Navigator(pilot, poseProvider);
+
+        ev3Model = new EV3NavigationModel();
+        ev3Model.addNavigator(navigator);
+        ev3Model.addPoseProvider(poseProvider);
+        ev3Model.addPilot(pilot);
+        ev3Model.addRangeScanner(scanner);
     }
 
     private static MovePilot createMovePilot() {
