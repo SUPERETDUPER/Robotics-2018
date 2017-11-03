@@ -9,5 +9,5 @@ public class Config {
     public static final Port PORT_MOTOR_LEFT = MotorPort.A;
     public static final Port PORT_MOTOR_RIGHT = MotorPort.B;
 
-    public static final Port PORT_ULTRASONIC_SENSOR = SensorPort.S1;
+    //public static final Port PORT_ULTRASONIC_SENSOR = SensorPort.S1;
 }

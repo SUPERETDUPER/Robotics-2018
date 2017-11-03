@@ -8,6 +8,7 @@ import lejos.robotics.chassis.WheeledChassis;
 import lejos.robotics.geometry.Line;
 import lejos.robotics.geometry.Rectangle;
 import lejos.robotics.localization.MCLPoseProvider;
+import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.mapping.EV3NavigationModel;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.*;
@@ -21,49 +22,54 @@ public class MyNavigator {
     private static final String LOG_TAG = MyNavigator.class.getSimpleName();
 
     //TODO : Set actual values
-    private static final double WHEEL_DIAMETER = 0;
-    private static final double WHEEL_OFFSET = 0;
+    private static final double WHEEL_DIAMETER = 5.6;
+    private static final double WHEEL_OFFSET = 8.4;
 
     //TODO : Test and understand values
-    private static final int NUMBER_OF_PARTICLES = 200;
-    private static final int MAP_BORDER = 10;
-    private static final float INITIAL_RADIUS_NOISE = 1;
-    private static final float INITIAL_HEADING_NOISE = 1;
+    //private static final int NUMBER_OF_PARTICLES = 200;
+    //private static final int MAP_BORDER = 10;
+    //private static final float INITIAL_RADIUS_NOISE = 1;
+    //private static final float INITIAL_HEADING_NOISE = 1;
 
     //TODO : Map actual surface
-    private static final Rectangle BOUNDING_RECTANGLE = new Rectangle(0, 0, 0, 0);
+    private static final Rectangle BOUNDING_RECTANGLE = new Rectangle(0, 0, 20, 20);
     private static final Line[] LINES = new Line[]{
-            new Line(0, 0, 0, 0),
-            new Line(0, 0, 0, 0)
+            //new Line(0, 0, 0, 0),
+            //new Line(0, 0, 0, 0)
     };
-    private static final Pose STARTING_POSE = new Pose(0, 0, 0);
+    private static final Pose STARTING_POSE = new Pose(10, 10, 0);
 
 
     private static final LineMap map = new LineMap(LINES, BOUNDING_RECTANGLE);
     private static final ShortestPathFinder pathFinder = new ShortestPathFinder(map);
 
-    private static MCLPoseProvider poseProvider;
+    private static OdometryPoseProvider poseProvider;
     private static Navigator navigator;
-    private static EV3NavigationModel ev3Model;
+    //private static EV3NavigationModel ev3Model;
 
     static {
         MovePilot pilot = createMovePilot();
 
-        EV3UltrasonicSensor distanceSensor = new EV3UltrasonicSensor(Config.PORT_ULTRASONIC_SENSOR);
-        RangeFinder finder = new RangeFinderAdapter(distanceSensor.getDistanceMode());
+        //EV3UltrasonicSensor distanceSensor = new EV3UltrasonicSensor(Config.PORT_ULTRASONIC_SENSOR);
+        //RangeFinder finder = new RangeFinderAdapter(distanceSensor.getDistanceMode());
 
-        RangeScanner scanner = new FixedRangeScanner(pilot, finder);
+        //RangeScanner scanner = new FixedRangeScanner(pilot, finder);
 
-        poseProvider = new MCLPoseProvider(pilot, scanner, map, NUMBER_OF_PARTICLES, MAP_BORDER);
-        poseProvider.setInitialPose(STARTING_POSE, INITIAL_RADIUS_NOISE, INITIAL_HEADING_NOISE);
+        //poseProvider = new MCLPoseProvider(pilot, scanner, map, NUMBER_OF_PARTICLES, MAP_BORDER);
+        //poseProvider.setInitialPose(STARTING_POSE, INITIAL_RADIUS_NOISE, INITIAL_HEADING_NOISE);
 
-        navigator = new Navigator(pilot, poseProvider);
+        poseProvider = new OdometryPoseProvider(pilot);
+        poseProvider.setPose(STARTING_POSE);
 
+        navigator = new Navigator(pilot);
+
+        /*
         ev3Model = new EV3NavigationModel();
         ev3Model.addNavigator(navigator);
-        ev3Model.addPoseProvider(poseProvider);
+        //ev3Model.addPoseProvider(poseProvider);
         ev3Model.addPilot(pilot);
         ev3Model.addRangeScanner(scanner);
+        */
     }
 
     private static MovePilot createMovePilot() {
