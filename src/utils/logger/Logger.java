@@ -1,4 +1,4 @@
-package utils;
+package utils.logger;
 
 
 public final class Logger {

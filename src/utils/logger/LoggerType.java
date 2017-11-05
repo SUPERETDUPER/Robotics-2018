@@ -1,4 +1,4 @@
-package utils;
+package utils.logger;
 
 class LoggerType {
 	private final String name;
