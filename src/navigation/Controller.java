@@ -26,14 +26,7 @@ public class Controller {
     //Set actual values
     private static final Pose STARTING_POSE = new Pose(0, 0, 0);
 
-    //TODO : Map actual surface
-    private static final Rectangle BOUNDING_RECTANGLE = new Rectangle(0, 0, 236.2F, 114.3F);
 
-    private static final ArrayList<ColoredRegion> REGIONS = new ArrayList<>(
-
-    );
-
-    private static final SurfaceMap surfaceMap = new SurfaceMap(BOUNDING_RECTANGLE, REGIONS);
 
     private static final Navigator navigator;
     private static final CustomPoseProvider poseProvider;
@@ -44,7 +37,7 @@ public class Controller {
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
 
-        poseProvider = new CustomPoseProvider(pilot, surfaceMap, STARTING_POSE);
+        poseProvider = new CustomPoseProvider(pilot, SurfaceMap.getDefaultSurfaceMap(), STARTING_POSE);
 
         navigator = new Navigator(pilot, poseProvider);
 

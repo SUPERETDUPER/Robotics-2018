@@ -2,6 +2,8 @@ package geometry;
 
 import lejos.robotics.geometry.Point;
 
+import java.awt.*;
+
 public class HorizontalLine extends ColoredRegion {
      private final float x1;
      private final float x2;
@@ -26,5 +28,10 @@ public class HorizontalLine extends ColoredRegion {
      @Override
      public boolean contains(Point point) {
           return x1 < point.x && point.x < x2 && y - weight < point.y && point.y < y + weight;
+     }
+
+     @Override
+     void drawRegion(Graphics g) {
+          g.fillRect((int) x1, (int) (y + weight), (int) x2, (int) (y - weight));
      }
 }

@@ -4,6 +4,7 @@ import lejos.robotics.geometry.Line;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.geometry.Point2D;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Polygon extends ColoredRegion {
@@ -44,5 +45,17 @@ public class Polygon extends ColoredRegion {
         }
 
         return intersections % 2 == 0;
+    }
+
+    @Override
+    void drawRegion(Graphics g) {
+        int[] xValues = new int[points.size()];
+        int[] yValues = new int[points.size()];
+
+        for (int i = 0; i < points.size() ; i++){
+            xValues[i] =(int) points.get(i).x;
+            yValues[i] = (int) points.get(i).y;
+        }
+        g.fillPolygon(xValues, yValues, points.size());
     }
 }
