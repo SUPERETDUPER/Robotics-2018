@@ -33,7 +33,7 @@ public class Controller {
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
 
-        poseProvider = new CustomPoseProvider(pilot, SurfaceMap.getSurfaceMap(), STARTING_POSE);
+        poseProvider = new CustomPoseProvider(pilot, STARTING_POSE);
 
         navigator = new Navigator(pilot, poseProvider);
 
