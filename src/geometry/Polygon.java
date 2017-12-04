@@ -16,10 +16,11 @@ public class Polygon extends ColoredRegion {
         super(color);
 
         this.points = points;
+
         maxX = this.points.get(0).x;
 
         for (Point2D.Float point : this.points) {
-            if (point.x > maxX) {
+            if (maxX < point.x) {
                 maxX = point.x;
             }
         }

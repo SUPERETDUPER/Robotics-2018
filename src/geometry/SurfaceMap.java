@@ -9,27 +9,39 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class SurfaceMap extends JComponent {
-    private static final int DEFAULT_COLOR = Color.WHITE;
-    public static final Rectangle BOUNDING_RECTANGLE = new Rectangle(0, 0, 2362F, 1143F);
 
     private ArrayList<ColoredRegion> regions = new ArrayList<>();
 
-    private Rectangle boundingRectangle;
+    private static SurfaceMap colorSurfaceMap;
 
-    public SurfaceMap(Rectangle boundingRectangle) {
-        this(boundingRectangle, new ArrayList<ColoredRegion>());
+    static {
+        colorSurfaceMap = new SurfaceMap(Color.WHITE, new Rectangle(0, 0, 236.2F, 114.3F));
+        colorSurfaceMap.addRegion(new HorizontalLine(Color.GREEN, 10, 20, 5, 2));
+        colorSurfaceMap.addRegion(new VerticalLine(Color.BLUE, 10, 20, 30, 2));
     }
 
-    public SurfaceMap(Rectangle boundingRectangle, ArrayList<ColoredRegion> regions) {
+    private final Rectangle boundingRectangle;
+    private final int defaultColor;
+
+    private SurfaceMap(int defaultColor, Rectangle boundingRectangle) {
         this.boundingRectangle = boundingRectangle;
+        this.defaultColor = defaultColor;
+    }
+
+    private SurfaceMap(int defaultColor, Rectangle boundingRectangle, ArrayList<ColoredRegion> regions) {
+        this(defaultColor, boundingRectangle);
         this.regions = regions;
+    }
+
+    public static SurfaceMap getSurfaceMap() {
+        return colorSurfaceMap;
     }
 
     public boolean contains(Point point) {
         return boundingRectangle.contains(point);
     }
 
-    public void addRegion(ColoredRegion coloredRegion) {
+    private void addRegion(ColoredRegion coloredRegion) {
         regions.add(coloredRegion);
     }
 
@@ -39,24 +51,16 @@ public class SurfaceMap extends JComponent {
                 return region.getColor();
             }
         }
-        return DEFAULT_COLOR;
+        return defaultColor;
     }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+        g.setColor(ColoredRegion.getAwtColor(defaultColor));
+        g.fillRect((int) boundingRectangle.x, (int) boundingRectangle.y, (int) boundingRectangle.getMaxX(), (int) boundingRectangle.getMaxY());
         for (ColoredRegion region : regions){
-            g.setColor(region.getAwtColor());
+            g.setColor(ColoredRegion.getAwtColor(region.getColor()));
             region.drawRegion(g);
         }
-    }
-
-    public static SurfaceMap getDefaultSurfaceMap(){
-
-
-
-        SurfaceMap map = new SurfaceMap(BOUNDING_RECTANGLE);
-        map.addRegion(new HorizontalLine(Color.GREEN, 10, 20, 5, 2));
-
-        return map;
     }
 }

@@ -5,20 +5,21 @@ import lejos.robotics.geometry.Point;
 import java.awt.*;
 
 public class VerticalLine extends ColoredRegion {
+
     private final float y1;
     private final float y2;
     private final float x;
     private final float weight;
 
-    public VerticalLine(int color, float y1, float y2, float x, float weight){
+    public VerticalLine(int color, float x, float y1, float y2, float weight) {
         super(color);
 
-        if (y2 > y1){
-            this.y2 = y1;
-            this.y1 = y2;
-        } else {
+        if (y1 < y2) {
             this.y1 = y1;
             this.y2 = y2;
+        } else {
+            this.y1 = y2;
+            this.y2 = y1;
         }
 
         this.x = x;
@@ -27,7 +28,7 @@ public class VerticalLine extends ColoredRegion {
 
     @Override
     public boolean contains(Point point) {
-        return y1 < point.x && point.x < y2 && x - weight < point.x && point.x < x + weight;
+        return y1 < point.y && point.y < y2 && x - weight / 2 < point.x && point.x < x + weight / 2;
     }
 
     @Override

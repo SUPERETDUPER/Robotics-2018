@@ -26,7 +26,7 @@ public abstract class ColoredRegion {
 
     abstract void drawRegion(Graphics g);
 
-    java.awt.Color getAwtColor(){
+    static java.awt.Color getAwtColor(int color) {
         switch (color){
             case Color.BLACK:
                 return java.awt.Color.BLACK;

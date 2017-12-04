@@ -1,17 +1,13 @@
 package navigation;
 
-import geometry.ColoredRegion;
 import geometry.SurfaceMap;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
-import lejos.robotics.geometry.Rectangle;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import utils.Config;
-
-import java.util.ArrayList;
 
 public class Controller {
 
@@ -37,7 +33,7 @@ public class Controller {
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
 
-        poseProvider = new CustomPoseProvider(pilot, SurfaceMap.getDefaultSurfaceMap(), STARTING_POSE);
+        poseProvider = new CustomPoseProvider(pilot, SurfaceMap.getSurfaceMap(), STARTING_POSE);
 
         navigator = new Navigator(pilot, poseProvider);
 
