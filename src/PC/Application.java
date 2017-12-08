@@ -9,7 +9,7 @@ public class Application {
 
     public static void main(String[] args) {
         JFrame window = new JFrame();
-        window.getContentPane().add(SurfaceMap.getSurfaceMap());
+        window.getContentPane().add(SurfaceMap.get());
         window.setVisible(true);
         window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }

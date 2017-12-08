@@ -28,12 +28,7 @@ public class SurfaceMap extends JComponent {
         this.defaultColor = defaultColor;
     }
 
-    private SurfaceMap(int defaultColor, Rectangle boundingRectangle, ArrayList<ColoredRegion> regions) {
-        this(defaultColor, boundingRectangle);
-        this.regions = regions;
-    }
-
-    public static SurfaceMap getSurfaceMap() {
+    public static SurfaceMap get() {
         return colorSurfaceMap;
     }
 
@@ -54,8 +49,10 @@ public class SurfaceMap extends JComponent {
         return defaultColor;
     }
 
+    @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+
         g.setColor(ColoredRegion.getAwtColor(defaultColor));
         g.fillRect((int) boundingRectangle.x, (int) boundingRectangle.y, (int) boundingRectangle.getMaxX(), (int) boundingRectangle.getMaxY());
         for (ColoredRegion region : regions){
