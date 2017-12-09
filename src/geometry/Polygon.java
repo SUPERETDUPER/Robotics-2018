@@ -5,14 +5,14 @@ import lejos.robotics.geometry.Point;
 import lejos.robotics.geometry.Point2D;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
-public class Polygon extends ColoredRegion {
+class Polygon extends ColoredRegion {
 
-    private final ArrayList<Point> points;
+    private final java.util.List<Point> points;
     private float maxX;
 
-    public Polygon(int color, ArrayList<Point> points) {
+    Polygon(int color, List<Point> points) {
         super(color);
 
         this.points = points;
@@ -20,14 +20,15 @@ public class Polygon extends ColoredRegion {
         maxX = this.points.get(0).x;
 
         for (Point2D.Float point : this.points) {
-            if (maxX < point.x) {
+            if (point.x > maxX) {
                 maxX = point.x;
             }
         }
     }
 
+    // Finds polygon by number of intersections check
     @Override
-    public boolean contains(Point point) {
+    boolean contains(Point point) {
         Line hLine = new Line(point.x, point.y, maxX + 1, point.y);
 
         int intersections = 0;
@@ -36,9 +37,9 @@ public class Polygon extends ColoredRegion {
 
         for (Point currentPoint : points) {
 
-            Line edge = new Line(previousPoint.x, previousPoint.y, currentPoint.x, currentPoint.y);
+            Line previousToCurrentEdge = new Line(previousPoint.x, previousPoint.y, currentPoint.x, currentPoint.y);
 
-            if (hLine.intersectsLine(edge)) {
+            if (hLine.intersectsLine(previousToCurrentEdge)) {
                 intersections += 1;
             }
 
@@ -54,9 +55,10 @@ public class Polygon extends ColoredRegion {
         int[] yValues = new int[points.size()];
 
         for (int i = 0; i < points.size() ; i++){
-            xValues[i] =(int) points.get(i).x;
-            yValues[i] = (int) points.get(i).y;
+            xValues[i] = SurfaceMap.adjustSize(points.get(i).x);
+            yValues[i] = SurfaceMap.adjustSize(points.get(i).y);
         }
+
         g.fillPolygon(xValues, yValues, points.size());
     }
 }

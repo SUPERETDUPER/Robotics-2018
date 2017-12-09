@@ -1,11 +1,12 @@
 package navigation;
 
-import geometry.SurfaceMap;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
-import lejos.robotics.navigation.*;
+import lejos.robotics.navigation.MovePilot;
+import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
 import utils.Config;
 
@@ -23,9 +24,8 @@ public class Controller {
     private static final Pose STARTING_POSE = new Pose(0, 0, 0);
 
 
-
-    private static final Navigator navigator;
-    private static final CustomPoseProvider poseProvider;
+    //private static final Navigator navigator;
+    //private static final CustomPoseProvider poseProvider;
 
     static {
         MovePilot pilot = createMovePilot();
@@ -33,11 +33,11 @@ public class Controller {
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
 
-        poseProvider = new CustomPoseProvider(pilot, SurfaceMap.get(), STARTING_POSE);
+        //poseProvider = new CustomPoseProvider(pilot, STARTING_POSE);
 
-        navigator = new Navigator(pilot, poseProvider);
+        //navigator = new Navigator(pilot, poseProvider);
 
-        navigator.addNavigationListener(new NavigationListener() {
+        /*navigator.addNavigationListener(new NavigationListener() {
             @Override
             public void atWaypoint(Waypoint waypoint, Pose pose, int i) {
 
@@ -52,7 +52,7 @@ public class Controller {
             public void pathInterrupted(Waypoint waypoint, Pose pose, int i) {
 
             }
-        });
+        });*/
     }
 
     public static void init() {
@@ -77,8 +77,8 @@ public class Controller {
         myPath.add(new Waypoint(40, -30));
         myPath.add(new Waypoint(-50, 30));
         myPath.add(new Waypoint(0, 0, 90));
-        navigator.setPath(myPath);
-        navigator.followPath();
-        navigator.waitForStop();
+        //navigator.setPath(myPath);
+        //navigator.followPath();
+        //navigator.waitForStop();
     }
 }

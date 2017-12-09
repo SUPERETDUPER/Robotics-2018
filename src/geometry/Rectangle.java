@@ -1,0 +1,31 @@
+package geometry;
+
+import lejos.robotics.geometry.Point;
+
+import java.awt.*;
+
+class Rectangle extends ColoredRegion {
+
+    private final float x1;
+    private final float y1;
+    private final float h;
+    private final float w;
+
+    Rectangle(int color, float x1, float y1, float w, float h) {
+        super(color);
+        this.x1 = x1;
+        this.y1 = y1;
+        this.h = h;
+        this.w = w;
+    }
+
+    @Override
+    void drawRegion(Graphics g) {
+        g.fillRect(SurfaceMap.adjustSize(x1), SurfaceMap.adjustSize(y1), SurfaceMap.adjustSize(w), SurfaceMap.adjustSize(h));
+    }
+
+    @Override
+    boolean contains(Point point) {
+        return x1 < point.getX() && point.getX() < x1 + w && y1 < point.getY() && point.getY() < y1 + h;
+    }
+}

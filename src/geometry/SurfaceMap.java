@@ -2,62 +2,69 @@ package geometry;
 
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
-import lejos.robotics.geometry.Rectangle;
+import utils.logger.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 
-public class SurfaceMap extends JComponent {
+public class SurfaceMap {
 
-    private ArrayList<ColoredRegion> regions = new ArrayList<>();
+    private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
-    private static SurfaceMap colorSurfaceMap;
+    private static final float DISPLAY_COEFFICIENT = 8;
 
-    static {
-        colorSurfaceMap = new SurfaceMap(Color.WHITE, new Rectangle(0, 0, 236.2F, 114.3F));
-        colorSurfaceMap.addRegion(new HorizontalLine(Color.GREEN, 10, 20, 5, 2));
-        colorSurfaceMap.addRegion(new VerticalLine(Color.BLUE, 10, 20, 30, 2));
+    private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 236.2F, 114.3F);
+
+    private static java.util.List<? extends ColoredRegion> regions = Arrays.asList(
+            new Rectangle(Color.BLACK, 0, 56.1F, 121.4F, 2),
+            new Rectangle(Color.BLACK, 117, 0, 2, 75.3F),
+
+            new FlatLine(Color.BLACK, 177.6F, 0, 81.4F, 2.9F, 225),
+            new FlatLine(Color.BLACK, 177.6F, 114.3F, 81.4F, 2.9F, 135),
+
+            new Rectangle(Color.GREEN, 103.1F, 0, 30, 30)
+    );
+
+
+    private static final JComponent surfaceCanvas = new JComponent() {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            boundingRectangle.setDisplayColor(g);
+            boundingRectangle.drawRegion(g);
+
+            for (ColoredRegion region : regions) {
+                region.setDisplayColor(g);
+                region.drawRegion(g);
+            }
+        }
+    };
+
+    public static JComponent getSurfaceComponent() {
+        return surfaceCanvas;
     }
 
-    private final Rectangle boundingRectangle;
-    private final int defaultColor;
-
-    private SurfaceMap(int defaultColor, Rectangle boundingRectangle) {
-        this.boundingRectangle = boundingRectangle;
-        this.defaultColor = defaultColor;
-    }
-
-    public static SurfaceMap get() {
-        return colorSurfaceMap;
-    }
-
-    public boolean contains(Point point) {
+    public static boolean contains(Point point) {
         return boundingRectangle.contains(point);
     }
 
-    private void addRegion(ColoredRegion coloredRegion) {
-        regions.add(coloredRegion);
-    }
+    public static int colorAtPoint(Point point) {
+        if (!contains(point)) {
+            Logger.print(Logger.typeWarning, LOG_TAG, "Point out of bounds");
+        }
 
-    public int colorAtPoint(Point point) {
+        int colorUnderPoint = boundingRectangle.getColor();
         for (ColoredRegion region : regions) {
             if (region.contains(point)) {
-                return region.getColor();
+                colorUnderPoint = region.getColor();
             }
         }
-        return defaultColor;
+        return colorUnderPoint;
     }
 
-    @Override
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
-
-        g.setColor(ColoredRegion.getAwtColor(defaultColor));
-        g.fillRect((int) boundingRectangle.x, (int) boundingRectangle.y, (int) boundingRectangle.getMaxX(), (int) boundingRectangle.getMaxY());
-        for (ColoredRegion region : regions){
-            g.setColor(ColoredRegion.getAwtColor(region.getColor()));
-            region.drawRegion(g);
-        }
+    public static int adjustSize(float original) {
+        return (int) (original * DISPLAY_COEFFICIENT);
     }
 }

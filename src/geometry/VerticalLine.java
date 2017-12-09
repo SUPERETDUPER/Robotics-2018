@@ -4,6 +4,7 @@ import lejos.robotics.geometry.Point;
 
 import java.awt.*;
 
+@Deprecated
 public class VerticalLine extends ColoredRegion {
 
     private final float y1;
@@ -33,6 +34,6 @@ public class VerticalLine extends ColoredRegion {
 
     @Override
     void drawRegion(Graphics g) {
-        g.fillRect((int) (x -weight), (int) y1, (int) (x+weight), (int) y2);
+        g.fillRect(SurfaceMap.adjustSize(x - weight), SurfaceMap.adjustSize(y1), SurfaceMap.adjustSize(x + weight), SurfaceMap.adjustSize(y2));
     }
 }
