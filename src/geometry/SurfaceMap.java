@@ -4,15 +4,12 @@ import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
 import utils.logger.Logger;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
 public class SurfaceMap {
 
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
-
-    private static final float DISPLAY_COEFFICIENT = 8;
 
     private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 236.2F, 114.3F);
 
@@ -26,24 +23,15 @@ public class SurfaceMap {
             new Rectangle(Color.GREEN, 103.1F, 0, 30, 30)
     );
 
+    public static void paintComponent(Graphics g) {
 
-    private static final JComponent surfaceCanvas = new JComponent() {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
+        boundingRectangle.setDisplayColor(g);
+        boundingRectangle.drawRegion(g);
 
-            boundingRectangle.setDisplayColor(g);
-            boundingRectangle.drawRegion(g);
-
-            for (ColoredRegion region : regions) {
-                region.setDisplayColor(g);
-                region.drawRegion(g);
-            }
+        for (ColoredRegion region : regions) {
+            region.setDisplayColor(g);
+            region.drawRegion(g);
         }
-    };
-
-    public static JComponent getSurfaceComponent() {
-        return surfaceCanvas;
     }
 
     public static boolean contains(Point point) {
@@ -64,7 +52,7 @@ public class SurfaceMap {
         return colorUnderPoint;
     }
 
-    public static int adjustSize(float original) {
-        return (int) (original * DISPLAY_COEFFICIENT);
+    public static Rectangle getBoundingRectangle() {
+        return boundingRectangle;
     }
 }

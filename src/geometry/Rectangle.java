@@ -1,10 +1,11 @@
 package geometry;
 
+import PC.MapGUI;
 import lejos.robotics.geometry.Point;
 
 import java.awt.*;
 
-class Rectangle extends ColoredRegion {
+public class Rectangle extends ColoredRegion {
 
     private final float x1;
     private final float y1;
@@ -21,11 +22,27 @@ class Rectangle extends ColoredRegion {
 
     @Override
     void drawRegion(Graphics g) {
-        g.fillRect(SurfaceMap.adjustSize(x1), SurfaceMap.adjustSize(y1), SurfaceMap.adjustSize(w), SurfaceMap.adjustSize(h));
+        g.fillRect(MapGUI.adjustSize(x1), MapGUI.adjustSize(y1), MapGUI.adjustSize(w), MapGUI.adjustSize(h));
     }
 
     @Override
     boolean contains(Point point) {
         return x1 < point.getX() && point.getX() < x1 + w && y1 < point.getY() && point.getY() < y1 + h;
+    }
+
+    public float getX1() {
+        return x1;
+    }
+
+    public float getY1() {
+        return y1;
+    }
+
+    public float getHeight() {
+        return h;
+    }
+
+    public float getWidth() {
+        return w;
     }
 }

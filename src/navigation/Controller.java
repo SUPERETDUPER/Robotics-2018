@@ -5,6 +5,7 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
 import lejos.robotics.navigation.MovePilot;
+import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
@@ -24,8 +25,7 @@ public class Controller {
     private static final Pose STARTING_POSE = new Pose(0, 0, 0);
 
 
-    //private static final Navigator navigator;
-    //private static final CustomPoseProvider poseProvider;
+    private static final Navigator navigator;
 
     static {
         MovePilot pilot = createMovePilot();
@@ -33,9 +33,9 @@ public class Controller {
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
 
-        //poseProvider = new CustomPoseProvider(pilot, STARTING_POSE);
+        CustomMCLPoseProvider.get().attachMoveProvider(pilot);
 
-        //navigator = new Navigator(pilot, poseProvider);
+        navigator = new Navigator(pilot, CustomMCLPoseProvider.get());
 
         /*navigator.addNavigationListener(new NavigationListener() {
             @Override
