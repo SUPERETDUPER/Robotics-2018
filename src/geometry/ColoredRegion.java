@@ -12,22 +12,18 @@ public abstract class ColoredRegion {
 
     private static final String LOG_TAG = ColoredRegion.class.getSimpleName();
 
-    private final int color;
+    private final int mColor;
 
     ColoredRegion(int color) {
-        this.color = color;
+        this.mColor = color;
     }
 
     int getColor() {
-        return color;
+        return mColor;
     }
 
-    public abstract boolean contains(Point point);
-
-    abstract void drawRegion(Graphics g);
-
-    static java.awt.Color getAwtColor(int color) {
-        switch (color){
+    private java.awt.Color getDisplayColor() {
+        switch (mColor) {
             case Color.BLACK:
                 return java.awt.Color.BLACK;
             case Color.WHITE:
@@ -43,8 +39,16 @@ public abstract class ColoredRegion {
             case Color.YELLOW:
                 return java.awt.Color.YELLOW;
             default:
-                Logger.log(Logger.typeWarning, LOG_TAG, "No color defined");
+                Logger.print(Logger.typeWarning, LOG_TAG, "Region not a valid color");
                 return null;
         }
     }
+
+    void setDisplayColor(Graphics g) {
+        g.setColor(getDisplayColor());
+    }
+
+    abstract boolean contains(Point point);
+
+    abstract void drawRegion(Graphics g);
 }
