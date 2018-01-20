@@ -1,6 +1,6 @@
 import PC.Connection;
 import lejos.hardware.Button;
-import lejos.hardware.Sound;
+import navigation.CustomMCLPoseProvider;
 import utils.Config;
 
 public class EV3Run {
@@ -8,13 +8,19 @@ public class EV3Run {
     private static final String LOG_TAG = EV3Run.class.getSimpleName();
 
     public static void main(String[] args) {
-        if (Config.EV3_CONNECT_TO_PC) {
-            Connection.EV3.connect();
+
+        if (Config.USING_PC) {
+            if (!Connection.EV3.connect()) { //Try connecting to computer, stop if fails
+                return;
+            }
         }
 
         //Controller.init();
         Button.ENTER.waitForPress();
-        Sound.beep();
+        Connection.EV3.sendMCLData();
+        Button.ENTER.waitForPress();
+        CustomMCLPoseProvider.get().getPose();
+        Button.ENTER.waitForPress();
         //Controller.test();
     }
 }

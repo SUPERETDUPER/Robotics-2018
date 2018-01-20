@@ -11,6 +11,7 @@ public class Config {
     public static final Port PORT_SENSOR_COLOR_SURFACE = SensorPort.S3;
     public static final Port PORT_SENSOR_ULTRASONIC = SensorPort.S2;
 
-    public static final boolean EV3_CONNECT_TO_PC = true;
+    public static final boolean USING_PC = true;
 
+    public static final float GUI_DISPLAY_RATIO = 8;
 }

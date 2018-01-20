@@ -2,7 +2,7 @@ package geometry;
 
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
-import utils.logger.Logger;
+import utils.Logger;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class SurfaceMap {
 
     public static int colorAtPoint(Point point) {
         if (!contains(point)) {
-            Logger.print(Logger.typeWarning, LOG_TAG, "Point out of bounds");
+            Logger.warning(LOG_TAG, "Point out of bounds");
         }
 
         int colorUnderPoint = boundingRectangle.getColor();

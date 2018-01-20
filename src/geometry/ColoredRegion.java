@@ -2,12 +2,15 @@ package geometry;
 
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
-import utils.logger.Logger;
+import utils.Logger;
 
 import java.awt.*;
 
 
-
+/*
+Defines a region of the surface of the board
+The region has a color
+ */
 public abstract class ColoredRegion {
 
     private static final String LOG_TAG = ColoredRegion.class.getSimpleName();
@@ -39,7 +42,7 @@ public abstract class ColoredRegion {
             case Color.YELLOW:
                 return java.awt.Color.YELLOW;
             default:
-                Logger.print(Logger.typeWarning, LOG_TAG, "Region not a valid color");
+                Logger.warning(LOG_TAG, "Region not a valid color");
                 return null;
         }
     }

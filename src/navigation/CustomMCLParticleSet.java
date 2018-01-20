@@ -5,6 +5,7 @@ import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
+import utils.Logger;
 
 import java.awt.*;
 import java.io.DataInputStream;
@@ -17,12 +18,12 @@ import java.util.Random;
  */
 public class CustomMCLParticleSet implements Transmittable {
 
+    private static final String LOG_TAG = CustomMCLParticleSet.class.getSimpleName();
+
     // Static variables
-    private static final int maxIterations = 1000;
+    private static final int maxIterationsForResample = 1000;
     private static final float distanceNoiseFactor = 0.2f;
     private static final float angleNoiseFactor = 4f;
-
-    private static final CustomMCLParticleSet particleSet = new CustomMCLParticleSet();
 
 
     // Instance variables
@@ -32,17 +33,10 @@ public class CustomMCLParticleSet implements Transmittable {
 
     //private static final boolean debug = false;
 
-    /**
-     * Create a set of particles randomly distributed within the given map.
-     */
-    private CustomMCLParticleSet() {
+    CustomMCLParticleSet() {
         for (int i = 0; i < numParticles; i++) {
             particles[i] = generateParticle();
         }
-    }
-
-    public static CustomMCLParticleSet get() {
-        return particleSet;
     }
 
     public int getSize() {
@@ -113,50 +107,47 @@ public class CustomMCLParticleSet implements Transmittable {
      * Note that the new set has multiple instances of the particles with higher
      * weights.
      *
-     * @return true iff lost
      */
-    public boolean resample() {
-        // Rename particles as oldParticles and create a new set
+    public void resample() {
         CustomMCLParticle[] oldParticles = particles;
         particles = new CustomMCLParticle[numParticles];
 
-        // Continually pick a random number and select the particles with
-        // weights greater than or equal to it until we have a full
-        // set of particles.
-        int count = 0;
-        int iterations = 0;
+        int particlesGenerated = 0;
 
-        while (count < numParticles) {
-            iterations++;
-            if (iterations >= maxIterations) {
-                //if (debug) System.out.println("Lost: count = " + count);
-                if (count > 0) { // Duplicate the ones we have so far
-                    for (int i = count; i < numParticles; i++) {
-                        particles[i] = new CustomMCLParticle(particles[i % count].getPose());
-                        particles[i].setWeight(particles[i % count].getWeight());
-                    }
-                    return false;
-                } else { // Completely lost - generate a new set of particles
-                    for (int i = 0; i < numParticles; i++) {
-                        particles[i] = generateParticle();
-                    }
-                    return true;
-                }
-            }
-
+        for (int iterations = 0; iterations < maxIterationsForResample; iterations++) {
             float rand = (float) Math.random();
-            for (int i = 0; i < numParticles && count < numParticles; i++) {
+
+            for (int i = 0; i < numParticles; i++) {
+
+                if (particlesGenerated >= numParticles) {
+                    return;
+                }
+
                 if (oldParticles[i].getWeight() >= rand) {
                     //TODO : Make sure this works might be mutable/immutable idk, see source
 
                     // Create a new instance of the particle and set its weight
-                    particles[count] = new CustomMCLParticle(oldParticles[i].getPose());
-                    particles[count].setWeight(oldParticles[i].getWeight());
-                    count++;
+                    particles[particlesGenerated] = new CustomMCLParticle(oldParticles[i].getPose());
+                    particles[particlesGenerated].setWeight(oldParticles[i].getWeight());
+                    particlesGenerated++;
                 }
             }
         }
-        return true;
+
+
+        if (particlesGenerated > 0) { // Duplicate the ones we have so far
+            for (int i = particlesGenerated; i < numParticles; i++) {
+                particles[i] = new CustomMCLParticle(particles[i % particlesGenerated].getPose());
+                particles[i].setWeight(particles[i % particlesGenerated].getWeight());
+            }
+            Logger.warning(LOG_TAG, "Bad resample; had to duplicate existing particles");
+        } else {
+            for (int i = 0; i < numParticles; i++) {
+                particles[i] = generateParticle();
+            }
+            Logger.warning(LOG_TAG, "Bad resample; regenerated all particles");
+        }
+
     }
 
 
@@ -196,12 +187,13 @@ public class CustomMCLParticleSet implements Transmittable {
 
     public void paintComponent(Graphics g) {
         for (CustomMCLParticle particle : particles) {
-            particle.paintComponent(g);
+            if (particle != null) {
+                particle.paintComponent(g);
+            }
         }
     }
 
     public void dumpObject(DataOutputStream dos) throws IOException {
-        //dos.writeFloat(this.maxWeight);
         dos.writeInt(numParticles);
 
         for (CustomMCLParticle particle : particles) {
@@ -211,12 +203,10 @@ public class CustomMCLParticleSet implements Transmittable {
             dos.writeFloat(pose.getY());
             dos.writeFloat(pose.getHeading());
             dos.writeFloat(weight);
-            dos.flush();
         }
     }
 
     public void loadObject(DataInputStream dis) throws IOException {
-        //this.maxWeight = dis.readFloat();
         numParticles = dis.readInt();
 
         CustomMCLParticle[] newParticles = new CustomMCLParticle[numParticles];
