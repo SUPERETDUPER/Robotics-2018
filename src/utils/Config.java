@@ -14,4 +14,5 @@ public class Config {
     public static final boolean USING_PC = true;
 
     public static final float GUI_DISPLAY_RATIO = 8;
+    static final int IMPORTANCE_TO_PRINT = 3;
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 class FlatLine extends ColoredRegion {
 
-    private Polygon flatLine;
+    private final Polygon flatLine;
 
     FlatLine(int color, float x1, float y1, float length, float hWidth, float angle) {
         super(color);

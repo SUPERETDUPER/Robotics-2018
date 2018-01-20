@@ -4,9 +4,9 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import utils.Config;
 
-public class DistanceSensor {
+class DistanceSensor {
 
-    private final static SampleProvider ultrasonicSampleProvider =  new EV3UltrasonicSensor(Config.PORT_SENSOR_ULTRASONIC).getDistanceMode();
+    private final static SampleProvider ultrasonicSampleProvider = new EV3UltrasonicSensor(Config.PORT_SENSOR_ULTRASONIC).getDistanceMode();
 
     public static float getDistance() {
         float[] distanceValues = new float[ultrasonicSampleProvider.sampleSize()];

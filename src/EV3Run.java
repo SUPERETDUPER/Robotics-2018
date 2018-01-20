@@ -1,9 +1,9 @@
 import PC.Connection;
 import lejos.hardware.Button;
-import navigation.CustomMCLPoseProvider;
+import navigation.MyPoseProvider;
 import utils.Config;
 
-public class EV3Run {
+class EV3Run {
 
     private static final String LOG_TAG = EV3Run.class.getSimpleName();
 
@@ -19,7 +19,7 @@ public class EV3Run {
         Button.ENTER.waitForPress();
         Connection.EV3.sendMCLData();
         Button.ENTER.waitForPress();
-        CustomMCLPoseProvider.get().getPose();
+        MyPoseProvider.get().getPose();
         Button.ENTER.waitForPress();
         //Controller.test();
     }

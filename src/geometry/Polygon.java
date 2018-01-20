@@ -1,6 +1,6 @@
 package geometry;
 
-import PC.MapGUI;
+import PC.GUI;
 import lejos.robotics.geometry.Line;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.geometry.Point2D;
@@ -55,9 +55,9 @@ class Polygon extends ColoredRegion {
         int[] xValues = new int[points.size()];
         int[] yValues = new int[points.size()];
 
-        for (int i = 0; i < points.size() ; i++){
-            xValues[i] = MapGUI.adjustSize(points.get(i).x);
-            yValues[i] = MapGUI.adjustSize(points.get(i).y);
+        for (int i = 0; i < points.size(); i++) {
+            xValues[i] = GUI.adjustSize(points.get(i).x);
+            yValues[i] = GUI.adjustSize(points.get(i).y);
         }
 
         g.fillPolygon(xValues, yValues, points.size());

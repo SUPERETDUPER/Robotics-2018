@@ -1,10 +1,10 @@
 package hardware;
 
-public class ColorChangeThread extends Thread {
+class ColorChangeThread extends Thread {
 
     private int previousColor;
 
-    public ColorChangeThread(){
+    public ColorChangeThread() {
         super();
 
         this.previousColor = ColorSensor.getSurfaceColor();
@@ -16,7 +16,7 @@ public class ColorChangeThread extends Thread {
 
         int currentColor = ColorSensor.getSurfaceColor();
 
-        if(previousColor != currentColor){
+        if (previousColor != currentColor) {
             // TODO : Update pose provider
             previousColor = currentColor;
         }

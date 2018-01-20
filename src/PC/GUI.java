@@ -1,41 +1,45 @@
 package PC;
 
+import com.sun.istack.internal.NotNull;
 import geometry.SurfaceMap;
-import navigation.CustomMCLPoseProvider;
+import navigation.MyPoseProvider;
 import utils.Config;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MapGUI extends JComponent {
-    private static final MapGUI mapGui = new MapGUI();
+public class GUI extends JComponent {
 
-    private JFrame window;
+    private static final GUI mapGui = new GUI();
 
-    private MapGUI() {
+    private final JFrame window;
+
+    private GUI() {
         window = new JFrame();
         window.getContentPane().add(this);
         window.setVisible(true);
         window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
-    public static MapGUI get() {
+    @NotNull
+    public static GUI get() {
         return mapGui;
     }
 
-    public static int adjustSize(float original) {
+    @NotNull
+    public static int adjustSize(@NotNull float original) {
         return (int) (original * Config.GUI_DISPLAY_RATIO);
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        SurfaceMap.paintComponent(g);
-        CustomMCLPoseProvider.get().paintComponent(g);
+    public static void init() {
     }
 
-    public static void init() {
+    @Override
+    protected void paintComponent(@NotNull Graphics g) {
+        super.paintComponent(g);
+
+        SurfaceMap.get().displayOnGUI(g);
+        MyPoseProvider.get().displayOnGUI(g);
     }
 
     public void close() {

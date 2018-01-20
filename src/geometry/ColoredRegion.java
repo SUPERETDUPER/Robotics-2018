@@ -11,7 +11,7 @@ import java.awt.*;
 Defines a region of the surface of the board
 The region has a color
  */
-public abstract class ColoredRegion {
+abstract class ColoredRegion {
 
     private static final String LOG_TAG = ColoredRegion.class.getSimpleName();
 

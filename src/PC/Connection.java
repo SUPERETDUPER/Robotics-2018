@@ -1,9 +1,10 @@
 package PC;
 
+import com.sun.istack.internal.NotNull;
 import lejos.remote.nxt.NXTConnection;
 import lejos.remote.nxt.SocketConnector;
 import lejos.utility.Delay;
-import navigation.CustomMCLPoseProvider;
+import navigation.MyPoseProvider;
 import utils.Logger;
 
 import java.io.DataInputStream;
@@ -15,7 +16,8 @@ public class Connection {
     private static final String EV3_IP_ADDRESS = "10.0.1.1";
 
     public enum EventTypes {
-        MCL_DATA
+        MCL_DATA,
+        LOG
     }
 
     static class PC {
@@ -26,6 +28,7 @@ public class Connection {
 
         private static boolean connected = false;
 
+        @NotNull
         public static boolean connect() {
             if (connected) {
                 Logger.warning(LOG_TAG, "Already connected");
@@ -49,10 +52,12 @@ public class Connection {
 
                 Delay.msDelay(5000L);
             }
+
             Logger.error(LOG_TAG, "Could not connect to EV3");
             return false;
         }
 
+        @NotNull
         public static boolean read() {
             try {
                 EventTypes dataType = EventTypes.values()[dis.readByte()];
@@ -61,8 +66,8 @@ public class Connection {
 
                 switch (dataType) {
                     case MCL_DATA:
-                        CustomMCLPoseProvider.get().loadObject(dis);
-                        MapGUI.get().repaint();
+                        MyPoseProvider.get().loadObject(dis);
+                        GUI.get().repaint();
                         break;
                     default:
                         Logger.warning(LOG_TAG, "Not a recognized event type");
@@ -84,6 +89,7 @@ public class Connection {
 
         private static boolean connected = false;
 
+        @NotNull
         public static boolean connect() {
             if (connected) {
                 Logger.warning(LOG_TAG, "Already connected to PC");
@@ -115,7 +121,7 @@ public class Connection {
             try {
                 Logger.debug(LOG_TAG, "Sending MCL_DATA...");
                 dos.writeByte(EventTypes.MCL_DATA.ordinal());
-                CustomMCLPoseProvider.get().dumpObject(dos);
+                MyPoseProvider.get().dumpObject(dos);
                 dos.flush();
                 Logger.debug(LOG_TAG, "Sent");
             } catch (IOException e) {

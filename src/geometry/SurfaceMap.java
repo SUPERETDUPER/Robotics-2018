@@ -1,5 +1,6 @@
 package geometry;
 
+import PC.Displayable;
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
 import utils.Logger;
@@ -7,13 +8,14 @@ import utils.Logger;
 import java.awt.*;
 import java.util.Arrays;
 
-public class SurfaceMap {
-
+public class SurfaceMap implements Displayable {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
-    private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 236.2F, 114.3F);
+    private static final SurfaceMap mSurfaceMap = new SurfaceMap();
 
-    private static java.util.List<? extends ColoredRegion> regions = Arrays.asList(
+    private final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 236.2F, 114.3F);
+
+    private final java.util.List<? extends ColoredRegion> regions = Arrays.asList(
             new Rectangle(Color.BLACK, 0, 56.1F, 121.4F, 2),
             new Rectangle(Color.BLACK, 117, 0, 2, 75.3F),
 
@@ -23,7 +25,14 @@ public class SurfaceMap {
             new Rectangle(Color.GREEN, 103.1F, 0, 30, 30)
     );
 
-    public static void paintComponent(Graphics g) {
+    private SurfaceMap() {
+    }
+
+    public static SurfaceMap get() {
+        return mSurfaceMap;
+    }
+
+    public void displayOnGUI(Graphics g) {
 
         boundingRectangle.setDisplayColor(g);
         boundingRectangle.drawRegion(g);
@@ -34,11 +43,11 @@ public class SurfaceMap {
         }
     }
 
-    public static boolean contains(Point point) {
+    public boolean contains(Point point) {
         return boundingRectangle.contains(point);
     }
 
-    public static int colorAtPoint(Point point) {
+    public int colorAtPoint(Point point) {
         if (!contains(point)) {
             Logger.warning(LOG_TAG, "Point out of bounds");
         }
@@ -49,10 +58,14 @@ public class SurfaceMap {
                 colorUnderPoint = region.getColor();
             }
         }
+
         return colorUnderPoint;
     }
 
-    public static Rectangle getBoundingRectangle() {
-        return boundingRectangle;
+    public Point getRandomPoint() {
+        return new Point(
+                boundingRectangle.getX1() + (float) (Math.random()) * boundingRectangle.getWidth(),
+                boundingRectangle.getY1() + (float) (Math.random()) * boundingRectangle.getHeight()
+        );
     }
 }

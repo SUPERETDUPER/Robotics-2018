@@ -3,7 +3,7 @@ package PC;
 import utils.Config;
 import utils.Logger;
 
-public class PCRun {
+class PCRun {
 
     private static final String LOG_TAG = PCRun.class.getSimpleName();
 
@@ -17,7 +17,7 @@ public class PCRun {
 
         if (Connection.PC.connect()) {
 
-            MapGUI.init();
+            GUI.init();
 
             for (int failedReads = 0; failedReads < 3; Thread.yield()) {
                 if (Connection.PC.read()) {// Try to read
@@ -29,7 +29,7 @@ public class PCRun {
 
             Logger.error(LOG_TAG, "Lost connection to EV3");
 
-            MapGUI.get().close();
+            GUI.get().close();
         }
     }
 }

@@ -1,21 +1,20 @@
 package utils;
 
 
+import com.sun.istack.internal.NotNull;
+
 public final class Logger {
 
     private static final String ESCAPE_CHAR = "\u001B";
 
     private static final String ANSI_RESET = "[0m";
-
     private static final String ANSI_BLACK = "[30m";
     private static final String ANSI_BRIGHT_RED = "[1;31m";
     private static final String ANSI_BLUE = "[34m";
     private static final String ANSI_BRIGHT_YELLOW = "[1;33m";
 
-    private static final int IMPORTANCE_TO_PRINT = 3;
-
-    private static void print(LogTypes type, String color, String tag, String message) {
-        if (type.ordinal() <= IMPORTANCE_TO_PRINT) {
+    private static void print(@NotNull LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
+        if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT) {
             String toPrint = "";
 
             toPrint += ESCAPE_CHAR + color;
@@ -28,19 +27,19 @@ public final class Logger {
         }
     }
 
-    public static void error(String tag, String message) {
+    public static void error(@NotNull String tag, @NotNull String message) {
         Logger.print(LogTypes.ERROR, ANSI_BRIGHT_RED, tag, message);
     }
 
-    public static void warning(String tag, String message) {
+    public static void warning(@NotNull String tag, @NotNull String message) {
         Logger.print(LogTypes.WARNING, ANSI_BRIGHT_YELLOW, tag, message);
     }
 
-    public static void info(String tag, String message) {
+    public static void info(@NotNull String tag, @NotNull String message) {
         Logger.print(LogTypes.INFO, ANSI_BLUE, tag, message);
     }
 
-    public static void debug(String tag, String message) {
+    public static void debug(@NotNull String tag, @NotNull String message) {
         Logger.print(LogTypes.DEBUG, ANSI_BLACK, tag, message);
     }
 
