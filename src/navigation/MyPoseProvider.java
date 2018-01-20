@@ -55,13 +55,13 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
 
     public void moveStopped(@NotNull Move event, @NotNull MoveProvider mp) {
         particleSet.applyMove(event);
-        update(false);
+        update(new SurfaceReading());
         updated = true;
     }
 
-    public void update(@NotNull boolean onEdge) {
+    public void update(Reading readings) {
         if (updated) {
-            particleSet.calculateWeights(new Readings(onEdge));
+            particleSet.calculateWeights(readings);
             particleSet.resample();
         }
 
@@ -79,7 +79,7 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
      */
     @NotNull
     public Pose getPose() {
-        update(false);
+        update(new SurfaceReading());
 
         return currentPose;
     }
@@ -131,8 +131,6 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
     }
 
     public void displayOnGUI(@NotNull Graphics g) {
-        particleSet.displayOnGUI(g);
-
         if (currentPose == null) {
             Logger.warning(LOG_TAG, "Could not paint robots location because it's null");
             return;
@@ -156,6 +154,10 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
         };
 
         g.fillPolygon(xValues, yValues, 3);
+    }
+
+    public ParticleSet getParticleSet() {
+        return particleSet;
     }
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {

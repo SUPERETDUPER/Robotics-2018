@@ -13,7 +13,9 @@ import java.io.IOException;
 
 public class Connection {
 
-    private static final String EV3_IP_ADDRESS = "10.0.1.1";
+    public static final String EV3_IP_ADDRESS = "10.0.1.1";
+    public static boolean runningOnEV3;
+    private static boolean connected = false;
 
     public enum EventTypes {
         MCL_DATA,
@@ -24,9 +26,6 @@ public class Connection {
         private static final String LOG_TAG = Connection.PC.class.getSimpleName();
 
         private static DataInputStream dis;
-        private static DataOutputStream dos;
-
-        private static boolean connected = false;
 
         @NotNull
         public static boolean connect() {
@@ -42,7 +41,6 @@ public class Connection {
 
                 if (socketConnection != null) {
                     dis = socketConnection.openDataInputStream();
-                    dos = socketConnection.openDataOutputStream();
                     connected = true;
                     Logger.info(LOG_TAG, "Connected to EV3");
                     return true;
@@ -50,7 +48,7 @@ public class Connection {
 
                 Logger.warning(LOG_TAG, "Failed to connect to EV3; attempt " + attempts);
 
-                Delay.msDelay(5000L);
+                Delay.msDelay(3000L);
             }
 
             Logger.error(LOG_TAG, "Could not connect to EV3");
@@ -69,12 +67,16 @@ public class Connection {
                         MyPoseProvider.get().loadObject(dis);
                         GUI.get().repaint();
                         break;
+                    case LOG:
+                        System.out.println(dis.readUTF());
+                        break;
                     default:
                         Logger.warning(LOG_TAG, "Not a recognized event type");
                 }
 
                 return true;
             } catch (IOException e) {
+                connected = false;
                 Logger.error(LOG_TAG, "Could not read data input stream" + e);
                 return false;
             }
@@ -84,10 +86,7 @@ public class Connection {
     public static class EV3 {
         private static final String LOG_TAG = Connection.EV3.class.getSimpleName();
 
-        private static DataInputStream dis;
         private static DataOutputStream dos;
-
-        private static boolean connected = false;
 
         @NotNull
         public static boolean connect() {
@@ -96,25 +95,18 @@ public class Connection {
                 return true;
             }
 
-            for (int attempts = 1; attempts < 6; attempts++) {
 
-                NXTConnection socketConnection = new SocketConnector().waitForConnection(0, 2);
+            NXTConnection socketConnection = new SocketConnector().waitForConnection(0, 2);  // Arguments are not used, see source
 
-                if (socketConnection != null) {
-                    dis = socketConnection.openDataInputStream();
-                    dos = socketConnection.openDataOutputStream();
-                    connected = true;
-                    Logger.info(LOG_TAG, "Connected to PC");
-                    return true;
-                }
-
-                Logger.warning(LOG_TAG, "Failed to connect to PC; attempt " + attempts);
-
-                Delay.msDelay(5000L);
+            if (socketConnection == null) {
+                Logger.error(LOG_TAG, "Could not connect to PC");
+                return false;
             }
 
-            Logger.error(LOG_TAG, "Could not connect to PC");
-            return false;
+            dos = socketConnection.openDataOutputStream();
+            connected = true;
+            Logger.info(LOG_TAG, "Connected to PC");
+            return true;
         }
 
         public static void sendMCLData() {
@@ -125,7 +117,20 @@ public class Connection {
                 dos.flush();
                 Logger.debug(LOG_TAG, "Sent");
             } catch (IOException e) {
+                connected = false;
                 Logger.error(LOG_TAG, "Failed to send MCLData");
+            }
+        }
+
+        public static void sendLogMessage(String message) {
+            if (connected) {
+                try {
+                    dos.writeByte(EventTypes.LOG.ordinal());
+                    dos.writeUTF(message);
+                } catch (IOException e) {
+                    connected = false;
+                    Logger.error(LOG_TAG, "Failed to send log message");
+                }
             }
         }
     }

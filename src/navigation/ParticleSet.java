@@ -110,7 +110,7 @@ public class ParticleSet implements Transmittable, Iterable<Particle>, Displayab
     /**
      * Calculate the weight for each particle
      */
-    public void calculateWeights(@NotNull Readings readings) {
+    public void calculateWeights(@NotNull Reading readings) {
         for (Particle particle : particles) {
             particle.calculateWeight(readings);
         }

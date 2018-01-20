@@ -1,6 +1,7 @@
 package utils;
 
 
+import PC.Connection;
 import com.sun.istack.internal.NotNull;
 
 public final class Logger {
@@ -11,20 +12,38 @@ public final class Logger {
     private static final String ANSI_BLACK = "[30m";
     private static final String ANSI_BRIGHT_RED = "[1;31m";
     private static final String ANSI_BLUE = "[34m";
-    private static final String ANSI_BRIGHT_YELLOW = "[1;33m";
+    private static final String ANSI_BRIGHT_YELLOW = "[33m";
+    private static final String ANSI_BRIGHT_GREEN = "[1;32m";
 
     private static void print(@NotNull LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
-        if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT) {
-            String toPrint = "";
+        if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
+            String toPrint =
+                    ESCAPE_CHAR +
+                            color +
+                            type.name().toUpperCase() +
+                            " : " +
+                            tag +
+                            " : " +
+                            message +
+                            ESCAPE_CHAR +
+                            ANSI_RESET;
 
-            toPrint += ESCAPE_CHAR + color;
-            toPrint += type.name().toUpperCase();
-            toPrint += " : " + tag;
-            toPrint += " : " + message;
-            toPrint += ESCAPE_CHAR + ANSI_RESET;
-
-            System.out.println(toPrint);
+            if (Connection.runningOnEV3 && Config.USING_PC) {
+                Connection.EV3.sendLogMessage(ESCAPE_CHAR +
+                        ANSI_BRIGHT_GREEN +
+                        "FROM EV3 : " +
+                        toPrint);
+            } else {
+                System.out.println(toPrint);
+            }
         }
+    }
+
+    enum LogTypes {
+        ERROR,
+        WARNING,
+        INFO,
+        DEBUG
     }
 
     public static void error(@NotNull String tag, @NotNull String message) {
@@ -41,12 +60,5 @@ public final class Logger {
 
     public static void debug(@NotNull String tag, @NotNull String message) {
         Logger.print(LogTypes.DEBUG, ANSI_BLACK, tag, message);
-    }
-
-    private enum LogTypes {
-        ERROR,
-        WARNING,
-        INFO,
-        DEBUG
     }
 }

@@ -7,6 +7,8 @@ import utils.Config;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GUI extends JComponent {
 
@@ -14,6 +16,17 @@ public class GUI extends JComponent {
 
     private final JFrame window;
 
+
+    //List of layers to display on GUI
+    private final ArrayList<Displayable> contents = new ArrayList<>(Arrays.asList(
+            SurfaceMap.get(),
+            MyPoseProvider.get(),
+            MyPoseProvider.get().getParticleSet()
+    ));
+
+    /*
+    Creates a window and loads it's content
+     */
     private GUI() {
         window = new JFrame();
         window.getContentPane().add(this);
@@ -38,8 +51,9 @@ public class GUI extends JComponent {
     protected void paintComponent(@NotNull Graphics g) {
         super.paintComponent(g);
 
-        SurfaceMap.get().displayOnGUI(g);
-        MyPoseProvider.get().displayOnGUI(g);
+        for (Displayable content : contents) {
+            content.displayOnGUI(g);
+        }
     }
 
     public void close() {

@@ -52,7 +52,7 @@ public class Particle implements Transmittable, Displayable {
         return pose;
     }
 
-    public void calculateWeight(@NotNull Readings readings) {
+    public void calculateWeight(@NotNull Reading readings) {
         weight = readings.calculateWeight(this);
     }
 
