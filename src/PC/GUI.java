@@ -1,6 +1,5 @@
 package PC;
 
-import com.sun.istack.internal.NotNull;
 import geometry.SurfaceMap;
 import navigation.MyPoseProvider;
 import utils.Config;
@@ -10,53 +9,51 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class GUI extends JComponent {
+public class GUI {
 
-    private static final GUI mapGui = new GUI();
-
-    private final JFrame window;
+    private static final JFrame window;
 
 
     //List of layers to display on GUI
-    private final ArrayList<Displayable> contents = new ArrayList<>(Arrays.asList(
+    private static final ArrayList<Displayable> contents = new ArrayList<>(Arrays.asList(
             SurfaceMap.get(),
             MyPoseProvider.get(),
             MyPoseProvider.get().getParticleSet()
     ));
 
+    private static final JComponent mapGui = new JComponent() {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            Graphics2D g2d = (Graphics2D) g.create();
+
+            g2d.scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
+
+            for (Displayable content : contents) {
+                content.displayOnGUI(g2d);
+            }
+        }
+    };
+
     /*
     Creates a window and loads it's content
      */
-    private GUI() {
+    static {
         window = new JFrame();
-        window.getContentPane().add(this);
+        window.getContentPane().add(mapGui);
         window.setVisible(true);
         window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-    }
-
-    @NotNull
-    public static GUI get() {
-        return mapGui;
-    }
-
-    @NotNull
-    public static int adjustSize(@NotNull float original) {
-        return (int) (original * Config.GUI_DISPLAY_RATIO);
     }
 
     public static void init() {
     }
 
-    @Override
-    protected void paintComponent(@NotNull Graphics g) {
-        super.paintComponent(g);
-
-        for (Displayable content : contents) {
-            content.displayOnGUI(g);
-        }
+    public static void update() {
+        window.repaint();
     }
 
-    public void close() {
+    public static void close() {
         window.dispose();
     }
 }

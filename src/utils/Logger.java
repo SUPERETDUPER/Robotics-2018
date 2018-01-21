@@ -15,6 +15,13 @@ public final class Logger {
     private static final String ANSI_BRIGHT_YELLOW = "[33m";
     private static final String ANSI_BRIGHT_GREEN = "[1;32m";
 
+    enum LogTypes {
+        ERROR,
+        WARNING,
+        INFO,
+        DEBUG
+    }
+
     private static void print(@NotNull LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
             String toPrint =
@@ -37,13 +44,6 @@ public final class Logger {
                 System.out.println(toPrint);
             }
         }
-    }
-
-    enum LogTypes {
-        ERROR,
-        WARNING,
-        INFO,
-        DEBUG
     }
 
     public static void error(@NotNull String tag, @NotNull String message) {

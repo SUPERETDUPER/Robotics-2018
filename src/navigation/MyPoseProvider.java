@@ -2,7 +2,6 @@ package navigation;
 
 import PC.Connection;
 import PC.Displayable;
-import PC.GUI;
 import com.sun.istack.internal.NotNull;
 import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
@@ -138,19 +137,19 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
 
         g.setColor(Color.RED);
 
-        lejos.robotics.geometry.Point leftEnd = currentPose.pointAt(GUI.adjustSize(GUI_TAIL_LENGTH), currentPose.getHeading() - GUI_ANGLE_WIDTH);
-        Point rightEnd = currentPose.pointAt(GUI.adjustSize(GUI_TAIL_LENGTH), currentPose.getHeading() + GUI_ANGLE_WIDTH);
+        lejos.robotics.geometry.Point leftEnd = currentPose.pointAt((int) GUI_TAIL_LENGTH, currentPose.getHeading() - GUI_ANGLE_WIDTH);
+        Point rightEnd = currentPose.pointAt((int) GUI_TAIL_LENGTH, currentPose.getHeading() + GUI_ANGLE_WIDTH);
 
         int[] xValues = new int[]{
-                GUI.adjustSize(currentPose.getX()),
-                GUI.adjustSize(leftEnd.x),
-                GUI.adjustSize(rightEnd.x)
+                (int) currentPose.getX(),
+                (int) leftEnd.x,
+                (int) rightEnd.x
         };
 
         int[] yValues = new int[]{
-                GUI.adjustSize(currentPose.getY()),
-                GUI.adjustSize(leftEnd.y),
-                GUI.adjustSize(rightEnd.y)
+                (int) currentPose.getY(),
+                (int) leftEnd.y,
+                (int) rightEnd.y
         };
 
         g.fillPolygon(xValues, yValues, 3);

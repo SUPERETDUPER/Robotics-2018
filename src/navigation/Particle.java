@@ -1,7 +1,6 @@
 package navigation;
 
 import PC.Displayable;
-import PC.GUI;
 import com.sun.istack.internal.NotNull;
 import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
@@ -74,19 +73,19 @@ public class Particle implements Transmittable, Displayable {
     public void displayOnGUI(@NotNull Graphics g) {
         g.setColor(Color.BLUE);
 
-        Point leftEnd = pose.pointAt(GUI.adjustSize(DISPLAY_TAIL_LENGTH), pose.getHeading() - DISPLAY_ANGLE_WIDTH);
-        Point rightEnd = pose.pointAt(GUI.adjustSize(DISPLAY_TAIL_LENGTH), pose.getHeading() + DISPLAY_ANGLE_WIDTH);
+        Point leftEnd = pose.pointAt((int) DISPLAY_TAIL_LENGTH, pose.getHeading() - DISPLAY_ANGLE_WIDTH);
+        Point rightEnd = pose.pointAt((int) DISPLAY_TAIL_LENGTH, pose.getHeading() + DISPLAY_ANGLE_WIDTH);
 
         int[] xValues = new int[]{
-                GUI.adjustSize(pose.getX()),
-                GUI.adjustSize(leftEnd.x),
-                GUI.adjustSize(rightEnd.x)
+                (int) pose.getX(),
+                (int) leftEnd.x,
+                (int) rightEnd.x
         };
 
         int[] yValues = new int[]{
-                GUI.adjustSize(pose.getY()),
-                GUI.adjustSize(leftEnd.y),
-                GUI.adjustSize(rightEnd.y)
+                (int) pose.getY(),
+                (int) leftEnd.y,
+                (int) rightEnd.y
         };
 
         g.fillPolygon(xValues, yValues, xValues.length);

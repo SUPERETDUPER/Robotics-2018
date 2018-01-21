@@ -1,6 +1,5 @@
 package geometry;
 
-import PC.GUI;
 import lejos.robotics.geometry.Point;
 
 import java.awt.*;
@@ -22,7 +21,7 @@ class Rectangle extends ColoredRegion {
 
     @Override
     void drawRegion(Graphics g) {
-        g.fillRect(GUI.adjustSize(x1), GUI.adjustSize(y1), GUI.adjustSize(w), GUI.adjustSize(h));
+        g.fillRect((int) x1, (int) y1, (int) w, (int) h);
     }
 
     @Override

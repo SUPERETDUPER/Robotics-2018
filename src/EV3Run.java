@@ -16,9 +16,7 @@ class EV3Run {
             }
         }
 
-        Button.ENTER.waitForPress();
         MyPoseProvider.get().getPose();
         Button.ENTER.waitForPress();
-        //Controller.test();
     }
 }

@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class Connection {
 
-    public static final String EV3_IP_ADDRESS = "10.0.1.1";
+    private static final String EV3_IP_ADDRESS = "10.0.1.1";
     public static boolean runningOnEV3;
     private static boolean connected = false;
 
@@ -65,7 +65,7 @@ public class Connection {
                 switch (dataType) {
                     case MCL_DATA:
                         MyPoseProvider.get().loadObject(dis);
-                        GUI.get().repaint();
+                        GUI.update();
                         break;
                     case LOG:
                         System.out.println(dis.readUTF());

@@ -22,7 +22,7 @@ class PCRun {
 
             monitorForData();
 
-            GUI.get().close();  //Close GUI
+            GUI.close();  //Close GUI
         }
     }
 
