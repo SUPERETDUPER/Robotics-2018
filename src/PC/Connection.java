@@ -5,6 +5,7 @@ import lejos.remote.nxt.NXTConnection;
 import lejos.remote.nxt.SocketConnector;
 import lejos.utility.Delay;
 import navigation.MyPoseProvider;
+import utils.Config;
 import utils.Logger;
 
 import java.io.DataInputStream;
@@ -13,13 +14,23 @@ import java.io.IOException;
 
 public class Connection {
 
-    private static final String EV3_IP_ADDRESS = "10.0.1.1";
-    public static boolean runningOnEV3;
+    public static RUNNING_ON runningOn;
+
+    public static boolean isConnected() {
+        return connected;
+    }
+
     private static boolean connected = false;
 
     public enum EventTypes {
         MCL_DATA,
         LOG
+    }
+
+    public enum RUNNING_ON {
+        PC,
+        EV3,
+        EV3_SIM
     }
 
     static class PC {
@@ -37,7 +48,17 @@ public class Connection {
 
             for (int attempts = 1; attempts < 6; attempts++) {
 
-                NXTConnection socketConnection = new SocketConnector().connect(EV3_IP_ADDRESS, 2);
+                NXTConnection socketConnection;
+
+                if (Config.currentMode == Config.Mode.SIM) {
+                    socketConnection = new SocketConnector().connect(Config.LOCAL_IP_ADDRESS, 2);
+                } else if (Config.currentMode == Config.Mode.DUAL) {
+                    socketConnection = new SocketConnector().connect(Config.EV3_IP_ADDRESS, 2);
+                } else {
+                    Logger.error(LOG_TAG, "Current mode is not SIM or DUAL should not be connecting");
+                    return false;
+                }
+
 
                 if (socketConnection != null) {
                     dis = socketConnection.openDataInputStream();
@@ -48,7 +69,7 @@ public class Connection {
 
                 Logger.warning(LOG_TAG, "Failed to connect to EV3; attempt " + attempts);
 
-                Delay.msDelay(3000L);
+                Delay.msDelay(3000);
             }
 
             Logger.error(LOG_TAG, "Could not connect to EV3");
@@ -71,13 +92,13 @@ public class Connection {
                         System.out.println(dis.readUTF());
                         break;
                     default:
-                        Logger.warning(LOG_TAG, "Not a recognized event type");
+                        Logger.error(LOG_TAG, "Not a recognized event type");
                 }
 
                 return true;
             } catch (IOException e) {
                 connected = false;
-                Logger.error(LOG_TAG, "Could not read data input stream" + e);
+                Logger.error(LOG_TAG, "Could not read data input stream " + e);
                 return false;
             }
         }
@@ -95,6 +116,7 @@ public class Connection {
                 return true;
             }
 
+            Logger.info(LOG_TAG, "Waiting for connection...");
 
             NXTConnection socketConnection = new SocketConnector().waitForConnection(0, 2);  // Arguments are not used, see source
 
@@ -131,6 +153,8 @@ public class Connection {
                     connected = false;
                     Logger.error(LOG_TAG, "Failed to send log message");
                 }
+            } else {
+                Logger.warning(LOG_TAG, "Not connected cannot send log message");
             }
         }
     }

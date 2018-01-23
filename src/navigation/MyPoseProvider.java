@@ -28,7 +28,7 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
 
     private static final MyPoseProvider mMCLPoseProvider = new MyPoseProvider();
 
-    private static final float GUI_TAIL_LENGTH = 1;
+    private static final float GUI_TAIL_LENGTH = 3;
     private static final float GUI_ANGLE_WIDTH = 10;
 
     private final ParticleSet particleSet = new ParticleSet();
@@ -59,14 +59,14 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
     }
 
     public void update(Reading readings) {
-        if (updated) {
+        if (!updated) {
             particleSet.calculateWeights(readings);
             particleSet.resample();
         }
 
         estimatePose();
 
-        if (Config.USING_PC) {
+        if ((Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) && (Connection.runningOn == Connection.RUNNING_ON.EV3 || Connection.runningOn == Connection.RUNNING_ON.EV3_SIM)) {
             Connection.EV3.sendMCLData();
         }
     }
@@ -79,6 +79,8 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
     @NotNull
     public Pose getPose() {
         update(new SurfaceReading());
+
+        Logger.info(LOG_TAG, "Current pose is " + currentPose.toString());
 
         return currentPose;
     }
@@ -137,8 +139,8 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
 
         g.setColor(Color.RED);
 
-        lejos.robotics.geometry.Point leftEnd = currentPose.pointAt((int) GUI_TAIL_LENGTH, currentPose.getHeading() - GUI_ANGLE_WIDTH);
-        Point rightEnd = currentPose.pointAt((int) GUI_TAIL_LENGTH, currentPose.getHeading() + GUI_ANGLE_WIDTH);
+        lejos.robotics.geometry.Point leftEnd = currentPose.pointAt((int) GUI_TAIL_LENGTH, currentPose.getHeading() + 180 - GUI_ANGLE_WIDTH);
+        Point rightEnd = currentPose.pointAt((int) GUI_TAIL_LENGTH, currentPose.getHeading() + 180 + GUI_ANGLE_WIDTH);
 
         int[] xValues = new int[]{
                 (int) currentPose.getX(),
@@ -172,6 +174,7 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
     }
 
     public void loadObject(@NotNull DataInputStream dis) throws IOException {
+        Logger.info(LOG_TAG, "Loading new MCL data");
         float firstFloat = dis.readFloat();
         if (firstFloat != -1F) {
             this.currentPose = new Pose(firstFloat, dis.readFloat(), dis.readFloat());

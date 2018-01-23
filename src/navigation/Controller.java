@@ -9,7 +9,7 @@ import lejos.robotics.navigation.MovePilot;
 import lejos.robotics.navigation.Pose;
 import utils.Config;
 
-class Controller {
+public class Controller {
 
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
@@ -22,10 +22,11 @@ class Controller {
     //Set actual values
     private static final Pose STARTING_POSE = new Pose(0, 0, 0);
 
+    private static final MovePilot pilot;
     //private static final Navigator navigator;
 
     static {
-        MovePilot pilot = createMovePilot();
+        pilot = createMovePilot();
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
@@ -36,6 +37,10 @@ class Controller {
 
     public static void init() {
 
+    }
+
+    public static void travel(int distance) {
+        pilot.travel(distance);
     }
 
     @NotNull

@@ -19,7 +19,7 @@ import java.util.Random;
 public class Particle implements Transmittable, Displayable {
     private static final String LOG_TAG = Particle.class.getSimpleName();
 
-    private static final float DISPLAY_TAIL_LENGTH = 0.3F;
+    private static final float DISPLAY_TAIL_LENGTH = 2;
     private static final float DISPLAY_ANGLE_WIDTH = 10;
 
     private static final Random rand = new Random();
@@ -51,6 +51,11 @@ public class Particle implements Transmittable, Displayable {
         return pose;
     }
 
+    @NotNull
+    public Point getLocation() {
+        return pose.getLocation();
+    }
+
     public void calculateWeight(@NotNull Reading readings) {
         weight = readings.calculateWeight(this);
     }
@@ -73,8 +78,8 @@ public class Particle implements Transmittable, Displayable {
     public void displayOnGUI(@NotNull Graphics g) {
         g.setColor(Color.BLUE);
 
-        Point leftEnd = pose.pointAt((int) DISPLAY_TAIL_LENGTH, pose.getHeading() - DISPLAY_ANGLE_WIDTH);
-        Point rightEnd = pose.pointAt((int) DISPLAY_TAIL_LENGTH, pose.getHeading() + DISPLAY_ANGLE_WIDTH);
+        Point leftEnd = pose.pointAt((int) DISPLAY_TAIL_LENGTH, pose.getHeading() + 180 - DISPLAY_ANGLE_WIDTH);
+        Point rightEnd = pose.pointAt((int) DISPLAY_TAIL_LENGTH, pose.getHeading() + 180 + DISPLAY_ANGLE_WIDTH);
 
         int[] xValues = new int[]{
                 (int) pose.getX(),

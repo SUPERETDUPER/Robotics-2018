@@ -3,15 +3,15 @@ package PC;
 import utils.Config;
 import utils.Logger;
 
-class PCRun {
+class PCMain {
 
-    private static final String LOG_TAG = PCRun.class.getSimpleName();
+    private static final String LOG_TAG = PCMain.class.getSimpleName();
 
     public static void main(String[] args) {
-        Connection.runningOnEV3 = false;
+        Connection.runningOn = Connection.RUNNING_ON.PC;
 
-        if (!Config.USING_PC) {
-            Logger.error(LOG_TAG, "Config var 'USING_PC' is false");
+        if (Config.currentMode != Config.Mode.SIM && Config.currentMode != Config.Mode.DUAL) {
+            Logger.error(LOG_TAG, "Config var 'currentMode' is not SIM or DUAL");
             return;
         }
 

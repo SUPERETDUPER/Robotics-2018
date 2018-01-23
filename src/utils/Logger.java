@@ -35,7 +35,7 @@ public final class Logger {
                             ESCAPE_CHAR +
                             ANSI_RESET;
 
-            if (Connection.runningOnEV3 && Config.USING_PC) {
+            if (Connection.runningOn == Connection.RUNNING_ON.EV3 && Connection.isConnected()) {
                 Connection.EV3.sendLogMessage(ESCAPE_CHAR +
                         ANSI_BRIGHT_GREEN +
                         "FROM EV3 : " +
