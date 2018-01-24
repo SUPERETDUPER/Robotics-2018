@@ -1,5 +1,7 @@
-package PC;
+package sim;
 
+import PC.Connection;
+import navigation.Controller;
 import navigation.MyPoseProvider;
 import utils.Config;
 import utils.Logger;
@@ -23,6 +25,7 @@ public class EV3SimMain {
         }
 
         MyPoseProvider.get().getPose();
+        Controller.init();
 
         try {
             Logger.info(LOG_TAG, "Enter to quit?");

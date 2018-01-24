@@ -1,5 +1,6 @@
 package navigation;
 
+import PC.Connection;
 import com.sun.istack.internal.NotNull;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
@@ -7,7 +8,9 @@ import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
 import lejos.robotics.navigation.MovePilot;
 import lejos.robotics.navigation.Pose;
+import sim.AbstractMotor;
 import utils.Config;
+import utils.Logger;
 
 public class Controller {
 
@@ -45,8 +48,18 @@ public class Controller {
 
     @NotNull
     private static MovePilot createMovePilot() {
-        RegulatedMotor leftMotor = new EV3LargeRegulatedMotor(Config.PORT_MOTOR_LEFT);
-        RegulatedMotor rightMotor = new EV3LargeRegulatedMotor(Config.PORT_MOTOR_RIGHT);
+        RegulatedMotor leftMotor;
+        RegulatedMotor rightMotor;
+        if (Connection.runningOn == Connection.RUNNING_ON.EV3) {
+            leftMotor = new EV3LargeRegulatedMotor(Config.PORT_MOTOR_LEFT);
+            rightMotor = new EV3LargeRegulatedMotor(Config.PORT_MOTOR_RIGHT);
+        } else if (Connection.runningOn == Connection.RUNNING_ON.EV3_SIM) {
+            leftMotor = new AbstractMotor();
+            rightMotor = new AbstractMotor();
+        } else {
+            Logger.error(LOG_TAG, "Not running on EV3 or EV3_SIM");
+            throw new RuntimeException("Not running on EV3 or EV3_SIM");
+        }
 
         Wheel leftWheel = WheeledChassis.modelWheel(leftMotor, WHEEL_DIAMETER).offset(WHEEL_OFFSET);
         Wheel rightWheel = WheeledChassis.modelWheel(rightMotor, WHEEL_DIAMETER).offset(-WHEEL_OFFSET);

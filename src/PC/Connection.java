@@ -51,7 +51,7 @@ public class Connection {
                 NXTConnection socketConnection;
 
                 if (Config.currentMode == Config.Mode.SIM) {
-                    socketConnection = new SocketConnector().connect(Config.LOCAL_IP_ADDRESS, 2);
+                    socketConnection = new SocketConnector().connect("localhost", 2);
                 } else if (Config.currentMode == Config.Mode.DUAL) {
                     socketConnection = new SocketConnector().connect(Config.EV3_IP_ADDRESS, 2);
                 } else {

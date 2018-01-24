@@ -10,7 +10,6 @@ import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
-import utils.Config;
 import utils.Logger;
 
 import java.awt.*;
@@ -33,7 +32,6 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
 
     private final ParticleSet particleSet = new ParticleSet();
     private Pose currentPose;
-    private boolean updated = false;
 
 
     private MyPoseProvider() {
@@ -48,25 +46,22 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
         mp.addMoveListener(this);
     }
 
-    public void moveStarted(@NotNull Move event, @NotNull MoveProvider mp) {
-        updated = false;
+    @Override
+    public void moveStarted(Move move, MoveProvider moveProvider) {
     }
 
     public void moveStopped(@NotNull Move event, @NotNull MoveProvider mp) {
         particleSet.applyMove(event);
         update(new SurfaceReading());
-        updated = true;
     }
 
     public void update(Reading readings) {
-        if (!updated) {
-            particleSet.calculateWeights(readings);
-            particleSet.resample();
-        }
+        particleSet.calculateWeights(readings);
+        particleSet.resample();
 
         estimatePose();
 
-        if ((Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) && (Connection.runningOn == Connection.RUNNING_ON.EV3 || Connection.runningOn == Connection.RUNNING_ON.EV3_SIM)) {
+        if (Connection.isConnected() && (Connection.runningOn == Connection.RUNNING_ON.EV3 || Connection.runningOn == Connection.RUNNING_ON.EV3_SIM)) {
             Connection.EV3.sendMCLData();
         }
     }
@@ -91,7 +86,6 @@ public class MyPoseProvider implements PoseProvider, MoveListener, Transmittable
     public void setPose(@NotNull Pose aPose) {
         this.currentPose = aPose;
         particleSet.setInitialPose(aPose);
-        updated = true;
     }
 
     /**
