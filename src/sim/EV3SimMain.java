@@ -26,9 +26,14 @@ public class EV3SimMain {
 
         MyPoseProvider.get().getPose();
         Controller.init();
+        waitForConfirmation();
+        Controller.travel(10);
+        waitForConfirmation();
+    }
 
+    public static void waitForConfirmation() {
         try {
-            Logger.info(LOG_TAG, "Enter to quit?");
+            Logger.info(LOG_TAG, "Press enter to continue");
             System.in.read();
         } catch (IOException e) {
             Logger.error(LOG_TAG, e.toString());
