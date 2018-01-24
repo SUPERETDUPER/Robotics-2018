@@ -7,59 +7,73 @@ public class AbstractMotor implements RegulatedMotor {
 
     private RegulatedMotorListener listener;
 
+    private State currentState = State.STOP;
+    private long timeStamp = -1;
+
     private final static int maxSpeed = 1050;
     private int tachoCount = 0;
 
     private int speed = 100;
-    private int currentSpeed = 0;
-    private long endTime = -1;
-    private int angleAtEnd;
+    private int goalTachoCount;
+
+    private void update() {
+        if (currentState == State.STOP) {
+            return;
+        }
+
+        long newTime = System.currentTimeMillis();
+        int rotationsTraveled = (int) ((newTime - timeStamp) * speed);
+
+        if (currentState == State.BACKWARD) {
+            rotationsTraveled *= -1;
+        }
+
+        tachoCount += rotationsTraveled;
+
+        if ((currentState == State.FORWARD && tachoCount > goalTachoCount) ||
+                (currentState == State.BACKWARD && tachoCount < goalTachoCount)) {
+            currentState = State.STOP;
+            if (listener != null) {
+                listener.rotationStopped(this, tachoCount, true, newTime);
+            }
+        }
+
+        timeStamp = newTime;
+    }
 
     public AbstractMotor() {
     }
 
-    @Override
-    public void stop(boolean b) {
-        currentSpeed = 0;
-        endTime = -1;
-        if (listener != null) {
-            listener.rotationStopped(this, tachoCount, true, System.currentTimeMillis());
-        }
+    private float getTimeToEnd() {
+        return Math.abs(goalTachoCount - tachoCount) / speed;
     }
 
-    private void start(long endTime, boolean forward) {
-        this.endTime = endTime;
+    @Override
+    public void stop(boolean b) {
+        update();
 
-        if (forward) {
-            this.currentSpeed = speed;
-        } else {
-            this.currentSpeed = -speed;
-        }
+        if (currentState != State.STOP) {
+            currentState = State.STOP;
+            timeStamp = System.currentTimeMillis();
 
-        if (listener != null) {
-            listener.rotationStarted(this, tachoCount, false, System.currentTimeMillis());
+            if (listener != null) {
+                listener.rotationStopped(this, tachoCount, true, timeStamp);
+            }
         }
     }
 
     @Override
     public void waitComplete() {
-        while (System.currentTimeMillis() < endTime) {
+        while (System.currentTimeMillis() < getTimeToEnd()) {
             Thread.yield();
         }
     }
 
-    private void check() {
-        if (System.currentTimeMillis() > endTime && endTime != -1) {
-            stop(true);
-        }
-    }
-
     @Override
-    public void flt(boolean b) {
-        stop(b);
+    public void rotateTo(int i, boolean b) {
+        goalTachoCount = i;
+        goalTachoCount
     }
-
-
 
     @Override
     public void rotate(int i, boolean b) {
@@ -70,58 +84,49 @@ public class AbstractMotor implements RegulatedMotor {
         }
     }
 
-
     @Override
-    public void rotateTo(int i, boolean b) {
-        angleAtEnd = i;
-        rotate(i - tachoCount, b);
+    public int getLimitAngle() {
+        update();
+        return tachoCount +;
     }
 
     @Override
-    public int getLimitAngle() {
-        check();
-        return angleAtEnd;
+    public void forward() {
+        update();
+        currentState = State.FORWARD;
+        rota = Integer.MAX_VALUE;
+        timeStamp = System.currentTimeMillis();
+    }
+
+    @Override
+    public void backward() {
+        update();
+        currentState = State.BACKWARD;
+        rota = Integer.MAX_VALUE;
+        timeStamp = System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean isMoving() {
+        update();
+        return currentState != State.STOP;
+    }
+
+    @Override
+    public int getTachoCount() {
+        update();
+        return this.tachoCount;
     }
 
     @Override
     public int getSpeed() {
-        check();
         return this.speed;
     }
 
     @Override
     public void setSpeed(int i) {
+        update();
         this.speed = i;
-    }
-
-    @Override
-    public boolean isStalled() {
-        check();
-        return currentSpeed == 0;
-    }
-
-    @Override
-    public void forward() {
-        start(-1, true);
-    }
-
-    @Override
-    public void backward() {
-        currentSpeed = -speed;
-        start(-1, false);
-
-    }
-
-    @Override
-    public boolean isMoving() {
-        check();
-        return currentSpeed != 0;
-    }
-
-    @Override
-    public int getTachoCount() {
-        check();
-        return this.tachoCount;
     }
 
     @Override
@@ -135,13 +140,26 @@ public class AbstractMotor implements RegulatedMotor {
     }
 
     @Override
+    public boolean isStalled() {
+        return !isMoving();
+    }
+
+    @Override
     public void rotateTo(int i) {
         rotateTo(i, true);
     }
 
     @Override
     public int getRotationSpeed() {
-        return this.currentSpeed;
+        if (currentState == State.STOP) {
+            return 0;
+        }
+        return this.speed;
+    }
+
+    @Override
+    public void flt(boolean b) {
+        stop(b);
     }
 
     @Override
@@ -176,6 +194,12 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public void endSynchronization() {
 
+    }
+
+    private enum State {
+        FORWARD,
+        BACKWARD,
+        STOP
     }
 
     @Override
