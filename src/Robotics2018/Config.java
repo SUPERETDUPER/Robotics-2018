@@ -11,7 +11,7 @@ public final class Config {
     public static final boolean isSimulator = true;
     public static final boolean isDual = true;
 
-    public static final float GUI_DISPLAY_RATIO = 8;
+    public static final float GUI_DISPLAY_RATIO = 0.8F;
     public static final String EV3_IP_ADDRESS = "10.0.1.1";
     public static final Port PORT_MOTOR_LEFT;
     public static final Port PORT_MOTOR_RIGHT;

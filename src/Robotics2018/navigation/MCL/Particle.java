@@ -16,10 +16,10 @@ import java.util.Random;
 /**
  * Inspired by Lawrie Griffiths' MCLParticle class in LEJOS EV3 Source code
  */
-public class Particle implements Transmittable, Displayable {
+class Particle implements Transmittable, Displayable {
     private static final String LOG_TAG = Particle.class.getSimpleName();
 
-    private static final float DISPLAY_TAIL_LENGTH = 3;
+    private static final float DISPLAY_TAIL_LENGTH = 30;
     private static final float DISPLAY_TAIL_ANGLE = 20;
 
     private static final Random rand = new Random();
@@ -77,8 +77,6 @@ public class Particle implements Transmittable, Displayable {
     }
 
     public void displayOnGUI(@NotNull Graphics g) {
-        g.setColor(Color.BLUE);
-
         Point leftEnd = pose.pointAt(DISPLAY_TAIL_LENGTH, pose.getHeading() + 180 - DISPLAY_TAIL_ANGLE / 2);
         Point rightEnd = pose.pointAt(DISPLAY_TAIL_LENGTH, pose.getHeading() + 180 + DISPLAY_TAIL_ANGLE / 2);
 

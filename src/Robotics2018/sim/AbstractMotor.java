@@ -8,12 +8,12 @@ public class AbstractMotor implements RegulatedMotor {
     private static final String LOG_TAG = AbstractMotor.class.getSimpleName();
 
     private boolean isMoving = false;
-    private long timeStamp = -1;
-
-    private final static int MAX_SPEED = 1050;
+    private long timeStamp = System.currentTimeMillis();
     private int tachoCount = 0;
 
-    private int speed = 100;
+    private final static int MAX_SPEED = 1050;
+
+    private int speed = 105;
     private int goalTachoCount;
 
     private void update() {
@@ -46,7 +46,6 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public void stop(boolean b) {
         update();
-
         if (isMoving) {
             isMoving = false;
             timeStamp = System.currentTimeMillis();
@@ -81,6 +80,7 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public int getLimitAngle() {
         update();
+        Logger.warning(LOG_TAG, "Not tested might return when no limit exists");
         return goalTachoCount;
     }
 

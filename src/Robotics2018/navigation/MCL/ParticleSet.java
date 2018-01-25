@@ -20,10 +20,7 @@ import java.util.Random;
 /**
  * Inspired by Lawrie Griffiths' MCLParticleSet class in LEJOS EV3 Source code
  */
-public class ParticleSet implements Transmittable, Iterable<Particle>, Displayable {
-
-    private static final int numParticles = 200;
-
+class ParticleSet extends ParticleSetContainer {
     // Static variables
     private static final int maxIterationsForResample = 1000;
     private static final String LOG_TAG = ParticleSet.class.getSimpleName();
@@ -32,7 +29,6 @@ public class ParticleSet implements Transmittable, Iterable<Particle>, Displayab
     private static final float angleNoiseFactor = 0.4f;
     private static final float startingRadiusNoise = 1;
     private static final float startingHeadingNoise = 1;
-    private ArrayList<Particle> particles;
 
     ParticleSet() {
         generateParticleSet();
@@ -127,44 +123,10 @@ public class ParticleSet implements Transmittable, Iterable<Particle>, Displayab
         }
     }
 
-    public void displayOnGUI(@NotNull Graphics g) {
-        for (Particle particle : particles) {
-
-            if (particle == null) {
-                Logger.warning(LOG_TAG, "Could not display particle because is null");
-                continue;
-            }
-
-            particle.displayOnGUI(g);
-        }
-    }
-
     private void generateParticleSet() {
         particles = new ArrayList<>(numParticles);
         for (int i = 0; i < numParticles; i++) {
             particles.add(generateParticle());
         }
-    }
-
-    @Override
-    @NotNull
-    public Iterator<Particle> iterator() {
-        return particles.iterator();
-    }
-
-    public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
-        for (Particle particle : particles) {
-            particle.dumpObject(dos);
-        }
-    }
-
-    public void loadObject(@NotNull DataInputStream dis) throws IOException {
-        ArrayList<Particle> newParticles = new ArrayList<>(numParticles);
-
-        for (int i = 0; i < numParticles; ++i) {
-            newParticles.add(new Particle(dis));
-        }
-
-        this.particles = newParticles;
     }
 }

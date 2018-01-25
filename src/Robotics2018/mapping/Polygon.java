@@ -7,6 +7,9 @@ import lejos.robotics.geometry.Point2D;
 import java.awt.*;
 import java.util.List;
 
+/*
+Any type of polygon
+ */
 class Polygon extends ColoredRegion {
 
     private final java.util.List<Point> points;

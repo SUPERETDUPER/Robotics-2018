@@ -5,6 +5,9 @@ import lejos.robotics.geometry.Point;
 import java.awt.*;
 import java.util.Arrays;
 
+/*
+Lines who's ends are horizontal
+ */
 class FlatLine extends ColoredRegion {
 
     private final Polygon flatLine;

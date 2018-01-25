@@ -13,16 +13,16 @@ public class SurfaceMap implements Displayable {
 
     private static final SurfaceMap mSurfaceMap = new SurfaceMap();
 
-    private final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 236.2F, 114.3F);
+    private final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143);
 
     private final java.util.List<? extends ColoredRegion> regions = Arrays.asList(
-            new Rectangle(Color.BLACK, 0, 56.1F, 121.4F, 2),
-            new Rectangle(Color.BLACK, 117, 0, 2, 75.3F),
+            new Rectangle(Color.BLACK, 0, 561, 1214, 20),
+            new Rectangle(Color.BLACK, 1170, 0, 20, 753),
 
-            new FlatLine(Color.BLACK, 177.6F, 0, 81.4F, 2.9F, 225),
-            new FlatLine(Color.BLACK, 177.6F, 114.3F, 81.4F, 2.9F, 135),
+            new FlatLine(Color.BLACK, 1776, 0, 814, 29, 225),
+            new FlatLine(Color.BLACK, 1776, 1143, 814, 29, 135),
 
-            new Rectangle(Color.GREEN, 103.1F, 0, 30, 30)
+            new Rectangle(Color.GREEN, 1031, 0, 300, 300)
     );
 
     private SurfaceMap() {

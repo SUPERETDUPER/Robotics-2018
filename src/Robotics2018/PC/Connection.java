@@ -93,6 +93,7 @@ public class Connection {
                         path.loadObject(dis);
                         GUI.paths.add(path);
                         GUI.update();
+                        break;
                     default:
                         Logger.error(LOG_TAG, "Not a recognized event type");
                 }

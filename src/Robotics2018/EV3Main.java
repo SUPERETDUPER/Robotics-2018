@@ -3,7 +3,6 @@ package Robotics2018;
 import Robotics2018.PC.Connection;
 import Robotics2018.utils.Helper;
 import Robotics2018.navigation.Controller;
-import Robotics2018.navigation.MCL.MyPoseProvider;
 
 class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
@@ -17,10 +16,8 @@ class EV3Main {
             }
         }
 
-        MyPoseProvider.get().getPose();
         Controller.init();
-        Helper.waitForConfirmation();
-        Controller.get().travel(10);
+        Controller.get().travel(100);
         Helper.waitForConfirmation();
     }
 }

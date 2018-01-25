@@ -8,23 +8,21 @@ import Robotics2018.utils.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class GUI {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
     private static final JFrame window;
 
-    public static final DisplayableArray<CustomPath> paths = new DisplayableArray<>();
+    public static final DisplayableList<CustomPath> paths = new DisplayableList<>();
 
-    //List of layers to display on GUI
-    private static final ArrayList<Displayable> contents = new ArrayList<>(Arrays.asList(
-            SurfaceMap.get(),
-            MyPoseProvider.get(),
-            MyPoseProvider.get().getParticleSet(),
-            paths
-    ));
+    private static final DisplayableList<Displayable> contents = new DisplayableList<>();
+
+    static {
+        contents.add(SurfaceMap.get());
+        contents.add(MyPoseProvider.get());
+        contents.add(paths);
+    }
 
 
     private static final JComponent mapGui = new JComponent() {
@@ -37,9 +35,7 @@ public class GUI {
 
             g2d.scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
 
-            for (Displayable content : contents) {
-                content.displayOnGUI(g2d);
-            }
+            contents.displayOnGUI(g2d);
         }
     };
 

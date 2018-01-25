@@ -1,10 +1,13 @@
 package Robotics2018.navigation;
 
+import Robotics2018.PC.Connection;
+import Robotics2018.navigation.MCL.Reading;
 import com.sun.istack.internal.NotNull;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
+import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
 import Robotics2018.navigation.MCL.MyPoseProvider;
 import Robotics2018.sim.AbstractMotor;
@@ -22,11 +25,12 @@ public class Controller implements MoveListener{
     private static final double LINEAR_ACCELERATION = 40;
 
     //Set actual values
-    private static final Pose STARTING_POSE = new Pose(0, 0, 0);
+    private static final Pose STARTING_POSE = new Pose(500, 50, 0);
 
     private static final Controller mController = new Controller();
 
     private final MovePilot pilot;
+    private final MyPoseProvider poseProvider;
     //private static final Navigator navigator;
 
     private Controller(){
@@ -36,8 +40,8 @@ public class Controller implements MoveListener{
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
         pilot.addMoveListener(this);
 
-        MyPoseProvider.get().attachMoveProvider(pilot);
-        MyPoseProvider.get().setPose(STARTING_POSE);
+        poseProvider = new MyPoseProvider(pilot);
+        poseProvider.setPose(STARTING_POSE);
     }
 
     public void travel(int distance) {
@@ -76,10 +80,19 @@ public class Controller implements MoveListener{
     @Override
     public void moveStarted(Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move started " + move.toString());
+        CustomPath path = new CustomPath();
+        Pose currentLocation = poseProvider.getPose();
+        path.add(new Waypoint(currentLocation));
+        path.add(new Waypoint(currentLocation.getLocation().pointAt(move.getDistanceTraveled(), currentLocation.getHeading() + move.getAngleTurned())));
+        Connection.EV3.sendPath(path);
     }
 
     @Override
     public void moveStopped(Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped " + move.toString());
+    }
+
+    public void update(Reading reading){
+        poseProvider.update(reading);
     }
 }

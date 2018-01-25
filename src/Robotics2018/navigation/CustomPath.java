@@ -13,6 +13,7 @@ public class CustomPath extends Path implements Displayable{
         Waypoint start = this.get(0);
 
         for (int i = 1; i < this.size() ; i++){
+            g.setColor(Color.BLUE);
             g.drawLine((int) start.x, (int) start.y, (int) this.get(i).x, (int) this.get(i).y);
             start = this.get(i);
         }

@@ -1,7 +1,7 @@
 package Robotics2018.hardware;
 
+import Robotics2018.navigation.Controller;
 import Robotics2018.navigation.MCL.EdgeReading;
-import Robotics2018.navigation.MCL.MyPoseProvider;
 
 class ColorChangeThread extends Thread {
 
@@ -20,7 +20,7 @@ class ColorChangeThread extends Thread {
         int currentColor = ColorSensor.getSurfaceColor();
 
         if (previousColor != currentColor) {
-            MyPoseProvider.get().update(new EdgeReading(previousColor, currentColor));
+            Controller.get().update(new EdgeReading(previousColor, currentColor));
             previousColor = currentColor;
         }
     }
