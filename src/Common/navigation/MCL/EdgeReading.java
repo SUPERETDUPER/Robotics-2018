@@ -1,0 +1,19 @@
+package Common.navigation.MCL;
+
+import lejos.robotics.navigation.Pose;
+
+public class EdgeReading implements Reading {
+    private final int previousColor;
+    private final int currentColor;
+
+    public EdgeReading(int previousColor, int currentColor) {
+        this.previousColor = previousColor;
+        this.currentColor = currentColor;
+    }
+
+    @Override
+    public float calculateWeight(Pose pose) {
+        //TODO :
+        return 0;
+    }
+}
