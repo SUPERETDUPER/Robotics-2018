@@ -2,7 +2,6 @@ package EV3;
 
 import Common.navigation.CustomPath;
 import Common.navigation.MCL.CustomPoseProvider;
-import Common.navigation.MCL.Reading;
 import Common.utils.Logger;
 import EV3.hardware.ChassisBuilder;
 import lejos.robotics.navigation.*;
@@ -12,15 +11,15 @@ public class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
 
-    private static final double ANGULAR_ACCELERATION = 120;
-    private static final double LINEAR_ACCELERATION = 40;
+    private static final double ANGULAR_ACCELERATION = 1200;
+    private static final double LINEAR_ACCELERATION = 400;
 
     //Set actual values
-    private static final Pose STARTING_POSE = new Pose(500, 50, 0);
+    private static final Pose STARTING_POSE = new Pose(500, 100, 0);
 
     private final MovePilot pilot;
     private final CustomPoseProvider poseProvider;
-    private final Navigator navigator;
+    //private final Navigator navigator;
 
     Controller() {
         pilot = new MovePilot(ChassisBuilder.get());
@@ -32,9 +31,9 @@ public class Controller implements MoveListener, NavigationListener {
         poseProvider = new CustomPoseProvider(pilot);
         poseProvider.setPose(STARTING_POSE);
 
-        navigator = new Navigator(pilot, poseProvider);
+        //navigator = new Navigator(pilot, poseProvider);
 
-        navigator.addNavigationListener(this);
+        //navigator.addNavigationListener(this);
     }
 
     @Override
@@ -50,10 +49,6 @@ public class Controller implements MoveListener, NavigationListener {
     @Override
     public void moveStopped(Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped " + move.toString());
-    }
-
-    public void update(Reading reading) {
-        poseProvider.update(reading);
     }
 
     @Override
@@ -72,6 +67,14 @@ public class Controller implements MoveListener, NavigationListener {
     }
 
     void goTo(float x, float y) {
-        navigator.goTo(x, y);
+        //navigator.goTo(x, y);
+    }
+
+    void waitForCompletion() {
+        //navigator.waitForStop();
+    }
+
+    void travel() {
+        pilot.travel(100, false);
     }
 }

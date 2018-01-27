@@ -49,7 +49,7 @@ class Polygon extends ColoredRegion {
             previousPoint = currentPoint;
         }
 
-        return intersections % 2 == 0;
+        return intersections % 2 == 1;
     }
 
     @Override

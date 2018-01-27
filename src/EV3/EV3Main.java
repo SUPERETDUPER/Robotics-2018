@@ -15,7 +15,8 @@ class EV3Main {
 
         Controller controller = new Controller();
         Brick.waitForUserConfirmation();
-        controller.goTo(1000, 1000);
+        //controller.goTo(550, 50);
+        controller.travel();
         Brick.waitForUserConfirmation();
     }
 }

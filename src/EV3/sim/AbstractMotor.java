@@ -4,6 +4,7 @@ import Common.utils.Logger;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
+//TODO Not working correctly taking too long for short distances
 public class AbstractMotor implements RegulatedMotor {
     private static final String LOG_TAG = AbstractMotor.class.getSimpleName();
 
@@ -13,7 +14,7 @@ public class AbstractMotor implements RegulatedMotor {
 
     private final static int MAX_SPEED = 1050;
 
-    private int speed = 105;
+    private int speed = 500;
     private int goalTachoCount;
 
     private void update() {
@@ -22,7 +23,7 @@ public class AbstractMotor implements RegulatedMotor {
         }
 
         long newTime = System.currentTimeMillis();
-        int rotationsTraveled = (int) ((newTime - timeStamp) * speed) / 1000;
+        int rotationsTraveled = (int) (newTime - timeStamp) / 1000 * speed;
         boolean isForward = goalTachoCount > tachoCount;
 
         if (!isForward) {

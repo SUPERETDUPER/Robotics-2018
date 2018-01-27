@@ -2,7 +2,7 @@ package Common.navigation.MCL;
 
 import lejos.robotics.navigation.Pose;
 
-public class EdgeReading implements Reading {
+public class EdgeReading implements Readings {
     private final int previousColor;
     private final int currentColor;
 

@@ -5,11 +5,11 @@ import EV3.hardware.ColorSensor;
 import com.sun.istack.internal.NotNull;
 import lejos.robotics.navigation.Pose;
 
-public class SurfaceReading implements Reading {
+public class SurfaceReadings implements Readings {
 
     private final int color;
 
-    SurfaceReading() {
+    SurfaceReadings() {
         this.color = ColorSensor.getSurfaceColor();
     }
 
@@ -19,5 +19,10 @@ public class SurfaceReading implements Reading {
             return 1;
         }
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Surface color " + color;
     }
 }
