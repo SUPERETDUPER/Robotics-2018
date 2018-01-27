@@ -10,8 +10,8 @@ import lejos.robotics.chassis.WheeledChassis;
 
 public class ChassisBuilder {
 
-    private static final double WHEEL_DIAMETER = 5.59;
-    private static final double WHEEL_OFFSET = 8.24;
+    private static final double WHEEL_DIAMETER = 55.9;
+    private static final double WHEEL_OFFSET = 82.4;
 
     public static Chassis get() {
         RegulatedMotor leftMotor;

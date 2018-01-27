@@ -1,6 +1,5 @@
 package EV3;
 
-import Common.navigation.CustomPath;
 import Common.navigation.MCL.CustomPoseProvider;
 import Common.utils.Logger;
 import EV3.hardware.ChassisBuilder;
@@ -11,7 +10,7 @@ public class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
 
-    private static final double ANGULAR_ACCELERATION = 1200;
+    private static final double ANGULAR_ACCELERATION = 120;
     private static final double LINEAR_ACCELERATION = 400;
 
     //Set actual values
@@ -19,7 +18,7 @@ public class Controller implements MoveListener, NavigationListener {
 
     private final MovePilot pilot;
     private final CustomPoseProvider poseProvider;
-    //private final Navigator navigator;
+    private final Navigator navigator;
 
     Controller() {
         pilot = new MovePilot(ChassisBuilder.get());
@@ -31,19 +30,15 @@ public class Controller implements MoveListener, NavigationListener {
         poseProvider = new CustomPoseProvider(pilot);
         poseProvider.setPose(STARTING_POSE);
 
-        //navigator = new Navigator(pilot, poseProvider);
+        navigator = new Navigator(pilot, poseProvider);
 
-        //navigator.addNavigationListener(this);
+        navigator.addNavigationListener(this);
     }
 
     @Override
     public void moveStarted(Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move started " + move.toString());
-        CustomPath path = new CustomPath();
-        Pose currentLocation = poseProvider.getPose();
-        path.add(new Waypoint(currentLocation));
-        path.add(new Waypoint(currentLocation.getLocation().pointAt(move.getDistanceTraveled(), currentLocation.getHeading() + move.getAngleTurned())));
-        DataSender.sendPath(path);
+        DataSender.sendPath(navigator.getPath());
     }
 
     @Override
@@ -63,18 +58,17 @@ public class Controller implements MoveListener, NavigationListener {
 
     @Override
     public void atWaypoint(Waypoint waypoint, Pose pose, int i) {
-
     }
 
     void goTo(float x, float y) {
-        //navigator.goTo(x, y);
+        navigator.goTo(x, y);
     }
 
     void waitForCompletion() {
-        //navigator.waitForStop();
+        navigator.waitForStop();
     }
 
     void travel() {
-        pilot.travel(100, false);
+        pilot.travel(1000, false);
     }
 }

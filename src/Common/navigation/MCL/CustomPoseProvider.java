@@ -24,7 +24,7 @@ public class CustomPoseProvider implements PoseProvider, MoveListener {
     private static final int MAX_RESAMPLE_ITERATIONS = 1000;
 
     private static final float DISTANCE_NOISE_FACTOR = 0.01F;
-    private static final float ANGLE_NOISE_FACTOR = 0.2F;
+    private static final float ANGLE_NOISE_FACTOR = 0.05F;
 
     private static final float STARTING_RADIUS_NOISE = 10;
     private static final float STARTING_HEADING_NOISE = 10;
@@ -140,9 +140,7 @@ public class CustomPoseProvider implements PoseProvider, MoveListener {
                     float x = (float) (pose.getX() + xm + (DISTANCE_NOISE_FACTOR * xm * random.nextGaussian()));
                     float y = (float) (pose.getY() + ym + (DISTANCE_NOISE_FACTOR * ym * random.nextGaussian()));
 
-                    float heading = ((pose.getHeading() + move.getAngleTurned() + (float) (move.getAngleTurned() * ANGLE_NOISE_FACTOR * random.nextGaussian())) + 0.5F) % 360;
-
-                    newParticles.add(new Particle(x, y, heading, oldParticle.getWeight()));
+                    newParticles.add(new Particle(x, y, pose.getHeading(), oldParticle.getWeight()));
                 }
                 Logger.info(LOG_TAG, "Particles moved by" + move.toString());
                 break;

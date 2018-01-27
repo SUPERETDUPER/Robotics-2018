@@ -2,12 +2,12 @@ package PC;
 
 import Common.Config;
 import Common.EventTypes;
-import Common.navigation.CustomPath;
 import Common.utils.Logger;
 import PC.GUI.GUI;
 import com.sun.istack.internal.NotNull;
 import lejos.remote.nxt.NXTConnection;
 import lejos.remote.nxt.SocketConnector;
+import lejos.robotics.pathfinding.Path;
 import lejos.utility.Delay;
 
 import java.io.DataInputStream;
@@ -81,9 +81,9 @@ public class DataReceiver {
                     System.out.println(dis.readUTF());
                     break;
                 case PATH:
-                    CustomPath path = new CustomPath();
+                    Path path = new Path();
                     path.loadObject(dis);
-                    GUI.paths.add(path);
+                    GUI.path = path;
                     PCMain.getGUI().repaint();
                     break;
                 default:

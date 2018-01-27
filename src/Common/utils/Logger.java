@@ -36,7 +36,7 @@ public final class Logger {
                             ESCAPE_CHAR +
                             ANSI_RESET;
 
-            if (!Config.useSimulator) {
+            if (!Config.useSimulator && DataSender.isConnected()) {
                 DataSender.sendLogMessage(ESCAPE_CHAR +
                         ANSI_BRIGHT_GREEN +
                         "FROM DataSender : " +

@@ -14,7 +14,7 @@ public class AbstractMotor implements RegulatedMotor {
 
     private final static int MAX_SPEED = 1050;
 
-    private int speed = 500;
+    private int speed = 100;
     private int goalTachoCount;
 
     private void update() {
@@ -30,15 +30,14 @@ public class AbstractMotor implements RegulatedMotor {
             rotationsTraveled *= -1;
         }
 
-        tachoCount += rotationsTraveled;
-
-        if ((isForward && tachoCount > goalTachoCount) ||
-                (!isForward && tachoCount < goalTachoCount)) {
+        if ((isForward && tachoCount + rotationsTraveled >= goalTachoCount) ||
+                (!isForward && tachoCount + rotationsTraveled <= goalTachoCount)) {
             isMoving = false;
             tachoCount = goalTachoCount;
+            timeStamp = newTime;
         }
 
-        timeStamp = newTime;
+
     }
 
     public AbstractMotor() {

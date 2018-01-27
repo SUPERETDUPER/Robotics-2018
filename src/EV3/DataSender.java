@@ -1,12 +1,12 @@
 package EV3;
 
 import Common.EventTypes;
-import Common.navigation.CustomPath;
 import Common.navigation.MCL.MCLData;
 import Common.utils.Logger;
 import com.sun.istack.internal.NotNull;
 import lejos.remote.nxt.NXTConnection;
 import lejos.remote.nxt.SocketConnector;
+import lejos.robotics.pathfinding.Path;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,6 +16,10 @@ public class DataSender {
 
     private static DataOutputStream dos;
     private static boolean isConnected = false;
+
+    public static boolean isConnected() {
+        return isConnected;
+    }
 
     @NotNull
     public static boolean connect() {
@@ -55,7 +59,7 @@ public class DataSender {
         }
     }
 
-    public static void sendPath(CustomPath path) {
+    public static void sendPath(Path path) {
         if (isConnected) {
             try {
                 dos.writeByte(EventTypes.PATH.ordinal());
