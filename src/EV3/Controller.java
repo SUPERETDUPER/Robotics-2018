@@ -25,50 +25,50 @@ public class Controller implements MoveListener, NavigationListener {
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
+
+        poseProvider = new CustomPoseProvider(pilot, STARTING_POSE);
+
+        navigator = new Navigator(pilot, poseProvider.getOdometryPoseProvider());
+        navigator.addNavigationListener(this);
+        navigator.singleStep(true);
+
         pilot.addMoveListener(this);
 
-        poseProvider = new CustomPoseProvider(pilot);
-        poseProvider.setPose(STARTING_POSE);
 
-        navigator = new Navigator(pilot, poseProvider);
-
-        navigator.addNavigationListener(this);
     }
 
     @Override
     public void moveStarted(Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Move started " + move.toString());
-        DataSender.sendPath(navigator.getPath());
+        //DataSender.sendPath(navigator.getPath());
     }
 
     @Override
     public void moveStopped(Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Move stopped " + move.toString());
     }
 
     @Override
     public void pathComplete(Waypoint waypoint, Pose pose, int i) {
-
+        Logger.info(LOG_TAG, "Path complete");
     }
 
     @Override
     public void pathInterrupted(Waypoint waypoint, Pose pose, int i) {
-
+        Logger.info(LOG_TAG, "pathInterrupted");
     }
 
     @Override
     public void atWaypoint(Waypoint waypoint, Pose pose, int i) {
+        Logger.info(LOG_TAG, "At waypoint");
     }
 
     void goTo(float x, float y) {
-        navigator.goTo(x, y);
-    }
-
-    void waitForCompletion() {
-        navigator.waitForStop();
+        navigator.goTo(500, 100, -90);
+        poseProvider.getPose();
     }
 
     void travel() {
         pilot.travel(1000, false);
+        pilot.rotate(-90, false);
+        pilot.travel(400, false);
     }
 }

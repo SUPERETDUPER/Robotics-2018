@@ -4,7 +4,6 @@ import Common.utils.Logger;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
-//TODO Not working correctly taking too long for short distances
 public class AbstractMotor implements RegulatedMotor {
     private static final String LOG_TAG = AbstractMotor.class.getSimpleName();
 
