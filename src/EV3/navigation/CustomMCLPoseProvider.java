@@ -71,6 +71,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         return data.getCurrentPose();
     }
 
+    // TODO Doesn`t work look at debug
     private synchronized void update(@Nullable Readings readings, @Nullable Move move) {
         ArrayList<Particle> newParticles = data.getParticles();
 
@@ -80,17 +81,22 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
         switch (move.getMoveType()) {
             case STOP:
+                move = null;
                 break;
             case TRAVEL:
                 if (move.getDistanceTraveled() - distanceTraveled > 0) {
                     newParticles = getTraveledParticleSet(newParticles, move.getDistanceTraveled() - distanceTraveled);
                     distanceTraveled = move.getDistanceTraveled();
+                } else {
+                    move = null;
                 }
                 break;
             case ROTATE:
                 if (move.getAngleTurned() - angleRotated > 0) {
                     newParticles = getRotatedParticleSet(newParticles, move.getAngleTurned() - angleRotated);
                     angleRotated = move.getAngleTurned();
+                } else {
+                    move = null;
                 }
                 break;
             case ARC:
@@ -100,7 +106,10 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
                             move.getDistanceTraveled() - distanceTraveled);
                     angleRotated = move.getAngleTurned();
                     distanceTraveled = move.getDistanceTraveled();
+                } else {
+                    move = null;
                 }
+                break;
             default:
                 Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
         }
@@ -110,11 +119,11 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
             newParticles = getResampledParticleSet(newParticles);//Re samples for highest weights
         }
 
-        if (move.getMoveType() != Move.MoveType.STOP || readings != null) {
+        if (move != null || readings != null) {
             data.setParticles(newParticles);
             data.setCurrentPose(getCurrentPoseEstimate(data.getParticles())); //Updates current pose
 
-            if (move.getMoveType() != Move.MoveType.STOP) {
+            if (move != null) {
                 Logger.info(LOG_TAG, "Moved particles " + move.toString());
             }
             if (readings != null){
@@ -130,7 +139,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
     @Override
     public synchronized void moveStarted(Move move, MoveProvider moveProvider) {
-        Delay.msDelay(2000); //TODO Make it work without delay
+        //Delay.msDelay(2000); //TODO Make it work without delay
         distanceTraveled = 0;
         angleRotated = 0;
         Logger.info(LOG_TAG, "Move started " + move.toString());
