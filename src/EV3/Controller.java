@@ -1,6 +1,6 @@
 package EV3;
 
-import Common.navigation.MCL.CustomPoseProvider;
+import Common.navigation.MCL.CustomMCLPoseProvider;
 import Common.utils.Logger;
 import EV3.hardware.ChassisBuilder;
 import lejos.robotics.navigation.*;
@@ -12,34 +12,27 @@ public class Controller implements MoveListener, NavigationListener {
 
     private static final double ANGULAR_ACCELERATION = 120;
     private static final double LINEAR_ACCELERATION = 400;
-
-    //Set actual values
     private static final Pose STARTING_POSE = new Pose(500, 100, 0);
 
-    private final MovePilot pilot;
-    private final CustomPoseProvider poseProvider;
+    private final CustomMCLPoseProvider poseProvider;
     private final Navigator navigator;
 
     Controller() {
-        pilot = new MovePilot(ChassisBuilder.get());
+        MovePilot pilot = new MovePilot(ChassisBuilder.getChassis());
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
+        pilot.addMoveListener(this);
 
-        poseProvider = new CustomPoseProvider(pilot, STARTING_POSE);
+        poseProvider = new CustomMCLPoseProvider(pilot, STARTING_POSE);
 
         navigator = new Navigator(pilot, poseProvider.getOdometryPoseProvider());
         navigator.addNavigationListener(this);
-        navigator.singleStep(true);
-
-        pilot.addMoveListener(this);
-
-
     }
 
     @Override
     public void moveStarted(Move move, MoveProvider moveProvider) {
-        //DataSender.sendPath(navigator.getPath());
+        DataSender.sendPath(navigator.getPath());
     }
 
     @Override
@@ -61,14 +54,12 @@ public class Controller implements MoveListener, NavigationListener {
         Logger.info(LOG_TAG, "At waypoint");
     }
 
-    void goTo(float x, float y) {
-        navigator.goTo(500, 100, -90);
-        poseProvider.getPose();
-    }
-
-    void travel() {
-        pilot.travel(1000, false);
-        pilot.rotate(-90, false);
-        pilot.travel(400, false);
+    void goTo() {
+        navigator.addWaypoint(600, 200);
+        navigator.addWaypoint(1200, 400);
+        navigator.addWaypoint(300, 1000);
+        navigator.followPath();
+        navigator.waitForStop();
+        Logger.info(LOG_TAG, poseProvider.getPose().toString());
     }
 }

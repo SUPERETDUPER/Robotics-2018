@@ -11,11 +11,9 @@ import java.util.Arrays;
 public class SurfaceMap implements Displayable {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
-    private static final SurfaceMap mSurfaceMap = new SurfaceMap();
+    private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143);
 
-    private final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143);
-
-    private final java.util.List<? extends ColoredRegion> regions = Arrays.asList(
+    private static final java.util.List<? extends ColoredRegion> regions = Arrays.asList(
             new Rectangle(Color.BLACK, 0, 561, 1214, 20),
             new Rectangle(Color.BLACK, 1170, 0, 20, 753),
 
@@ -25,29 +23,11 @@ public class SurfaceMap implements Displayable {
             new Rectangle(Color.GREEN, 1031, 0, 300, 300)
     );
 
-    private SurfaceMap() {
-    }
-
-    public static SurfaceMap get() {
-        return mSurfaceMap;
-    }
-
-    public void displayOnGUI(Graphics g) {
-
-        boundingRectangle.setDisplayColor(g);
-        boundingRectangle.drawRegion(g);
-
-        for (ColoredRegion region : regions) {
-            region.setDisplayColor(g);
-            region.drawRegion(g);
-        }
-    }
-
-    public boolean contains(Point point) {
+    public static boolean contains(Point point) {
         return boundingRectangle.contains(point);
     }
 
-    public int colorAtPoint(Point point) {
+    public static int colorAtPoint(Point point) {
         if (!contains(point)) {
             Logger.warning(LOG_TAG, "Point out of bounds");
         }
@@ -62,10 +42,20 @@ public class SurfaceMap implements Displayable {
         return colorUnderPoint;
     }
 
-    public Point getRandomPoint() {
+    public static Point getRandomPoint() {
         return new Point(
                 boundingRectangle.getX1() + (float) (Math.random()) * boundingRectangle.getWidth(),
                 boundingRectangle.getY1() + (float) (Math.random()) * boundingRectangle.getHeight()
         );
+    }
+
+    public void displayOnGui(Graphics g) {
+        boundingRectangle.setDisplayColor(g);
+        boundingRectangle.drawRegion(g);
+
+        for (ColoredRegion region : regions) {
+            region.setDisplayColor(g);
+            region.drawRegion(g);
+        }
     }
 }

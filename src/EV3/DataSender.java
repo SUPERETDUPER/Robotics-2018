@@ -4,12 +4,13 @@ import Common.EventTypes;
 import Common.navigation.MCL.MCLData;
 import Common.utils.Logger;
 import com.sun.istack.internal.NotNull;
-import lejos.remote.nxt.NXTConnection;
-import lejos.remote.nxt.SocketConnector;
+import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class DataSender {
     private static final String LOG_TAG = DataSender.class.getSimpleName();
@@ -22,38 +23,27 @@ public class DataSender {
     }
 
     @NotNull
-    public static boolean connect() {
+    public static void connect() {
         if (isConnected) {
             Logger.warning(LOG_TAG, "Already connected to Robotics2018.PC");
-            return true;
         }
 
         Logger.info(LOG_TAG, "Waiting for connection...");
 
-        NXTConnection socketConnection = new SocketConnector().waitForConnection(0, 2);  // Arguments are not used, see source
-
-        if (socketConnection == null) {
-            Logger.error(LOG_TAG, "Could not connect to Robotics2018.PC");
-            return false;
+        try {
+            Socket socket = new ServerSocket(8888).accept();
+            dos = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            Logger.error(LOG_TAG, "Failed to connect to PC");
         }
 
-        dos = socketConnection.openDataOutputStream();
         isConnected = true;
         Logger.info(LOG_TAG, "Connected to Robotics2018.PC");
-        return true;
     }
 
     public static void sendMCLData(MCLData data) {
         if (isConnected) {
-            try {
-                dos.writeByte(EventTypes.MCL_DATA.ordinal());
-                data.dumpObject(dos);
-                dos.flush();
-                Logger.debug(LOG_TAG, "Sent MCLData");
-            } catch (IOException e) {
-                isConnected = false;
-                Logger.error(LOG_TAG, "Failed to send MCLData");
-            }
+            sendTransmittable(EventTypes.MCL_DATA, data);
         } else {
             Logger.warning(LOG_TAG, "Not connected; could not send MCLData");
         }
@@ -61,29 +51,36 @@ public class DataSender {
 
     public static void sendPath(Path path) {
         if (isConnected) {
-            try {
-                dos.writeByte(EventTypes.PATH.ordinal());
-                path.dumpObject(dos);
-            } catch (IOException e) {
-                isConnected = false;
-                Logger.error(LOG_TAG, "Failed to send move " + e);
-            }
+            sendTransmittable(EventTypes.PATH, path);
         } else {
             Logger.warning(LOG_TAG, "Not connected; could not sendPath");
         }
     }
 
-    public static void sendLogMessage(String message) {
+    public synchronized static void sendLogMessage(String message) {
         if (isConnected) {
             try {
                 dos.writeByte(EventTypes.LOG.ordinal());
                 dos.writeUTF(message);
+                dos.flush();
             } catch (IOException e) {
                 isConnected = false;
                 Logger.error(LOG_TAG, "Failed to send log message");
             }
         } else {
             Logger.warning(LOG_TAG, "Not connected cannot send log message");
+        }
+    }
+
+    private synchronized static void sendTransmittable(EventTypes eventType, Transmittable transmittable) {
+        try {
+            dos.writeByte(eventType.ordinal());
+            transmittable.dumpObject(dos);
+            dos.flush();
+            Logger.info(LOG_TAG, "Sent : " + eventType.name());
+        } catch (IOException e) {
+            isConnected = false;
+            Logger.error(LOG_TAG, "Failed to send transmittable type : " + eventType.name());
         }
     }
 }

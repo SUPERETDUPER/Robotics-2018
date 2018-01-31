@@ -49,6 +49,7 @@ public final class Logger {
 
     public static void error(@NotNull String tag, @NotNull String message) {
         Logger.print(LogTypes.ERROR, ANSI_BRIGHT_RED, tag, message);
+        throw new RuntimeException(message);
     }
 
     public static void warning(@NotNull String tag, @NotNull String message) {

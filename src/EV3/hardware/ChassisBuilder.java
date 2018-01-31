@@ -13,13 +13,13 @@ public class ChassisBuilder {
     private static final double WHEEL_DIAMETER = 55.9;
     private static final double WHEEL_OFFSET = 82.4;
 
-    public static Chassis get() {
+    public static Chassis getChassis() {
         RegulatedMotor leftMotor;
         RegulatedMotor rightMotor;
 
         if (Config.useSimulator) {
-            leftMotor = new AbstractMotor();
-            rightMotor = new AbstractMotor();
+            leftMotor = new AbstractMotor("Left motor");
+            rightMotor = new AbstractMotor("Right motor");
         } else {
             leftMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT);
             rightMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT);

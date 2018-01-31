@@ -4,25 +4,25 @@ import Common.Config;
 import Common.utils.Logger;
 import PC.GUI.GUI;
 
-class PCMain {
+import java.io.IOException;
+
+public class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();
-    private static GUI mGUI;
 
     public static void main(String[] args) {
         if (!Config.usePC) {
             Logger.error(LOG_TAG, "Config var 'usePC' isFalse");
-            return;
         }
 
-        if (DataReceiver.connect()) { //Try to connect
-            mGUI = new GUI();
+        DataReceiver.connect();
+
+        try {
             DataReceiver.monitorForData();
-            mGUI.dispose();
+        } catch (IOException e) {
+            Logger.warning(LOG_TAG, "Lost connection to EV3");
+            DataReceiver.close();
+            GUI.close();
         }
-    }
-
-    static GUI getGUI() {
-        return mGUI;
     }
 }

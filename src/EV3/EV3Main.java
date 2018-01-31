@@ -8,14 +8,12 @@ class EV3Main {
 
     public static void main(String[] args) {
         if (Config.usePC) {
-            if (!DataSender.connect()) { //Try connecting to computer, stop if fails
-                return;
-            }
+            DataSender.connect();
         }
 
         Controller controller = new Controller();
         //Brick.waitForUserConfirmation();
-        controller.goTo(1000, 100);
+        controller.goTo();
         //controller.travel();
         Brick.waitForUserConfirmation();
     }

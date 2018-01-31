@@ -9,6 +9,7 @@ import lejos.robotics.navigation.Pose;
 final class Particle {
     private static final String LOG_TAG = Particle.class.getSimpleName();
 
+
     private final Pose pose;
     private final float weight;
 

@@ -5,21 +5,28 @@ import Common.mapping.SurfaceMap;
 import Common.navigation.MCL.MCLData;
 import Common.utils.Logger;
 import lejos.robotics.navigation.Pose;
-import lejos.robotics.navigation.Waypoint;
-import lejos.robotics.pathfinding.Path;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class GUI extends JFrame {
+public class GUI {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
-    public static Path path;
+    private static final JFrame window = new JFrame();
+
+    private static final DisplayablePath path = new DisplayablePath();
     private static final MCLData mclData = new MCLData();
 
-    private static final DisplayableList<Displayable> contents = new DisplayableList<>();
+    private static final ArrayList<Displayable> contents = new ArrayList<>(Arrays.asList(
+            new SurfaceMap(),
+            mclData,
+            path
+    ));
+
     private static final JComponent mainComponent = new JComponent() {
         @Override
         protected void paintComponent(Graphics g) {
@@ -30,37 +37,33 @@ public class GUI extends JFrame {
 
             g2d.scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
 
-            contents.displayOnGUI(g2d);
-            if (path != null) {
-                displayPathsOnGui(g2d, mclData.getCurrentPose(), path);
+            for (Displayable layer : contents) {
+                layer.displayOnGui(g2d);
             }
         }
     };
 
     static {
-        contents.add(SurfaceMap.get());
-        contents.add(mclData);
+        window.getContentPane().add(mainComponent);
+        window.setVisible(true);
+        window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
-    public GUI() {
-        super();
-        this.getContentPane().add(mainComponent);
-        this.setVisible(true);
-        this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-    }
-
-    public void updateMCLData(DataInputStream dis) throws IOException {
+    public static void updateMCLData(DataInputStream dis) throws IOException {
         mclData.loadObject(dis);
+        window.repaint();
     }
 
-    //TODO Make cleaner
-    private static void displayPathsOnGui(Graphics g, Pose startingPose, Path path) {
-        Waypoint start = new Waypoint(startingPose);
+    public static void updatePaths(DataInputStream dis) throws IOException {
+        path.loadObject(dis);
+        window.repaint();
+    }
 
-        for (int i = 0; i < path.size(); i++) {
-            g.setColor(Color.RED);
-            g.drawLine((int) start.x, (int) start.y, (int) path.get(i).x, (int) path.get(i).y);
-            start = path.get(i);
-        }
+    public static Pose getCurrentPose() {
+        return mclData.getCurrentPose();
+    }
+
+    public static void close() {
+        window.dispose();
     }
 }

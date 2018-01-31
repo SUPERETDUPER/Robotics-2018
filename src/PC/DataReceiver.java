@@ -5,96 +5,70 @@ import Common.EventTypes;
 import Common.utils.Logger;
 import PC.GUI.GUI;
 import com.sun.istack.internal.NotNull;
-import lejos.remote.nxt.NXTConnection;
-import lejos.remote.nxt.SocketConnector;
-import lejos.robotics.pathfinding.Path;
 import lejos.utility.Delay;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.Socket;
 
 public class DataReceiver {
     private static final String LOG_TAG = DataReceiver.class.getSimpleName();
-    private static boolean isConnected = false;
     private static DataInputStream dis;
+    private static Socket socket;
 
     @NotNull
-    public static boolean connect() {
-        if (!Config.usePC) {
-            Logger.error(LOG_TAG, "'usePC' is set to false");
-        }
+    public static void connect() {
+        for (int attempt = 0; attempt < 6; attempt++) {
+            try {
+                socket = new Socket(Config.useSimulator ? "localhost" : Config.EV3_IP_ADDRESS, 8888);
+                dis = new DataInputStream(socket.getInputStream());
 
-        if (isConnected) {
-            Logger.warning(LOG_TAG, "Already isConnected");
-            return true;
-        }
-
-
-        for (int attempts = 1; attempts < 6; attempts++) {
-
-            NXTConnection socketConnection;
-
-            if (Config.useSimulator) {
-                socketConnection = new SocketConnector().connect("localhost", 2);
-            } else {
-                socketConnection = new SocketConnector().connect(Config.EV3_IP_ADDRESS, 2);
-            }
-
-
-            if (socketConnection != null) {
-                dis = socketConnection.openDataInputStream();
-                isConnected = true;
                 Logger.info(LOG_TAG, "Connected to DataSender");
-                return true;
+
+                return;
+
+            } catch (IOException e) {
+                Logger.warning(LOG_TAG, "Failled attempt " + attempt + " to connect to EV3");
+                Delay.msDelay(3000);
             }
-
-            Logger.warning(LOG_TAG, "Failed to connect to DataSender; attempt " + attempts);
-
-            Delay.msDelay(3000);
         }
 
-        Logger.error(LOG_TAG, "Could not connect to DataSender");
-        return false;
+        Logger.error(LOG_TAG, "Failed to connect to EV3");
     }
 
-    static void monitorForData() {
-        while (read()) { //Constantly check for new data
-            Thread.yield();
+    static void monitorForData() throws IOException {
+        for (; ; Thread.yield()) {
+            DataReceiver.read();
         }
-
-        Logger.error(LOG_TAG, "Lost connection to DataSender");
     }
 
     @NotNull
-    private static boolean read() {
+    private synchronized static void read() throws IOException {
+        EventTypes dataType = EventTypes.values()[dis.readByte()];
+
+        Logger.debug(LOG_TAG, "Received Event " + dataType.name());
+
+        switch (dataType) {
+            case MCL_DATA:
+                GUI.updateMCLData(dis);
+                break;
+            case LOG:
+                System.out.println(dis.readUTF());
+                break;
+            case PATH:
+                GUI.updatePaths(dis);
+                break;
+            default:
+                Logger.warning(LOG_TAG, "Not a recognized event type");
+        }
+    }
+
+    static void close() {
         try {
-            EventTypes dataType = EventTypes.values()[dis.readByte()];
-
-            Logger.debug(LOG_TAG, "Received Event " + dataType.name());
-
-            switch (dataType) {
-                case MCL_DATA:
-                    PCMain.getGUI().updateMCLData(dis);
-                    PCMain.getGUI().repaint();
-                    break;
-                case LOG:
-                    System.out.println(dis.readUTF());
-                    break;
-                case PATH:
-                    Path path = new Path();
-                    path.loadObject(dis);
-                    GUI.path = path;
-                    PCMain.getGUI().repaint();
-                    break;
-                default:
-                    Logger.error(LOG_TAG, "Not a recognized event type");
-            }
-
-            return true;
+            dis.close();
+            socket.close();
         } catch (IOException e) {
-            isConnected = false;
-            return false;
+            Logger.warning(LOG_TAG, "Unable to close data input stream or socket");
         }
     }
 }
-

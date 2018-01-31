@@ -20,9 +20,9 @@ import java.util.Random;
  * Inspired by Lawrie Griffiths' and Roger Glassey's MCLPoseProvider class in Lejos Source Code
  */
 
-public class CustomPoseProvider implements PoseProvider, MoveListener {
+public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
-    private static final String LOG_TAG = CustomPoseProvider.class.getSimpleName();
+    private static final String LOG_TAG = CustomMCLPoseProvider.class.getSimpleName();
 
     private static final int MAX_RESAMPLE_ITERATIONS = 1000;
 
@@ -39,7 +39,7 @@ public class CustomPoseProvider implements PoseProvider, MoveListener {
     private final MoveProvider moveProvider;
 
 
-    public CustomPoseProvider(@NotNull MoveProvider moveProvider, Pose startingPose) {
+    public CustomMCLPoseProvider(@NotNull MoveProvider moveProvider, Pose startingPose) {
         this.moveProvider = moveProvider;
 
         this.odometryPoseProvider = new OdometryPoseProvider(moveProvider) { //Odometry pose provider that updates MCLData
@@ -47,6 +47,7 @@ public class CustomPoseProvider implements PoseProvider, MoveListener {
             public synchronized Pose getPose() {
                 Pose pose = super.getPose();
                 data.setOdometryPose(pose);
+                updatePC(data);
                 return pose;
             }
 
@@ -112,36 +113,59 @@ public class CustomPoseProvider implements PoseProvider, MoveListener {
      */
     @NotNull
     private static Particle generateParticle(Readings readings) {
-        Point point = SurfaceMap.get().getRandomPoint();
+        Point point = SurfaceMap.getRandomPoint();
 
         float angle = (float) (Math.random() * 360);
 
         return new Particle(point.x, point.y, angle, readings);
     }
 
-    private static ArrayList<Particle> getMovedParticleSet(ArrayList<Particle> particles, @NotNull float distanceTraveled, float angleTurned) {
-        ArrayList<Particle> newParticles = new ArrayList<>(MCLData.NUM_PARTICLES);
+    private static ArrayList<Particle> getMovedParticleSet(ArrayList<Particle> particles, Pose initialPose, Pose finalPose) {
+        float angleTurnedAtFirst = initialPose.angleTo(finalPose.getLocation()) - initialPose.getHeading();
+        float distanceTraveled = initialPose.distanceTo(finalPose.getLocation());
+        float finalRotate = finalPose.getHeading() - (initialPose.getHeading() + angleTurnedAtFirst);
 
-        for (Particle oldParticle : particles) {
-            Pose pose = oldParticle.getPose();
+        particles = getRotatedParticleSet(particles, angleTurnedAtFirst);
+        particles = getTraveledParticleSet(particles, distanceTraveled); //Moves particles over if odometry has moved since last time
+        particles = getRotatedParticleSet(particles, finalRotate);
+
+        return particles;
+    }
+
+
+    private static ArrayList<Particle> getRotatedParticleSet(ArrayList<Particle> particles, float angleRotated) {
+        for (int i = 0; i < particles.size(); i++) {
+            Pose particlePose = particles.get(i).getPose();
+
+            float heading = (particlePose.getHeading() + angleRotated + (float) (angleRotated * ANGLE_NOISE_FACTOR * random.nextGaussian()) + 0.5F) % 360;
+
+            particles.set(i, new Particle(particlePose.getX(), particlePose.getY(), heading, particles.get(i).getWeight()));
+        }
+
+        Logger.debug(LOG_TAG, "Particles rotated by " + angleRotated);
+
+        return particles;
+    }
+
+    private static ArrayList<Particle> getTraveledParticleSet(ArrayList<Particle> particles, @NotNull float distanceTraveled) {
+        for (int i = 0; i < particles.size(); i++) {
+            Pose pose = particles.get(i).getPose();
 
             double theta = Math.toRadians(pose.getHeading());
 
-            float ym = distanceTraveled * ((float) Math.sin(theta));
-            float xm = distanceTraveled * ((float) Math.cos(theta));
+            double ym = distanceTraveled * Math.sin(theta);
+            double xm = distanceTraveled * Math.cos(theta);
 
-            float x = (float) (pose.getX() + xm + (DISTANCE_NOISE_FACTOR * xm * random.nextGaussian()));
-            float y = (float) (pose.getY() + ym + (DISTANCE_NOISE_FACTOR * ym * random.nextGaussian()));
-
-            float heading = (pose.getHeading() + angleTurned + (float) (angleTurned * ANGLE_NOISE_FACTOR * random.nextGaussian()) + 0.5F) % 360;
+            float x = (float) (pose.getX() + xm + DISTANCE_NOISE_FACTOR * xm * random.nextGaussian());
+            float y = (float) (pose.getY() + ym + DISTANCE_NOISE_FACTOR * ym * random.nextGaussian());
 
 
-            newParticles.add(new Particle(x, y, heading, oldParticle.getWeight()));
+            particles.set(i, new Particle(x, y, pose.getHeading(), particles.get(i).getWeight()));
         }
-        Logger.debug(LOG_TAG, "Particles moved by " + distanceTraveled + " and turned by " + angleTurned);
 
+        Logger.debug(LOG_TAG, "Particles moved by " + distanceTraveled);
 
-        return newParticles;
+        return particles;
     }
 
     private static ArrayList<Particle> getReWeightedParticleSet(ArrayList<Particle> particles, @NotNull Readings readings) {
@@ -232,9 +256,8 @@ public class CustomPoseProvider implements PoseProvider, MoveListener {
      */
     @NotNull
     public Pose getPose() {
-        if (moveProvider.getMovement().getMoveType() != Move.MoveType.STOP) {
-            update(new SurfaceReadings());
-        }
+        update(new SurfaceReadings());
+
 
         return data.getCurrentPose();
     }
@@ -247,17 +270,14 @@ public class CustomPoseProvider implements PoseProvider, MoveListener {
         return odometryPoseProvider;
     }
 
-    private void update(Readings readings) {
-        float distanceTraveled = data.getCurrentPose().distanceTo(odometryPoseProvider.getPose().getLocation());
-        float angleTurned = data.getCurrentPose().getHeading() - odometryPoseProvider.getPose().getHeading();
+    private synchronized void update(Readings readings) {
+
+        ArrayList<Particle> newParticles = getMovedParticleSet(data.getParticles(), data.getCurrentPose(), odometryPoseProvider.getPose()); //Moves all the particles if odometry pp moved while away
+        newParticles = getReWeightedParticleSet(newParticles, readings); //Recalculate all the particle weights
+        newParticles = getResampledParticleSet(newParticles);//Re samples for highest weights
 
 
-        data.setParticles(getMovedParticleSet(data.getParticles(), distanceTraveled, angleTurned)); //Moves particles over if odometry has moved since last time
-
-        data.setParticles(getReWeightedParticleSet(data.getParticles(), readings)); //Recalculate all the particle weights
-
-        data.setParticles(getResampledParticleSet(data.getParticles())); //Re samples for highest weights
-
+        data.setParticles(newParticles);
         data.setCurrentPose(getCurrentPoseEstimate(data.getParticles())); //Updates current pose
         odometryPoseProvider.setPose(data.getCurrentPose()); //Updates odometryPoseProvider
 

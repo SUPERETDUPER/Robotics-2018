@@ -7,47 +7,48 @@ import lejos.robotics.RegulatedMotorListener;
 public class AbstractMotor implements RegulatedMotor {
     private static final String LOG_TAG = AbstractMotor.class.getSimpleName();
 
-    private boolean isMoving = false;
-    private long timeStamp = System.currentTimeMillis();
-    private int tachoCount = 0;
-
     private final static int MAX_SPEED = 1050;
+    private final static int DEFAULT_SPEED = 360;
 
-    private int speed = 100;
-    private int goalTachoCount;
+    private final String name;
 
-    private void update() {
+    private int tachoCount = 0;
+    private int speed = DEFAULT_SPEED;
+
+
+    private boolean isMoving = false;
+    private long timeStarted;
+    private int rotateAmount;
+
+
+    public AbstractMotor(String name) {
+        this.name = name;
+    }
+
+    private synchronized void update() {
         if (!isMoving) {
+            //Logger.debug(LOG_TAG, name + " : Not moving nothing to debug");
             return;
         }
 
-        long newTime = System.currentTimeMillis();
-        int rotationsTraveled = (int) (newTime - timeStamp) / 1000 * speed;
-        boolean isForward = goalTachoCount > tachoCount;
+        long rotationsTraveled = (System.currentTimeMillis() - timeStarted) / 1000 * speed; //distance = speed * time
 
-        if (!isForward) {
-            rotationsTraveled *= -1;
-        }
-
-        if ((isForward && tachoCount + rotationsTraveled >= goalTachoCount) ||
-                (!isForward && tachoCount + rotationsTraveled <= goalTachoCount)) {
+        if (rotationsTraveled >= Math.abs(rotateAmount)) {
             isMoving = false;
-            tachoCount = goalTachoCount;
-            timeStamp = newTime;
+            tachoCount += rotateAmount;
+            Logger.debug(LOG_TAG, name + " : done moving motor");
+        } else {
+            // Logger.debug(LOG_TAG, name + " : Still moving");
         }
-
-
-    }
-
-    public AbstractMotor() {
     }
 
     @Override
     public void stop(boolean b) {
         update();
+
         if (isMoving) {
             isMoving = false;
-            timeStamp = System.currentTimeMillis();
+            Logger.debug(LOG_TAG, name + " : Motor stopped");
         }
     }
 
@@ -60,11 +61,19 @@ public class AbstractMotor implements RegulatedMotor {
     }
 
     @Override
-    public void rotateTo(int i, boolean b) {
+    public synchronized void rotateTo(int i, boolean b) {
+        rotate(i - getTachoCount(), b);
+    }
+
+    @Override
+    public synchronized void rotate(int i, boolean b) {
         update();
-        goalTachoCount = i;
+
+        rotateAmount = i;
         isMoving = true;
-        timeStamp = System.currentTimeMillis();
+        timeStarted = System.currentTimeMillis();
+
+        Logger.debug(LOG_TAG, name + " : Moving motor by " + i);
 
         if (!b) {
             waitComplete();
@@ -72,27 +81,53 @@ public class AbstractMotor implements RegulatedMotor {
     }
 
     @Override
-    public void rotate(int i, boolean b) {
-        rotateTo(tachoCount + i, b);
-    }
-
-    @Override
-    public int getLimitAngle() {
+    public synchronized int getLimitAngle() {
         update();
-        Logger.warning(LOG_TAG, "Not tested might return when no limit exists");
-        return goalTachoCount;
+
+        if (isMoving) {
+            Logger.warning(LOG_TAG, name + "Tried to getChassis limit angle but not moving");
+        }
+
+        return tachoCount + rotateAmount;
     }
 
     @Override
-    public boolean isMoving() {
+    public synchronized boolean isMoving() {
         update();
         return isMoving;
     }
 
     @Override
-    public int getTachoCount() {
+    public synchronized int getTachoCount() {
         update();
         return this.tachoCount;
+    }
+
+    @Override
+    public synchronized void resetTachoCount() {
+        update();
+        tachoCount = 0;
+    }
+
+    @Override
+    public synchronized int getRotationSpeed() {
+        update();
+        return isMoving ? speed : 0; //Ternary operator
+    }
+
+    @Override
+    public boolean isStalled() {
+        return false;
+    }
+
+    @Override
+    public void forward() {
+        rotateTo(Integer.MAX_VALUE, true);
+    }
+
+    @Override
+    public void backward() {
+        rotateTo(Integer.MIN_VALUE, true);
     }
 
     @Override
@@ -101,24 +136,9 @@ public class AbstractMotor implements RegulatedMotor {
     }
 
     @Override
-    public void setSpeed(int i) {
+    public synchronized void setSpeed(int i) {
         update();
         this.speed = i;
-    }
-
-    @Override
-    public void rotate(int i) {
-        rotate(i, true);
-    }
-
-    @Override
-    public void resetTachoCount() {
-        tachoCount = 0;
-    }
-
-    @Override
-    public boolean isStalled() {
-        return !isMoving;
     }
 
     @Override
@@ -127,12 +147,8 @@ public class AbstractMotor implements RegulatedMotor {
     }
 
     @Override
-    public int getRotationSpeed() {
-        update();
-        if (!isMoving) {
-            return 0;
-        }
-        return speed;
+    public void rotate(int i) {
+        rotate(i, true);
     }
 
     @Override
@@ -176,7 +192,6 @@ public class AbstractMotor implements RegulatedMotor {
 
     @Override
     public void close() {
-
     }
 
     @Override
@@ -186,23 +201,13 @@ public class AbstractMotor implements RegulatedMotor {
 
     @Override
     public void addListener(RegulatedMotorListener regulatedMotorListener) {
-        Logger.warning(LOG_TAG, "Did not implement callback thread for listner");
+        Logger.warning(LOG_TAG, "Did not implement callback thread for listener");
     }
 
     @Override
     public RegulatedMotorListener removeListener() {
-        Logger.warning(LOG_TAG, "Did not implement callback thread for listner");
+        Logger.warning(LOG_TAG, "Did not implement callback thread for listener");
         return null;
-    }
-
-    @Override
-    public void forward() {
-        rotateTo(Integer.MAX_VALUE, true);
-    }
-
-    @Override
-    public void backward() {
-        rotateTo(Integer.MIN_VALUE, true);
     }
 }
 
