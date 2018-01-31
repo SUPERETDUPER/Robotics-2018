@@ -60,10 +60,7 @@ public class Controller implements MoveListener, NavigationListener {
         navigator.addWaypoint(1200, 400);
         navigator.addWaypoint(300, 1000);
         navigator.followPath();
-        while (navigator.isMoving()) {
-            poseProvider.getPose();
-            Delay.msDelay(500);
-        }
+        navigator.waitForStop();
         Logger.info(LOG_TAG, poseProvider.getPose().toString());
     }
 }

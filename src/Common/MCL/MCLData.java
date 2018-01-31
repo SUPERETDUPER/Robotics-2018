@@ -22,7 +22,6 @@ public class MCLData implements Transmittable, Displayable {
 
     private ArrayList<Particle> particles;
     private Pose currentPose;
-    private Pose odometryPose;
 
     public Pose getCurrentPose() {
         return new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading());
@@ -30,6 +29,34 @@ public class MCLData implements Transmittable, Displayable {
 
     public void setCurrentPose(Pose currentPose) {
         this.currentPose = new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading());
+    }
+
+    public ArrayList<Particle> getParticles() {
+        return new ArrayList<>(particles);
+    }
+
+    public void setParticles(ArrayList<Particle> particles) {
+        this.particles = new ArrayList<>(particles);
+    }
+
+    @Override
+    public synchronized void displayOnGui(Graphics g) {
+        if (particles != null) {
+            g.setColor(Color.BLUE);
+
+            for (Particle particle : particles) {
+                displayParticleOnGui(particle, g);
+            }
+        } else {
+            Logger.warning(LOG_TAG, "Could not display particles because is null");
+        }
+
+        if (currentPose != null) {
+            g.setColor(Color.RED);
+            displayParticleOnGui(new Particle(currentPose, -1), g);
+        } else {
+            Logger.warning(LOG_TAG, "Could not paint robots location because it's null");
+        }
     }
 
     private static void displayParticleOnGui(Particle particle, Graphics g) {
@@ -56,55 +83,11 @@ public class MCLData implements Transmittable, Displayable {
         }
     }
 
-    public ArrayList<Particle> getParticles() {
-        return new ArrayList<>(particles);
-    }
-
-    public void setOdometryPose(Pose odometryPose) {
-        this.odometryPose = new Pose(odometryPose.getX(), odometryPose.getY(), odometryPose.getHeading());
-    }
-
-    public void setParticles(ArrayList<Particle> particles) {
-        this.particles = new ArrayList<>(particles);
-    }
-
-    @Override
-    public synchronized void displayOnGui(Graphics g) {
-        if (particles != null) {
-            g.setColor(Color.BLUE);
-
-            for (Particle particle : particles) {
-                displayParticleOnGui(particle, g);
-            }
-        } else {
-            Logger.warning(LOG_TAG, "Could not display particles because is null");
-        }
-
-        if (odometryPose != null) {
-            g.setColor(Color.GREEN);
-            displayParticleOnGui(new Particle(odometryPose, -1), g);
-        } else {
-            Logger.warning(LOG_TAG, "Could not display odometry pose because it's null");
-        }
-
-        if (currentPose != null) {
-            g.setColor(Color.RED);
-            displayParticleOnGui(new Particle(currentPose, -1), g);
-        } else {
-            Logger.warning(LOG_TAG, "Could not paint robots location because it's null");
-        }
-    }
-
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
         dos.writeBoolean(currentPose != null);
         if (currentPose != null) {
             currentPose.dumpObject(dos);
-        }
-
-        dos.writeBoolean(odometryPose != null);
-        if (odometryPose != null) {
-            odometryPose.dumpObject(dos);
         }
 
         dos.writeBoolean(particles != null);
@@ -120,11 +103,6 @@ public class MCLData implements Transmittable, Displayable {
         if (dis.readBoolean()) {
             this.currentPose = new Pose();
             this.currentPose.loadObject(dis);
-        }
-
-        if (dis.readBoolean()) {
-            this.odometryPose = new Pose();
-            this.odometryPose.loadObject(dis);
         }
 
         if (dis.readBoolean()) {

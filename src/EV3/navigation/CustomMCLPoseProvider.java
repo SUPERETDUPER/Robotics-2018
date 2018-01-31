@@ -8,8 +8,9 @@ import Common.utils.Logger;
 import EV3.DataSender;
 import com.sun.istack.internal.NotNull;
 import lejos.robotics.geometry.Point;
-import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
 
@@ -20,7 +21,7 @@ import java.util.Random;
  * Inspired by Lawrie Griffiths' and Roger Glassey's MCLPoseProvider class in Lejos Source Code
  */
 
-public class CustomMCLPoseProvider implements PoseProvider {
+public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
     private static final String LOG_TAG = CustomMCLPoseProvider.class.getSimpleName();
 
@@ -35,57 +36,66 @@ public class CustomMCLPoseProvider implements PoseProvider {
     private static final Random random = new Random();
 
     private final MCLData data = new MCLData(); //Stores all the data that needs to be transmitted to the computer
-    private final OdometryPoseProvider odometryPoseProvider; //Keeps track of the robots location when it's moving
+    private final MoveProvider mp;
 
 
     public CustomMCLPoseProvider(@NotNull MoveProvider moveProvider, Pose startingPose) {
-
-        this.odometryPoseProvider = new OdometryPoseProvider(moveProvider); //Odometry pose provider that updates MCLData
+        this.mp = moveProvider;
 
 
         Logger.info(LOG_TAG, "Setting current pose to " + startingPose + "... particles regenerated");
         data.setCurrentPose(startingPose);
         data.setParticles(generateNewParticleSet(startingPose));
-        odometryPoseProvider.setPose(startingPose);
-        updatePC();
+        updatePC(data);
+
+        moveProvider.addMoveListener(this);
     }
 
-    private void updatePC() {
-        data.setOdometryPose(odometryPoseProvider.getPose());
+    private static void updatePC(MCLData data) {
         if (Config.usePC) {
             DataSender.sendMCLData(data);
         }
     }
-
 
     /**
      * Returns the currentPose;
      */
     @NotNull
     public Pose getPose() {
-        if (!poseAreEqual(data.getCurrentPose(), odometryPoseProvider.getPose())) {
-            update(new SurfaceReadings());
+        if (mp.getMovement().getMoveType() != Move.MoveType.STOP) {
+            update(null, mp.getMovement());
         }
-
 
         return data.getCurrentPose();
     }
 
-    public void setPose(@NotNull Pose pose) {
-        Logger.warning(LOG_TAG, "Did not implement changing pose");
-    }
+    private synchronized void update(Readings readings, Move move) {
+        ArrayList<Particle> newParticles = data.getParticles();
 
-    private synchronized void update(Readings readings) {
-        ArrayList<Particle> newParticles = getMovedParticleSet(data.getParticles(), data.getCurrentPose(), odometryPoseProvider.getPose()); //Moves all the particles if odometry pp moved while away
-        newParticles = getReWeightedParticleSet(newParticles, readings); //Recalculate all the particle weights
-        newParticles = getResampledParticleSet(newParticles);//Re samples for highest weights
+        if (move != null) {
+            newParticles = getMovedParticleSet(newParticles, move); //Moves all the particles if odometry pp moved while away
+        }
 
+        if (readings != null) {
+            newParticles = getReWeightedParticleSet(newParticles, readings); //Recalculate all the particle weights
+            newParticles = getResampledParticleSet(newParticles);//Re samples for highest weights
+        }
 
         data.setParticles(newParticles);
         data.setCurrentPose(getCurrentPoseEstimate(data.getParticles())); //Updates current pose
-        odometryPoseProvider.setPose(data.getCurrentPose()); //Updates odometryPoseProvider
 
-        updatePC(); //SendToPc
+        updatePC(data); //SendToPc
+    }
+
+    @Override
+    public void moveStarted(Move move, MoveProvider moveProvider) {
+        Logger.info(LOG_TAG, "Move started " + move.toString());
+    }
+
+    @Override
+    public void moveStopped(Move move, MoveProvider moveProvider) {
+        Logger.info(LOG_TAG, "Move stopped " + move.toString());
+        update(null, move);
     }
 
     /**
@@ -134,16 +144,16 @@ public class CustomMCLPoseProvider implements PoseProvider {
         return new Particle(point.x, point.y, angle, readings);
     }
 
-    private static ArrayList<Particle> getMovedParticleSet(ArrayList<Particle> particles, Pose initialPose, Pose finalPose) {
-        float angleTurnedAtFirst = initialPose.angleTo(finalPose.getLocation()) - initialPose.getHeading();
-        float distanceTraveled = initialPose.distanceTo(finalPose.getLocation());
-        float finalRotate = finalPose.getHeading() - (initialPose.getHeading() + angleTurnedAtFirst);
-
-        particles = getRotatedParticleSet(particles, angleTurnedAtFirst);
-        particles = getTraveledParticleSet(particles, distanceTraveled); //Moves particles over if odometry has moved since last time
-        particles = getRotatedParticleSet(particles, finalRotate);
-
-        return particles;
+    private static ArrayList<Particle> getMovedParticleSet(ArrayList<Particle> particles, Move move) {
+        switch (move.getMoveType()) {
+            case ROTATE:
+                return getRotatedParticleSet(particles, move.getAngleTurned());
+            case TRAVEL:
+                return getTraveledParticleSet(particles, move.getDistanceTraveled());
+            default:
+                Logger.warning(LOG_TAG, "This type of move is not implemented");
+                return particles;
+        }
     }
 
     private static ArrayList<Particle> getRotatedParticleSet(ArrayList<Particle> particles, float angleRotated) {
@@ -264,9 +274,7 @@ public class CustomMCLPoseProvider implements PoseProvider {
         return newPose;
     }
 
-    private static boolean poseAreEqual(Pose pose1, Pose pose2) {
-        return pose1.getX() == pose2.getX() &&
-                pose1.getY() == pose2.getY() &&
-                pose1.getHeading() == pose2.getHeading();
+    public void setPose(@NotNull Pose pose) {
+        Logger.warning(LOG_TAG, "Did not implement changing pose");
     }
 }
