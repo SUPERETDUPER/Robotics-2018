@@ -7,12 +7,14 @@ import Common.MCL.Particle;
 import Common.utils.Logger;
 import EV3.DataSender;
 import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
+import lejos.utility.Delay;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -36,16 +38,18 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     private static final Random random = new Random();
 
     private final MCLData data = new MCLData(); //Stores all the data that needs to be transmitted to the computer
-    private final MoveProvider mp;
 
+    private final MoveProvider mp;
+    private float distanceTraveled;
+    private float angleRotated;
 
     public CustomMCLPoseProvider(@NotNull MoveProvider moveProvider, Pose startingPose) {
         this.mp = moveProvider;
 
-
-        Logger.info(LOG_TAG, "Setting current pose to " + startingPose + "... particles regenerated");
+        Logger.info(LOG_TAG, "Setting current pose to " + startingPose + ". particles generated");
         data.setCurrentPose(startingPose);
         data.setParticles(generateNewParticleSet(startingPose));
+
         updatePC(data);
 
         moveProvider.addMoveListener(this);
@@ -61,19 +65,28 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
      * Returns the currentPose;
      */
     @NotNull
-    public Pose getPose() {
-        if (mp.getMovement().getMoveType() != Move.MoveType.STOP) {
-            update(null, mp.getMovement());
-        }
+    public synchronized Pose getPose() {
+        update(null, mp.getMovement());
 
         return data.getCurrentPose();
     }
 
-    private synchronized void update(Readings readings, Move move) {
+    private synchronized void update(@Nullable Readings readings, @NotNull Move move) {
         ArrayList<Particle> newParticles = data.getParticles();
 
-        if (move != null) {
-            newParticles = getMovedParticleSet(newParticles, move); //Moves all the particles if odometry pp moved while away
+        switch (move.getMoveType()) {
+            case STOP:
+                return;
+            case TRAVEL:
+                newParticles = getTraveledParticleSet(newParticles, move.getDistanceTraveled() - distanceTraveled);
+                distanceTraveled = move.getDistanceTraveled();
+                break;
+            case ROTATE:
+                newParticles = getRotatedParticleSet(newParticles, move.getAngleTurned() - angleRotated);
+                angleRotated = move.getAngleTurned();
+                break;
+            default:
+                Logger.warning(LOG_TAG, "Move type not implemented");
         }
 
         if (readings != null) {
@@ -87,15 +100,20 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         updatePC(data); //SendToPc
     }
 
+    //TODO When start called before stop doesn't work
+
     @Override
     public void moveStarted(Move move, MoveProvider moveProvider) {
+        Delay.msDelay(2000); //TODO Make it work without delay
         Logger.info(LOG_TAG, "Move started " + move.toString());
     }
 
     @Override
-    public void moveStopped(Move move, MoveProvider moveProvider) {
+    public synchronized void moveStopped(Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped " + move.toString());
         update(null, move);
+        distanceTraveled = 0;
+        angleRotated = 0;
     }
 
     /**
@@ -142,18 +160,6 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         float angle = (float) (Math.random() * 360);
 
         return new Particle(point.x, point.y, angle, readings);
-    }
-
-    private static ArrayList<Particle> getMovedParticleSet(ArrayList<Particle> particles, Move move) {
-        switch (move.getMoveType()) {
-            case ROTATE:
-                return getRotatedParticleSet(particles, move.getAngleTurned());
-            case TRAVEL:
-                return getTraveledParticleSet(particles, move.getDistanceTraveled());
-            default:
-                Logger.warning(LOG_TAG, "This type of move is not implemented");
-                return particles;
-        }
     }
 
     private static ArrayList<Particle> getRotatedParticleSet(ArrayList<Particle> particles, float angleRotated) {
