@@ -1,4 +1,4 @@
-package Common.navigation.MCL;
+package Common.MCL;
 
 import Common.utils.Logger;
 import PC.GUI.Displayable;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MCLData implements Transmittable, Displayable {
-    static final int NUM_PARTICLES = 30;
+    public static final int NUM_PARTICLES = 30;
     private static final float DISPLAY_TAIL_LENGTH = 30;
     private static final float DISPLAY_TAIL_ANGLE = 20;
 
@@ -23,7 +23,6 @@ public class MCLData implements Transmittable, Displayable {
     private ArrayList<Particle> particles;
     private Pose currentPose;
     private Pose odometryPose;
-
 
     public Pose getCurrentPose() {
         return new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading());
@@ -95,7 +94,6 @@ public class MCLData implements Transmittable, Displayable {
             Logger.warning(LOG_TAG, "Could not paint robots location because it's null");
         }
     }
-
 
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {

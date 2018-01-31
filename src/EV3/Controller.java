@@ -1,9 +1,10 @@
 package EV3;
 
-import Common.navigation.MCL.CustomMCLPoseProvider;
+import EV3.navigation.CustomMCLPoseProvider;
 import Common.utils.Logger;
 import EV3.hardware.ChassisBuilder;
 import lejos.robotics.navigation.*;
+import lejos.utility.Delay;
 
 public class Controller implements MoveListener, NavigationListener {
 
@@ -26,7 +27,7 @@ public class Controller implements MoveListener, NavigationListener {
 
         poseProvider = new CustomMCLPoseProvider(pilot, STARTING_POSE);
 
-        navigator = new Navigator(pilot, poseProvider.getOdometryPoseProvider());
+        navigator = new Navigator(pilot, poseProvider);
         navigator.addNavigationListener(this);
     }
 
@@ -59,7 +60,10 @@ public class Controller implements MoveListener, NavigationListener {
         navigator.addWaypoint(1200, 400);
         navigator.addWaypoint(300, 1000);
         navigator.followPath();
-        navigator.waitForStop();
+        while (navigator.isMoving()) {
+            poseProvider.getPose();
+            Delay.msDelay(500);
+        }
         Logger.info(LOG_TAG, poseProvider.getPose().toString());
     }
 }

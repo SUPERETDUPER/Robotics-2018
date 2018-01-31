@@ -20,7 +20,7 @@ public class DataReceiver {
     public static void connect() {
         for (int attempt = 0; attempt < 6; attempt++) {
             try {
-                socket = new Socket(Config.useSimulator ? "localhost" : Config.EV3_IP_ADDRESS, 8888);
+                socket = new Socket(getIpAddress(), Config.PORT_TO_CONNECT);
                 dis = new DataInputStream(socket.getInputStream());
 
                 Logger.info(LOG_TAG, "Connected to DataSender");
@@ -70,5 +70,9 @@ public class DataReceiver {
         } catch (IOException e) {
             Logger.warning(LOG_TAG, "Unable to close data input stream or socket");
         }
+    }
+
+    private static String getIpAddress() {
+        return Config.useSimulator ? "localhost" : Config.EV3_IP_ADDRESS;
     }
 }

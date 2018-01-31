@@ -1,4 +1,6 @@
-package EV3.hardware;
+package EV3.navigation;
+
+import EV3.hardware.ColorSensor;
 
 class LineChecker {
 

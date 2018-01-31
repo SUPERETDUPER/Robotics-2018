@@ -30,7 +30,7 @@ abstract class ColoredRegion {
             case Color.BLACK:
                 return java.awt.Color.BLACK;
             case Color.WHITE:
-                return java.awt.Color.LIGHT_GRAY;
+                return java.awt.Color.LIGHT_GRAY; //So that we see difference in GUI
             case Color.BLUE:
                 return java.awt.Color.BLUE;
             case Color.BROWN:

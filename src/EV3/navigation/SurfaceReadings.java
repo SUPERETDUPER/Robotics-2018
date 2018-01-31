@@ -1,4 +1,4 @@
-package Common.navigation.MCL;
+package EV3.navigation;
 
 import Common.mapping.SurfaceMap;
 import EV3.hardware.ColorSensor;

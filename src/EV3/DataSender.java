@@ -1,7 +1,8 @@
 package EV3;
 
+import Common.Config;
 import Common.EventTypes;
-import Common.navigation.MCL.MCLData;
+import Common.MCL.MCLData;
 import Common.utils.Logger;
 import com.sun.istack.internal.NotNull;
 import lejos.robotics.Transmittable;
@@ -28,10 +29,10 @@ public class DataSender {
             Logger.warning(LOG_TAG, "Already connected to Robotics2018.PC");
         }
 
-        Logger.info(LOG_TAG, "Waiting for connection...");
+        Logger.info(LOG_TAG, "Waiting for PC to connect...");
 
         try {
-            Socket socket = new ServerSocket(8888).accept();
+            Socket socket = new ServerSocket(Config.PORT_TO_CONNECT).accept();
             dos = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Failed to connect to PC");
