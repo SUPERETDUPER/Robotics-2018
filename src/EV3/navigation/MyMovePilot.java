@@ -108,11 +108,11 @@ public class MyMovePilot implements ArcRotateMoveController {
     }
 
     public void travel(double distance, boolean immediateReturn) {
-        if (this.chassis.isMoving()) {
+        if (isMoving()) {
             this.stop();
         }
 
-        this.move = new Move(MoveType.TRAVEL, (float)distance, 0.0F, (float)this.linearSpeed, (float)this.angularSpeed, this.chassis.isMoving());
+        this.move = new Move(MoveType.TRAVEL, (float)distance, 0.0F, (float)this.linearSpeed, (float)this.angularSpeed, isMoving());
         this.chassis.moveStart();
         this.chassis.travel(distance);
         this.movementStart(immediateReturn);
@@ -163,9 +163,9 @@ public class MyMovePilot implements ArcRotateMoveController {
             }
 
             if (radius == 0.0D) {
-                this.move = new Move(MoveType.ROTATE, 0.0F, (float)angle, (float)this.linearSpeed, (float)this.angularSpeed, this.chassis.isMoving());
+                this.move = new Move(MoveType.ROTATE, 0.0F, (float)angle, (float)this.linearSpeed, (float)this.angularSpeed, isMoving());
             } else {
-                this.move = new Move(MoveType.ARC, (float)(Math.toRadians(angle) * radius), (float)angle, (float)this.linearSpeed, (float)this.angularSpeed, this.chassis.isMoving());
+                this.move = new Move(MoveType.ARC, (float)(Math.toRadians(angle) * radius), (float)angle, (float)this.linearSpeed, (float)this.angularSpeed, isMoving());
             }
 
             this.chassis.moveStart();
