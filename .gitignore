@@ -1,4 +1,4 @@
-.idea
 *.jar
 *.iml
 out/
+.idea/workspace.xml

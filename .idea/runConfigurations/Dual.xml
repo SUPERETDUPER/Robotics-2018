@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Dual" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
+    <toRun type="Application" name="1PC" />
+    <toRun type="LejosRunConfigurationType" name="EV3" />
+    <method />
+  </configuration>
+</component>

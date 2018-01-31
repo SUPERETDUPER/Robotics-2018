@@ -3,6 +3,7 @@ package EV3;
 import EV3.navigation.CustomMCLPoseProvider;
 import Common.utils.Logger;
 import EV3.hardware.ChassisBuilder;
+import EV3.navigation.MyMovePilot;
 import lejos.robotics.navigation.*;
 import lejos.utility.Delay;
 
@@ -19,7 +20,7 @@ public class Controller implements MoveListener, NavigationListener {
     private final Navigator navigator;
 
     Controller() {
-        MovePilot pilot = new MovePilot(ChassisBuilder.getChassis());
+        MyMovePilot pilot = new MyMovePilot(ChassisBuilder.getChassis());
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
