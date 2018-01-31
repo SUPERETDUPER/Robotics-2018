@@ -46,7 +46,7 @@ public class DataReceiver {
     private synchronized static void read() throws IOException {
         EventTypes dataType = EventTypes.values()[dis.readByte()];
 
-        Logger.debug(LOG_TAG, "Received Event " + dataType.name());
+        //Logger.debug(LOG_TAG, "Received Event " + dataType.name());
 
         switch (dataType) {
             case MCL_DATA:

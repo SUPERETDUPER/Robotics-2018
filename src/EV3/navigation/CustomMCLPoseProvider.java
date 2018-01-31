@@ -66,27 +66,43 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
      */
     @NotNull
     public synchronized Pose getPose() {
-        update(null, mp.getMovement());
+        update(null, null);
 
         return data.getCurrentPose();
     }
 
-    private synchronized void update(@Nullable Readings readings, @NotNull Move move) {
+    private synchronized void update(@Nullable Readings readings, @Nullable Move move) {
         ArrayList<Particle> newParticles = data.getParticles();
+
+        if (move == null){
+            move = mp.getMovement();
+        }
 
         switch (move.getMoveType()) {
             case STOP:
-                return;
+                break;
             case TRAVEL:
-                newParticles = getTraveledParticleSet(newParticles, move.getDistanceTraveled() - distanceTraveled);
-                distanceTraveled = move.getDistanceTraveled();
+                if (move.getDistanceTraveled() - distanceTraveled > 0) {
+                    newParticles = getTraveledParticleSet(newParticles, move.getDistanceTraveled() - distanceTraveled);
+                    distanceTraveled = move.getDistanceTraveled();
+                }
                 break;
             case ROTATE:
-                newParticles = getRotatedParticleSet(newParticles, move.getAngleTurned() - angleRotated);
-                angleRotated = move.getAngleTurned();
+                if (move.getAngleTurned() - angleRotated > 0) {
+                    newParticles = getRotatedParticleSet(newParticles, move.getAngleTurned() - angleRotated);
+                    angleRotated = move.getAngleTurned();
+                }
                 break;
+            case ARC:
+                if (move.getAngleTurned() - angleRotated > 0 && move.getDistanceTraveled() - distanceTraveled > 0) {
+                    newParticles = getArcParticleSet(newParticles,
+                            move.getAngleTurned() - angleRotated,
+                            move.getDistanceTraveled() - distanceTraveled);
+                    angleRotated = move.getAngleTurned();
+                    distanceTraveled = move.getDistanceTraveled();
+                }
             default:
-                Logger.warning(LOG_TAG, "Move type not implemented");
+                Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
         }
 
         if (readings != null) {
@@ -94,17 +110,29 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
             newParticles = getResampledParticleSet(newParticles);//Re samples for highest weights
         }
 
-        data.setParticles(newParticles);
-        data.setCurrentPose(getCurrentPoseEstimate(data.getParticles())); //Updates current pose
+        if (move.getMoveType() != Move.MoveType.STOP || readings != null) {
+            data.setParticles(newParticles);
+            data.setCurrentPose(getCurrentPoseEstimate(data.getParticles())); //Updates current pose
 
-        updatePC(data); //SendToPc
+            if (move.getMoveType() != Move.MoveType.STOP) {
+                Logger.info(LOG_TAG, "Moved particles " + move.toString());
+            }
+            if (readings != null){
+                Logger.info(LOG_TAG, "Recalculated weights + resample");
+            }
+            Logger.info(LOG_TAG, "New position is " + data.getCurrentPose().toString());
+
+            updatePC(data); //SendToPc
+        }
     }
 
     //TODO When start called before stop doesn't work
 
     @Override
-    public void moveStarted(Move move, MoveProvider moveProvider) {
+    public synchronized void moveStarted(Move move, MoveProvider moveProvider) {
         Delay.msDelay(2000); //TODO Make it work without delay
+        distanceTraveled = 0;
+        angleRotated = 0;
         Logger.info(LOG_TAG, "Move started " + move.toString());
     }
 
@@ -112,8 +140,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     public synchronized void moveStopped(Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped " + move.toString());
         update(null, move);
-        distanceTraveled = 0;
-        angleRotated = 0;
+
     }
 
     /**
@@ -162,6 +189,33 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         return new Particle(point.x, point.y, angle, readings);
     }
 
+    private static ArrayList<Particle> getArcParticleSet(ArrayList<Particle> particles, float angle, float distance) {
+        //TODO generate randomness
+        for (int i = 0 ; i < particles.size() ; i++) {
+            Pose pose = particles.get(i).getPose();
+            double dx = 0.0D;
+            double dy = 0.0D;
+            double headingRad = Math.toRadians((double) pose.getHeading());
+            if (Math.abs(angle) >= 0.2F) {
+                double turnRad = Math.toRadians((double) angle);
+                double radius = (double) distance / turnRad;
+                dy = radius * (Math.cos(headingRad) - Math.cos(headingRad + turnRad));
+                dx = radius * (Math.sin(headingRad + turnRad) - Math.sin(headingRad));
+
+            }
+
+            float x = (float) ((double) pose.getX() + dx);
+            float y = (float) ((double) pose.getY() + dy);
+            float heading = (pose.getHeading() + angle + 0.5F) % 360;
+
+            particles.set(i, new Particle(x, y, heading, particles.get(i).getWeight()));
+        }
+
+        Logger.warning(LOG_TAG, "Particles arced. Distance " + distance + ". Angle " + angle + ". Not tested");
+
+        return particles;
+    }
+
     private static ArrayList<Particle> getRotatedParticleSet(ArrayList<Particle> particles, float angleRotated) {
         for (int i = 0; i < particles.size(); i++) {
             Pose particlePose = particles.get(i).getPose();
@@ -170,8 +224,6 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
             particles.set(i, new Particle(particlePose.getX(), particlePose.getY(), heading, particles.get(i).getWeight()));
         }
-
-        Logger.debug(LOG_TAG, "Particles rotated by " + angleRotated);
 
         return particles;
     }
@@ -191,8 +243,6 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
             particles.set(i, new Particle(x, y, pose.getHeading(), particles.get(i).getWeight()));
         }
-
-        Logger.debug(LOG_TAG, "Particles moved by " + distanceTraveled);
 
         return particles;
     }
@@ -276,7 +326,6 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
         Pose newPose = new Pose(estimatedX, estimatedY, estimatedAngle);
 
-        Logger.debug(LOG_TAG, "Estimating current pose to be " + newPose.toString());
         return newPose;
     }
 

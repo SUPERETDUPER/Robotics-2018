@@ -16,7 +16,7 @@ public class AbstractMotor implements RegulatedMotor {
     private int speed = DEFAULT_SPEED;
 
 
-    private boolean isMoving = false;
+    private volatile boolean isMoving = false;
     private long timeStarted;
     private int rotateAmount;
 
@@ -31,19 +31,19 @@ public class AbstractMotor implements RegulatedMotor {
             return;
         }
 
-        long rotationsTraveled = (System.currentTimeMillis() - timeStarted) / 1000 * speed; //distance = speed * time
+        final long rotationsTraveled = (System.currentTimeMillis() - timeStarted) * speed / 1000; //distance = speed * time
 
         if (rotationsTraveled >= Math.abs(rotateAmount)) {
             isMoving = false;
             tachoCount += rotateAmount;
-            Logger.debug(LOG_TAG, name + " : done moving motor");
+            Logger.debug(LOG_TAG, name + " : Done Move motor by " + rotationsTraveled);
         } else {
-            // Logger.debug(LOG_TAG, name + " : Still moving");
+            //Logger.debug(LOG_TAG, name + " : Still moving " + rotationsTraveled + "/" + Math.abs(rotateAmount));
         }
     }
 
     @Override
-    public void stop(boolean b) {
+    public synchronized void stop(boolean b) {
         update();
 
         if (isMoving) {
@@ -73,7 +73,7 @@ public class AbstractMotor implements RegulatedMotor {
         isMoving = true;
         timeStarted = System.currentTimeMillis();
 
-        Logger.debug(LOG_TAG, name + " : Moving motor by " + i);
+        Logger.debug(LOG_TAG, name + " : Moving motor by " + i + "...");
 
         if (!b) {
             waitComplete();
@@ -138,7 +138,8 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public synchronized void setSpeed(int i) {
         update();
-        this.speed = i;
+        //Logger.info(LOG_TAG, name + " : Set speed to " + i/10);
+        this.speed = i /3;
     }
 
     @Override
@@ -172,7 +173,7 @@ public class AbstractMotor implements RegulatedMotor {
 
     @Override
     public void setAcceleration(int i) {
-        Logger.warning(LOG_TAG, "Acceleration not implemented");
+        //Logger.warning(LOG_TAG, "Acceleration not implemented");
     }
 
     @Override

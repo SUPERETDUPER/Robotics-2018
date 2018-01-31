@@ -42,6 +42,21 @@ public class DataSender {
         Logger.info(LOG_TAG, "Connected to Robotics2018.PC");
     }
 
+    public synchronized static void sendLogMessage(String message) {
+        if (isConnected) {
+            try {
+                dos.writeByte(EventTypes.LOG.ordinal());
+                dos.writeUTF(message);
+                dos.flush();
+            } catch (IOException e) {
+                isConnected = false;
+                Logger.error(LOG_TAG, "Failed to send log message");
+            }
+        } else {
+            Logger.warning(LOG_TAG, "Not connected cannot send log message");
+        }
+    }
+
     public static void sendMCLData(MCLData data) {
         if (isConnected) {
             sendTransmittable(EventTypes.MCL_DATA, data);
@@ -58,27 +73,12 @@ public class DataSender {
         }
     }
 
-    public synchronized static void sendLogMessage(String message) {
-        if (isConnected) {
-            try {
-                dos.writeByte(EventTypes.LOG.ordinal());
-                dos.writeUTF(message);
-                dos.flush();
-            } catch (IOException e) {
-                isConnected = false;
-                Logger.error(LOG_TAG, "Failed to send log message");
-            }
-        } else {
-            Logger.warning(LOG_TAG, "Not connected cannot send log message");
-        }
-    }
-
     private synchronized static void sendTransmittable(EventTypes eventType, Transmittable transmittable) {
         try {
             dos.writeByte(eventType.ordinal());
             transmittable.dumpObject(dos);
             dos.flush();
-            Logger.info(LOG_TAG, "Sent : " + eventType.name());
+            //Logger.debug(LOG_TAG, "Sent : " + eventType.name());
         } catch (IOException e) {
             isConnected = false;
             Logger.error(LOG_TAG, "Failed to send transmittable type : " + eventType.name());
