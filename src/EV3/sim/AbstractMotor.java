@@ -9,6 +9,7 @@ public class AbstractMotor implements RegulatedMotor {
 
     private final static int MAX_SPEED = 1050;
     private final static int DEFAULT_SPEED = 360;
+    private final static int SPEED_REDUCER = 2;
 
     private final String name;
 
@@ -139,7 +140,7 @@ public class AbstractMotor implements RegulatedMotor {
     public synchronized void setSpeed(int i) {
         update();
         //Logger.info(LOG_TAG, name + " : Set speed to " + i/10);
-        this.speed = i /3;
+        this.speed = i / SPEED_REDUCER;
     }
 
     @Override

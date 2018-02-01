@@ -1,6 +1,5 @@
 package Common.MCL;
 
-import EV3.navigation.Readings;
 import com.sun.istack.internal.NotNull;
 import lejos.robotics.navigation.Pose;
 
@@ -9,7 +8,7 @@ import lejos.robotics.navigation.Pose;
  */
 public final class Particle {
     private static final String LOG_TAG = Particle.class.getSimpleName();
-
+    private static final float DEFAULT_WEIGHT = 1;
 
     private final Pose pose;
     private final float weight;
@@ -19,17 +18,16 @@ public final class Particle {
         this.weight = weight;
     }
 
-    public Particle(float x, float y, float heading, Readings reading) {
-        this.pose = new Pose(x, y, heading);
-        this.weight = reading.calculateWeight(pose);
-    }
-
     public Particle(@NotNull Pose pose, float weight) {
         this(pose.getX(), pose.getY(), pose.getHeading(), weight); // Not directly this.pose = pose because want to keep object immutable
     }
 
-    public Particle(@NotNull Pose pose, Readings reading) {
-        this(pose, reading.calculateWeight(pose));
+    public Particle(Pose pose) {
+        this(pose, DEFAULT_WEIGHT);
+    }
+
+    public Particle(float x, float y, float heading) {
+        this(x, y, heading, DEFAULT_WEIGHT);
     }
 
     public Pose getPose() {

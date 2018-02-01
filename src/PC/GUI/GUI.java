@@ -1,8 +1,8 @@
 package PC.GUI;
 
 import Common.Config;
-import Common.mapping.SurfaceMap;
 import Common.MCL.MCLData;
+import Common.mapping.SurfaceMap;
 import Common.utils.Logger;
 import lejos.robotics.navigation.Pose;
 

@@ -23,20 +23,16 @@ public class MCLData implements Transmittable, Displayable {
     private ArrayList<Particle> particles;
     private Pose currentPose;
 
+    public MCLData() {
+    }
+
+    public MCLData(ArrayList<Particle> particles, Pose currentPose) {
+        this.particles = particles;
+        this.currentPose = currentPose;
+    }
+
     public Pose getCurrentPose() {
-        return new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading());
-    }
-
-    public void setCurrentPose(Pose currentPose) {
-        this.currentPose = new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading());
-    }
-
-    public ArrayList<Particle> getParticles() {
-        return new ArrayList<>(particles);
-    }
-
-    public void setParticles(ArrayList<Particle> particles) {
-        this.particles = new ArrayList<>(particles);
+        return currentPose;
     }
 
     @Override
