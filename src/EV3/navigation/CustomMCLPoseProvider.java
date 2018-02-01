@@ -6,6 +6,7 @@ import Common.MCL.Particle;
 import Common.mapping.SurfaceMap;
 import Common.utils.Logger;
 import EV3.DataSender;
+import EV3.hardware.Brick;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import lejos.robotics.geometry.Point;
@@ -61,6 +62,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         if (Config.usePC) {
             DataSender.sendMCLData(new MCLData(particles, currentPose));
         }
+        //Brick.waitForUserConfirmation();
     }
 
     /**
@@ -100,14 +102,14 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     }
 
     @Override
-    public void moveStarted(Move move, MoveProvider moveProvider) {
+    public synchronized void moveStarted(Move move, MoveProvider moveProvider) {
         distanceTraveled = 0;
         angleRotated = 0;
         Logger.info(LOG_TAG, "Move started " + move.toString());
     }
 
     @Override
-    public void moveStopped(Move move, MoveProvider moveProvider) {
+    public synchronized void moveStopped(Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped " + move.toString());
         update(null, move);
     }

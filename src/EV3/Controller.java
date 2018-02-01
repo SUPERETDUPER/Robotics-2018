@@ -4,6 +4,7 @@ import Common.utils.Logger;
 import EV3.hardware.ChassisBuilder;
 import EV3.navigation.CustomMCLPoseProvider;
 import EV3.navigation.MyMovePilot;
+import EV3.navigation.MyNavigator;
 import lejos.robotics.navigation.*;
 
 public class Controller implements MoveListener, NavigationListener {
@@ -16,7 +17,7 @@ public class Controller implements MoveListener, NavigationListener {
     private static final Pose STARTING_POSE = new Pose(500, 100, 0);
 
     private final CustomMCLPoseProvider poseProvider;
-    private final Navigator navigator;
+    private final MyNavigator navigator;
 
     Controller() {
         MyMovePilot pilot = new MyMovePilot(ChassisBuilder.getChassis());
@@ -27,7 +28,7 @@ public class Controller implements MoveListener, NavigationListener {
 
         poseProvider = new CustomMCLPoseProvider(pilot, STARTING_POSE);
 
-        navigator = new Navigator(pilot, poseProvider);
+        navigator = new MyNavigator(pilot, poseProvider);
         navigator.addNavigationListener(this);
     }
 
@@ -56,9 +57,9 @@ public class Controller implements MoveListener, NavigationListener {
     }
 
     void goTo() {
-        navigator.addWaypoint(600, 200);
-        navigator.addWaypoint(1200, 400);
-        navigator.addWaypoint(300, 1000);
+        navigator.addWaypoint(new Waypoint(600, 200));
+        navigator.addWaypoint(new Waypoint(1200, 400));
+        navigator.addWaypoint(new Waypoint(300, 1000));
         navigator.followPath();
         while (navigator.isMoving()) {
             poseProvider.getPose();
