@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MCLData implements Transmittable, Displayable {
-    public static final int NUM_PARTICLES = 30;
+    public static final int NUM_PARTICLES = 300;
     private static final float DISPLAY_TAIL_LENGTH = 30;
     private static final float DISPLAY_TAIL_ANGLE = 20;
 

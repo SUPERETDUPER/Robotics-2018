@@ -164,6 +164,7 @@ public class MyNavigator implements WaypointListener {
 
     private class Nav extends Thread {
         private Nav() {
+            this.setName("Navigator");
         }
 
         public void run() {

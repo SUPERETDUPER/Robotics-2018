@@ -1,14 +1,21 @@
 package PC.GUI;
 
+import Common.utils.Logger;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
+import org.omg.PortableInterceptor.LOCATION_FORWARD;
 
 import java.awt.*;
 
 public class DisplayablePath extends Path implements Displayable {
-
+    private static final String LOG_TAG = DisplayablePath.class.getSimpleName();
 
     public void displayOnGui(Graphics g) {
+        if (GUI.getCurrentPose() == null) {
+            Logger.warning(LOG_TAG, "Could not display path, no current position");
+            return;
+        }
+
         Waypoint previous = new Waypoint(GUI.getCurrentPose());
 
         g.setColor(Color.RED);

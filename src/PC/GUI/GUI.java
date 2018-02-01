@@ -22,7 +22,7 @@ public class GUI {
     private static final MCLData mclData = new MCLData();
 
     private static final ArrayList<Displayable> contents = new ArrayList<>(Arrays.asList(
-            new SurfaceMap(),
+            SurfaceMap.get(),
             mclData,
             path
     ));
@@ -66,4 +66,6 @@ public class GUI {
     public static void close() {
         window.dispose();
     }
+
+    public static void init(){}
 }

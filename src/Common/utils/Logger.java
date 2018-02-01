@@ -30,6 +30,8 @@ public final class Logger {
                             color +
                             type.name().toUpperCase() +
                             " : " +
+                            Thread.currentThread().getName() +
+                            " : " +
                             tag +
                             " : " +
                             message +

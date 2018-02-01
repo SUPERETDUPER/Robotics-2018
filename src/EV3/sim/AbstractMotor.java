@@ -9,17 +9,16 @@ public class AbstractMotor implements RegulatedMotor {
 
     private final static int MAX_SPEED = 1050;
     private final static int DEFAULT_SPEED = 360;
-    private final static int SPEED_REDUCER = 2;
+    private final static int SPEED_REDUCING_FACTOR = 4;
 
     private final String name;
 
-    private int tachoCount = 0;
+    private int currentTachoCount = 0;
+    private int tachoCountAtStart = 0;
+    private int goalTachoCount;
+    private long timeAtStart;
+
     private int speed = DEFAULT_SPEED;
-
-
-    private volatile boolean isMoving = false;
-    private long timeStarted;
-    private int rotateAmount;
 
 
     public AbstractMotor(String name) {
@@ -27,35 +26,31 @@ public class AbstractMotor implements RegulatedMotor {
     }
 
     private synchronized void update() {
-        if (!isMoving) {
+        if (goalTachoCount == currentTachoCount) {
             //Logger.debug(LOG_TAG, name + " : Not moving nothing to debug");
             return;
         }
 
-        final long rotationsTraveled = (System.currentTimeMillis() - timeStarted) * speed / 1000; //distance = speed * time
+        int rotationsTraveled = (int) (System.currentTimeMillis() - timeAtStart) * speed / 1000; //distance = speed * time
 
-        if (rotationsTraveled >= Math.abs(rotateAmount)) {
-            isMoving = false;
-            tachoCount += rotateAmount;
-            Logger.debug(LOG_TAG, name + " : Done Move motor by " + rotationsTraveled);
-        } else {
-            //Logger.debug(LOG_TAG, name + " : Still moving " + rotationsTraveled + "/" + Math.abs(rotateAmount));
+        rotationsTraveled = Math.min(rotationsTraveled, Math.abs(goalTachoCount - tachoCountAtStart)); //If rotated more then necessary reduce to cap
+
+        if (goalTachoCount < currentTachoCount){
+            rotationsTraveled *= -1;
         }
+
+        currentTachoCount = tachoCountAtStart + rotationsTraveled;
     }
 
     @Override
     public synchronized void stop(boolean b) {
         update();
-
-        if (isMoving) {
-            isMoving = false;
-            Logger.debug(LOG_TAG, name + " : Motor stopped");
-        }
+        goalTachoCount = currentTachoCount;
     }
 
     @Override
-    public void waitComplete() {
-        while (isMoving) {
+    public synchronized void waitComplete() {
+        while (currentTachoCount != goalTachoCount) {
             update();
             Thread.yield();
         }
@@ -63,16 +58,11 @@ public class AbstractMotor implements RegulatedMotor {
 
     @Override
     public synchronized void rotateTo(int i, boolean b) {
-        rotate(i - getTachoCount(), b);
-    }
-
-    @Override
-    public synchronized void rotate(int i, boolean b) {
         update();
 
-        rotateAmount = i;
-        isMoving = true;
-        timeStarted = System.currentTimeMillis();
+        tachoCountAtStart = currentTachoCount;
+        timeAtStart = System.currentTimeMillis();
+        goalTachoCount = i;
 
         Logger.debug(LOG_TAG, name + " : Moving motor by " + i + "...");
 
@@ -85,35 +75,52 @@ public class AbstractMotor implements RegulatedMotor {
     public synchronized int getLimitAngle() {
         update();
 
-        if (isMoving) {
+        if (goalTachoCount == currentTachoCount) {
             Logger.warning(LOG_TAG, name + "Tried to getChassis limit angle but not moving");
         }
 
-        return tachoCount + rotateAmount;
+        return goalTachoCount;
+    }
+
+    @Override
+    public synchronized void rotate(int i, boolean b) {
+        update();
+
+        rotateTo(currentTachoCount + i, b);
     }
 
     @Override
     public synchronized boolean isMoving() {
         update();
-        return isMoving;
+        return goalTachoCount != currentTachoCount;
     }
 
     @Override
     public synchronized int getTachoCount() {
         update();
-        return this.tachoCount;
+        return this.currentTachoCount;
     }
 
     @Override
     public synchronized void resetTachoCount() {
         update();
-        tachoCount = 0;
+        tachoCountAtStart -= currentTachoCount;
+        goalTachoCount -= currentTachoCount;
+        currentTachoCount = 0;
+        Logger.warning(LOG_TAG, "Might not work with rotateTo method");
     }
 
     @Override
-    public synchronized int getRotationSpeed() {
+    public int getRotationSpeed() {
         update();
-        return isMoving ? speed : 0; //Ternary operator
+        return goalTachoCount == currentTachoCount ? 0 : speed; //Ternary operator
+    }
+
+    @Override
+    public void setSpeed(int i) {
+        update();
+        //Logger.info(LOG_TAG, name + " : Set speed to " + i/10);
+        this.speed = i / SPEED_REDUCING_FACTOR;
     }
 
     @Override
@@ -134,13 +141,6 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public int getSpeed() {
         return this.speed;
-    }
-
-    @Override
-    public synchronized void setSpeed(int i) {
-        update();
-        //Logger.info(LOG_TAG, name + " : Set speed to " + i/10);
-        this.speed = i / SPEED_REDUCER;
     }
 
     @Override
@@ -212,5 +212,3 @@ public class AbstractMotor implements RegulatedMotor {
         return null;
     }
 }
-
-

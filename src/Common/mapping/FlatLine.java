@@ -1,6 +1,8 @@
 package Common.mapping;
 
+import Common.utils.Logger;
 import lejos.robotics.geometry.Point;
+import org.omg.PortableInterceptor.LOCATION_FORWARD;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -8,12 +10,17 @@ import java.util.Arrays;
 /*
 Lines who's ends are horizontal
  */
-class FlatLine extends ColoredRegion {
+class FlatLine extends SingleColorRegion {
+    private static final String LOG_TAG = FlatLine.class.getSimpleName();
 
     private final Polygon flatLine;
 
     FlatLine(int color, float x1, float y1, float length, float hWidth, float angle) {
         super(color);
+
+        if (angle > 90 || angle < 0){
+            Logger.warning(LOG_TAG, "Only tested with angles between 0 and 90");
+        }
 
         float x2 = (float) (x1 + Math.cos(Math.toRadians(angle)) * length);
         float y2 = (float) (y1 - Math.sin(Math.toRadians(angle)) * length);
@@ -27,12 +34,13 @@ class FlatLine extends ColoredRegion {
     }
 
     @Override
-    void drawRegion(Graphics g) {
-        flatLine.drawRegion(g);
+    public void displayOnGui(Graphics g) {
+        super.displayOnGui(g);
+        flatLine.displayOnGui(g);
     }
 
     @Override
-    boolean contains(Point point) {
+    public boolean contains(Point point) {
         return flatLine.contains(point);
     }
 }

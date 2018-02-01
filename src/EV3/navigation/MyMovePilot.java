@@ -10,21 +10,20 @@ import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Move.MoveType;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.RotateMoveController;
+import lejos.utility.Delay;
 
 import java.util.ArrayList;
 
 public class MyMovePilot implements RotateMoveController {
     private final Chassis chassis;
     private final ArrayList<MoveListener> _listeners = new ArrayList<>();
-    private final MyMovePilot.Monitor _monitor = new MyMovePilot.Monitor();
-    private volatile boolean _moving = false;
-    private Move move;
+    private volatile boolean isMoving = false;
+    private Move currentMove;
 
     public MyMovePilot(Chassis chassis) {
         this.chassis = chassis;
-        this.chassis.setSpeed(chassis.getMaxLinearSpeed() * 0.8D, chassis.getMaxAngularSpeed() * 0.8D);
-        this.chassis.setAcceleration(this.getLinearSpeed() * 4.0D, this.getAngularSpeed() * 4.0D);
-        this._monitor.start();
+
+        new MyMovePilot.Monitor().start();
     }
 
     public void setLinearAcceleration(double acceleration) {
@@ -92,22 +91,22 @@ public class MyMovePilot implements RotateMoveController {
     }
 
     public void travel(double distance, boolean immediateReturn) {
-        if (_moving) {
+        if (isMoving) {
             this.stop();
         }
 
-        this.move = new Move(MoveType.TRAVEL, (float) distance, 0.0F, (float) getLinearSpeed(), (float) getAngularSpeed(), _moving);
+        this.currentMove = new Move(MoveType.TRAVEL, (float) distance, 0.0F, (float) getLinearSpeed(), (float) getAngularSpeed(), isMoving);
         this.chassis.moveStart();
         this.chassis.travel(distance);
         this.movementStart(immediateReturn);
     }
 
     public void rotate(double angle, boolean immediateReturn) {
-        if (this._moving) {
+        if (this.isMoving) {
             this.stop();
         }
 
-        this.move = new Move(MoveType.ROTATE, 0.0F, (float) angle, (float) getLinearSpeed(), (float) getAngularSpeed(), _moving);
+        this.currentMove = new Move(MoveType.ROTATE, 0.0F, (float) angle, (float) getLinearSpeed(), (float) getAngularSpeed(), isMoving);
         this.chassis.moveStart();
         this.chassis.arc(0, angle);
         this.movementStart(immediateReturn);
@@ -119,44 +118,29 @@ public class MyMovePilot implements RotateMoveController {
     }
 
     private void waitForStop() {
-        while (this._moving) {
+        while (this.isMoving) {
             Thread.yield();
         }
     }
 
     public boolean isMoving() {
-        return this._moving;
+        return this.isMoving;
     }
 
     private void movementStart(boolean immediateReturn) {
         for (MoveListener ml : this._listeners) {
-            ml.moveStarted(this.move, this);
+            ml.moveStarted(this.currentMove, this);
         }
 
-        this._moving = true;
-        synchronized (this._monitor) {
-            this._monitor.notifyAll();
-        }
+        this.isMoving = true;
 
         if (!immediateReturn) {
             waitForStop();
         }
     }
 
-    private void movementStop() {
-        if (!this._listeners.isEmpty()) {
-            this.move = this.chassis.getDisplacement(this.move);
-
-            for (MoveListener ml : this._listeners) {
-                ml.moveStopped(this.move, this);
-            }
-        }
-
-        this._moving = false;
-    }
-
     public Move getMovement() {
-        return this._moving ? this.chassis.getDisplacement(this.move) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
+        return this.isMoving ? this.chassis.getDisplacement(new Move(0,0, false)) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
     }
 
     public void addMoveListener(MoveListener listener) {
@@ -165,27 +149,33 @@ public class MyMovePilot implements RotateMoveController {
 
     private class Monitor extends Thread {
         private Monitor() {
+            this.setName("MovePilot");
             this.setDaemon(true);
         }
 
         public synchronized void run() {
             while (true) {
-                if (MyMovePilot.this._moving) {
+                for (;MyMovePilot.this.isMoving; Thread.yield()) {
+
                     if (MyMovePilot.this.chassis.isStalled()) {
-                        MyMovePilot.this.stop();
+                        MyMovePilot.this.chassis.stop();
                     }
 
                     if (!MyMovePilot.this.chassis.isMoving()) {
-                        MyMovePilot.this.movementStop();
-                        MyMovePilot.this._moving = false;
+                        this.movementStop();
+                        MyMovePilot.this.isMoving = false;
                     }
                 }
 
-                try {
-                    this.wait(MyMovePilot.this._moving ? 1L : 100L);
-                } catch (InterruptedException var2) {
-                    var2.printStackTrace();
-                }
+                Delay.msDelay(100L);
+            }
+        }
+
+        private void movementStop() {
+            MyMovePilot.this.currentMove = MyMovePilot.this.chassis.getDisplacement(MyMovePilot.this.currentMove);
+
+            for (MoveListener ml : MyMovePilot.this._listeners) {
+                ml.moveStopped(MyMovePilot.this.currentMove, MyMovePilot.this);
             }
         }
     }

@@ -16,6 +16,7 @@ public class PCMain {
         }
 
         DataReceiver.connect();
+        GUI.init();
 
         try {
             DataReceiver.monitorForData();

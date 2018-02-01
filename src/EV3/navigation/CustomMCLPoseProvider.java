@@ -6,7 +6,6 @@ import Common.MCL.Particle;
 import Common.mapping.SurfaceMap;
 import Common.utils.Logger;
 import EV3.DataSender;
-import EV3.hardware.Brick;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import lejos.robotics.geometry.Point;
@@ -75,7 +74,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         return currentPose;
     }
 
-    // TODO Doesn`t work look at debug
+    // TODO Doesn't work look at debug
     public synchronized void update(@Nullable Readings readings, @Nullable Move move) {
         if (move == null) {
             move = mp.getMovement();

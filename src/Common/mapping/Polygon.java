@@ -10,7 +10,7 @@ import java.util.List;
 /*
 Any type of polygon
  */
-class Polygon extends ColoredRegion {
+class Polygon extends SingleColorRegion {
 
     private final java.util.List<Point> points;
     private float maxX;
@@ -31,7 +31,7 @@ class Polygon extends ColoredRegion {
 
     // Finds polygon by number of intersections check
     @Override
-    boolean contains(Point point) {
+    public boolean contains(Point point) {
         Line hLine = new Line(point.x, point.y, maxX + 1, point.y);
 
         int intersections = 0;
@@ -53,7 +53,8 @@ class Polygon extends ColoredRegion {
     }
 
     @Override
-    void drawRegion(Graphics g) {
+    public void displayOnGui(Graphics g) {
+        super.displayOnGui(g);
         int[] xValues = new int[points.size()];
         int[] yValues = new int[points.size()];
 

@@ -1,6 +1,7 @@
 package Common.mapping;
 
 import Common.utils.Logger;
+import PC.GUI.Displayable;
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
 
@@ -11,47 +12,10 @@ import java.awt.*;
 Defines a region of the surface of the board
 The region has a color
  */
-abstract class ColoredRegion {
+interface ColoredRegion extends Displayable {
+    int getColorAtPoint(Point point);
 
-    private static final String LOG_TAG = ColoredRegion.class.getSimpleName();
+    boolean contains(Point point);
 
-    private final int mColor;
-
-    ColoredRegion(int color) {
-        this.mColor = color;
-    }
-
-    int getColor() {
-        return mColor;
-    }
-
-    private java.awt.Color getDisplayColor() {
-        switch (mColor) {
-            case Color.BLACK:
-                return java.awt.Color.BLACK;
-            case Color.WHITE:
-                return java.awt.Color.LIGHT_GRAY; //So that we see difference in GUI
-            case Color.BLUE:
-                return java.awt.Color.BLUE;
-            case Color.BROWN:
-                return java.awt.Color.DARK_GRAY;
-            case Color.GREEN:
-                return java.awt.Color.GREEN;
-            case Color.RED:
-                return java.awt.Color.RED;
-            case Color.YELLOW:
-                return java.awt.Color.YELLOW;
-            default:
-                Logger.warning(LOG_TAG, "Region not a valid color");
-                return null;
-        }
-    }
-
-    void setDisplayColor(Graphics g) {
-        g.setColor(getDisplayColor());
-    }
-
-    abstract boolean contains(Point point);
-
-    abstract void drawRegion(Graphics g);
+    void displayOnGui(Graphics g);
 }

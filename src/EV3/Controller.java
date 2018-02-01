@@ -6,6 +6,7 @@ import EV3.navigation.CustomMCLPoseProvider;
 import EV3.navigation.MyMovePilot;
 import EV3.navigation.MyNavigator;
 import lejos.robotics.navigation.*;
+import lejos.utility.Delay;
 
 public class Controller implements MoveListener, NavigationListener {
 
@@ -24,12 +25,15 @@ public class Controller implements MoveListener, NavigationListener {
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
+        pilot.setLinearSpeed(pilot.getMaxLinearSpeed() * 0.8D);
+        pilot.setAngularSpeed(pilot.getMaxAngularSpeed() * 0.8D);
         pilot.addMoveListener(this);
 
         poseProvider = new CustomMCLPoseProvider(pilot, STARTING_POSE);
 
         navigator = new MyNavigator(pilot, poseProvider);
         navigator.addNavigationListener(this);
+        navigator.singleStep(true);
     }
 
     @Override
@@ -60,9 +64,11 @@ public class Controller implements MoveListener, NavigationListener {
         navigator.addWaypoint(new Waypoint(600, 200));
         navigator.addWaypoint(new Waypoint(1200, 400));
         navigator.addWaypoint(new Waypoint(300, 1000));
+        navigator.addWaypoint(new Waypoint(305, 1000));
         navigator.followPath();
         while (navigator.isMoving()) {
-            poseProvider.getPose();
+            Logger.info(LOG_TAG, "Current pose is " + poseProvider.getPose().toString());
+            Delay.msDelay(1000);
         }
         Logger.info(LOG_TAG, poseProvider.getPose().toString());
     }
