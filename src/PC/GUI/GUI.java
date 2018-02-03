@@ -67,5 +67,6 @@ public class GUI {
         window.dispose();
     }
 
-    public static void init(){}
+    public static void init() {
+    }
 }

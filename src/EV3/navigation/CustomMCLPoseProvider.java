@@ -6,14 +6,14 @@ import Common.MCL.Particle;
 import Common.mapping.SurfaceMap;
 import Common.utils.Logger;
 import EV3.DataSender;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import lejos.robotics.geometry.Point;
+import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,11 +22,11 @@ import java.util.Random;
  * Inspired by Lawrie Griffiths' and Roger Glassey's MCLPoseProvider class in Lejos Source Code
  */
 
-//TODO Still not working
-public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
+public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     private static final String LOG_TAG = CustomMCLPoseProvider.class.getSimpleName();
 
+    private static final int NUM_PARTICLES = 300;
     private static final int MAX_RESAMPLE_ITERATIONS = 1000;
 
     private static final float DISTANCE_NOISE_FACTOR = 0.008F;
@@ -39,111 +39,95 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
     private final MoveProvider mp;
 
+    private final OdometryPoseProvider odometryPoseProvider;
     private ArrayList<Particle> particles;
-    private Pose currentPose;
 
-    private float distanceTraveled;
-    private float angleRotated;
+    private float distanceAlreadyTraveled;
+    private float angleAlreadyRotated;
 
     public CustomMCLPoseProvider(@NotNull MoveProvider moveProvider, Pose startingPose) {
         this.mp = moveProvider;
+        this.odometryPoseProvider = new OdometryPoseProvider(mp);
         moveProvider.addMoveListener(this);
 
-        this.currentPose = startingPose;
+
+        odometryPoseProvider.setPose(startingPose);
         this.particles = generateNewParticleSet(startingPose);
 
-        Logger.info(LOG_TAG, "Setting current pose to " + startingPose + ". particles generated");
+        Logger.info(LOG_TAG, "Starting at " + startingPose.toString() + ". particles generated");
 
         updatePC();
     }
 
-    private void updatePC() {
-        if (Config.usePC) {
-            DataSender.sendMCLData(new MCLData(particles, currentPose));
-        }
-        //Brick.waitForUserConfirmation();
-    }
-
-    /**
-     * Returns the currentPose;
-     */
-    @NotNull
-    public Pose getPose() {
-        update(null, null);
-
-        return currentPose;
-    }
-
-    // TODO Doesn't work look at debug
-    public synchronized void update(@Nullable Readings readings, @Nullable Move move) {
-        if (move == null) {
-            move = mp.getMovement();
-        }
-
-        boolean particlesShifted = moveParticles(move);
-
-        if (particlesShifted) {
-            Logger.info(LOG_TAG, "Particles shifted : " + move.toString());
-        }
-
-        if (readings != null) {
-            weightParticles(readings); //Recalculate all the particle weights
-            resample();//Re samples for highest weights
-            Logger.info(LOG_TAG, "Recalculated weights + resample");
-        }
-
-        if (particlesShifted || readings != null) {
-            estimatePose(); //Updates current pose
-            Logger.info(LOG_TAG, "New position is " + currentPose.toString());
-
-            updatePC(); //SendToPc
-        }
-    }
-
     @Override
     public synchronized void moveStarted(Move move, MoveProvider moveProvider) {
-        distanceTraveled = 0;
-        angleRotated = 0;
+        distanceAlreadyTraveled = 0;
+        angleAlreadyRotated = 0;
+
         Logger.info(LOG_TAG, "Move started " + move.toString());
     }
 
     @Override
     public synchronized void moveStopped(Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped " + move.toString());
-        update(null, move);
+        moveParticles(move);
     }
 
-    private synchronized boolean moveParticles(Move move) {
+    private void updatePC() {
+        if (Config.usePC) {
+            DataSender.sendMCLData(new MCLData(particles, odometryPoseProvider.getPose()));
+        }
+        //Brick.waitForUserConfirmation();
+    }
+
+    @NotNull
+    public Pose getPose() {
+        return odometryPoseProvider.getPose();
+    }
+
+    public synchronized void update(@NotNull Readings readings) {
+        Move move = mp.getMovement();
+
+        moveParticles(move);
+        weightParticles(readings); //Recalculate all the particle weights
+        resample();//Re samples for highest weights
+        estimateNewPose(); //Updates current pose
+
+        Logger.info(LOG_TAG, "Updated with readings. New position is " + odometryPoseProvider.getPose().toString());
+
+        updatePC(); //SendToPc
+    }
+
+    private synchronized void moveParticles(@NotNull Move move) {
         switch (move.getMoveType()) {
             case STOP:
-                return false;
+                return;
             case TRAVEL:
-                if (move.getDistanceTraveled() - distanceTraveled == 0) {
-                    return false;
+                if (move.getDistanceTraveled() - distanceAlreadyTraveled == 0) {
+                    return;
                 }
 
-                shiftParticles(move.getDistanceTraveled() - distanceTraveled);
-                distanceTraveled = move.getDistanceTraveled();
-                return true;
-
+                shiftParticles(move.getDistanceTraveled() - distanceAlreadyTraveled);
+                distanceAlreadyTraveled = move.getDistanceTraveled();
+                break;
             case ROTATE:
-                if (move.getAngleTurned() - angleRotated == 0) {
-                    return false;
+                if (move.getAngleTurned() - angleAlreadyRotated == 0) {
+                    return;
                 }
 
-                rotateParticles(move.getAngleTurned() - angleRotated);
-                angleRotated = move.getAngleTurned();
-
-                return true;
-
+                rotateParticles(move.getAngleTurned() - angleAlreadyRotated);
+                angleAlreadyRotated = move.getAngleTurned();
+                break;
             default:
                 Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
-                return false;
+                return;
         }
+        updatePC();
+        Logger.info(LOG_TAG, "Particles shifted : " + move.toString());
     }
 
     private synchronized void rotateParticles(float angleRotated) {
-        for (int i = 0; i < particles.size(); i++) {
+        for (int i = 0; i < NUM_PARTICLES; i++) {
             Pose particlePose = particles.get(i).getPose();
 
             float heading = (particlePose.getHeading() + angleRotated + (float) (angleRotated * ANGLE_NOISE_FACTOR * random.nextGaussian()) + 0.5F) % 360;
@@ -152,8 +136,8 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         }
     }
 
-    private synchronized void shiftParticles(@NotNull float distance) {
-        for (int i = 0; i < particles.size(); i++) {
+    private synchronized void shiftParticles(float distance) {
+        for (int i = 0; i < NUM_PARTICLES; i++) {
             Pose pose = particles.get(i).getPose();
 
             double theta = Math.toRadians(pose.getHeading());
@@ -170,7 +154,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     }
 
     private synchronized void weightParticles(@NotNull Readings readings) {
-        for (int i = 0; i < particles.size(); i++) {
+        for (int i = 0; i < NUM_PARTICLES; i++) {
             Pose pose = particles.get(i).getPose();
             particles.set(i, new Particle(pose, readings.calculateWeight(pose)));
         }
@@ -179,7 +163,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     }
 
     private synchronized void resample() {
-        ArrayList<Particle> newParticles = new ArrayList<>(MCLData.NUM_PARTICLES);
+        ArrayList<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
         int particlesGenerated = 0;
 
@@ -191,14 +175,14 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
                     newParticles.add(particle);
                     particlesGenerated++;
 
-                    if (particlesGenerated == MCLData.NUM_PARTICLES) {
+                    if (particlesGenerated == NUM_PARTICLES) {
                         Logger.debug(LOG_TAG, "Successful particle resample");
                         break;
                     }
                 }
             }
 
-            if (particlesGenerated == MCLData.NUM_PARTICLES) {
+            if (particlesGenerated == NUM_PARTICLES) {
                 break;
             }
         }
@@ -206,8 +190,8 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         if (particlesGenerated == 0) {
             newParticles = generateNewParticleSet();
             Logger.warning(LOG_TAG, "Bad resample ; regenerated all particles");
-        } else if (particlesGenerated < MCLData.NUM_PARTICLES) {
-            for (int i = particlesGenerated; i < MCLData.NUM_PARTICLES; i++) {
+        } else if (particlesGenerated < NUM_PARTICLES) {
+            for (int i = particlesGenerated; i < NUM_PARTICLES; i++) {
                 newParticles.add(newParticles.get(i % particlesGenerated));
             }
 
@@ -221,7 +205,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
      * Estimate currentPose from weighted average of the particles
      * Calculate statistics
      */
-    private synchronized void estimatePose() {
+    private synchronized void estimateNewPose() {
         float totalWeights = 0;
 
         float estimatedX = 0;
@@ -244,11 +228,14 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         while (estimatedAngle > 180) estimatedAngle -= 360;
         while (estimatedAngle < -180) estimatedAngle += 360;
 
-        currentPose = new Pose(estimatedX, estimatedY, estimatedAngle);
+        odometryPoseProvider.setPose(new Pose(estimatedX, estimatedY, estimatedAngle));
     }
 
     public void setPose(@NotNull Pose pose) {
-        Logger.warning(LOG_TAG, "Did not implement changing pose");
+        odometryPoseProvider.setPose(pose);
+        particles = generateNewParticleSet(pose);
+
+        updatePC();
     }
 
     /**
@@ -256,9 +243,9 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
      */
     @NotNull
     private static ArrayList<Particle> generateNewParticleSet(@NotNull Pose centerPose) {
-        ArrayList<Particle> particles = new ArrayList<>(MCLData.NUM_PARTICLES);
+        ArrayList<Particle> particles = new ArrayList<>(NUM_PARTICLES);
 
-        for (int i = 0; i < MCLData.NUM_PARTICLES; i++) {
+        for (int i = 0; i < NUM_PARTICLES; i++) {
             float rad = STARTING_RADIUS_NOISE * (float) random.nextGaussian();
 
             float theta = (float) (2 * Math.PI * Math.random());  //Random angle between 0 and 2pi
@@ -278,9 +265,9 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
      */
     @NotNull
     private static ArrayList<Particle> generateNewParticleSet() {
-        ArrayList<Particle> particles = new ArrayList<>(MCLData.NUM_PARTICLES);
+        ArrayList<Particle> particles = new ArrayList<>(NUM_PARTICLES);
 
-        for (int i = 0; i < MCLData.NUM_PARTICLES; i++) {
+        for (int i = 0; i < NUM_PARTICLES; i++) {
             particles.add(generateParticle());
         }
 

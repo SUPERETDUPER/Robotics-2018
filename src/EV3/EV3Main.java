@@ -11,9 +11,8 @@ class EV3Main {
             DataSender.connect();
         }
 
-        //Controller controller = new Controller();
         //Brick.waitForUserConfirmation();
-        //controller.goTo();
+        Controller.get().goTo();
         //controller.travel();
         Brick.waitForUserConfirmation();
     }

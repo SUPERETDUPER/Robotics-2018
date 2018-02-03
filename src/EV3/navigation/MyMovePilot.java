@@ -140,7 +140,7 @@ public class MyMovePilot implements RotateMoveController {
     }
 
     public Move getMovement() {
-        return this.isMoving ? this.chassis.getDisplacement(new Move(0,0, false)) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
+        return this.isMoving ? this.chassis.getDisplacement(new Move(0, 0, false)) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
     }
 
     public void addMoveListener(MoveListener listener) {
@@ -155,7 +155,7 @@ public class MyMovePilot implements RotateMoveController {
 
         public synchronized void run() {
             while (true) {
-                for (;MyMovePilot.this.isMoving; Thread.yield()) {
+                for (; MyMovePilot.this.isMoving; Thread.yield()) {
 
                     if (MyMovePilot.this.chassis.isStalled()) {
                         MyMovePilot.this.chassis.stop();

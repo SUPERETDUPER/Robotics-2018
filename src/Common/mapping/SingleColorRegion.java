@@ -3,10 +3,11 @@ package Common.mapping;
 import Common.utils.Logger;
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-public abstract class SingleColorRegion implements ColoredRegion{
+public abstract class SingleColorRegion implements ColoredRegion {
 
     private static final String LOG_TAG = ColoredRegion.class.getSimpleName();
 
@@ -20,6 +21,7 @@ public abstract class SingleColorRegion implements ColoredRegion{
         return mColor;
     }
 
+    @Nullable
     private java.awt.Color getDisplayColor() {
         switch (mColor) {
             case Color.BLACK:

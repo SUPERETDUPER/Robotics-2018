@@ -16,11 +16,11 @@ public class MyNavigator implements WaypointListener {
     private boolean _keepGoing = false;
     private boolean _singleStep = false;
     private boolean _interrupted = false;
-    private MoveController _pilot;
-    private PoseProvider poseProvider;
+    private final MoveController _pilot;
+    private final PoseProvider poseProvider;
     private Waypoint _destination;
     private int _sequenceNr;
-    private ArrayList<NavigationListener> _listeners = new ArrayList<>();
+    private final ArrayList<NavigationListener> _listeners = new ArrayList<>();
 
     public MyNavigator(MoveController pilot, PoseProvider poseProvider) {
         this._pilot = pilot;
@@ -168,7 +168,7 @@ public class MyNavigator implements WaypointListener {
         }
 
         public void run() {
-            for (;; Thread.yield()) {
+            for (; ; Thread.yield()) {
                 for (; MyNavigator.this._keepGoing && MyNavigator.this._path != null && !MyNavigator.this._path.isEmpty(); Thread.yield()) {
 
                     MyNavigator.this._destination = MyNavigator.this._path.get(0);

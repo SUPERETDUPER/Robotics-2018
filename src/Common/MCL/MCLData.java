@@ -2,10 +2,10 @@ package Common.MCL;
 
 import Common.utils.Logger;
 import PC.GUI.Displayable;
-import com.sun.istack.internal.NotNull;
 import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.DataInputStream;
@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MCLData implements Transmittable, Displayable {
-    public static final int NUM_PARTICLES = 300;
     private static final float DISPLAY_TAIL_LENGTH = 30;
     private static final float DISPLAY_TAIL_ANGLE = 20;
 
@@ -55,7 +54,7 @@ public class MCLData implements Transmittable, Displayable {
         }
     }
 
-    private static void displayParticleOnGui(Particle particle, Graphics g) {
+    private static void displayParticleOnGui(@NotNull Particle particle, @NotNull Graphics g) {
         Pose particlePose = particle.getPose();
 
         Point leftEnd = particlePose.pointAt(DISPLAY_TAIL_LENGTH, particlePose.getHeading() + 180 - DISPLAY_TAIL_ANGLE / 2);
@@ -86,8 +85,11 @@ public class MCLData implements Transmittable, Displayable {
             currentPose.dumpObject(dos);
         }
 
-        dos.writeBoolean(particles != null);
+        if (particles == null) {
+            dos.writeInt(0);
+        }
         if (particles != null) {
+            dos.writeInt(particles.size());
             for (Particle particle : particles) {
                 particle.getPose().dumpObject(dos);
                 dos.writeFloat(particle.getWeight());
@@ -101,10 +103,12 @@ public class MCLData implements Transmittable, Displayable {
             this.currentPose.loadObject(dis);
         }
 
-        if (dis.readBoolean()) {
-            particles = new ArrayList<>(NUM_PARTICLES);
+        int numOfParticles = dis.readInt();
 
-            for (int i = 0; i < NUM_PARTICLES; i++) {
+        if (numOfParticles != 0) {
+            particles = new ArrayList<>(numOfParticles);
+
+            for (int i = 0; i < numOfParticles; i++) {
                 Pose particlePose = new Pose();
                 particlePose.loadObject(dis);
 

@@ -4,9 +4,10 @@ import Common.Config;
 import Common.EventTypes;
 import Common.MCL.MCLData;
 import Common.utils.Logger;
-import com.sun.istack.internal.NotNull;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,11 +20,11 @@ public class DataSender {
     private static DataOutputStream dos;
     private static boolean isConnected = false;
 
+    @Contract(pure = true)
     public static boolean isConnected() {
         return isConnected;
     }
 
-    @NotNull
     public static void connect() {
         if (isConnected) {
             Logger.warning(LOG_TAG, "Already connected to Robotics2018.PC");
@@ -73,7 +74,7 @@ public class DataSender {
         }
     }
 
-    private synchronized static void sendTransmittable(EventTypes eventType, Transmittable transmittable) {
+    private synchronized static void sendTransmittable(@NotNull EventTypes eventType, @NotNull Transmittable transmittable) {
         try {
             dos.writeByte(eventType.ordinal());
             transmittable.dumpObject(dos);

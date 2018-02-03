@@ -2,25 +2,23 @@ package EV3;
 
 import Common.utils.Logger;
 import EV3.hardware.ChassisBuilder;
-import EV3.navigation.CustomMCLPoseProvider;
-import EV3.navigation.MyMovePilot;
-import EV3.navigation.MyNavigator;
+import EV3.navigation.*;
 import lejos.robotics.navigation.*;
-import lejos.utility.Delay;
+import org.jetbrains.annotations.Contract;
 
 public class Controller implements MoveListener, NavigationListener {
 
     private static final String LOG_TAG = Controller.class.getSimpleName();
-
-
     private static final double ANGULAR_ACCELERATION = 120;
     private static final double LINEAR_ACCELERATION = 400;
     private static final Pose STARTING_POSE = new Pose(500, 100, 0);
 
+    private static final Controller controller = new Controller();
+
     private final CustomMCLPoseProvider poseProvider;
     private final MyNavigator navigator;
 
-    Controller() {
+    private Controller() {
         MyMovePilot pilot = new MyMovePilot(ChassisBuilder.getChassis());
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
@@ -34,6 +32,11 @@ public class Controller implements MoveListener, NavigationListener {
         navigator = new MyNavigator(pilot, poseProvider);
         navigator.addNavigationListener(this);
         navigator.singleStep(true);
+    }
+
+    @Contract(pure = true)
+    public static Controller get() {
+        return controller;
     }
 
     @Override
@@ -57,19 +60,28 @@ public class Controller implements MoveListener, NavigationListener {
 
     @Override
     public void atWaypoint(Waypoint waypoint, Pose pose, int i) {
-        Logger.info(LOG_TAG, "At waypoint");
+        Logger.info(LOG_TAG, "At Waypoint");
     }
 
     void goTo() {
         navigator.addWaypoint(new Waypoint(600, 200));
         navigator.addWaypoint(new Waypoint(1200, 400));
         navigator.addWaypoint(new Waypoint(300, 1000));
-        navigator.addWaypoint(new Waypoint(305, 1000));
+        //navigator.addWaypoint(new Waypoint(305, 1000));
         navigator.followPath();
+        LineChecker lineChecker = new LineChecker();
         while (navigator.isMoving()) {
-            Logger.info(LOG_TAG, "Current pose is " + poseProvider.getPose().toString());
-            Delay.msDelay(1000);
+            lineChecker.check();
+            Thread.yield();
         }
         Logger.info(LOG_TAG, poseProvider.getPose().toString());
+    }
+
+    public Pose getPose() {
+        return poseProvider.getPose();
+    }
+
+    public void update(Readings readings) {
+        poseProvider.update(readings);
     }
 }

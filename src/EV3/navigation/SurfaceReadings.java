@@ -2,8 +2,8 @@ package EV3.navigation;
 
 import Common.mapping.SurfaceMap;
 import EV3.hardware.ColorSensor;
-import com.sun.istack.internal.NotNull;
 import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.NotNull;
 
 public class SurfaceReadings implements Readings {
 
@@ -13,7 +13,10 @@ public class SurfaceReadings implements Readings {
         this.color = ColorSensor.getSurfaceColor();
     }
 
-    @NotNull
+    SurfaceReadings(int color) {
+        this.color = color;
+    }
+
     public float calculateWeight(@NotNull Pose pose) {
         if (SurfaceMap.get().contains(pose.getLocation()) && SurfaceMap.get().getColorAtPoint(pose.getLocation()) == color) {
             return 1;

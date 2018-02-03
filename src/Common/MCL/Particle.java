@@ -1,7 +1,8 @@
 package Common.MCL;
 
-import com.sun.istack.internal.NotNull;
 import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Immutable
@@ -30,10 +31,12 @@ public final class Particle {
         this(x, y, heading, DEFAULT_WEIGHT);
     }
 
+    @NotNull
     public Pose getPose() {
         return new Pose(pose.getX(), pose.getY(), pose.getHeading()); //To make it immutable
     }
 
+    @Contract(pure = true)
     public float getWeight() {
         return weight;
     }

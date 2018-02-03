@@ -7,12 +7,14 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
+import org.jetbrains.annotations.NotNull;
 
 public class ChassisBuilder {
 
     private static final double WHEEL_DIAMETER = 55.9;
     private static final double WHEEL_OFFSET = 82.4;
 
+    @NotNull
     public static Chassis getChassis() {
         RegulatedMotor leftMotor;
         RegulatedMotor rightMotor;

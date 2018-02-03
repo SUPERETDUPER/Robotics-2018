@@ -1,20 +1,26 @@
 package EV3.hardware;
 
 import Common.Config;
-import lejos.robotics.Color;
+import Common.mapping.SurfaceMap;
+import EV3.Controller;
+import lejos.hardware.sensor.EV3ColorSensor;
 
 public class ColorSensor {
-    //private static final EV3ColorSensor surfaceColorSensor = new EV3ColorSensor(Config.PORT_SENSOR_COLOR_SURFACE);
+    private static final EV3ColorSensor surfaceColorSensor;
+
+    static {
+        if (Config.useSimulator) {
+            surfaceColorSensor = null;
+        } else {
+            surfaceColorSensor = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE);
+        }
+    }
 
     public static int getSurfaceColor() {
         if (Config.useSimulator) {
-            return Color.WHITE;
-
+            return SurfaceMap.get().getColorAtPoint(Controller.get().getPose().getLocation());
         } else {
-            //TODO
-            return Color.WHITE;
-            //return surfaceColorSensor.getColorID();
+            return surfaceColorSensor.getColorID();
         }
-
     }
 }

@@ -4,8 +4,8 @@ import Common.Config;
 import Common.EventTypes;
 import Common.utils.Logger;
 import PC.GUI.GUI;
-import com.sun.istack.internal.NotNull;
 import lejos.utility.Delay;
+import org.jetbrains.annotations.Contract;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -16,7 +16,6 @@ public class DataReceiver {
     private static DataInputStream dis;
     private static Socket socket;
 
-    @NotNull
     public static void connect() {
         for (int attempt = 0; attempt < 6; attempt++) {
             try {
@@ -28,7 +27,7 @@ public class DataReceiver {
                 return;
 
             } catch (IOException e) {
-                Logger.warning(LOG_TAG, "Failled attempt " + attempt + " to connect to EV3");
+                Logger.warning(LOG_TAG, "Failed attempt " + attempt + " to connect to EV3");
                 Delay.msDelay(3000);
             }
         }
@@ -42,11 +41,11 @@ public class DataReceiver {
         }
     }
 
-    @NotNull
+
     private synchronized static void read() throws IOException {
         EventTypes dataType = EventTypes.values()[dis.readByte()];
 
-        //Logger.debug(LOG_TAG, "Received Event " + dataType.name());
+        Logger.debug(LOG_TAG, "Received Event " + dataType.name());
 
         switch (dataType) {
             case MCL_DATA:
@@ -72,6 +71,7 @@ public class DataReceiver {
         }
     }
 
+    @Contract(pure = true)
     private static String getIpAddress() {
         return Config.useSimulator ? "localhost" : Config.EV3_IP_ADDRESS;
     }

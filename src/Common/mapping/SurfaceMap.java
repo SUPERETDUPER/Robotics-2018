@@ -3,17 +3,18 @@ package Common.mapping;
 import PC.GUI.Displayable;
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SurfaceMap extends RegionContainer implements Displayable {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
-    private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143){
+    private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143) {
         @Override
-        public void displayOnGui(Graphics g) {
+        public void displayOnGui(@NotNull Graphics g) {
             g.setColor(java.awt.Color.LIGHT_GRAY); //So that we see difference in GUI
             g.fillRect((int) mRectangle.x, (int) mRectangle.y, (int) mRectangle.width, (int) mRectangle.height);
         }
@@ -49,8 +50,17 @@ public class SurfaceMap extends RegionContainer implements Displayable {
         regions.add(new Rectangle(Color.RED, 1530.5F, 807, 80, 64));
         regions.add(new Rectangle(Color.GREEN, 1853, 807, 80, 64));
 
+        //Containers base
+        regions.add(new Rectangle(Color.WHITE, 822.5F, 343, 88, 88));
+        regions.add(new Rectangle(Color.WHITE, 1254.5F, 272, 88, 88));
+        regions.add(new Rectangle(Color.WHITE, 753.5F, 783, 88, 88));
+        regions.add(new Rectangle(Color.WHITE, 1193.5F, 732, 88, 88));
+
+        //Container lines
+
+
         //Boats
-        for (int i = 0 ; i < 6  ; i++) {
+        for (int i = 0; i < 6; i++) {
             regions.add(new Rectangle(Color.WHITE, 212.5F, 73 + 182.6F * i, 116, 84));
             regions.add(new Rectangle(Color.BLACK, 328.5F, 105 + 182.6F * i, 84, 20));
         }
@@ -64,10 +74,12 @@ public class SurfaceMap extends RegionContainer implements Displayable {
         super(regions);
     }
 
+    @Contract(pure = true)
     public static SurfaceMap get() {
         return mSurfaceMap;
     }
 
+    @NotNull
     public static Point getRandomPoint() {
         return new Point(
                 boundingRectangle.getX1() + (float) (Math.random()) * boundingRectangle.getWidth(),

@@ -3,7 +3,6 @@ package PC.GUI;
 import Common.utils.Logger;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
-import org.omg.PortableInterceptor.LOCATION_FORWARD;
 
 import java.awt.*;
 

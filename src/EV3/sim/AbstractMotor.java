@@ -35,7 +35,7 @@ public class AbstractMotor implements RegulatedMotor {
 
         rotationsTraveled = Math.min(rotationsTraveled, Math.abs(goalTachoCount - tachoCountAtStart)); //If rotated more then necessary reduce to cap
 
-        if (goalTachoCount < currentTachoCount){
+        if (goalTachoCount < currentTachoCount) {
             rotationsTraveled *= -1;
         }
 

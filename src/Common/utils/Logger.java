@@ -1,9 +1,8 @@
 package Common.utils;
 
-
 import Common.Config;
 import EV3.DataSender;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 public final class Logger {
 

@@ -2,7 +2,6 @@ package Common.mapping;
 
 import Common.utils.Logger;
 import lejos.robotics.geometry.Point;
-import org.omg.PortableInterceptor.LOCATION_FORWARD;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -18,7 +17,7 @@ class FlatLine extends SingleColorRegion {
     FlatLine(int color, float x1, float y1, float length, float hWidth, float angle) {
         super(color);
 
-        if (angle > 90 || angle < 0){
+        if (angle > 90 || angle < 0) {
             Logger.warning(LOG_TAG, "Only tested with angles between 0 and 90");
         }
 
