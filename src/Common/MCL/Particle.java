@@ -11,6 +11,7 @@ public final class Particle {
     private static final String LOG_TAG = Particle.class.getSimpleName();
     private static final float DEFAULT_WEIGHT = 1;
 
+    @NotNull
     private final Pose pose;
     private final float weight;
 
@@ -23,7 +24,7 @@ public final class Particle {
         this(pose.getX(), pose.getY(), pose.getHeading(), weight); // Not directly this.pose = pose because want to keep object immutable
     }
 
-    public Particle(Pose pose) {
+    public Particle(@NotNull Pose pose) {
         this(pose, DEFAULT_WEIGHT);
     }
 

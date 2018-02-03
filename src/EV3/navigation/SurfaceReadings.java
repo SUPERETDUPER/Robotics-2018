@@ -24,6 +24,7 @@ public class SurfaceReadings implements Readings {
         return 0;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "Surface color " + color;

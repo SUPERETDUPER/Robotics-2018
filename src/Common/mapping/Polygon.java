@@ -3,6 +3,7 @@ package Common.mapping;
 import lejos.robotics.geometry.Line;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.geometry.Point2D;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.List;
@@ -31,7 +32,7 @@ class Polygon extends SingleColorRegion {
 
     // Finds polygon by number of intersections check
     @Override
-    public boolean contains(Point point) {
+    public boolean contains(@NotNull Point point) {
         Line hLine = new Line(point.x, point.y, maxX + 1, point.y);
 
         int intersections = 0;
@@ -53,7 +54,7 @@ class Polygon extends SingleColorRegion {
     }
 
     @Override
-    public void displayOnGui(Graphics g) {
+    public void displayOnGui(@NotNull Graphics g) {
         super.displayOnGui(g);
         int[] xValues = new int[points.size()];
         int[] yValues = new int[points.size()];

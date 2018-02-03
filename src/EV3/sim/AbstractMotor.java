@@ -3,6 +3,7 @@ package EV3.sim;
 import Common.utils.Logger;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
+import org.jetbrains.annotations.Nullable;
 
 public class AbstractMotor implements RegulatedMotor {
     private static final String LOG_TAG = AbstractMotor.class.getSimpleName();
@@ -206,6 +207,7 @@ public class AbstractMotor implements RegulatedMotor {
         Logger.warning(LOG_TAG, "Did not implement callback thread for listener");
     }
 
+    @Nullable
     @Override
     public RegulatedMotorListener removeListener() {
         Logger.warning(LOG_TAG, "Did not implement callback thread for listener");

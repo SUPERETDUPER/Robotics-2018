@@ -15,6 +15,7 @@ public final class Brick {
         } else {
             try {
                 Logger.info(LOG_TAG, "Press enter to continue");
+                //noinspection ResultOfMethodCallIgnored
                 System.in.read();
             } catch (IOException e) {
                 Logger.error(LOG_TAG, e.toString());

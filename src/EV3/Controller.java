@@ -5,6 +5,7 @@ import EV3.hardware.ChassisBuilder;
 import EV3.navigation.*;
 import lejos.robotics.navigation.*;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class Controller implements MoveListener, NavigationListener {
 
@@ -15,7 +16,9 @@ public class Controller implements MoveListener, NavigationListener {
 
     private static final Controller controller = new Controller();
 
+    @NotNull
     private final CustomMCLPoseProvider poseProvider;
+    @NotNull
     private final MyNavigator navigator;
 
     private Controller() {
@@ -34,6 +37,7 @@ public class Controller implements MoveListener, NavigationListener {
         navigator.singleStep(true);
     }
 
+    @NotNull
     @Contract(pure = true)
     public static Controller get() {
         return controller;
@@ -77,11 +81,12 @@ public class Controller implements MoveListener, NavigationListener {
         Logger.info(LOG_TAG, poseProvider.getPose().toString());
     }
 
+    @NotNull
     public Pose getPose() {
         return poseProvider.getPose();
     }
 
-    public void update(Readings readings) {
+    public void update(@NotNull Readings readings) {
         poseProvider.update(readings);
     }
 }

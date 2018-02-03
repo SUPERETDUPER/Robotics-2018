@@ -2,6 +2,7 @@ package Common.mapping;
 
 import Common.utils.Logger;
 import lejos.robotics.geometry.Point;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ Lines who's ends are horizontal
 class FlatLine extends SingleColorRegion {
     private static final String LOG_TAG = FlatLine.class.getSimpleName();
 
+    @NotNull
     private final Polygon flatLine;
 
     FlatLine(int color, float x1, float y1, float length, float hWidth, float angle) {
@@ -33,13 +35,13 @@ class FlatLine extends SingleColorRegion {
     }
 
     @Override
-    public void displayOnGui(Graphics g) {
+    public void displayOnGui(@NotNull Graphics g) {
         super.displayOnGui(g);
         flatLine.displayOnGui(g);
     }
 
     @Override
-    public boolean contains(Point point) {
+    public boolean contains(@NotNull Point point) {
         return flatLine.contains(point);
     }
 }

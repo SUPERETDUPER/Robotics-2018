@@ -4,8 +4,10 @@ import Common.Config;
 import Common.mapping.SurfaceMap;
 import EV3.Controller;
 import lejos.hardware.sensor.EV3ColorSensor;
+import org.jetbrains.annotations.Nullable;
 
 public class ColorSensor {
+    @Nullable
     private static final EV3ColorSensor surfaceColorSensor;
 
     static {

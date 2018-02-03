@@ -35,7 +35,7 @@ public class MCLData implements Transmittable, Displayable {
     }
 
     @Override
-    public synchronized void displayOnGui(Graphics g) {
+    public synchronized void displayOnGui(@NotNull Graphics g) {
         if (particles != null) {
             g.setColor(Color.BLUE);
 

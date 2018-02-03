@@ -3,6 +3,7 @@ package Common.mapping;
 import Common.utils.Logger;
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -45,7 +46,7 @@ public abstract class SingleColorRegion implements ColoredRegion {
     }
 
     @Override
-    public void displayOnGui(Graphics g) {
+    public void displayOnGui(@NotNull Graphics g) {
         g.setColor(getDisplayColor());
     }
 }

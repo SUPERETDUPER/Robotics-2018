@@ -5,6 +5,7 @@ import Common.MCL.MCLData;
 import Common.mapping.SurfaceMap;
 import Common.utils.Logger;
 import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,12 +50,12 @@ public class GUI {
         window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
-    public static void updateMCLData(DataInputStream dis) throws IOException {
+    public static void updateMCLData(@NotNull DataInputStream dis) throws IOException {
         mclData.loadObject(dis);
         window.repaint();
     }
 
-    public static void updatePaths(DataInputStream dis) throws IOException {
+    public static void updatePaths(@NotNull DataInputStream dis) throws IOException {
         path.loadObject(dis);
         window.repaint();
     }
@@ -67,6 +68,7 @@ public class GUI {
         window.dispose();
     }
 
+    @SuppressWarnings("EmptyMethod")
     public static void init() {
     }
 }

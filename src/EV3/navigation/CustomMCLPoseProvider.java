@@ -37,15 +37,17 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
     private static final Random random = new Random();
 
+    @NotNull
     private final MoveProvider mp;
 
+    @NotNull
     private final OdometryPoseProvider odometryPoseProvider;
     private ArrayList<Particle> particles;
 
     private float distanceAlreadyTraveled;
     private float angleAlreadyRotated;
 
-    public CustomMCLPoseProvider(@NotNull MoveProvider moveProvider, Pose startingPose) {
+    public CustomMCLPoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose startingPose) {
         this.mp = moveProvider;
         this.odometryPoseProvider = new OdometryPoseProvider(mp);
         moveProvider.addMoveListener(this);
@@ -60,7 +62,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     }
 
     @Override
-    public synchronized void moveStarted(Move move, MoveProvider moveProvider) {
+    public synchronized void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
         distanceAlreadyTraveled = 0;
         angleAlreadyRotated = 0;
 
@@ -68,7 +70,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     }
 
     @Override
-    public synchronized void moveStopped(Move move, MoveProvider moveProvider) {
+    public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped " + move.toString());
         moveParticles(move);
     }

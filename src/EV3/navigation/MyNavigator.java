@@ -8,6 +8,7 @@ package EV3.navigation;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -121,6 +122,7 @@ public class MyNavigator implements WaypointListener {
         this.callListeners();
     }
 
+    @Nullable
     public Waypoint getWaypoint() {
         return this._path.size() <= 0 ? null : this._path.get(0);
     }

@@ -43,7 +43,7 @@ public class DataSender {
         Logger.info(LOG_TAG, "Connected to Robotics2018.PC");
     }
 
-    public synchronized static void sendLogMessage(String message) {
+    public synchronized static void sendLogMessage(@NotNull String message) {
         if (isConnected) {
             try {
                 dos.writeByte(EventTypes.LOG.ordinal());
@@ -58,7 +58,7 @@ public class DataSender {
         }
     }
 
-    public static void sendMCLData(MCLData data) {
+    public static void sendMCLData(@NotNull MCLData data) {
         if (isConnected) {
             sendTransmittable(EventTypes.MCL_DATA, data);
         } else {
@@ -66,7 +66,7 @@ public class DataSender {
         }
     }
 
-    public static void sendPath(Path path) {
+    public static void sendPath(@NotNull Path path) {
         if (isConnected) {
             sendTransmittable(EventTypes.PATH, path);
         } else {

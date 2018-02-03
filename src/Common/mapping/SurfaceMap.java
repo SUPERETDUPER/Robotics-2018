@@ -74,6 +74,7 @@ public class SurfaceMap extends RegionContainer implements Displayable {
         super(regions);
     }
 
+    @NotNull
     @Contract(pure = true)
     public static SurfaceMap get() {
         return mSurfaceMap;
@@ -88,7 +89,7 @@ public class SurfaceMap extends RegionContainer implements Displayable {
     }
 
     @Override
-    public boolean contains(Point point) {
+    public boolean contains(@NotNull Point point) {
         return boundingRectangle.contains(point);
     }
 }

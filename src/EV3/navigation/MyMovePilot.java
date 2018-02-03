@@ -11,6 +11,7 @@ import lejos.robotics.navigation.Move.MoveType;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.RotateMoveController;
 import lejos.utility.Delay;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -139,6 +140,7 @@ public class MyMovePilot implements RotateMoveController {
         }
     }
 
+    @NotNull
     public Move getMovement() {
         return this.isMoving ? this.chassis.getDisplacement(new Move(0, 0, false)) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
     }

@@ -6,12 +6,13 @@ import Common.utils.Logger;
 import PC.GUI.GUI;
 import lejos.utility.Delay;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class DataReceiver {
+class DataReceiver {
     private static final String LOG_TAG = DataReceiver.class.getSimpleName();
     private static DataInputStream dis;
     private static Socket socket;
@@ -71,6 +72,7 @@ public class DataReceiver {
         }
     }
 
+    @NotNull
     @Contract(pure = true)
     private static String getIpAddress() {
         return Config.useSimulator ? "localhost" : Config.EV3_IP_ADDRESS;

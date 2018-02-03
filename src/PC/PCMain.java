@@ -6,7 +6,7 @@ import PC.GUI.GUI;
 
 import java.io.IOException;
 
-public class PCMain {
+class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 
