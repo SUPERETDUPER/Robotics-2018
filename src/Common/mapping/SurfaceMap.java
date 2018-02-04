@@ -24,7 +24,6 @@
 
 package Common.mapping;
 
-import PC.GUI.Displayable;
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.Contract;
@@ -34,7 +33,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SurfaceMap extends RegionContainer implements Displayable {
+public class SurfaceMap implements ColoredRegion {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
     private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143) {
@@ -48,7 +47,6 @@ public class SurfaceMap extends RegionContainer implements Displayable {
     private static final ArrayList<ColoredRegion> regions = new ArrayList<>();
 
     static {
-        regions.add(boundingRectangle);
         regions.add(new Rectangle(Color.BLUE, 0, 0, 412.5F, 1143));
 
         //Vertical lines
@@ -110,7 +108,7 @@ public class SurfaceMap extends RegionContainer implements Displayable {
     private static final SurfaceMap mSurfaceMap = new SurfaceMap();
 
     private SurfaceMap() {
-        super(regions);
+
     }
 
     @NotNull
@@ -130,5 +128,27 @@ public class SurfaceMap extends RegionContainer implements Displayable {
     @Override
     public boolean contains(@NotNull Point point) {
         return boundingRectangle.contains(point);
+    }
+
+    @Override
+    public void displayOnGui(Graphics g) {
+        boundingRectangle.displayOnGui(g);
+
+        for (ColoredRegion region : regions) {
+            region.displayOnGui(g);
+        }
+    }
+
+    @Override
+    public int getColorAtPoint(Point point) {
+        int colorUnderPoint = boundingRectangle.getColorAtPoint(point);
+
+        for (ColoredRegion region : regions) {
+            if (region.contains(point)) {
+                colorUnderPoint = region.getColorAtPoint(point);
+            }
+        }
+
+        return colorUnderPoint;
     }
 }
