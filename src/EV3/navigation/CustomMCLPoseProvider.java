@@ -98,6 +98,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped " + move.toString());
         moveParticles(move);
+        updatePC();
     }
 
     private void updatePC() {
@@ -113,9 +114,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     }
 
     public synchronized void update(@NotNull Readings readings) {
-        Move move = mp.getMovement();
-
-        moveParticles(move);
+        moveParticles(mp.getMovement()); //Shift particles
         weightParticles(readings); //Recalculate all the particle weights
         resample();//Re samples for highest weights
         estimateNewPose(); //Updates current pose
@@ -130,40 +129,38 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
             case STOP:
                 return;
             case TRAVEL:
-                if (move.getDistanceTraveled() - distanceAlreadyTraveled == 0) {
-                    return;
-                }
-
                 shiftParticles(move.getDistanceTraveled() - distanceAlreadyTraveled);
-                distanceAlreadyTraveled = move.getDistanceTraveled();
                 break;
             case ROTATE:
-                if (move.getAngleTurned() - angleAlreadyRotated == 0) {
-                    return;
-                }
-
                 rotateParticles(move.getAngleTurned() - angleAlreadyRotated);
-                angleAlreadyRotated = move.getAngleTurned();
                 break;
             default:
                 Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
-                return;
         }
-        updatePC();
-        Logger.info(LOG_TAG, "Particles shifted : " + move.toString());
     }
 
-    private synchronized void rotateParticles(float angleRotated) {
+    private synchronized void rotateParticles(float angleToRotate) {
+        if (angleToRotate == 0) {
+            return;
+        }
+
         for (int i = 0; i < NUM_PARTICLES; i++) {
             Pose particlePose = particles.get(i).getPose();
 
-            float heading = (particlePose.getHeading() + angleRotated + (float) (angleRotated * ANGLE_NOISE_FACTOR * random.nextGaussian()) + 0.5F) % 360;
+            float heading = (particlePose.getHeading() + angleToRotate + (float) (angleToRotate * ANGLE_NOISE_FACTOR * random.nextGaussian()) + 0.5F) % 360;
 
             particles.set(i, new Particle(particlePose.getX(), particlePose.getY(), heading, particles.get(i).getWeight()));
         }
+
+        angleAlreadyRotated += angleToRotate;
+        Logger.info(LOG_TAG, "Particles rotated by " + angleToRotate);
     }
 
     private synchronized void shiftParticles(float distance) {
+        if (distance == 0) {
+            return;
+        }
+
         for (int i = 0; i < NUM_PARTICLES; i++) {
             Pose pose = particles.get(i).getPose();
 
@@ -178,6 +175,10 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
             particles.set(i, new Particle(x, y, pose.getHeading(), particles.get(i).getWeight()));
         }
+
+        distanceAlreadyTraveled += distance;
+
+        Logger.info(LOG_TAG, "Particles shifted by " + distance);
     }
 
     private synchronized void weightParticles(@NotNull Readings readings) {

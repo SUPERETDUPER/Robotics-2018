@@ -45,7 +45,6 @@ public class SurfaceMap extends RegionContainer implements Displayable {
         }
     };
 
-
     private static final ArrayList<ColoredRegion> regions = new ArrayList<>();
 
     static {
