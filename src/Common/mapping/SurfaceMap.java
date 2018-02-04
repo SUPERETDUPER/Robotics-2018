@@ -128,7 +128,7 @@ public class SurfaceMap implements ColoredRegion {
     }
 
     @Override
-    public void displayOnGui(Graphics g) {
+    public void displayOnGui(@NotNull Graphics g) {
         boundingRectangle.displayOnGui(g);
 
         for (ColoredRegion region : regions) {

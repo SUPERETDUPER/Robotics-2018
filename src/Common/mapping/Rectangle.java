@@ -51,6 +51,7 @@ class Rectangle extends SingleColorRegion {
         //return x1 < point.getX() && point.getX() < x1 + w && y1 < point.getY() && point.getY() < y1 + h;
     }
 
+    @NotNull
     Point getRandomPoint() {
         return new Point(
                 (float) (mRectangle.getX() + Math.random() * mRectangle.getWidth()),

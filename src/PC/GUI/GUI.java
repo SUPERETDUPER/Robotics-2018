@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
+//TODO Add event listener for panel closing
 public class GUI {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
@@ -85,8 +87,8 @@ public class GUI {
         window.repaint();
     }
 
-    public static Pose getCurrentPose() {
-        return mclData.getCurrentPose();
+    static Pose getCurrentPose() {
+        return mclData.getPose();
     }
 
     public static void close() {
