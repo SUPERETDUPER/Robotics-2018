@@ -51,19 +51,10 @@ class Rectangle extends SingleColorRegion {
         //return x1 < point.getX() && point.getX() < x1 + w && y1 < point.getY() && point.getY() < y1 + h;
     }
 
-    public float getX1() {
-        return mRectangle.x;
-    }
-
-    public float getY1() {
-        return mRectangle.y;
-    }
-
-    public float getHeight() {
-        return mRectangle.height;
-    }
-
-    public float getWidth() {
-        return mRectangle.width;
+    Point getRandomPoint() {
+        return new Point(
+                (float) (mRectangle.getX() + Math.random() * mRectangle.getWidth()),
+                (float) (mRectangle.getY() + Math.random() * mRectangle.getHeight())
+        );
     }
 }

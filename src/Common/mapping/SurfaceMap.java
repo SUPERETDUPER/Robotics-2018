@@ -119,10 +119,7 @@ public class SurfaceMap implements ColoredRegion {
 
     @NotNull
     public static Point getRandomPoint() {
-        return new Point(
-                boundingRectangle.getX1() + (float) (Math.random()) * boundingRectangle.getWidth(),
-                boundingRectangle.getY1() + (float) (Math.random()) * boundingRectangle.getHeight()
-        );
+        return boundingRectangle.getRandomPoint();
     }
 
     @Override
