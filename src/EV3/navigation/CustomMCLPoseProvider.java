@@ -69,17 +69,16 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
     private final OdometryPoseProvider odometryPoseProvider;
     private List<Particle> particles;
 
-    private float distanceAlreadyTraveled;
-    private float angleAlreadyRotated;
+    private float distanceParticlesTraveled;
+    private float distanceParticlesRotated;
 
     public CustomMCLPoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose startingPose) {
         this.mp = moveProvider;
         this.odometryPoseProvider = new OdometryPoseProvider(mp);
         moveProvider.addMoveListener(this);
-
-
         odometryPoseProvider.setPose(startingPose);
-        this.particles = generateNewParticleSet(startingPose);
+
+        this.particles = getNewParticleSet(startingPose);
 
         Logger.info(LOG_TAG, "Starting at " + startingPose.toString() + ". particles generated");
 
@@ -88,15 +87,15 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
 
     @Override
     public synchronized void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
-        distanceAlreadyTraveled = 0;
-        angleAlreadyRotated = 0;
+        distanceParticlesTraveled = 0;
+        distanceParticlesRotated = 0;
 
-        Logger.info(LOG_TAG, "Move started " + move.toString());
+        Logger.debug(LOG_TAG, "Move started " + move.toString());
     }
 
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Move stopped " + move.toString());
+        Logger.debug(LOG_TAG, "Move stopped " + move.toString());
         moveParticles(move);
         updatePC();
     }
@@ -105,7 +104,6 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         if (Config.usePC) {
             DataSender.sendMCLData(new MCLData(particles, odometryPoseProvider.getPose()));
         }
-        //Brick.waitForUserConfirmation();
     }
 
     @NotNull
@@ -118,10 +116,9 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         weightParticles(readings); //Recalculate all the particle weights
         resample();//Re samples for highest weights
         estimateNewPose(); //Updates current pose
+        updatePC(); //SendToPc
 
         Logger.info(LOG_TAG, "Updated with readings. New position is " + odometryPoseProvider.getPose().toString());
-
-        updatePC(); //SendToPc
     }
 
     private synchronized void moveParticles(@NotNull Move move) {
@@ -129,10 +126,10 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
             case STOP:
                 return;
             case TRAVEL:
-                shiftParticles(move.getDistanceTraveled() - distanceAlreadyTraveled);
+                shiftParticles(move.getDistanceTraveled() - distanceParticlesTraveled);
                 break;
             case ROTATE:
-                rotateParticles(move.getAngleTurned() - angleAlreadyRotated);
+                rotateParticles(move.getAngleTurned() - distanceParticlesRotated);
                 break;
             default:
                 Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
@@ -152,7 +149,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
             particles.set(i, new Particle(particlePose.getX(), particlePose.getY(), heading, particles.get(i).getWeight()));
         }
 
-        angleAlreadyRotated += angleToRotate;
+        distanceParticlesRotated += angleToRotate;
         Logger.info(LOG_TAG, "Particles rotated by " + angleToRotate);
     }
 
@@ -172,11 +169,10 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
             float x = (float) (pose.getX() + xm + DISTANCE_NOISE_FACTOR * xm * random.nextGaussian());
             float y = (float) (pose.getY() + ym + DISTANCE_NOISE_FACTOR * ym * random.nextGaussian());
 
-
             particles.set(i, new Particle(x, y, pose.getHeading(), particles.get(i).getWeight()));
         }
 
-        distanceAlreadyTraveled += distance;
+        distanceParticlesTraveled += distance;
 
         Logger.info(LOG_TAG, "Particles shifted by " + distance);
     }
@@ -216,7 +212,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         }
 
         if (particlesGenerated == 0) {
-            newParticles = generateNewParticleSet();
+            newParticles = getNewParticleSet();
             Logger.warning(LOG_TAG, "Bad resample ; regenerated all particles");
         } else if (particlesGenerated < NUM_PARTICLES) {
             for (int i = particlesGenerated; i < NUM_PARTICLES; i++) {
@@ -259,9 +255,9 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
         odometryPoseProvider.setPose(new Pose(estimatedX, estimatedY, estimatedAngle));
     }
 
-    public void setPose(@NotNull Pose pose) {
+    public synchronized void setPose(@NotNull Pose pose) {
         odometryPoseProvider.setPose(pose);
-        particles = generateNewParticleSet(pose);
+        particles = getNewParticleSet(pose);
 
         updatePC();
     }
@@ -270,7 +266,7 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
      * Generates a new particle set around a specific point with weights 0.5
      */
     @NotNull
-    private static ArrayList<Particle> generateNewParticleSet(@NotNull Pose centerPose) {
+    private static ArrayList<Particle> getNewParticleSet(@NotNull Pose centerPose) {
         ArrayList<Particle> particles = new ArrayList<>(NUM_PARTICLES);
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
@@ -292,25 +288,14 @@ public class CustomMCLPoseProvider implements PoseProvider, MoveListener {
      * Generates a new particle set per the reading
      */
     @NotNull
-    private static ArrayList<Particle> generateNewParticleSet() {
+    private static ArrayList<Particle> getNewParticleSet() {
         ArrayList<Particle> particles = new ArrayList<>(NUM_PARTICLES);
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
-            particles.add(generateParticle());
+            Point randomPoint = SurfaceMap.getRandomPoint();
+            particles.add(new Particle(randomPoint.x, randomPoint.y, (float) (Math.random() * 360), 1));
         }
 
         return particles;
-    }
-
-    /**
-     * Generates a particle with a random position and weight corresponding to the reading
-     */
-    @NotNull
-    private static Particle generateParticle() {
-        Point point = SurfaceMap.getRandomPoint();
-
-        float angle = (float) (Math.random() * 360);
-
-        return new Particle(point.x, point.y, angle);
     }
 }

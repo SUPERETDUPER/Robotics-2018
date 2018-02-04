@@ -94,7 +94,7 @@ public class Controller implements MoveListener, NavigationListener {
         Logger.info(LOG_TAG, "At Waypoint");
     }
 
-    void goTo() {
+    void testMethod() {
         navigator.addWaypoint(new Waypoint(600, 200));
         navigator.addWaypoint(new Waypoint(1200, 400));
         navigator.addWaypoint(new Waypoint(300, 1000));

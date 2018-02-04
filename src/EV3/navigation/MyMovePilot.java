@@ -22,11 +22,6 @@
  * SOFTWARE.
  */
 
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package EV3.navigation;
 
 import lejos.robotics.chassis.Chassis;
@@ -127,7 +122,12 @@ public class MyMovePilot implements RotateMoveController {
         this.currentMove = new Move(MoveType.TRAVEL, (float) distance, 0.0F, (float) getLinearSpeed(), (float) getAngularSpeed(), isMoving);
         this.chassis.moveStart();
         this.chassis.travel(distance);
-        this.movementStart(immediateReturn);
+        this.notifyMovementStart();
+        this.isMoving = true;
+
+        if (!immediateReturn) {
+            waitForStop();
+        }
     }
 
     public void rotate(double angle, boolean immediateReturn) {
@@ -138,7 +138,12 @@ public class MyMovePilot implements RotateMoveController {
         this.currentMove = new Move(MoveType.ROTATE, 0.0F, (float) angle, (float) getLinearSpeed(), (float) getAngularSpeed(), isMoving);
         this.chassis.moveStart();
         this.chassis.arc(0, angle);
-        this.movementStart(immediateReturn);
+        this.notifyMovementStart();
+        this.isMoving = true;
+
+        if (!immediateReturn) {
+            waitForStop();
+        }
     }
 
     public void stop() {
@@ -156,21 +161,15 @@ public class MyMovePilot implements RotateMoveController {
         return this.isMoving;
     }
 
-    private void movementStart(boolean immediateReturn) {
+    private void notifyMovementStart() {
         for (MoveListener ml : this._listeners) {
             ml.moveStarted(this.currentMove, this);
-        }
-
-        this.isMoving = true;
-
-        if (!immediateReturn) {
-            waitForStop();
         }
     }
 
     @NotNull
     public Move getMovement() {
-        return this.isMoving ? this.chassis.getDisplacement(new Move(0, 0, false)) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
+        return this.isMoving ? this.chassis.getDisplacement(currentMove) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
     }
 
     public void addMoveListener(MoveListener listener) {
@@ -192,7 +191,7 @@ public class MyMovePilot implements RotateMoveController {
                     }
 
                     if (!MyMovePilot.this.chassis.isMoving()) {
-                        this.movementStop();
+                        this.notifyMoveStop();
                         MyMovePilot.this.isMoving = false;
                     }
                 }
@@ -201,7 +200,7 @@ public class MyMovePilot implements RotateMoveController {
             }
         }
 
-        private void movementStop() {
+        private void notifyMoveStop() {
             MyMovePilot.this.currentMove = MyMovePilot.this.chassis.getDisplacement(MyMovePilot.this.currentMove);
 
             for (MoveListener ml : MyMovePilot.this._listeners) {

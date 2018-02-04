@@ -30,7 +30,6 @@ import Common.MCL.MCLData;
 import Common.utils.Logger;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataOutputStream;
@@ -44,12 +43,7 @@ public class DataSender {
     private static DataOutputStream dos;
     private static boolean isConnected = false;
 
-    @Contract(pure = true)
-    public static boolean isConnected() {
-        return isConnected;
-    }
-
-    public static void connect() {
+    static void connect() {
         if (isConnected) {
             Logger.warning(LOG_TAG, "Already connected to Robotics2018.PC");
         }
@@ -78,7 +72,7 @@ public class DataSender {
                 Logger.error(LOG_TAG, "Failed to send log message");
             }
         } else {
-            Logger.warning(LOG_TAG, "Not connected cannot send log message");
+            System.out.println(message);
         }
     }
 
@@ -98,7 +92,7 @@ public class DataSender {
         }
     }
 
-    public synchronized static void sendTransmittable(@NotNull EventTypes eventType, @NotNull Transmittable transmittable) {
+    private synchronized static void sendTransmittable(@NotNull EventTypes eventType, @NotNull Transmittable transmittable) {
         try {
             dos.writeByte(eventType.ordinal());
             transmittable.dumpObject(dos);
