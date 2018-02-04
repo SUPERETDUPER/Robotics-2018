@@ -94,7 +94,7 @@ public class MCLData implements Transmittable, Displayable {
         g.fillPolygon(xValues, yValues, xValues.length);
     }
 
-    private static void displayParticleWeight(@NotNull Particle particle, @NotNull Graphics g) {
+    private static void displayParticleWeight(@NotNull Particle particle, Graphics g) {
         g.drawString(String.valueOf(particle.getWeight()), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
     }
 
