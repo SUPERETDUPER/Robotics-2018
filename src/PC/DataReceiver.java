@@ -26,7 +26,7 @@ package PC;
 
 import Common.Config;
 import Common.EventTypes;
-import Common.utils.Logger;
+import Common.Logger;
 import PC.GUI.GUI;
 import lejos.utility.Delay;
 import org.jetbrains.annotations.Contract;
@@ -44,7 +44,7 @@ class DataReceiver {
     static void connect() {
         for (int attempt = 0; attempt < 6; attempt++) {
             try {
-                socket = new Socket(getIpAddress(), Config.PORT_TO_CONNECT);
+                socket = new Socket(getIpAddress(), Config.PORT_TO_CONNECT_ON_EV3);
                 dis = new DataInputStream(socket.getInputStream());
 
                 Logger.info(LOG_TAG, "Connected to DataSender");
@@ -61,6 +61,7 @@ class DataReceiver {
     }
 
     static void monitorForData() throws IOException {
+        //noinspection InfiniteLoopStatement
         for (; ; Thread.yield()) {
             DataReceiver.read();
         }
@@ -70,7 +71,7 @@ class DataReceiver {
     private synchronized static void read() throws IOException {
         EventTypes dataType = EventTypes.values()[dis.readByte()];
 
-        Logger.debug(LOG_TAG, "Received Event " + dataType.name());
+//        Logger.debug(LOG_TAG, "Received Event " + dataType.name());
 
         switch (dataType) {
             case MCL_DATA:

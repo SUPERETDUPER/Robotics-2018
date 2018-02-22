@@ -30,6 +30,9 @@ import EV3.Controller;
 import lejos.hardware.sensor.EV3ColorSensor;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Static class allowing access to color sensors
+ */
 public class ColorSensor {
     @Nullable
     private static final EV3ColorSensor surfaceColorSensor;

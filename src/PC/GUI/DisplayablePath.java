@@ -1,6 +1,6 @@
 package PC.GUI;
 
-import Common.utils.Logger;
+import Common.Logger;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;

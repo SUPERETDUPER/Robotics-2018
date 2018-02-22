@@ -25,9 +25,9 @@
 package PC.GUI;
 
 import Common.Config;
-import Common.MCL.MCLData;
+import Common.Particles.ParticleData;
 import Common.mapping.SurfaceMap;
-import Common.utils.Logger;
+import Common.Logger;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +47,7 @@ public class GUI {
     private static final JFrame window = new JFrame();
 
     private static final DisplayablePath path = new DisplayablePath();
-    private static final MCLData mclData = new MCLData();
+    private static final ParticleData mclData = new ParticleData();
 
     private static final List<Displayable> contents = new ArrayList<>(Arrays.asList(
             SurfaceMap.get(),
@@ -57,14 +57,14 @@ public class GUI {
 
     private static final JComponent mainComponent = new JComponent() {
         @Override
-        protected void paintComponent(Graphics g) {
-            Logger.info(LOG_TAG, "Drawing GUI...");
+        protected synchronized void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
 
-            super.paintComponent(g2d);
+            super.paintComponent(g);
 
             g2d.scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
 
+//            Logger.debug(LOG_TAG, "Drawing GUI...");
             for (Displayable layer : contents) {
                 layer.displayOnGui(g2d);
             }
@@ -88,7 +88,7 @@ public class GUI {
     }
 
     static Pose getCurrentPose() {
-        return mclData.getPose();
+        return mclData.getCurrentPose();
     }
 
     public static void close() {

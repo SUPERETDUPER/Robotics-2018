@@ -25,7 +25,7 @@
 package EV3.hardware;
 
 import Common.Config;
-import Common.utils.Logger;
+import Common.Logger;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 

@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-package Common.MCL;
+package Common.Particles;
 
+import Common.Logger;
 import PC.GUI.Displayable;
 import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
@@ -37,29 +38,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MCLData implements Transmittable, Displayable {
-    private static final String LOG_TAG = MCLData.class.getSimpleName();
+/**
+ * Object that gets sent from the EV3 to the computer GUI containing the Particles particles and the currentPosition
+ */
+public class ParticleData implements Transmittable, Displayable {
+    private static final String LOG_TAG = ParticleData.class.getSimpleName();
 
     private static final float DISPLAY_TAIL_LENGTH = 30;
     private static final float DISPLAY_TAIL_ANGLE = 10;
 
     private List<Particle> particles;
-    private Pose pose;
+    private Pose currentPose;
 
-    public MCLData() {
+    public ParticleData() {
     }
 
-    public MCLData(List<Particle> particles, Pose currentPose) {
+    public ParticleData(List<Particle> particles, Pose currentPose) {
         this.particles = particles;
-        this.pose = currentPose;
+        this.currentPose = currentPose;
     }
 
-    public Pose getPose() {
-        return pose;
+    public Pose getCurrentPose() {
+        return currentPose;
     }
 
     @Override
     public synchronized void displayOnGui(@NotNull Graphics g) {
+//        Logger.info(LOG_TAG, "Drawing mcl data");
         if (particles != null) {
             g.setColor(Color.BLUE);
 
@@ -69,9 +74,9 @@ public class MCLData implements Transmittable, Displayable {
             }
         }
 
-        if (pose != null) {
+        if (currentPose != null) {
             g.setColor(Color.RED);
-            displayPoseOnGui(pose, g);
+            displayPoseOnGui(currentPose, g);
         }
     }
 
@@ -100,9 +105,9 @@ public class MCLData implements Transmittable, Displayable {
 
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
-        dos.writeBoolean(pose != null);
-        if (pose != null) {
-            pose.dumpObject(dos);
+        dos.writeBoolean(currentPose != null);
+        if (currentPose != null) {
+            currentPose.dumpObject(dos);
         }
 
         if (particles == null) {
@@ -119,8 +124,8 @@ public class MCLData implements Transmittable, Displayable {
 
     public synchronized void loadObject(@NotNull DataInputStream dis) throws IOException {
         if (dis.readBoolean()) {
-            this.pose = new Pose();
-            this.pose.loadObject(dis);
+            this.currentPose = new Pose();
+            this.currentPose.loadObject(dis);
         }
 
         int numOfParticles = dis.readInt();

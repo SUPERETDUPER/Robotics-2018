@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package Common.MCL;
+package Common.Particles;
 
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Immutable
+ * Immutable particle (position + weight)
  */
 public final class Particle {
     private static final String LOG_TAG = Particle.class.getSimpleName();

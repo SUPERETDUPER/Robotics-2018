@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.List;
 
-/*
-Any type of polygon
+/**
+Any colored region that is a polygon
  */
 class Polygon extends SingleColorRegion {
 

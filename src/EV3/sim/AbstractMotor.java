@@ -24,11 +24,14 @@
 
 package EV3.sim;
 
-import Common.utils.Logger;
+import Common.Logger;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Replicates the behaviour of an EV3 motor. Is used by the simulator
+ */
 public class AbstractMotor implements RegulatedMotor {
     private static final String LOG_TAG = AbstractMotor.class.getSimpleName();
 
@@ -39,8 +42,9 @@ public class AbstractMotor implements RegulatedMotor {
     private final String name;
 
     private int currentTachoCount = 0;
-    private int tachoCountAtStart = 0;
-    private int goalTachoCount;
+    private int startTachoCount = 0;
+    private int endTachoCount;
+
     private long timeAtStart;
 
     private int speed = DEFAULT_SPEED;
@@ -50,31 +54,31 @@ public class AbstractMotor implements RegulatedMotor {
     }
 
     private synchronized void update() {
-        if (goalTachoCount == currentTachoCount) {
+        if (endTachoCount == currentTachoCount) {
             //Logger.debug(LOG_TAG, name + " : Not moving nothing to debug");
             return;
         }
 
         int rotationsTraveled = (int) (System.currentTimeMillis() - timeAtStart) * speed / 1000; //distance = speed * time
 
-        rotationsTraveled = Math.min(rotationsTraveled, Math.abs(goalTachoCount - tachoCountAtStart)); //If rotated more then necessary reduce to cap
+        rotationsTraveled = Math.min(rotationsTraveled, Math.abs(endTachoCount - startTachoCount)); //If rotated more then necessary reduce to cap
 
-        if (goalTachoCount < currentTachoCount) {
+        if (endTachoCount < currentTachoCount) {
             rotationsTraveled *= -1;
         }
 
-        currentTachoCount = tachoCountAtStart + rotationsTraveled;
+        currentTachoCount = startTachoCount + rotationsTraveled;
     }
 
     @Override
     public synchronized void stop(boolean b) {
         update();
-        goalTachoCount = currentTachoCount;
+        endTachoCount = currentTachoCount;
     }
 
     @Override
     public synchronized void waitComplete() {
-        while (currentTachoCount != goalTachoCount) {
+        while (currentTachoCount != endTachoCount) {
             update();
             Thread.yield();
         }
@@ -84,11 +88,11 @@ public class AbstractMotor implements RegulatedMotor {
     public synchronized void rotateTo(int i, boolean b) {
         update();
 
-        tachoCountAtStart = currentTachoCount;
+        startTachoCount = currentTachoCount;
         timeAtStart = System.currentTimeMillis();
-        goalTachoCount = i;
+        endTachoCount = i;
 
-        Logger.debug(LOG_TAG, name + " : Moving motor by " + i + "...");
+//        Logger.debug(LOG_TAG, name + " : Moving motor by " + i + "...");
 
         if (!b) {
             waitComplete();
@@ -99,11 +103,11 @@ public class AbstractMotor implements RegulatedMotor {
     public synchronized int getLimitAngle() {
         update();
 
-        if (goalTachoCount == currentTachoCount) {
+        if (endTachoCount == currentTachoCount) {
             Logger.warning(LOG_TAG, name + "Tried to getChassis limit angle but not moving");
         }
 
-        return goalTachoCount;
+        return endTachoCount;
     }
 
     @Override
@@ -116,7 +120,7 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public synchronized boolean isMoving() {
         update();
-        return goalTachoCount != currentTachoCount;
+        return endTachoCount != currentTachoCount;
     }
 
     @Override
@@ -128,8 +132,8 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public synchronized void resetTachoCount() {
         update();
-        tachoCountAtStart -= currentTachoCount;
-        goalTachoCount -= currentTachoCount;
+        startTachoCount -= currentTachoCount;
+        endTachoCount -= currentTachoCount;
         currentTachoCount = 0;
         Logger.warning(LOG_TAG, "Might not work with rotateTo method");
     }
@@ -137,7 +141,7 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public int getRotationSpeed() {
         update();
-        return goalTachoCount == currentTachoCount ? 0 : speed; //Ternary operator
+        return endTachoCount == currentTachoCount ? 0 : speed; //Ternary operator
     }
 
     @Override

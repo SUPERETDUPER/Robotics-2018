@@ -25,7 +25,7 @@
 package PC;
 
 import Common.Config;
-import Common.utils.Logger;
+import Common.Logger;
 import PC.GUI.GUI;
 
 import java.io.IOException;

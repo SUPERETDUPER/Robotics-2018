@@ -1,6 +1,6 @@
 package Common.mapping;
 
-import Common.utils.Logger;
+import Common.Logger;
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;

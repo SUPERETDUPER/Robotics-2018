@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package Common.utils;
+package Common;
 
-import Common.Config;
 import EV3.DataSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,9 +58,14 @@ public final class Logger {
                 message +
                 ESCAPE_CHAR +
                 ANSI_RESET;
-
     }
 
+    /**
+     * If using PC sends all log messages to PC. Else print on brick
+     *
+     * @param message message to be sent
+     * @param type type of the message. Used to check if should be printed
+     */
     private static void print(String message, @NotNull LogTypes type) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
             if (Config.usePC) {

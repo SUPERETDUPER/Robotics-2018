@@ -31,12 +31,13 @@ class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
 
     public static void main(String[] args) {
-        Config.runningOn = Config.Device.EV3;
+        Config.runningOn = Config.Device.EV3; //DO NOT REMOVE
+
         if (Config.usePC) {
-            DataSender.connect();
+            DataSender.connect(); //Try to connect to PC
         }
 
-        Controller.get().testMethod();
-        Brick.waitForUserConfirmation();
+        Controller.get().testMethod(); //Run test method
+        Brick.waitForUserConfirmation(); //And wait for complete
     }
 }

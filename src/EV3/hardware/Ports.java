@@ -28,6 +28,9 @@ import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 
+/**
+ * Defines the Ports for the sensors and motors
+ */
 class Ports {
     static final Port PORT_MOTOR_LEFT = MotorPort.A;
     static final Port PORT_MOTOR_RIGHT = MotorPort.B;

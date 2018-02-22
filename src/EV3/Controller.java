@@ -24,9 +24,9 @@
 
 package EV3;
 
-import Common.utils.Logger;
+import Common.Logger;
 import EV3.hardware.ChassisBuilder;
-import EV3.navigation.CustomMCLPoseProvider;
+import EV3.navigation.ParticlePoseProvider;
 import EV3.navigation.LineChecker;
 import EV3.navigation.MyMovePilot;
 import EV3.navigation.Readings;
@@ -44,7 +44,7 @@ public class Controller implements MoveListener, NavigationListener {
     private static final Controller controller = new Controller();
 
     @NotNull
-    private final CustomMCLPoseProvider poseProvider;
+    private final ParticlePoseProvider poseProvider;
     @NotNull
     private final Navigator navigator;
 
@@ -57,7 +57,7 @@ public class Controller implements MoveListener, NavigationListener {
         pilot.setAngularSpeed(pilot.getMaxAngularSpeed() * 0.8D);
         pilot.addMoveListener(this);
 
-        poseProvider = new CustomMCLPoseProvider(pilot, STARTING_POSE);
+        poseProvider = new ParticlePoseProvider(pilot, STARTING_POSE);
 
         navigator = new Navigator(pilot, poseProvider);
         navigator.addNavigationListener(this);
@@ -91,7 +91,7 @@ public class Controller implements MoveListener, NavigationListener {
 
     @Override
     public void atWaypoint(Waypoint waypoint, Pose pose, int i) {
-        Logger.info(LOG_TAG, "At Waypoint");
+//        Logger.info(LOG_TAG, "At Waypoint");
     }
 
     void testMethod() {
@@ -101,6 +101,7 @@ public class Controller implements MoveListener, NavigationListener {
         navigator.followPath();
         LineChecker lineChecker = new LineChecker();
         while (navigator.isMoving()) {
+            poseProvider.updatePC();
             lineChecker.check();
             Thread.yield();
         }

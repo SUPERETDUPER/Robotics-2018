@@ -34,10 +34,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-/*
+/**
 Taken from the Lejos Source Code MovePilot class and modified to fix bug with Move STOPPED not getting called with navigator
  */
-
 public class MyMovePilot implements RotateMoveController {
     private final Chassis chassis;
     private final ArrayList<MoveListener> _listeners = new ArrayList<>();
@@ -183,6 +182,7 @@ public class MyMovePilot implements RotateMoveController {
         }
 
         public synchronized void run() {
+            //noinspection InfiniteLoopStatement
             while (true) {
                 for (; MyMovePilot.this.isMoving; Thread.yield()) {
 

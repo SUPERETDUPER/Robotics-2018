@@ -26,8 +26,8 @@ package EV3;
 
 import Common.Config;
 import Common.EventTypes;
-import Common.MCL.MCLData;
-import Common.utils.Logger;
+import Common.Particles.ParticleData;
+import Common.Logger;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ public class DataSender {
         Logger.info(LOG_TAG, "Waiting for PC to connect...");
 
         try {
-            Socket socket = new ServerSocket(Config.PORT_TO_CONNECT).accept();
+            Socket socket = new ServerSocket(Config.PORT_TO_CONNECT_ON_EV3).accept();
             dos = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Failed to connect to PC");
@@ -76,11 +76,11 @@ public class DataSender {
         }
     }
 
-    public static void sendMCLData(@NotNull MCLData data) {
+    public static void sendParticleData(@NotNull ParticleData data) {
         if (isConnected) {
             sendTransmittable(EventTypes.MCL_DATA, data);
         } else {
-            Logger.warning(LOG_TAG, "Not connected; could not send MCLData");
+            Logger.warning(LOG_TAG, "Not connected; could not send ParticleData");
         }
     }
 
@@ -97,7 +97,7 @@ public class DataSender {
             dos.writeByte(eventType.ordinal());
             transmittable.dumpObject(dos);
             dos.flush();
-            //Logger.debug(LOG_TAG, "Sent : " + eventType.name());
+//            Logger.debug(LOG_TAG, "Sent : " + eventType.name());
         } catch (IOException e) {
             isConnected = false;
             Logger.error(LOG_TAG, "Failed to send transmittable type : " + eventType.name());

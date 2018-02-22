@@ -33,6 +33,9 @@ import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Static class to build the chassis object
+ */
 public class ChassisBuilder {
 
     private static final double WHEEL_DIAMETER = 55.9;
