@@ -50,7 +50,7 @@ public class ParticlePoseProvider implements MoveListener, PoseProvider {
 
     private Move completedMove;
 
-    public ParticlePoseProvider() {
+    private ParticlePoseProvider() {
     }
 
     public static ParticlePoseProvider get() {
