@@ -30,6 +30,7 @@ import EV3.navigation.ParticlePoseProvider;
 import EV3.navigation.LineChecker;
 import EV3.navigation.MyMovePilot;
 import EV3.navigation.Readings;
+import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +45,6 @@ public class Controller implements MoveListener, NavigationListener {
     private static final Controller controller = new Controller();
 
     @NotNull
-    private final ParticlePoseProvider poseProvider;
-    @NotNull
     private final Navigator navigator;
 
     private Controller() {
@@ -57,11 +56,14 @@ public class Controller implements MoveListener, NavigationListener {
         pilot.setAngularSpeed(pilot.getMaxAngularSpeed() * 0.8D);
         pilot.addMoveListener(this);
 
-        poseProvider = new ParticlePoseProvider(pilot, STARTING_POSE);
+        ParticlePoseProvider.get().addMoveProvider(pilot);
+        ParticlePoseProvider.get().setPose(STARTING_POSE);
 
-        navigator = new Navigator(pilot, poseProvider);
+        navigator = new Navigator(pilot, ParticlePoseProvider.get());
         navigator.addNavigationListener(this);
         navigator.singleStep(true);
+
+        new LineChecker().start();
     }
 
     @NotNull
@@ -99,21 +101,14 @@ public class Controller implements MoveListener, NavigationListener {
         navigator.addWaypoint(new Waypoint(300, 1000));
         navigator.followPath();
 
-        LineChecker lineChecker = new LineChecker();
         while (navigator.isMoving()) {
-            poseProvider.updatePC();
-            lineChecker.check();
+            ParticlePoseProvider.get().updatePC();
             Thread.yield();
         }
-        Logger.info(LOG_TAG, poseProvider.getPose().toString());
-    }
-
-    @NotNull
-    public Pose getPose() {
-        return poseProvider.getPose();
+        Logger.info(LOG_TAG, ParticlePoseProvider.get().getPose().toString());
     }
 
     public void update(@NotNull Readings readings) {
-        poseProvider.update(readings);
+        ParticlePoseProvider.get().update(readings);
     }
 }

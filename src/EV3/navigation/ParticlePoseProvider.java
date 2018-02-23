@@ -36,28 +36,30 @@ import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
+ * Based on odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
  */
 public class ParticlePoseProvider implements MoveListener, PoseProvider {
     private static final String LOG_TAG = ParticlePoseProvider.class.getSimpleName();
 
-    @NotNull
-    private final MoveProvider mp;
+    private static final ParticlePoseProvider mParticlePoseProvider = new ParticlePoseProvider();
+
+    private MoveProvider mp;
     private ParticleSet particleSet;
 
     private Pose currentPose;
 
     private Move completedMove;
 
-    public ParticlePoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose startingPose) {
+    public ParticlePoseProvider() {
+    }
+
+    public static ParticlePoseProvider get() {
+        return mParticlePoseProvider;
+    }
+
+    public void addMoveProvider(MoveProvider moveProvider){
         this.mp = moveProvider;
         moveProvider.addMoveListener(this);
-
-        setPose(startingPose);
-
-        Logger.info(LOG_TAG, "Starting at " + startingPose.toString() + ". particles generated");
-
-        updatePC();
     }
 
     @Override
