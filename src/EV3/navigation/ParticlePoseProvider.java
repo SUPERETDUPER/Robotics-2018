@@ -28,7 +28,9 @@ import Common.Config;
 import Common.Logger;
 import Common.Particles.ParticleData;
 import EV3.DataSender;
+import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -36,26 +38,29 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
  */
-public class ParticlePoseProvider {
+public class ParticlePoseProvider implements MoveListener, PoseProvider {
     private static final String LOG_TAG = ParticlePoseProvider.class.getSimpleName();
 
     @NotNull
     private final MoveProvider mp;
     private ParticleSet particleSet;
 
-    private Pose poseAtStart;
+    private Pose currentPose;
 
-    private float distancePoseTraveled;
-    private float distancePoseRotated;
-
-    private float distanceParticlesTraveled;
-    private float distanceParticlesRotated;
+    private Move completedMovePose;
+    private Move competedMoveParticle;
 
     public ParticlePoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose startingPose) {
         this.mp = moveProvider;
-        this.setPose(startingPose);
+        moveProvider.addMoveListener(this);
 
-        particleSet = new ParticleSet(startingPose); //Create particle set
+        this.currentPose = startingPose;
+        this.particleSet = new ParticleSet(startingPose); //Create particle set
+
+        Move currentMove = this.mp.getMovement();
+
+        this.completedMovePose = currentMove;
+        this.competedMoveParticle = currentMove;
 
         Logger.info(LOG_TAG, "Starting at " + startingPose.toString() + ". particles generated");
 
@@ -64,34 +69,36 @@ public class ParticlePoseProvider {
 
     @Override
     public synchronized Pose getPose() {
-        Pose pose = super.getPose();
-        Logger.warning(LOG_TAG, pose.toString());
-        return pose;
+        return ParticleSetUtil.movePose(currentPose, ParticleSetUtil.subtractMove(mp.getMovement(), completedMovePose));
     }
 
     public synchronized void setPose(@NotNull Pose pose) {
-        super.setPose(pose);
+        currentPose = pose;
         particleSet = new ParticleSet(pose);
+
+        completedMovePose = mp.getMovement();
+        competedMoveParticle = mp.getMovement();
 
         updatePC();
     }
 
     @Override
-    public synchronized void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
-        super.moveStarted(move, moveProvider);
-
-        distanceParticlesTraveled = 0;
-        distanceParticlesRotated = 0;
-
+    public void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
         Logger.debug(LOG_TAG, "Move started " + move.toString());
     }
 
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
-        super.moveStopped(move, moveProvider);
+        Move missingMovePose = ParticleSetUtil.subtractMove(move, completedMovePose);
+        Move missingMoveParticles = ParticleSetUtil.subtractMove(move, competedMoveParticle);
+
+        currentPose = ParticleSetUtil.movePose(currentPose, missingMovePose);
+        particleSet.moveParticles(missingMoveParticles);
+
+        completedMovePose = null;
+        competedMoveParticle = null;
 
         Logger.debug(LOG_TAG, "Move stopped " + move.toString());
-        moveParticles(move);
         updatePC();
     }
 
@@ -102,30 +109,19 @@ public class ParticlePoseProvider {
     }
 
     public synchronized void update(@NotNull Readings readings) {
-        moveParticles(mp.getMovement()); //Shift particles
+        Move move = mp.getMovement();
+
+        particleSet.moveParticles(ParticleSetUtil.subtractMove(move, competedMoveParticle)); //Shift particles
+        competedMoveParticle = move;
+
         particleSet.weightParticles(readings); //Recalculate all the particle weights
         particleSet.resample();//Re samples for highest weights
-        super.setPose(particleSet.estimateCurrentPose()); //Updates current pose
+
+        currentPose = particleSet.estimateCurrentPose(); //Updates current pose
+        completedMovePose = move;
+
         updatePC(); //SendToPc
 
         Logger.info(LOG_TAG, "Updated with readings. New position is " + this.getPose().toString());
-    }
-
-
-    private synchronized void moveParticles(@NotNull Move move) {
-        switch (move.getMoveType()) {
-            case STOP:
-                return;
-            case TRAVEL:
-                particleSet.shiftParticles(move.getDistanceTraveled() - distanceParticlesTraveled);
-                distanceParticlesTraveled = move.getDistanceTraveled();
-                break;
-            case ROTATE:
-                particleSet.rotateParticles(move.getAngleTurned() - distanceParticlesRotated);
-                distanceParticlesRotated = move.getAngleTurned();
-                break;
-            default:
-                Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
-        }
     }
 }

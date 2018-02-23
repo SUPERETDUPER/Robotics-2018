@@ -28,6 +28,7 @@ import Common.Logger;
 import Common.Particles.Particle;
 import Common.mapping.SurfaceMap;
 import lejos.robotics.geometry.Point;
+import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,10 +42,12 @@ class ParticleSet {
     private static final float STARTING_RADIUS_NOISE = 4;
     private static final float STARTING_HEADING_NOISE = 3;
 
+    private static final float DISTANCE_NOISE_FACTOR = 0.008F;
+    private static final float ANGLE_NOISE_FACTOR = 0.04F;
 
     private static final Random random = new Random();
 
-    private static final int NUM_PARTICLES = 5;
+    private static final int NUM_PARTICLES = 200;
     private static final int MAX_RESAMPLE_ITERATIONS = 1000;
 
     private List<Particle> particles;
@@ -57,48 +60,37 @@ class ParticleSet {
         return particles;
     }
 
-    void rotateParticles(float angleToRotate) {
-        if (angleToRotate == 0) {
+    synchronized void moveParticles(Move move){
+        if (!ParticleSetUtil.moveIsGood(move)){
             return;
         }
 
         List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
-        for (Particle particle : particles) {
-            newParticles.add(new Particle(Particle.rotatePose(particle.getPose(), angleToRotate), particle.getWeight()));
+        for(Particle particle : particles){
+            Pose newPose = ParticleSetUtil.movePose(particle.getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
+
+            newParticles.add(new Particle(newPose, particle.getWeight()));
         }
 
         particles = newParticles;
 
-        Logger.info(LOG_TAG, "Particles rotated by " + angleToRotate);
+        Logger.info(LOG_TAG, "Moved particles by : " + move.toString());
     }
 
-    void shiftParticles(float distance) {
-        if (distance == 0) {
-            return;
-        }
-
+    synchronized void weightParticles(@NotNull Readings readings) {
         List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
         for (Particle particle : particles) {
-            newParticles.add(new Particle(Particle.shiftPose(particle.getPose(), distance), particle.getWeight()));
+            newParticles.add(new Particle(particle.getPose(), readings.calculateWeight(particle.getPose())));
         }
 
         particles = newParticles;
-
-        Logger.info(LOG_TAG, "Particles shifted by " + distance);
-    }
-
-    void weightParticles(@NotNull Readings readings) {
-        for (int i = 0; i < ParticleSet.NUM_PARTICLES; i++) {
-            Pose pose = particles.get(i).getPose();
-            particles.set(i, new Particle(pose, readings.calculateWeight(pose)));
-        }
 
         Logger.debug(LOG_TAG, "Recalculated weights using readings" + readings.toString());
     }
 
-    void resample() {
+    synchronized void resample() {
         ArrayList<Particle> newParticles = new ArrayList<>(ParticleSet.NUM_PARTICLES);
 
         int particlesGenerated = 0;
@@ -172,7 +164,7 @@ class ParticleSet {
      */
     @NotNull
     private static ArrayList<Particle> getNewParticleSet(@NotNull Pose centerPose) {
-        ArrayList<Particle> particles = new ArrayList<>(NUM_PARTICLES);
+        ArrayList<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
             float rad = STARTING_RADIUS_NOISE * (float) random.nextGaussian();
@@ -183,10 +175,10 @@ class ParticleSet {
             float y = centerPose.getY() + rad * (float) Math.sin(theta);
 
             float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * (float) random.nextGaussian();
-            particles.add(new Particle((new Pose(x, y, heading)), 0.5F));
+            newParticles.add(new Particle((new Pose(x, y, heading)), 0.5F));
         }
 
-        return particles;
+        return newParticles;
     }
 
     /**
@@ -194,13 +186,13 @@ class ParticleSet {
      */
     @NotNull
     private static ArrayList<Particle> getNewParticleSet() {
-        ArrayList<Particle> particles = new ArrayList<>(NUM_PARTICLES);
+        ArrayList<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
             Point randomPoint = SurfaceMap.getRandomPoint();
-            particles.add(new Particle(randomPoint.x, randomPoint.y, (float) (Math.random() * 360), 1));
+            newParticles.add(new Particle(randomPoint.x, randomPoint.y, (float) (Math.random() * 360), 1));
         }
 
-        return particles;
+        return newParticles;
     }
 }
