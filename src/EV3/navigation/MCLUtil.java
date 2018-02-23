@@ -27,23 +27,30 @@ package EV3.navigation;
 import Common.Logger;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-class ParticleSetUtil {
-    private static final String LOG_TAG = ParticleSetUtil.class.getSimpleName();
+class MCLUtil {
+    private static final String LOG_TAG = MCLUtil.class.getSimpleName();
 
     private static final Random random = new Random();
 
-    private static Pose rotatePose(Pose pose, float angleToRotate, float randomFactor) {
+    @NotNull
+    private static Pose rotatePose(@NotNull Pose pose, float angleToRotate, float randomFactor) {
+        if (angleToRotate == 0) return pose;
+
         float heading = (pose.getHeading() + angleToRotate + (float) (angleToRotate * randomFactor * random.nextGaussian()) + 0.5F) % 360;
 
         return new Pose(pose.getX(), pose.getY(), heading);
     }
 
-    private static Pose shiftPose(Pose pose, float distance, float randomFactor) {
+    @NotNull
+    private static Pose shiftPose(@NotNull Pose pose, float distance, float randomFactor) {
+        if (distance == 0) return pose;
+
         double theta = Math.toRadians(pose.getHeading());
 
         double ym = distance * Math.sin(theta);
@@ -56,8 +63,10 @@ class ParticleSetUtil {
     }
 
     @NotNull
-    static Pose movePose(@NotNull Pose pose, Move move, float angleNoiseFactor, float distanceNoiseFactor) {
+    static Pose movePose(@NotNull Pose pose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
         switch (move.getMoveType()) {
+            case STOP:
+                return pose;
             case TRAVEL:
                 return shiftPose(pose, move.getDistanceTraveled(), distanceNoiseFactor);
             case ROTATE:
@@ -69,8 +78,7 @@ class ParticleSetUtil {
     }
 
     @NotNull
-    static Pose movePose(Pose pose, Move move) {
-        Logger.info(LOG_TAG, "Moving pose " + pose.toString() + " by " + move.toString());
+    static Pose movePose(@NotNull Pose pose, @NotNull Move move) {
         return movePose(pose, move, 0, 0);
     }
 
@@ -83,7 +91,8 @@ class ParticleSetUtil {
         return new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());
     }
 
-    static boolean moveIsGood(@Nullable Move move) {
-        return move != null && move.getMoveType() != Move.MoveType.STOP && !(move.getDistanceTraveled() == 0 && move.getAngleTurned() == 0);
+    @Contract("null -> true")
+    static boolean badMove(@Nullable Move move) {
+        return move == null || move.getMoveType() == Move.MoveType.STOP || (move.getDistanceTraveled() == 0 && move.getAngleTurned() == 0);
     }
 }

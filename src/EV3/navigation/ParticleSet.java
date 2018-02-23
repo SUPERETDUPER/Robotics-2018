@@ -60,22 +60,18 @@ class ParticleSet {
         return particles;
     }
 
-    synchronized void moveParticles(Move move){
-        if (!ParticleSetUtil.moveIsGood(move)){
-            return;
-        }
+    synchronized void moveParticles(@NotNull Move move) {
+        Logger.info(LOG_TAG, "Moving particles by : " + move.toString());
 
         List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
-        for(Particle particle : particles){
-            Pose newPose = ParticleSetUtil.movePose(particle.getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
-
+        for (Particle particle : particles) {
+            Pose newPose = MCLUtil.movePose(particle.getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
             newParticles.add(new Particle(newPose, particle.getWeight()));
+
         }
 
         particles = newParticles;
-
-        Logger.info(LOG_TAG, "Moved particles by : " + move.toString());
     }
 
     synchronized void weightParticles(@NotNull Readings readings) {

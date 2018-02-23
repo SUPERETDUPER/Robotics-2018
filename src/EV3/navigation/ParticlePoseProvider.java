@@ -47,20 +47,13 @@ public class ParticlePoseProvider implements MoveListener, PoseProvider {
 
     private Pose currentPose;
 
-    private Move completedMovePose;
-    private Move competedMoveParticle;
+    private Move completedMove;
 
     public ParticlePoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose startingPose) {
         this.mp = moveProvider;
         moveProvider.addMoveListener(this);
 
-        this.currentPose = startingPose;
-        this.particleSet = new ParticleSet(startingPose); //Create particle set
-
-        Move currentMove = this.mp.getMovement();
-
-        this.completedMovePose = currentMove;
-        this.competedMoveParticle = currentMove;
+        setPose(startingPose);
 
         Logger.info(LOG_TAG, "Starting at " + startingPose.toString() + ". particles generated");
 
@@ -69,36 +62,35 @@ public class ParticlePoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized Pose getPose() {
-        return ParticleSetUtil.movePose(currentPose, ParticleSetUtil.subtractMove(mp.getMovement(), completedMovePose));
+        Move missingMove = MCLUtil.subtractMove(mp.getMovement(), completedMove);
+
+        return MCLUtil.movePose(currentPose, missingMove);
     }
 
     public synchronized void setPose(@NotNull Pose pose) {
         currentPose = pose;
         particleSet = new ParticleSet(pose);
-
-        completedMovePose = mp.getMovement();
-        competedMoveParticle = mp.getMovement();
+        completedMove = deepCopyMove(mp.getMovement());
 
         updatePC();
     }
 
     @Override
     public void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
-        Logger.debug(LOG_TAG, "Move started " + move.toString());
+        Logger.debug(LOG_TAG, "Move started : " + move.toString());
     }
 
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
-        Move missingMovePose = ParticleSetUtil.subtractMove(move, completedMovePose);
-        Move missingMoveParticles = ParticleSetUtil.subtractMove(move, competedMoveParticle);
+        Logger.info(LOG_TAG, "Move stopped  : " + move.toString());
 
-        currentPose = ParticleSetUtil.movePose(currentPose, missingMovePose);
-        particleSet.moveParticles(missingMoveParticles);
+        Move missingMove = MCLUtil.subtractMove(move, completedMove);
 
-        completedMovePose = null;
-        competedMoveParticle = null;
+        currentPose = MCLUtil.movePose(currentPose, missingMove);
+        particleSet.moveParticles(missingMove);
 
-        Logger.debug(LOG_TAG, "Move stopped " + move.toString());
+        completedMove = null;
+
         updatePC();
     }
 
@@ -111,17 +103,20 @@ public class ParticlePoseProvider implements MoveListener, PoseProvider {
     public synchronized void update(@NotNull Readings readings) {
         Move move = mp.getMovement();
 
-        particleSet.moveParticles(ParticleSetUtil.subtractMove(move, competedMoveParticle)); //Shift particles
-        competedMoveParticle = move;
+        particleSet.moveParticles(MCLUtil.subtractMove(move, completedMove)); //Shift particles
+
+        completedMove = deepCopyMove(move);
 
         particleSet.weightParticles(readings); //Recalculate all the particle weights
         particleSet.resample();//Re samples for highest weights
-
         currentPose = particleSet.estimateCurrentPose(); //Updates current pose
-        completedMovePose = move;
 
         updatePC(); //SendToPc
 
         Logger.info(LOG_TAG, "Updated with readings. New position is " + this.getPose().toString());
+    }
+
+    private static Move deepCopyMove(Move move) {
+        return new Move(move.getMoveType(), move.getDistanceTraveled(), move.getAngleTurned(), move.getTravelSpeed(), move.getRotateSpeed(), move.isMoving());
     }
 }

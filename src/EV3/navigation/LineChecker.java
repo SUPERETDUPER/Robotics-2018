@@ -22,7 +22,7 @@ public class LineChecker {
         int currentColor = ColorSensor.getSurfaceColor();
 
         if (previousColor != currentColor) {
-            Logger.warning(LOG_TAG, "Changed zone " + previousColor + " to " + currentColor);
+            Logger.info(LOG_TAG, "Changed zone " + previousColor + " to " + currentColor);
             Controller.get().update(new SurfaceReadings(currentColor));
             previousColor = currentColor;
         }
