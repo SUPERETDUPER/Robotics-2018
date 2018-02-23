@@ -28,11 +28,17 @@ import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+
 /**
  * Immutable particle (position + weight)
  */
 public final class Particle {
     private static final String LOG_TAG = Particle.class.getSimpleName();
+    private static final Random random = new Random();
+
+    private static final float DISTANCE_NOISE_FACTOR = 0.008F;
+    private static final float ANGLE_NOISE_FACTOR = 0.04F;
 
     @NotNull
     private final Pose pose;
@@ -56,5 +62,23 @@ public final class Particle {
     @Contract(pure = true)
     public float getWeight() {
         return weight;
+    }
+
+    public static Pose rotatePose(Pose pose, float angleToRotate) {
+        float heading = (pose.getHeading() + angleToRotate + (float) (angleToRotate * ANGLE_NOISE_FACTOR * random.nextGaussian()) + 0.5F) % 360;
+
+        return new Pose(pose.getX(), pose.getY(), heading);
+    }
+
+    public static Pose shiftPose(Pose pose, float distance) {
+        double theta = Math.toRadians(pose.getHeading());
+
+        double ym = distance * Math.sin(theta);
+        double xm = distance * Math.cos(theta);
+
+        float x = (float) (pose.getX() + xm + DISTANCE_NOISE_FACTOR * xm * random.nextGaussian());
+        float y = (float) (pose.getY() + ym + DISTANCE_NOISE_FACTOR * ym * random.nextGaussian());
+
+        return new Pose(x, y, pose.getHeading());
     }
 }

@@ -25,10 +25,9 @@
 package EV3.navigation;
 
 import Common.Config;
-import Common.Particles.ParticleData;
 import Common.Logger;
+import Common.Particles.ParticleData;
 import EV3.DataSender;
-import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
@@ -37,18 +36,22 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
  */
-public class ParticlePoseProvider extends OdometryPoseProvider {
+public class ParticlePoseProvider {
     private static final String LOG_TAG = ParticlePoseProvider.class.getSimpleName();
 
     @NotNull
     private final MoveProvider mp;
     private ParticleSet particleSet;
 
+    private Pose poseAtStart;
+
+    private float distancePoseTraveled;
+    private float distancePoseRotated;
+
     private float distanceParticlesTraveled;
     private float distanceParticlesRotated;
 
     public ParticlePoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose startingPose) {
-        super(moveProvider);
         this.mp = moveProvider;
         this.setPose(startingPose);
 
@@ -57,6 +60,13 @@ public class ParticlePoseProvider extends OdometryPoseProvider {
         Logger.info(LOG_TAG, "Starting at " + startingPose.toString() + ". particles generated");
 
         updatePC();
+    }
+
+    @Override
+    public synchronized Pose getPose() {
+        Pose pose = super.getPose();
+        Logger.warning(LOG_TAG, pose.toString());
+        return pose;
     }
 
     public synchronized void setPose(@NotNull Pose pose) {

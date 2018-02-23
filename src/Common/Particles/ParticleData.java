@@ -24,7 +24,6 @@
 
 package Common.Particles;
 
-import Common.Logger;
 import PC.GUI.Displayable;
 import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
@@ -64,7 +63,6 @@ public class ParticleData implements Transmittable, Displayable {
 
     @Override
     public synchronized void displayOnGui(@NotNull Graphics g) {
-//        Logger.info(LOG_TAG, "Drawing mcl data");
         if (particles != null) {
             g.setColor(Color.BLUE);
 

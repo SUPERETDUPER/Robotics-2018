@@ -41,8 +41,6 @@ class ParticleSet {
     private static final float STARTING_RADIUS_NOISE = 4;
     private static final float STARTING_HEADING_NOISE = 3;
 
-    private static final float DISTANCE_NOISE_FACTOR = 0.008F;
-    private static final float ANGLE_NOISE_FACTOR = 0.04F;
 
     private static final Random random = new Random();
 
@@ -64,13 +62,13 @@ class ParticleSet {
             return;
         }
 
-        for (int i = 0; i < NUM_PARTICLES; i++) {
-            Pose particlePose = particles.get(i).getPose();
+        List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
-            float heading = (particlePose.getHeading() + angleToRotate + (float) (angleToRotate * ANGLE_NOISE_FACTOR * random.nextGaussian()) + 0.5F) % 360;
-
-            particles.set(i, new Particle(particlePose.getX(), particlePose.getY(), heading, particles.get(i).getWeight()));
+        for (Particle particle : particles) {
+            newParticles.add(new Particle(Particle.rotatePose(particle.getPose(), angleToRotate), particle.getWeight()));
         }
+
+        particles = newParticles;
 
         Logger.info(LOG_TAG, "Particles rotated by " + angleToRotate);
     }
@@ -80,19 +78,13 @@ class ParticleSet {
             return;
         }
 
-        for (int i = 0; i < NUM_PARTICLES; i++) {
-            Pose pose = particles.get(i).getPose();
+        List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
-            double theta = Math.toRadians(pose.getHeading());
-
-            double ym = distance * Math.sin(theta);
-            double xm = distance * Math.cos(theta);
-
-            float x = (float) (pose.getX() + xm + DISTANCE_NOISE_FACTOR * xm * random.nextGaussian());
-            float y = (float) (pose.getY() + ym + DISTANCE_NOISE_FACTOR * ym * random.nextGaussian());
-
-            particles.set(i, new Particle(x, y, pose.getHeading(), particles.get(i).getWeight()));
+        for (Particle particle : particles) {
+            newParticles.add(new Particle(Particle.shiftPose(particle.getPose(), distance), particle.getWeight()));
         }
+
+        particles = newParticles;
 
         Logger.info(LOG_TAG, "Particles shifted by " + distance);
     }
