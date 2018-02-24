@@ -26,9 +26,9 @@ package EV3;
 
 import Common.Logger;
 import EV3.hardware.ChassisBuilder;
+import EV3.localization.ParticlePoseProvider;
 import EV3.navigation.LineChecker;
 import EV3.navigation.MyMovePilot;
-import EV3.navigation.ParticlePoseProvider;
 import EV3.navigation.Readings;
 import lejos.robotics.navigation.*;
 import org.jetbrains.annotations.Contract;

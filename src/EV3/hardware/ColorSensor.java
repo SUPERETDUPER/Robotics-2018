@@ -26,8 +26,7 @@ package EV3.hardware;
 
 import Common.Config;
 import Common.mapping.SurfaceMap;
-import EV3.Controller;
-import EV3.navigation.ParticlePoseProvider;
+import EV3.localization.ParticlePoseProvider;
 import lejos.hardware.sensor.EV3ColorSensor;
 import org.jetbrains.annotations.Nullable;
 

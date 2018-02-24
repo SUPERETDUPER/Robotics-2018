@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-package EV3.navigation;
+package EV3.localization;
 
 import Common.Logger;
 import Common.Particles.Particle;
+import EV3.navigation.Readings;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;

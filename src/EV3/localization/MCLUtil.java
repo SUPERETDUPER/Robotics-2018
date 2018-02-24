@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package EV3.navigation;
+package EV3.localization;
 
 import Common.Logger;
 import lejos.robotics.navigation.Move;
