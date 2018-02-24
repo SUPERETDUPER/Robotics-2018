@@ -26,17 +26,15 @@ package Common;
 
 import Common.Logger.LogTypes;
 
-/*
-Environnment specific and run specific settings
+/**
+Environment specific and run specific settings
  */
 public final class Config {
 
-    public enum Device {
-        PC,
-        EV3
-    }
+    public static final boolean DISPLAY_PARTICLE_WEIGHT = false;
+    public final static int SIM_SPEED_REDUCING_FACTOR = 3;
 
-    public static Device runningOn;
+    public static boolean runningOnEV3;
 
     public static final boolean useSimulator = true;
     public static final boolean usePC = true;

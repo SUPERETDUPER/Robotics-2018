@@ -117,11 +117,6 @@ public class SurfaceMap implements ColoredRegion {
         return mSurfaceMap;
     }
 
-    @NotNull
-    public static Point getRandomPoint() {
-        return boundingRectangle.getRandomPoint();
-    }
-
     @Override
     public boolean contains(@NotNull Point point) {
         return boundingRectangle.contains(point);

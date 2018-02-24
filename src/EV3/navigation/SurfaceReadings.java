@@ -25,17 +25,12 @@
 package EV3.navigation;
 
 import Common.mapping.SurfaceMap;
-import EV3.hardware.ColorSensor;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
 public class SurfaceReadings implements Readings {
 
     private final int color;
-
-    SurfaceReadings() {
-        this.color = ColorSensor.getSurfaceColor();
-    }
 
     SurfaceReadings(int color) {
         this.color = color;

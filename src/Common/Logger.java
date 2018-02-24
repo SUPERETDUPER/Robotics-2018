@@ -64,26 +64,22 @@ public final class Logger {
      * If using PC sends all log messages to PC. Else print on brick
      *
      * @param message message to be sent
-     * @param type type of the message. Used to check if should be printed
+     * @param type    type of the message. Used to check if should be printed
      */
     private static void print(String message, @NotNull LogTypes type) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
             if (Config.usePC) {
-                switch (Config.runningOn) {
-                    case PC:
-                        System.out.println("PC : " + message);
-                        break;
-                    case EV3:
-                        DataSender.sendLogMessage("EV3: " + message);
-                        break;
-                    default:
-                        System.out.println(constructMessage(LogTypes.ERROR, ANSI_BRIGHT_RED, LOG_TAG, "Error running on unknown enum type"));
+                if (Config.runningOnEV3) {
+                    DataSender.sendLogMessage("EV3: " + message);
+                } else {
+                    System.out.println("PC : " + message);
                 }
-            } else {
-                System.out.println(message);
             }
+        } else {
+            System.out.println(message);
         }
     }
+
 
     public static void error(@NotNull String tag, @NotNull String message) {
         print(constructMessage(LogTypes.ERROR, ANSI_BRIGHT_RED, tag, message), LogTypes.ERROR);

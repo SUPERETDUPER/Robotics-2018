@@ -84,7 +84,7 @@ class DataReceiver {
                 GUI.updatePaths(dis);
                 break;
             default:
-                Logger.warning(LOG_TAG, "Not a recognized event type");
+                Logger.error(LOG_TAG, "Not a recognized event type");
         }
     }
 

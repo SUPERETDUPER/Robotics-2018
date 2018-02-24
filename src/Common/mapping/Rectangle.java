@@ -48,14 +48,5 @@ class Rectangle extends SingleColorRegion {
     @Override
     public boolean contains(@NotNull Point point) {
         return mRectangle.contains(point);
-        //return x1 < point.getX() && point.getX() < x1 + w && y1 < point.getY() && point.getY() < y1 + h;
-    }
-
-    @NotNull
-    Point getRandomPoint() {
-        return new Point(
-                (float) (mRectangle.getX() + Math.random() * mRectangle.getWidth()),
-                (float) (mRectangle.getY() + Math.random() * mRectangle.getHeight())
-        );
     }
 }

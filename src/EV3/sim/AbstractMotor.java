@@ -24,6 +24,7 @@
 
 package EV3.sim;
 
+import Common.Config;
 import Common.Logger;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
@@ -37,7 +38,6 @@ public class AbstractMotor implements RegulatedMotor {
 
     private final static int MAX_SPEED = 1050;
     private final static int DEFAULT_SPEED = 360;
-    private final static int SPEED_REDUCING_FACTOR = 3;
 
     private final String name;
 
@@ -92,8 +92,6 @@ public class AbstractMotor implements RegulatedMotor {
         timeAtStart = System.currentTimeMillis();
         endTachoCount = i;
 
-//        Logger.debug(LOG_TAG, name + " : Moving motor by " + i + "...");
-
         if (!b) {
             waitComplete();
         }
@@ -147,7 +145,7 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public void setSpeed(int i) {
         update();
-        this.speed = i / SPEED_REDUCING_FACTOR;
+        this.speed = i / Config.SIM_SPEED_REDUCING_FACTOR;
     }
 
     @Override

@@ -26,8 +26,6 @@ package EV3.navigation;
 
 import Common.Logger;
 import Common.Particles.Particle;
-import Common.mapping.SurfaceMap;
-import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -112,8 +110,7 @@ class ParticleSet {
         }
 
         if (particlesGenerated == 0) {
-            newParticles = ParticleSet.getNewParticleSet();
-            Logger.warning(LOG_TAG, "Bad resample ; regenerated all particles");
+            Logger.error(LOG_TAG, "Bad resample ; totally lost");
         } else if (particlesGenerated < ParticleSet.NUM_PARTICLES) {
             for (int i = particlesGenerated; i < ParticleSet.NUM_PARTICLES; i++) {
                 newParticles.add(newParticles.get(i % particlesGenerated));
@@ -172,21 +169,6 @@ class ParticleSet {
 
             float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * (float) random.nextGaussian();
             newParticles.add(new Particle((new Pose(x, y, heading)), 0.5F));
-        }
-
-        return newParticles;
-    }
-
-    /**
-     * Generates a new particle set per the reading
-     */
-    @NotNull
-    private static ArrayList<Particle> getNewParticleSet() {
-        ArrayList<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
-
-        for (int i = 0; i < NUM_PARTICLES; i++) {
-            Point randomPoint = SurfaceMap.getRandomPoint();
-            newParticles.add(new Particle(randomPoint.x, randomPoint.y, (float) (Math.random() * 360), 1));
         }
 
         return newParticles;

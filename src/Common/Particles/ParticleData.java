@@ -24,6 +24,7 @@
 
 package Common.Particles;
 
+import Common.Config;
 import PC.GUI.Displayable;
 import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
@@ -45,7 +46,6 @@ public class ParticleData implements Transmittable, Displayable {
 
     private static final float DISPLAY_TAIL_LENGTH = 30;
     private static final float DISPLAY_TAIL_ANGLE = 10;
-    private static final boolean DISPLAY_WEIGHT = false;
 
     private List<Particle> particles;
     private Pose currentPose;
@@ -69,7 +69,7 @@ public class ParticleData implements Transmittable, Displayable {
 
             for (Particle particle : particles) {
                 displayPoseOnGui(particle.getPose(), g);
-                if (DISPLAY_WEIGHT) {
+                if (Config.DISPLAY_PARTICLE_WEIGHT) {
                     displayParticleWeight(particle, g);
                 }
             }

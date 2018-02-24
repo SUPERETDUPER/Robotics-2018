@@ -27,7 +27,6 @@ package EV3.navigation;
 import Common.Logger;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,10 +88,5 @@ class MCLUtil {
         }
 
         return new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());
-    }
-
-    @Contract("null -> true")
-    static boolean badMove(@Nullable Move move) {
-        return move == null || move.getMoveType() == Move.MoveType.STOP || (move.getDistanceTraveled() == 0 && move.getAngleTurned() == 0);
     }
 }

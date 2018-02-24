@@ -35,7 +35,7 @@ class PCMain {
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 
     public static void main(String[] args) {
-        Config.runningOn = Config.Device.PC;
+        Config.runningOnEV3 = false;
 
         if (!Config.usePC) {
             Logger.error(LOG_TAG, "Config var 'usePC' isFalse");
