@@ -7,9 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="ev3classes" level="application" />
-    <orderEntry type="library" name="ev3tools" level="application" />
-    <orderEntry type="module-library">
+    <orderEntry type="library" exported="" name="ev3classes" level="application" />
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$APPLICATION_HOME_DIR$/lib/annotations.jar!/" />
