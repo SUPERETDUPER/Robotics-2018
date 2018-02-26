@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-class MCLUtil {
+final class MCLUtil {
     private static final String LOG_TAG = MCLUtil.class.getSimpleName();
 
     private static final Random random = new Random();

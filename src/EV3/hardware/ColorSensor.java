@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Static class allowing access to color sensors
  */
-public class ColorSensor {
+public final class ColorSensor {
     @Nullable
     private static final EV3ColorSensor surfaceColorSensor;
 

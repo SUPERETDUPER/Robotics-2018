@@ -7,7 +7,7 @@ import EV3.hardware.ColorSensor;
 /**
  * Check method checks if the color under the robot has changed. If so it calls the pose provider update method
  */
-public class LineChecker extends Thread {
+public final class LineChecker extends Thread {
     private static final String LOG_TAG = LineChecker.class.getSimpleName();
 
     private int previousColor;

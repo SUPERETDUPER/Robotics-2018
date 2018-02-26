@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-public class DisplayablePath extends Path implements Displayable {
+public final class DisplayablePath extends Path implements Displayable {
     private static final String LOG_TAG = DisplayablePath.class.getSimpleName();
 
     public void displayOnGui(@NotNull Graphics g) {

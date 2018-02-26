@@ -31,7 +31,7 @@ import lejos.hardware.port.SensorPort;
 /**
  * Defines the Ports for the sensors and motors
  */
-class Ports {
+final class Ports {
     static final Port PORT_MOTOR_LEFT = MotorPort.A;
     static final Port PORT_MOTOR_RIGHT = MotorPort.B;
     static final Port PORT_SENSOR_COLOR_SURFACE = SensorPort.S3;

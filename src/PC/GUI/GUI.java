@@ -41,7 +41,7 @@ import java.util.List;
 
 
 //TODO Add event listener for panel closing
-public class GUI {
+public final class GUI {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
     private static final JFrame window = new JFrame();

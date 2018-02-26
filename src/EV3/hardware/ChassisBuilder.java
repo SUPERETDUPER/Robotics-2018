@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Static class to build the chassis object
  */
-public class ChassisBuilder {
+public final class ChassisBuilder {
 
     private static final double WHEEL_DIAMETER = 55.9;
     private static final double WHEEL_OFFSET = 82.4;

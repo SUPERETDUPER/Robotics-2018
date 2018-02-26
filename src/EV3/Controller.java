@@ -34,7 +34,7 @@ import lejos.robotics.navigation.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public class Controller implements MoveListener, NavigationListener {
+public final class Controller implements MoveListener, NavigationListener {
 
     private static final String LOG_TAG = Controller.class.getSimpleName();
     private static final double ANGULAR_ACCELERATION = 120;

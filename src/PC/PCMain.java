@@ -30,7 +30,7 @@ import PC.GUI.GUI;
 
 import java.io.IOException;
 
-class PCMain {
+final class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 

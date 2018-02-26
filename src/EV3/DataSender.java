@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class DataSender {
+public final class DataSender {
     private static final String LOG_TAG = DataSender.class.getSimpleName();
 
     private static DataOutputStream dos;

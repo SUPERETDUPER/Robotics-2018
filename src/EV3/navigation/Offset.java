@@ -30,7 +30,7 @@ import lejos.robotics.navigation.Pose;
 /**
  * Responsible of offsetting readings
  */
-public class Offset {
+public final class Offset {
     // (x,y) offsets when robot is facing to the right (heading = 0)
     private static final float[] RELATIVE_OFFSET_LEFT = {-1, -1};
     private static final float[] RELATIVE_OFFSET_RIGHT = {1, -1};

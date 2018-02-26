@@ -36,7 +36,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-class DataReceiver {
+final class DataReceiver {
     private static final String LOG_TAG = DataReceiver.class.getSimpleName();
     private static DataInputStream dis;
     private static Socket socket;
