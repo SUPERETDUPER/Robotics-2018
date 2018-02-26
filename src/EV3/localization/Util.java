@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-final class MCLUtil {
-    private static final String LOG_TAG = MCLUtil.class.getSimpleName();
+final class Util {
+    private static final String LOG_TAG = Util.class.getSimpleName();
 
     private static final Random random = new Random();
 

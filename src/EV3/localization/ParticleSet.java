@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Used by the Pose Provider to run operations on its set of particles
+ */
 class ParticleSet {
     private static final String LOG_TAG = ParticleSet.class.getSimpleName();
 
@@ -45,7 +48,7 @@ class ParticleSet {
         List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
         for (Particle particle : particles) {
-            Pose newPose = MCLUtil.movePose(particle.getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
+            Pose newPose = Util.movePose(particle.getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
             newParticles.add(new Particle(newPose, particle.getWeight()));
 
         }
@@ -141,15 +144,16 @@ class ParticleSet {
         ArrayList<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
-            float rad = STARTING_RADIUS_NOISE * (float) random.nextGaussian();
+            float radiusFromCenter = STARTING_RADIUS_NOISE * (float) random.nextGaussian();
 
-            float theta = (float) (2 * Math.PI * Math.random());  //Random angle between 0 and 2pi
+            float thetaInRad = (float) (2 * Math.PI * Math.random());  //Random angle between 0 and 2pi
 
-            float x = centerPose.getX() + rad * (float) Math.cos(theta);
-            float y = centerPose.getY() + rad * (float) Math.sin(theta);
+            float x = centerPose.getX() + radiusFromCenter * (float) Math.cos(thetaInRad);
+            float y = centerPose.getY() + radiusFromCenter * (float) Math.sin(thetaInRad);
 
             float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * (float) random.nextGaussian();
-            newParticles.add(new Particle((new Pose(x, y, heading)), 0.5F));
+
+            newParticles.add(new Particle(x, y, heading, 0.5F));
         }
 
         return newParticles;

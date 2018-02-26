@@ -6,7 +6,7 @@ package EV3;
 
 import Common.Logger;
 import EV3.hardware.ChassisBuilder;
-import EV3.localization.ParticlePoseProvider;
+import EV3.localization.RobotPoseProvider;
 import EV3.navigation.LineChecker;
 import EV3.navigation.MyMovePilot;
 import EV3.navigation.Readings;
@@ -35,10 +35,10 @@ public final class Controller implements MoveListener, NavigationListener {
         pilot.setAngularSpeed(pilot.getMaxAngularSpeed() * 0.8D);
         pilot.addMoveListener(this);
 
-        ParticlePoseProvider.get().addMoveProvider(pilot);
-        ParticlePoseProvider.get().setPose(STARTING_POSE);
+        RobotPoseProvider.get().addMoveProvider(pilot);
+        RobotPoseProvider.get().setPose(STARTING_POSE);
 
-        navigator = new Navigator(pilot, ParticlePoseProvider.get());
+        navigator = new Navigator(pilot, RobotPoseProvider.get());
         navigator.addNavigationListener(this);
         navigator.singleStep(true);
 
@@ -81,13 +81,13 @@ public final class Controller implements MoveListener, NavigationListener {
         navigator.followPath();
 
         while (navigator.isMoving()) {
-            ParticlePoseProvider.get().updatePC();
+            RobotPoseProvider.get().updatePC();
             Thread.yield();
         }
-        Logger.info(LOG_TAG, ParticlePoseProvider.get().getPose().toString());
+        Logger.info(LOG_TAG, RobotPoseProvider.get().getPose().toString());
     }
 
     public void update(@NotNull Readings readings) {
-        ParticlePoseProvider.get().update(readings);
+        RobotPoseProvider.get().update(readings);
     }
 }

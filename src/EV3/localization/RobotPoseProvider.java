@@ -19,10 +19,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Based on odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
  */
-public class ParticlePoseProvider implements MoveListener, PoseProvider {
-    private static final String LOG_TAG = ParticlePoseProvider.class.getSimpleName();
+public class RobotPoseProvider implements MoveListener, PoseProvider {
+    private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
 
-    private static final ParticlePoseProvider mParticlePoseProvider = new ParticlePoseProvider();
+    private static final RobotPoseProvider mParticlePoseProvider = new RobotPoseProvider();
 
     private MoveProvider mp;
     private ParticleSet particleSet;
@@ -31,10 +31,10 @@ public class ParticlePoseProvider implements MoveListener, PoseProvider {
 
     private Move completedMove;
 
-    private ParticlePoseProvider() {
+    private RobotPoseProvider() {
     }
 
-    public static ParticlePoseProvider get() {
+    public static RobotPoseProvider get() {
         return mParticlePoseProvider;
     }
 
@@ -45,9 +45,9 @@ public class ParticlePoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized Pose getPose() {
-        Move missingMove = MCLUtil.subtractMove(mp.getMovement(), completedMove);
+        Move missingMove = Util.subtractMove(mp.getMovement(), completedMove);
 
-        return MCLUtil.movePose(currentPose, missingMove);
+        return Util.movePose(currentPose, missingMove);
     }
 
     public synchronized void setPose(@NotNull Pose pose) {
@@ -67,9 +67,9 @@ public class ParticlePoseProvider implements MoveListener, PoseProvider {
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Move stopped  : " + move.toString());
 
-        Move missingMove = MCLUtil.subtractMove(move, completedMove);
+        Move missingMove = Util.subtractMove(move, completedMove);
 
-        currentPose = MCLUtil.movePose(currentPose, missingMove);
+        currentPose = Util.movePose(currentPose, missingMove);
         particleSet.moveParticles(missingMove);
 
         completedMove = null;
@@ -86,7 +86,7 @@ public class ParticlePoseProvider implements MoveListener, PoseProvider {
     public synchronized void update(@NotNull Readings readings) {
         Move move = mp.getMovement();
 
-        particleSet.moveParticles(MCLUtil.subtractMove(move, completedMove)); //Shift particles
+        particleSet.moveParticles(Util.subtractMove(move, completedMove)); //Shift particles
 
         completedMove = deepCopyMove(move);
 

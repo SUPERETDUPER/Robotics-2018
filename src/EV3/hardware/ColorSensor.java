@@ -6,7 +6,7 @@ package EV3.hardware;
 
 import Common.Config;
 import Common.mapping.SurfaceMap;
-import EV3.localization.ParticlePoseProvider;
+import EV3.localization.RobotPoseProvider;
 import lejos.hardware.sensor.EV3ColorSensor;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public final class ColorSensor {
 
     public static int getSurfaceColor() {
         if (surfaceColorSensor == null) {
-            return SurfaceMap.get().getColorAtPoint(ParticlePoseProvider.get().getPose().getLocation());
+            return SurfaceMap.get().getColorAtPoint(RobotPoseProvider.get().getPose().getLocation());
         } else {
             return surfaceColorSensor.getColorID();
         }
