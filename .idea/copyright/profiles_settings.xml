@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="MIT">
+  <settings default="copyright profile">
     <module2copyright>
-      <element module="Project Files" copyright="MIT" />
+      <element module="Project Files" copyright="copyright profile" />
     </module2copyright>
   </settings>
 </component>

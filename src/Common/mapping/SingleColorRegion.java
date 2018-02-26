@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
+ */
+
 package Common.mapping;
 
 import Common.Logger;
