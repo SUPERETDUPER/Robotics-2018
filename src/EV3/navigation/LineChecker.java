@@ -5,8 +5,12 @@
 package EV3.navigation;
 
 import Common.Logger;
+import Common.mapping.SurfaceMap;
 import EV3.Controller;
 import EV3.hardware.ColorSensor;
+import EV3.localization.EdgeReadings;
+import EV3.localization.RobotPoseProvider;
+import EV3.localization.SurfaceReadings;
 
 /**
  * Check method checks if the color under the robot has changed. If so it calls the pose provider update method
@@ -28,11 +32,19 @@ public final class LineChecker extends Thread {
     @Override
     public void run() {
         while(true) {
+            //SurfaceReadings
+            int surfaceColor = ColorSensor.getSurfaceColor();
+
+            if (SurfaceMap.get().getColorAtPoint(RobotPoseProvider.get().getPose().getLocation()) != surfaceColor) {
+                RobotPoseProvider.get().update(new SurfaceReadings(surfaceColor));
+            }
+
+            //EdgeReadings
             int currentColor = ColorSensor.getSurfaceColor();
 
             if (previousColor != currentColor) {
                 Logger.info(LOG_TAG, "Changed zone " + previousColor + " to " + currentColor);
-                Controller.get().update(new SurfaceReadings(currentColor));
+                Controller.get().update(new EdgeReadings(previousColor, currentColor));
                 previousColor = currentColor;
             }
         }

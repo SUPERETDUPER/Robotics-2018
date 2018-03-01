@@ -19,7 +19,7 @@ public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
     private static final double ANGULAR_ACCELERATION = 120;
     private static final double LINEAR_ACCELERATION = 400;
-    private static final Pose STARTING_POSE = new Pose(500, 100, 0);
+    private static final Pose STARTING_POSE = new Pose(2242, 573, 180);
 
     private static final Controller controller = new Controller();
 
@@ -76,8 +76,9 @@ public final class Controller implements MoveListener, NavigationListener {
     }
 
     void testMethod() {
-        navigator.addWaypoint(new Waypoint(1200, 400));
-        navigator.addWaypoint(new Waypoint(300, 1000));
+        MapOperations.goToTempRegBlue();
+        MapOperations.goToTempRegGreen();
+        MapOperations.goToTempRegYellow();
         navigator.followPath();
 
         while (navigator.isMoving()) {
@@ -85,6 +86,11 @@ public final class Controller implements MoveListener, NavigationListener {
             Thread.yield();
         }
         Logger.info(LOG_TAG, RobotPoseProvider.get().getPose().toString());
+    }
+
+    @NotNull
+    Navigator getNavigator() {
+        return navigator;
     }
 
     public void update(@NotNull Readings readings) {

@@ -63,7 +63,6 @@ public final class Logger {
 
     public static void error(@NotNull String tag, @NotNull String message) {
         print(constructMessage(LogTypes.ERROR, ANSI_BRIGHT_RED, tag, message), LogTypes.ERROR);
-        throw new RuntimeException(message);
     }
 
     public static void warning(@NotNull String tag, @NotNull String message) {

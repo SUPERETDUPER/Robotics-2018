@@ -58,6 +58,26 @@ class Polygon extends SingleColorRegion {
     }
 
     @Override
+    public float distanceToPoint(Point point) {
+        float result = Float.MAX_VALUE;
+        Point previousPoint = points.get(points.size() - 1);
+
+        for (Point currentPoint : points) {
+
+            Line previousToCurrentEdge = new Line(previousPoint.x, previousPoint.y, currentPoint.x, currentPoint.y);
+
+            if (result > previousToCurrentEdge.ptSegDist(point)) {
+                result = (float) previousToCurrentEdge.ptSegDist(point);
+            }
+
+
+            previousPoint = currentPoint;
+        }
+
+        return result;
+    }
+
+    @Override
     public void displayOnGui(@NotNull Graphics g) {
         super.displayOnGui(g);
         int[] xValues = new int[points.size()];

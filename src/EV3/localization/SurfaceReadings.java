@@ -2,9 +2,10 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package EV3.navigation;
+package EV3.localization;
 
 import Common.mapping.SurfaceMap;
+import EV3.navigation.Readings;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +13,7 @@ public class SurfaceReadings implements Readings {
 
     private final int color;
 
-    SurfaceReadings(int color) {
+    public SurfaceReadings(int color) {
         this.color = color;
     }
 
