@@ -87,12 +87,13 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         Move move = mp.getMovement();
 
         particleSet.moveParticles(Util.subtractMove(move, completedMove)); //Shift particles
+        currentPose = Util.movePose(currentPose, Util.subtractMove(move, completedMove));
 
         completedMove = deepCopyMove(move);
 
         particleSet.weightParticles(readings); //Recalculate all the particle weights
         particleSet.resample();//Re samples for highest weights
-        currentPose = particleSet.estimateCurrentPose(); //Updates current pose
+//        currentPose = particleSet.estimateCurrentPose(); //Updates current pose
 
         updatePC(); //SendToPc
 

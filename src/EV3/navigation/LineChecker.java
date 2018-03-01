@@ -32,8 +32,9 @@ public final class LineChecker extends Thread {
             //SurfaceReadings
             int surfaceColor = ColorSensor.getSurfaceColor();
 
-            if (SurfaceMap.get().getColorAtPoint(RobotPoseProvider.get().getPose().getLocation()) != surfaceColor) {
+            if (previousColor != surfaceColor){
                 RobotPoseProvider.get().update(new SurfaceReadings(surfaceColor));
+                previousColor =  surfaceColor;
             }
         }
     }

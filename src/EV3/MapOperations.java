@@ -8,8 +8,9 @@ import EV3.localization.RobotPoseProvider;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
+import org.jetbrains.annotations.NotNull;
 
-public final class MapOperations {
+final class MapOperations {
     private static final float APPROACH_DIST = 100;
 
     private static final Point TEMP_REG_GREEN = new Point(1902, 838);
@@ -64,28 +65,34 @@ public final class MapOperations {
         Controller.get().getNavigator().addWaypoint(new Waypoint(point));
     }
 
+    @NotNull
     private static Pose getApproachRight(Point point) {
         return getApproachAt(point, 0);
     }
 
+    @NotNull
     private static Pose getApproachTop(Point point) {
         return getApproachAt(point, 90);
     }
 
+    @NotNull
     private static Pose getApproachLeft(Point point) {
         return getApproachAt(point, 180);
     }
 
+    @NotNull
     private static Pose getApproachBottom(Point point) {
         return getApproachAt(point, 270);
     }
 
+    @NotNull
     private static Pose getApproachAt(Point point, float angle) {
         Point approachPoint = point.pointAt(APPROACH_DIST, angle);
 
         float heading = angle + 180;
 
-        if (heading > 360) heading -= 360;
+        while (heading > 360) heading -= 360;
+        while (heading < 0) heading +=360;
 
         return new Pose(approachPoint.x, approachPoint.y, heading);
     }
