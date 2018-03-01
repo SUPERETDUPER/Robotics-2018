@@ -14,6 +14,4 @@ Defines a region of the surface that has a color
 interface ColoredRegion extends Displayable {
     int getColorAtPoint(Point point);
     boolean contains(Point point);
-
-    float distanceToPoint(Point point);
 }

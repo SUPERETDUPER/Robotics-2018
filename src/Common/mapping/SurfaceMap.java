@@ -123,21 +123,4 @@ public class SurfaceMap implements ColoredRegion {
 
         return colorUnderPoint;
     }
-
-    @Override
-    public float distanceToPoint(Point point) {
-        return boundingRectangle.distanceToPoint(point);
-    }
-
-    public float distanceToColor(Point point, int color) {
-        float distance = Float.MAX_VALUE;
-
-        for (ColoredRegion region : regions) {
-            if (region.getColorAtPoint(null) == color) {
-                distance = region.distanceToPoint(point);
-            }
-        }
-
-        return distance;
-    }
 }

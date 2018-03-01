@@ -29,11 +29,4 @@ class Rectangle extends SingleColorRegion {
     public boolean contains(@NotNull Point point) {
         return mRectangle.contains(point);
     }
-
-    @Override
-    public float distanceToPoint(Point point) {
-        double dx = Math.max(Math.abs(point.x - mRectangle.getCenterX()) - (mRectangle.width / 2), 0);
-        double dy = Math.max(Math.abs(point.y - mRectangle.getCenterY()) - (mRectangle.height / 2), 0);
-        return (float) Math.sqrt(dx * dx + dy * dy);
-    }
 }
