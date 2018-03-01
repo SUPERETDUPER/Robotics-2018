@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package EV3;
+package EV3.navigation;
 
 import EV3.localization.RobotPoseProvider;
 import lejos.robotics.geometry.Point;
@@ -10,7 +10,7 @@ import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 import org.jetbrains.annotations.NotNull;
 
-final class MapOperations {
+public final class MapOperations {
     private static final float APPROACH_DIST = 100;
 
     private static final Point TEMP_REG_GREEN = new Point(1902, 838);
@@ -19,19 +19,19 @@ final class MapOperations {
     private static final Point TEMP_REG_RED = new Point(1578, 838);
 
 
-    static void goToTempRegGreen() {
+    public static void goToTempRegGreen() {
         approachTopOrBottom(TEMP_REG_GREEN);
     }
 
-    static void goToTempRegBlue() {
+    public static void goToTempRegBlue() {
         approachTopOrBottom(TEMP_REG_BLUE);
     }
 
-    static void goToTempRegRed() {
+    public static void goToTempRegRed() {
         approachTopOrBottom(TEMP_REG_RED);
     }
 
-    static void goToTempRegYellow() {
+    public static void goToTempRegYellow() {
         approachTopOrBottom(TEMP_REG_YELLOW);
     }
 
@@ -72,7 +72,7 @@ final class MapOperations {
 
     @NotNull
     private static Pose getApproachTop(Point point) {
-        return getApproachAt(point, 90);
+        return getApproachAt(point, 270); //Opposite of what's expected because GUI flipped
     }
 
     @NotNull
@@ -82,7 +82,7 @@ final class MapOperations {
 
     @NotNull
     private static Pose getApproachBottom(Point point) {
-        return getApproachAt(point, 270);
+        return getApproachAt(point, 90); //Opposite of what's expected because GUI flipped
     }
 
     @NotNull
@@ -92,7 +92,7 @@ final class MapOperations {
         float heading = angle + 180;
 
         while (heading > 360) heading -= 360;
-        while (heading < 0) heading +=360;
+        while (heading < 0) heading += 360;
 
         return new Pose(approachPoint.x, approachPoint.y, heading);
     }

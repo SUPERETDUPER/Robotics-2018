@@ -64,7 +64,7 @@ public final class DataSender {
         }
     }
 
-    static void sendPath(@NotNull Path path) {
+    public static void sendPath(@NotNull Path path) {
         if (isConnected) {
             sendTransmittable(EventTypes.PATH, path);
         } else {

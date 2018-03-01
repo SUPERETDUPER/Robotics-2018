@@ -2,14 +2,12 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package EV3;
+package EV3.navigation;
 
 import Common.Logger;
+import EV3.DataSender;
 import EV3.hardware.ChassisBuilder;
 import EV3.localization.RobotPoseProvider;
-import EV3.navigation.LineChecker;
-import EV3.navigation.MyMovePilot;
-import EV3.navigation.Readings;
 import lejos.robotics.navigation.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +38,6 @@ public final class Controller implements MoveListener, NavigationListener {
 
         navigator = new Navigator(pilot, RobotPoseProvider.get());
         navigator.addNavigationListener(this);
-        navigator.singleStep(true);
 
         new LineChecker().start();
     }
@@ -75,12 +72,7 @@ public final class Controller implements MoveListener, NavigationListener {
 //        Logger.info(LOG_TAG, "At Waypoint");
     }
 
-    void testMethod() {
-        MapOperations.goToTempRegBlue();
-        MapOperations.goToTempRegGreen();
-        MapOperations.goToTempRegYellow();
-        navigator.followPath();
-
+    public void waitForStop() {
         while (navigator.isMoving()) {
             RobotPoseProvider.get().updatePC();
             Thread.yield();
@@ -89,11 +81,14 @@ public final class Controller implements MoveListener, NavigationListener {
     }
 
     @NotNull
-    Navigator getNavigator() {
+    public Navigator getNavigator() {
         return navigator;
     }
 
     public void update(@NotNull Readings readings) {
         RobotPoseProvider.get().update(readings);
+    }
+
+    public static void init() {
     }
 }
