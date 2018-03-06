@@ -4,7 +4,6 @@
 
 package EV3.navigation;
 
-import Common.mapping.SurfaceMap;
 import EV3.hardware.ColorSensor;
 import EV3.localization.RobotPoseProvider;
 import EV3.localization.SurfaceReadings;

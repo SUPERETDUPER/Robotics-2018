@@ -29,4 +29,12 @@ class Rectangle extends SingleColorRegion {
     public boolean contains(@NotNull Point point) {
         return mRectangle.contains(point);
     }
+
+    public float getWidth(){
+        return mRectangle.width;
+    }
+
+    public float getHeight(){
+        return mRectangle.height;
+    }
 }

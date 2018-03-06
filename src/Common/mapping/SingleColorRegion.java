@@ -27,7 +27,7 @@ public abstract class SingleColorRegion implements ColoredRegion {
     }
 
     @Nullable
-    private java.awt.Color getDisplayColor() {
+    public java.awt.Color getDisplayColor(@Nullable Point point) {
         switch (mColor) {
             case Color.BLACK:
                 return java.awt.Color.BLACK;
@@ -51,6 +51,6 @@ public abstract class SingleColorRegion implements ColoredRegion {
 
     @Override
     public void displayOnGui(@NotNull Graphics g) {
-        g.setColor(getDisplayColor());
+        g.setColor(getDisplayColor(null));
     }
 }

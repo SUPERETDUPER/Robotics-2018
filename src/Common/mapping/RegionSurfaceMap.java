@@ -4,17 +4,23 @@
 
 package Common.mapping;
 
+import Common.Logger;
 import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SurfaceMap implements ColoredRegion {
-    private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
+public class RegionSurfaceMap implements ColoredRegion {
+    private static final String LOG_TAG = RegionSurfaceMap.class.getSimpleName();
 
     private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143) {
         @Override
@@ -85,15 +91,15 @@ public class SurfaceMap implements ColoredRegion {
         }
     }
 
-    private static final SurfaceMap mSurfaceMap = new SurfaceMap();
+    private static final RegionSurfaceMap mSurfaceMap = new RegionSurfaceMap();
 
-    private SurfaceMap() {
+    private RegionSurfaceMap() {
 
     }
 
     @NotNull
     @Contract(pure = true)
-    public static SurfaceMap get() {
+    public static RegionSurfaceMap get() {
         return mSurfaceMap;
     }
 
@@ -122,5 +128,33 @@ public class SurfaceMap implements ColoredRegion {
         }
 
         return colorUnderPoint;
+    }
+
+    public java.awt.Color getDisplayColor(Point point){
+        java.awt.Color colorUnderPoint = boundingRectangle.getDisplayColor(point);
+
+        for (ColoredRegion region : regions) {
+            if (region.contains(point)) {
+                colorUnderPoint = region.getDisplayColor(point);
+            }
+        }
+
+        return colorUnderPoint;
+    }
+
+    public static void exportToFile() {
+        BufferedImage image = new BufferedImage((int) boundingRectangle.getWidth(), (int) boundingRectangle.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+        for (int x = 0; x < boundingRectangle.getWidth(); x++) {
+            for (int y = 0; y < boundingRectangle.getHeight(); y++) {
+                image.setRGB(x,y, RegionSurfaceMap.get().getDisplayColor(new Point(x,y)).getRGB());
+            }
+        }
+
+        try{
+            File file = new File("//res//map.jpg");
+            ImageIO.write(image, "png", file);
+        } catch (IOException e) {
+            Logger.error(LOG_TAG, "Failed to write Image to file");
+        }
     }
 }
