@@ -6,7 +6,7 @@ package PC.GUI;
 
 import Common.Config;
 import Common.Particles.ParticleData;
-import Common.mapping.RegionSurfaceMap;
+import Common.mapping.SurfaceMap;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public final class GUI {
     private static final ParticleData mclData = new ParticleData();
 
     private static final List<Displayable> contents = new ArrayList<>(Arrays.asList(
-            RegionSurfaceMap.get(),
+            SurfaceMap.get(),
             mclData,
             path
     ));

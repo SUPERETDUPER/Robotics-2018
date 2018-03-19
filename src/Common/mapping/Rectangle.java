@@ -14,7 +14,7 @@ class Rectangle extends SingleColorRegion {
     @NotNull
     final lejos.robotics.geometry.Rectangle mRectangle;
 
-    Rectangle(int color, float x1, float y1, float w, float h) {
+    Rectangle(Color color, float x1, float y1, float w, float h) {
         super(color);
         mRectangle = new lejos.robotics.geometry.Rectangle(x1, y1, w, h);
     }

@@ -13,6 +13,7 @@ public final class Config {
 
     public static final boolean DISPLAY_PARTICLE_WEIGHT = false;
     public final static int SIM_SPEED_REDUCING_FACTOR = 3;
+    public static final String IMAGE_PATH = ".//res//map.png";
 
     public static boolean runningOnEV3;
 

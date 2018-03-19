@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="ev3classes">
     <CLASSES>
-      <root url="jar://H:/Software/leJOS_EV3_0.9.1-beta_win32/lib/ev3/ev3classes.jar!/" />
+      <root url="jar:///opt/leJOS_EV3_0.9.1-beta/lib/ev3/ev3classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

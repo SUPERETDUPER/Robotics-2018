@@ -20,7 +20,7 @@ class Polygon extends SingleColorRegion {
     private final List<Point> points;
     private float maxX;
 
-    Polygon(int color, List<Point> points) {
+    Polygon(Color color, List<Point> points) {
         super(color);
 
         this.points = points;

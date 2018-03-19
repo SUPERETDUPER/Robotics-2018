@@ -4,7 +4,7 @@
 
 package EV3.localization;
 
-import Common.mapping.RegionSurfaceMap;
+import Common.mapping.SurfaceMap;
 import EV3.navigation.Readings;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class SurfaceReadings implements Readings {
     }
 
     public float calculateWeight(@NotNull Pose pose) {
-        if (RegionSurfaceMap.get().contains(pose.getLocation()) && RegionSurfaceMap.get().getColorAtPoint(pose.getLocation()) == color) {
+        if (SurfaceMap.get().contains(pose.getLocation()) && SurfaceMap.get().getColorAtPoint(pose.getLocation()) == color) {
             return 1;
         }
         return 0;
