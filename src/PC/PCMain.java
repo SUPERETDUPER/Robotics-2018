@@ -14,22 +14,36 @@ final class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 
+    private static Connection connection = new Connection();
+
     public static void main(String[] args) {
         Config.runningOnEV3 = false;
 
         if (!Config.usePC) {
             Logger.error(LOG_TAG, "Config var 'usePC' isFalse");
+            return;
         }
 
-        DataReceiver.connect();
+        boolean success = connection.connect();
+
+        if (!success){
+            Logger.error(LOG_TAG, "Could not connect to EV3");
+            return;
+        }
+
         GUI.init();
 
         try {
-            DataReceiver.monitorForData();
+            DataReceiver.monitorForData(connection.getDataInputStream());
         } catch (IOException e) {
             Logger.warning(LOG_TAG, "Lost connection to EV3");
-            DataReceiver.close();
-            GUI.close();
+        } finally {
+            cleanup();
         }
+    }
+
+    private static void cleanup(){
+        connection.close();
+        GUI.close();
     }
 }
