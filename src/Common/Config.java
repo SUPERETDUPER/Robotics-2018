@@ -17,7 +17,7 @@ public final class Config {
 
     public static boolean runningOnEV3;
 
-    public static final boolean useSimulator = true;
+    public static final boolean useSimulator = false;
     public static final boolean usePC = true;
 
     public static final float GUI_DISPLAY_RATIO = 0.8F;

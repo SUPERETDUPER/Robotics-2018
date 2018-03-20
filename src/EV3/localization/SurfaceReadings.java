@@ -18,7 +18,7 @@ public class SurfaceReadings implements Readings {
     }
 
     public float calculateWeight(@NotNull Pose pose) {
-        if (SurfaceMap.get().contains(pose.getLocation()) && SurfaceMap.get().getColorAtPoint(pose.getLocation()) == color) {
+        if (SurfaceMap.contains(pose.getLocation()) && SurfaceMap.getColorAtPoint(pose.getLocation()) == color) {
             return 1;
         }
         return 0;

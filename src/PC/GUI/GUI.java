@@ -29,7 +29,7 @@ public final class GUI {
     private static final ParticleData mclData = new ParticleData();
 
     private static final List<Displayable> contents = new ArrayList<>(Arrays.asList(
-            SurfaceMap.get(),
+            new SurfaceMap(),
             mclData,
             path
     ));
