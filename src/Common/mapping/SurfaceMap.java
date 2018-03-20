@@ -6,9 +6,8 @@ package Common.mapping;
 
 import Common.Config;
 import Common.Logger;
-import PC.GUI.Displayable;
+import PC.Displayable;
 import lejos.robotics.geometry.Point;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;

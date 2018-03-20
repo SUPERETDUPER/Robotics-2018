@@ -6,7 +6,6 @@ package PC;
 
 import Common.Config;
 import Common.Logger;
-import PC.GUI.GUI;
 
 final class PCMain {
 

@@ -4,9 +4,8 @@
 
 package Common.mapping;
 
-import PC.GUI.Displayable;
+import PC.Displayable;
 import lejos.robotics.geometry.Point;
-import org.jetbrains.annotations.Nullable;
 
 
 /**

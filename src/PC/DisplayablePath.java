@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package PC.GUI;
+package PC;
 
 import Common.Logger;
 import lejos.robotics.navigation.Waypoint;
@@ -15,12 +15,12 @@ public final class DisplayablePath extends Path implements Displayable {
     private static final String LOG_TAG = DisplayablePath.class.getSimpleName();
 
     public void displayOnGui(@NotNull Graphics g) {
-        if (GUI.getCurrentPose() == null) {
+        if (GUI.get().getCurrentPose() == null) {
             Logger.warning(LOG_TAG, "Could not display path, no current position");
             return;
         }
 
-        Waypoint previous = new Waypoint(GUI.getCurrentPose());
+        Waypoint previous = new Waypoint(GUI.get().getCurrentPose());
 
         g.setColor(Color.RED);
 

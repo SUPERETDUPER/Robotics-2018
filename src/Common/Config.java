@@ -10,14 +10,13 @@ import Common.Logger.LogTypes;
 Environment specific and run specific settings
  */
 public final class Config {
-
     public static final boolean DISPLAY_PARTICLE_WEIGHT = false;
     public final static int SIM_SPEED_REDUCING_FACTOR = 3;
     public static final String IMAGE_PATH = ".//res//map.png";
 
     public static boolean runningOnEV3;
 
-    public static final boolean useSimulator = false;
+    public static final boolean useSimulator = true;
     public static final boolean usePC = true;
 
     public static final float GUI_DISPLAY_RATIO = 0.8F;

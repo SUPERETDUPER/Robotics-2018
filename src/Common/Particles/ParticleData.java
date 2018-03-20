@@ -5,7 +5,7 @@
 package Common.Particles;
 
 import Common.Config;
-import PC.GUI.Displayable;
+import PC.Displayable;
 import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;

@@ -2,14 +2,13 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package PC.GUI;
+package PC;
 
 import Common.Config;
 import Common.EventTypes;
 import Common.Logger;
 import Common.Particles.ParticleData;
 import Common.mapping.SurfaceMap;
-import PC.DataChangeListener;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,21 +22,20 @@ import java.util.List;
 
 
 //TODO Add event listener for panel closing
-public final class GUI implements DataChangeListener {
+public final class GUI extends JFrame implements DataChangeListener {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
-    private static final JFrame window = new JFrame();
+    private final DisplayablePath path = new DisplayablePath();
+    private final ParticleData mclData = new ParticleData();
+    private final static GUI mGui = new GUI();
 
-    private static final DisplayablePath path = new DisplayablePath();
-    private static final ParticleData mclData = new ParticleData();
-
-    private static final List<Displayable> contents = new ArrayList<>(Arrays.asList(
+    private final List<Displayable> contents = new ArrayList<>(Arrays.asList(
             new SurfaceMap(),
             mclData,
             path
     ));
 
-    private static final JComponent mainComponent = new JComponent() {
+    private final JComponent mainComponent = new JComponent() {
         @Override
         protected synchronized void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
@@ -53,41 +51,47 @@ public final class GUI implements DataChangeListener {
         }
     };
 
-    static {
-        window.getContentPane().add(mainComponent);
-        window.setVisible(true);
-        window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+    public static GUI get() {
+        return mGui;
     }
 
-    public static void updateMCLData(@NotNull DataInputStream dis) throws IOException {
+    private GUI() {
+        super();
+        Connection.setListener(this);
+        this.getContentPane().add(mainComponent);
+        this.setVisible(true);
+        this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+    }
+
+    private void updateMCLData(@NotNull DataInputStream dis) throws IOException {
         mclData.loadObject(dis);
-        window.repaint();
+        this.repaint();
     }
 
-    public static void updatePaths(@NotNull DataInputStream dis) throws IOException {
+    private void updatePaths(@NotNull DataInputStream dis) throws IOException {
         path.loadObject(dis);
-        window.repaint();
+        this.repaint();
     }
 
-    static Pose getCurrentPose() {
+    Pose getCurrentPose() {
         return mclData.getCurrentPose();
     }
 
     @SuppressWarnings("EmptyMethod")
-    public static void init() {
+    static void init() {
     }
 
     @Override
     public void dataChanged(EventTypes event, DataInputStream dis) throws IOException {
         switch (event) {
             case MCL_DATA:
-                GUI.updateMCLData(dis);
+                updateMCLData(dis);
                 break;
             case LOG:
                 System.out.println(dis.readUTF());
                 break;
             case PATH:
-                GUI.updatePaths(dis);
+                updatePaths(dis);
                 break;
             default:
                 Logger.error(LOG_TAG, "Not a recognized event type");
@@ -96,6 +100,6 @@ public final class GUI implements DataChangeListener {
 
     @Override
     public void connectionLost() {
-        window.dispose();
+        this.dispose();
     }
 }

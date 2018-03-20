@@ -12,19 +12,17 @@ import lejos.utility.Delay;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-class Connection {
+public class Connection {
     private static final String LOG_TAG = Connection.class.getSimpleName();
 
     private static Socket socket;
     private static DataInputStream dis;
 
-    private static List<DataChangeListener> listeners = new ArrayList<DataChangeListener>();
+    private static DataChangeListener listener;
 
-    static void addListener(DataChangeListener listener) {
-        listeners.add(listener);
+    public static void setListener(DataChangeListener listener) {
+        Connection.listener = listener;
     }
 
     static boolean connect() {
@@ -52,7 +50,7 @@ class Connection {
                 readNext();
             }
         } catch (IOException e) {
-            for (DataChangeListener listener : listeners) {
+            if (listener != null) {
                 listener.connectionLost();
             }
         } finally {
@@ -63,12 +61,12 @@ class Connection {
     private static void readNext() throws IOException {
         EventTypes dataType = EventTypes.values()[dis.readByte()];
 
-        for (DataChangeListener listener : listeners) {
+        if (listener != null) {
             listener.dataChanged(dataType, dis);
         }
     }
 
-    static void close() {
+    private static void close() {
         try {
             socket.close();
             dis.close();
