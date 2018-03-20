@@ -5,8 +5,11 @@
 package PC.GUI;
 
 import Common.Config;
+import Common.EventTypes;
+import Common.Logger;
 import Common.Particles.ParticleData;
 import Common.mapping.SurfaceMap;
+import PC.DataChangeListener;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +23,7 @@ import java.util.List;
 
 
 //TODO Add event listener for panel closing
-public final class GUI {
+public final class GUI implements DataChangeListener {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
     private static final JFrame window = new JFrame();
@@ -70,11 +73,29 @@ public final class GUI {
         return mclData.getCurrentPose();
     }
 
-    public static void close() {
-        window.dispose();
-    }
-
     @SuppressWarnings("EmptyMethod")
     public static void init() {
+    }
+
+    @Override
+    public void dataChanged(EventTypes event, DataInputStream dis) throws IOException {
+        switch (event) {
+            case MCL_DATA:
+                GUI.updateMCLData(dis);
+                break;
+            case LOG:
+                System.out.println(dis.readUTF());
+                break;
+            case PATH:
+                GUI.updatePaths(dis);
+                break;
+            default:
+                Logger.error(LOG_TAG, "Not a recognized event type");
+        }
+    }
+
+    @Override
+    public void connectionLost() {
+        window.dispose();
     }
 }
