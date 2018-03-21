@@ -5,9 +5,9 @@
 package EV3;
 
 import Common.Config;
-import Common.EventTypes;
-import Common.Particles.ParticleData;
 import Common.Logger;
+import PC.EventTypes;
+import PC.GUI.GUILayers.ParticleData;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;

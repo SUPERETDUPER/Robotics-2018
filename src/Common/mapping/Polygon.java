@@ -4,12 +4,13 @@
 
 package Common.mapping;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Line;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.geometry.Point2D;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.List;
 
 /**
@@ -58,14 +59,14 @@ class Polygon extends SingleColorRegion {
     }
 
     @Override
-    public void displayOnGui(@NotNull Graphics g) {
+    public void displayOnGui(@NotNull GraphicsContext g) {
         super.displayOnGui(g);
-        int[] xValues = new int[points.size()];
-        int[] yValues = new int[points.size()];
+        double[] xValues = new double[points.size()];
+        double[] yValues = new double[points.size()];
 
         for (int i = 0; i < points.size(); i++) {
-            xValues[i] = (int) points.get(i).x;
-            yValues[i] = (int) points.get(i).y;
+            xValues[i] = points.get(i).x;
+            yValues[i] = points.get(i).y;
         }
 
         g.fillPolygon(xValues, yValues, points.size());

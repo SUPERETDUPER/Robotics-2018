@@ -6,9 +6,9 @@ package EV3.localization;
 
 import Common.Config;
 import Common.Logger;
-import Common.Particles.ParticleData;
 import EV3.DataSender;
 import EV3.navigation.Readings;
+import PC.GUI.GUILayers.ParticleData;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;

@@ -6,12 +6,14 @@ package PC;
 
 import Common.Config;
 import Common.Logger;
+import PC.GUI.GUI;
+import javafx.application.Application;
 
 final class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         Config.runningOnEV3 = false;
 
         if (!Config.usePC) {
@@ -26,7 +28,14 @@ final class PCMain {
             return;
         }
 
-        GUI.init();
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                Application.launch(GUI.class, args);
+            }
+        }.start();
+
         Connection.listen();
     }
 }

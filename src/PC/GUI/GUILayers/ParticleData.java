@@ -2,16 +2,17 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package Common.Particles;
+package PC.GUI.GUILayers;
 
 import Common.Config;
-import PC.Displayable;
+import Common.Particles.Particle;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -30,9 +31,6 @@ public class ParticleData implements Transmittable, Displayable {
     private List<Particle> particles;
     private Pose currentPose;
 
-    public ParticleData() {
-    }
-
     public ParticleData(List<Particle> particles, Pose currentPose) {
         this.particles = particles;
         this.currentPose = currentPose;
@@ -43,9 +41,9 @@ public class ParticleData implements Transmittable, Displayable {
     }
 
     @Override
-    public synchronized void displayOnGui(@NotNull Graphics g) {
+    public synchronized void displayOnGui(@NotNull GraphicsContext g) {
         if (particles != null) {
-            g.setColor(Color.BLUE);
+            g.setFill(Color.BLUE);
 
             for (Particle particle : particles) {
                 displayPoseOnGui(particle.getPose(), g);
@@ -56,22 +54,22 @@ public class ParticleData implements Transmittable, Displayable {
         }
 
         if (currentPose != null) {
-            g.setColor(Color.RED);
+            g.setFill(Color.RED);
             displayPoseOnGui(currentPose, g);
         }
     }
 
-    private static void displayPoseOnGui(@NotNull Pose particlePose, @NotNull Graphics g) {
+    private static void displayPoseOnGui(@NotNull Pose particlePose, @NotNull GraphicsContext g) {
         Point leftEnd = particlePose.pointAt(DISPLAY_TAIL_LENGTH, particlePose.getHeading() + 180 - DISPLAY_TAIL_ANGLE);
         Point rightEnd = particlePose.pointAt(DISPLAY_TAIL_LENGTH, particlePose.getHeading() + 180 + DISPLAY_TAIL_ANGLE);
 
-        int[] xValues = new int[]{
+        double[] xValues = new double[]{
                 Math.round(particlePose.getX()),
                 Math.round(leftEnd.x),
                 Math.round(rightEnd.x)
         };
 
-        int[] yValues = new int[]{
+        double[] yValues = new double[]{
                 Math.round(particlePose.getY()),
                 Math.round(leftEnd.y),
                 Math.round(rightEnd.y)
@@ -80,8 +78,8 @@ public class ParticleData implements Transmittable, Displayable {
         g.fillPolygon(xValues, yValues, xValues.length);
     }
 
-    private static void displayParticleWeight(@NotNull Particle particle, Graphics g) {
-        g.drawString(String.valueOf(particle.getWeight()), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
+    private static void displayParticleWeight(@NotNull Particle particle, GraphicsContext g) {
+        g.fillText(String.valueOf(particle.getWeight()), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
     }
 
 

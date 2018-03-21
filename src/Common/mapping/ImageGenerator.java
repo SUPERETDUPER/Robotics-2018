@@ -6,24 +6,24 @@ package Common.mapping;
 
 import Common.Config;
 import Common.Logger;
-
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.awt.Color;
 
 public class ImageGenerator {
     private static final String LOG_TAG = ImageGenerator.class.getSimpleName();
 
-    private static final Color LEJOS_BLUE = new java.awt.Color(0, 117, 191);
-    private static final Color LEJOS_GREEN = new java.awt.Color(0, 172, 70);
-    private static final Color LEJOS_RED = new java.awt.Color(237, 28, 36);
-    private static final Color LEJOS_YELLOW = new java.awt.Color(255, 205, 3);
+    private static final Color LEJOS_BLUE = Color.rgb(0, 117, 191);
+    private static final Color LEJOS_GREEN = Color.rgb(0, 172, 70);
+    private static final Color LEJOS_RED = Color.rgb(237, 28, 36);
+    private static final Color LEJOS_YELLOW = Color.rgb(255, 205, 3);
 
     private static final Color DEFAULT_COLOR = Color.WHITE;
 
@@ -90,8 +90,8 @@ public class ImageGenerator {
         }
     }
 
-    private static java.awt.Color getDisplayColor(Point point){
-        java.awt.Color colorUnderPoint = DEFAULT_COLOR;
+    private static Color getDisplayColor(Point point) {
+        javafx.scene.paint.Color colorUnderPoint = DEFAULT_COLOR;
 
         for (ColoredRegion region : regions) {
             if (region.contains(point)) {
@@ -103,20 +103,19 @@ public class ImageGenerator {
     }
 
     public static void main(String[] args) {
-        BufferedImage image = new BufferedImage((int) boundingRectangle.getWidth(), (int) boundingRectangle.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+        WritableImage image = new WritableImage(boundingRectangle.width, boundingRectangle.height);
 
         for (int x = 0; x < boundingRectangle.getWidth(); x++) {
             for (int y = 0; y < boundingRectangle.getHeight(); y++) {
-                image.setRGB(x, y, getDisplayColor(new Point(x, y)).getRGB());
+                image.getPixelWriter().setColor(x, y, getDisplayColor(new Point(x, y)));
             }
         }
 
         try {
             File file = new File(Config.IMAGE_PATH);
-            ImageIO.write(image, "png", file);
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Failed to write Image to file" + e);
         }
-
     }
 }

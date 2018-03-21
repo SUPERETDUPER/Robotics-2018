@@ -4,10 +4,10 @@
 
 package Common.mapping;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
 
 class Rectangle extends SingleColorRegion {
 
@@ -20,7 +20,7 @@ class Rectangle extends SingleColorRegion {
     }
 
     @Override
-    public void displayOnGui(@NotNull Graphics g) {
+    public void displayOnGui(@NotNull GraphicsContext g) {
         super.displayOnGui(g);
         g.fillRect((int) mRectangle.x, (int) mRectangle.y, (int) mRectangle.width, (int) mRectangle.height);
     }

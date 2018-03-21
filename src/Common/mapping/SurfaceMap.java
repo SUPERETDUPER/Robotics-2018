@@ -6,26 +6,25 @@ package Common.mapping;
 
 import Common.Config;
 import Common.Logger;
-import PC.Displayable;
+import PC.GUI.GUILayers.Displayable;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
-public class SurfaceMap implements Displayable{
+public class SurfaceMap implements Displayable {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
-    private static BufferedImage image;
+    private static Image image;
 
     static {
         try {
-            image = ImageIO.read(new File(Config.IMAGE_PATH));
+            image = new Image(new FileInputStream(Config.IMAGE_PATH));
         } catch (IOException e) {
-            Logger.error(LOG_TAG, "Could not read map from file");
+            Logger.error(LOG_TAG, "Unable to read picture");
         }
     }
 
@@ -34,12 +33,21 @@ public class SurfaceMap implements Displayable{
     }
 
     @Override
-    public void displayOnGui(@NotNull Graphics g) {
-        g.drawImage(image, 0, 0, null);
+    public void displayOnGui(@NotNull GraphicsContext g) {
+        g.drawImage(image, 0, 0);
     }
 
     public static int getColorAtPoint(Point point) {
         //TODO Fix int to be lejos int
-        return image.getRGB((int) point.x, (int) point.y);
+        return 0;
+//        return image.getPixelReader().getColor((int) point.x, (int) point.y);
+    }
+
+    public static double getHeight() {
+        return image.getHeight();
+    }
+
+    public static double getWidth() {
+        return image.getWidth();
     }
 }
