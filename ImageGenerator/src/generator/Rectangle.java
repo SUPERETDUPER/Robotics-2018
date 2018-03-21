@@ -8,10 +8,10 @@ import javafx.scene.canvas.GraphicsContext;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
 
-class Rectangle extends SingleColorRegion {
+class Rectangle extends ColorRegion {
 
     @NotNull
-    final lejos.robotics.geometry.Rectangle mRectangle;
+    private final lejos.robotics.geometry.Rectangle mRectangle;
 
     Rectangle(int color, float x1, float y1, float w, float h) {
         super(color);

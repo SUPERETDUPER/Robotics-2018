@@ -18,7 +18,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="PC" />
     <orderEntry type="library" name="ev3classes" level="project" />
   </component>
 </module>

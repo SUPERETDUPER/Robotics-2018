@@ -6,7 +6,7 @@ package EV3;
 
 import Common.Config;
 import Common.Logger;
-import Common.Particles.LogMessageSender;
+import Common.LogMessageSender;
 import GUI.EventTypes;
 import GUI.ParticleData;
 import lejos.robotics.Transmittable;

@@ -15,7 +15,7 @@ import java.util.List;
 /**
 Any colored region that is a polygon
  */
-class Polygon extends SingleColorRegion {
+class Polygon extends ColorRegion {
 
     private final List<Point> points;
     private float maxX;

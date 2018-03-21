@@ -6,7 +6,6 @@ package generator;
 
 import Common.Config;
 import Common.Logger;
-import Common.mapping.ColorJavaLejos;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -22,11 +21,9 @@ import java.util.Arrays;
 public class ImageGenerator {
     private static final String LOG_TAG = ImageGenerator.class.getSimpleName();
 
-    private static final int DEFAULT_COLOR = Color.WHITE;
+    private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143);
 
-    private static final java.awt.Rectangle boundingRectangle = new java.awt.Rectangle(0, 0, 2362, 1143);
-
-    private static final ArrayList<ColoredRegion> regions = new ArrayList<>();
+    private static final ArrayList<ColorRegion> regions = new ArrayList<>();
 
     static {
         regions.add(new Rectangle(Color.BLUE, 0, 0, 412.5F, 1143));
@@ -87,20 +84,20 @@ public class ImageGenerator {
         }
     }
 
-    private static javafx.scene.paint.Color getDisplayColor(Point point, ArrayList<ColoredRegion> regions) {
-        javafx.scene.paint.Color colorUnderPoint = ColorJavaLejos.getJavaColor(DEFAULT_COLOR);
+    private static javafx.scene.paint.Color getDisplayColor(Point point, ArrayList<ColorRegion> regions) {
+        javafx.scene.paint.Color colorUnderPoint = boundingRectangle.getDisplayColor();
 
-        for (ColoredRegion region : regions) {
+        for (ColorRegion region : regions) {
             if (region.contains(point)) {
-                colorUnderPoint = region.getDisplayColor(point);
+                colorUnderPoint = region.getDisplayColor();
             }
         }
 
         return colorUnderPoint;
     }
 
-    private static void generateImage(ArrayList<ColoredRegion> regions) {
-        WritableImage image = new WritableImage(boundingRectangle.width, boundingRectangle.height);
+    private static void generateImage(ArrayList<ColorRegion> regions) {
+        WritableImage image = new WritableImage((int) boundingRectangle.getWidth(), (int) boundingRectangle.getHeight());
         PixelWriter pixelWriter = image.getPixelWriter();
 
         for (int x = 0; x < boundingRectangle.getWidth(); x++) {

@@ -4,7 +4,6 @@
 
 package Common;
 
-import Common.Particles.LogMessageSender;
 import org.jetbrains.annotations.NotNull;
 
 public final class Logger {
