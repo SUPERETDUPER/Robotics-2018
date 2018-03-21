@@ -54,17 +54,22 @@ public class ImageGenerator {
         //TODO Make more precise, slightly off
         //Container lines
         regions.add(new Polygon(Color.BLACK, Arrays.asList(
-                new Point(1328.4F, 272),
-                new Point(1342.5F, 286.1F),
-                new Point(841.5F, 797.1F),
-                new Point(827.4F, 783)
+                new Point(827, 766),
+                new Point(842, 780),
+                new Point(1274, 360),
+                new Point(1260, 346)
+//                corner of grey box 841.5 766 bot left
+//                corner of grey box 1259.5 360 top right
         )));
 
         regions.add(new Polygon(Color.BLACK, Arrays.asList(
-                new Point(896.4F, 431),
-                new Point(910.5F, 416.9F),
-                new Point(1207.6F, 732),
-                new Point(1193.5F, 746.1F)
+                new Point(916, 417),
+                new Point(901, 431),
+                new Point(1192, 709),
+                new Point(1206, 695)
+//                corner of grey box 915.5 431 top left
+//                corner of grey box 1191.5 695 bot right
+//                length of little black part = 10* sqrt(2) = 14.14
         )));
 
         //Containers base
