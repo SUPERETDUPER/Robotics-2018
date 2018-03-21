@@ -99,10 +99,6 @@ public class ImageGenerator {
         return colorUnderPoint;
     }
 
-    public static void main(String[] args) {
-        generateImage(regions);
-    }
-
     private static void generateImage(ArrayList<ColoredRegion> regions) {
         WritableImage image = new WritableImage(boundingRectangle.width, boundingRectangle.height);
         PixelWriter pixelWriter = image.getPixelWriter();
@@ -119,5 +115,9 @@ public class ImageGenerator {
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Failed to write Image to file" + e);
         }
+    }
+
+    public static void main(String[] args) {
+        generateImage(regions);
     }
 }
