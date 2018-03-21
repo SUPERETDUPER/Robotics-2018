@@ -27,13 +27,13 @@ public final class LineChecker extends Thread {
 
     @Override
     public void run() {
-        while(true) {
+        while (true) {
             //SurfaceReadings
             int surfaceColor = ColorSensor.getSurfaceColor();
 
-            if (previousColor != surfaceColor){
+            if (previousColor != surfaceColor) {
                 RobotPoseProvider.get().update(new SurfaceReadings(surfaceColor));
-                previousColor =  surfaceColor;
+                previousColor = surfaceColor;
             }
         }
     }

@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package Common.mapping.generator;
+package generator;
 
 import javafx.scene.canvas.GraphicsContext;
 import lejos.robotics.geometry.Line;

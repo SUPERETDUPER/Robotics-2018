@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package Common.mapping.generator;
+package generator;
 
 import Common.Config;
 import Common.Logger;

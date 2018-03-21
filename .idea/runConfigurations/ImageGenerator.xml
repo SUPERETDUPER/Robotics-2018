@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ImageGenerator" type="Application" factoryName="Application" singleton="true" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="Common.mapping.generator.ImageGenerator" />
-    <module name="Robotics-2018" />
+    <option name="MAIN_CLASS_NAME" value="generator.ImageGenerator" />
+    <module name="ImageGenerator" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="Common.mapping.generator.*" />
+        <option name="PATTERN" value="generator.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

@@ -38,7 +38,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         return mParticlePoseProvider;
     }
 
-    public void addMoveProvider(MoveProvider moveProvider){
+    public void addMoveProvider(MoveProvider moveProvider) {
         this.mp = moveProvider;
         moveProvider.addMoveListener(this);
     }

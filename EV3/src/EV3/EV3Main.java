@@ -6,7 +6,6 @@ package EV3;
 
 import Common.Config;
 import EV3.hardware.Brick;
-import EV3.navigation.Controller;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();

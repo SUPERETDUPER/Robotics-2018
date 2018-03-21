@@ -7,7 +7,7 @@ package Common;
 import Common.Logger.LogTypes;
 
 /**
-Environment specific and run specific settings
+ * Environment specific and run specific settings
  */
 public final class Config {
     public static final boolean DISPLAY_PARTICLE_WEIGHT = false;
