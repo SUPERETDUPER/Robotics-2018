@@ -22,10 +22,10 @@ public final class Logger {
         DEBUG
     }
 
-    private static LogMessageSender messageSender;
+    private static NewLogMessageListener newMessageListener;
 
-    public static void setMessageSender(LogMessageSender messageSender) {
-        Logger.messageSender = messageSender;
+    public static void setListener(NewLogMessageListener messageSender) {
+        Logger.newMessageListener = messageSender;
     }
 
     private static String constructMessage(@NotNull LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
@@ -52,7 +52,7 @@ public final class Logger {
     private static void print(String message, @NotNull LogTypes type) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
             if (Config.runningOnEV3 && !Config.useSimulator) {
-                messageSender.sendLogMessage(message);
+                newMessageListener.sendLogMessage(message);
             } else {
                 System.out.println(message);
             }

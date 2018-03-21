@@ -6,7 +6,7 @@ package Common.mapping;
 
 import Common.Config;
 import Common.Logger;
-import GUI.Displayable;
+import Common.GUI.Displayable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;

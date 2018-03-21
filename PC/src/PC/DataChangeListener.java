@@ -4,7 +4,7 @@
 
 package PC;
 
-import GUI.EventTypes;
+import Common.GUI.EventTypes;
 
 import java.io.DataInputStream;
 import java.io.IOException;

@@ -72,7 +72,7 @@ public final class MapOperations {
 
     @NotNull
     private static Pose getApproachTop(Point point) {
-        return getApproachAt(point, 270); //Opposite of what's expected because GUI flipped
+        return getApproachAt(point, 270); //Opposite of what's expected because Common.GUI flipped
     }
 
     @NotNull
@@ -82,7 +82,7 @@ public final class MapOperations {
 
     @NotNull
     private static Pose getApproachBottom(Point point) {
-        return getApproachAt(point, 90); //Opposite of what's expected because GUI flipped
+        return getApproachAt(point, 90); //Opposite of what's expected because Common.GUI flipped
     }
 
     @NotNull

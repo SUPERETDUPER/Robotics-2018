@@ -5,7 +5,7 @@
 package generator;
 
 import Common.mapping.ColorJavaLejos;
-import GUI.Displayable;
+import Common.GUI.Displayable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;

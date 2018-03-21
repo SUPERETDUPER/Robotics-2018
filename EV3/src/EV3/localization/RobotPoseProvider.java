@@ -8,7 +8,7 @@ import Common.Config;
 import Common.Logger;
 import EV3.DataSender;
 import EV3.navigation.Readings;
-import GUI.ParticleData;
+import Common.GUI.ParticleData;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;

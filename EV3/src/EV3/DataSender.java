@@ -6,9 +6,9 @@ package EV3;
 
 import Common.Config;
 import Common.Logger;
-import Common.LogMessageSender;
-import GUI.EventTypes;
-import GUI.ParticleData;
+import Common.NewLogMessageListener;
+import Common.GUI.EventTypes;
+import Common.GUI.ParticleData;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +18,17 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public final class DataSender implements LogMessageSender {
+public final class DataSender implements NewLogMessageListener {
     private static final String LOG_TAG = DataSender.class.getSimpleName();
 
     private static final DataSender dataSender = new DataSender();
 
     private static DataOutputStream dos;
     private static boolean isConnected = false;
+
+    private DataSender() {
+        Logger.setListener(this);
+    }
 
     public static DataSender get() {
         return dataSender;

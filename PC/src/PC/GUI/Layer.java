@@ -6,7 +6,7 @@ package PC.GUI;
 
 import Common.Config;
 import Common.mapping.SurfaceMap;
-import GUI.Displayable;
+import Common.GUI.Displayable;
 import javafx.scene.canvas.Canvas;
 
 class Layer extends Canvas {

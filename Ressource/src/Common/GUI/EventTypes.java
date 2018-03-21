@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package GUI;
+package Common.GUI;
 
 public enum EventTypes {
     MCL_DATA,

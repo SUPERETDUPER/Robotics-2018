@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package GUI;
+package Common.GUI;
 
 import Common.Config;
 import Common.Particles.Particle;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Object that gets sent from the EV3 to the computer GUI containing the Particles particles and the currentPosition
+ * Object that gets sent from the EV3 to the computer Common.GUI containing the Particles particles and the currentPosition
  */
 public class ParticleData implements Transmittable, Displayable {
     private static final String LOG_TAG = ParticleData.class.getSimpleName();
@@ -81,7 +81,6 @@ public class ParticleData implements Transmittable, Displayable {
     private static void displayParticleWeight(@NotNull Particle particle, GraphicsContext g) {
         g.fillText(String.valueOf(particle.getWeight()), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
     }
-
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
         dos.writeBoolean(currentPose != null);

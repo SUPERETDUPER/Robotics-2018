@@ -16,7 +16,7 @@ final class EV3Main {
 
         if (Config.usePC) {
             DataSender.connect(); //Try to connect to PC
-            Logger.setMessageSender(DataSender.get());
+            Logger.setListener(DataSender.get());
         }
 
         Brain.start();

@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package GUI;
+package Common.GUI;
 
 import Common.Logger;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public final class DisplayablePath extends Path implements Displayable {
     private static final String LOG_TAG = DisplayablePath.class.getSimpleName();
 
-    private Pose currentPose = null;
+    private Pose currentPose;
 
     public void setCurrentPose(Pose currentPose) {
         this.currentPose = currentPose;
@@ -27,13 +27,13 @@ public final class DisplayablePath extends Path implements Displayable {
             return;
         }
 
-        Waypoint previous = new Waypoint(currentPose);
+        Waypoint previousWaypoint = new Waypoint(currentPose);
 
         g.setStroke(Color.RED);
 
         for (Waypoint waypoint : this) {
-            g.strokeLine((int) previous.x, (int) previous.y, (int) waypoint.x, (int) waypoint.y);
-            previous = waypoint;
+            g.strokeLine((int) previousWaypoint.x, (int) previousWaypoint.y, (int) waypoint.x, (int) waypoint.y);
+            previousWaypoint = waypoint;
         }
     }
 }
