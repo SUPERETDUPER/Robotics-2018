@@ -4,7 +4,7 @@
 
 package generator;
 
-import PC.GUI.GUILayers.Displayable;
+import GUI.Displayable;
 import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 

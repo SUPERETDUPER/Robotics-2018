@@ -5,6 +5,7 @@
 package EV3;
 
 import Common.Config;
+import Common.Logger;
 import EV3.hardware.Brick;
 
 final class EV3Main {
@@ -15,6 +16,7 @@ final class EV3Main {
 
         if (Config.usePC) {
             DataSender.connect(); //Try to connect to PC
+            Logger.setMessageSender(DataSender.get());
         }
 
         Brain.start();

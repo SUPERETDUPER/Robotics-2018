@@ -8,9 +8,9 @@ import Common.Logger;
 import Common.mapping.SurfaceMap;
 import PC.Connection;
 import PC.DataChangeListener;
-import PC.EventTypes;
-import PC.GUI.GUILayers.DisplayablePath;
-import PC.GUI.GUILayers.ParticleData;
+import GUI.EventTypes;
+import GUI.DisplayablePath;
+import GUI.ParticleData;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -88,6 +88,8 @@ public final class GUI extends Application implements DataChangeListener {
             case MCL_DATA:
                 ((ParticleData) layerMCLData.getDisplayable()).loadObject(dis);
                 layerMCLData.markNotDrawn();
+                ((DisplayablePath) layerPath.getDisplayable()).setCurrentPose(((ParticleData) layerMCLData.getDisplayable()).getCurrentPose());
+                layerPath.markNotDrawn();
                 break;
             case PATH:
                 ((DisplayablePath) layerPath.getDisplayable()).loadObject(dis);

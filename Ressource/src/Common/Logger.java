@@ -4,7 +4,7 @@
 
 package Common;
 
-import EV3.DataSender;
+import Common.Particles.LogMessageSender;
 import org.jetbrains.annotations.NotNull;
 
 public final class Logger {
@@ -21,6 +21,12 @@ public final class Logger {
         WARNING,
         INFO,
         DEBUG
+    }
+
+    private static LogMessageSender messageSender;
+
+    public static void setMessageSender(LogMessageSender messageSender) {
+        Logger.messageSender = messageSender;
     }
 
     private static String constructMessage(@NotNull LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
@@ -47,7 +53,7 @@ public final class Logger {
     private static void print(String message, @NotNull LogTypes type) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
             if (Config.runningOnEV3 && !Config.useSimulator) {
-                DataSender.sendLogMessage(message);
+                messageSender.sendLogMessage(message);
             } else {
                 System.out.println(message);
             }
