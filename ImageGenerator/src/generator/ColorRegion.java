@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ColorRegion implements Displayable {
+abstract class ColorRegion implements Displayable {
     private static final String LOG_TAG = ColorRegion.class.getSimpleName();
 
     private final int mColor;
