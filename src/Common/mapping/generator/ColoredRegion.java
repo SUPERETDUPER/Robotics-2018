@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package Common.mapping;
+package Common.mapping.generator;
 
 import PC.GUI.GUILayers.Displayable;
 import javafx.scene.paint.Color;
@@ -14,6 +14,5 @@ Defines a region of the surface that has a color
  */
 interface ColoredRegion extends Displayable {
     boolean contains(Point point);
-
     Color getDisplayColor(Point point);
 }

@@ -9,6 +9,7 @@ import Common.Logger;
 import PC.GUI.GUILayers.Displayable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,10 +20,12 @@ public class SurfaceMap implements Displayable {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
     private static Image image;
+    private static PixelReader pixelReader;
 
     static {
         try {
             image = new Image(new FileInputStream(Config.IMAGE_PATH));
+            pixelReader = image.getPixelReader();
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Unable to read picture");
         }
@@ -32,15 +35,8 @@ public class SurfaceMap implements Displayable {
         return point.x >= 0 && point.x < image.getWidth() && point.y >= 0 && point.y < image.getHeight();
     }
 
-    @Override
-    public void displayOnGui(@NotNull GraphicsContext g) {
-        g.drawImage(image, 0, 0);
-    }
-
     public static int getColorAtPoint(Point point) {
-        //TODO Fix int to be lejos int
-        return 0;
-//        return image.getPixelReader().getColor((int) point.x, (int) point.y);
+        return ColorJavaLejos.getLejosColor(pixelReader.getColor((int) point.x, (int) point.y));
     }
 
     public static double getHeight() {
@@ -49,5 +45,10 @@ public class SurfaceMap implements Displayable {
 
     public static double getWidth() {
         return image.getWidth();
+    }
+
+    @Override
+    public void displayOnGui(@NotNull GraphicsContext g) {
+        g.drawImage(image, 0, 0);
     }
 }

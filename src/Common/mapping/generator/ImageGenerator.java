@@ -2,13 +2,15 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package Common.mapping;
+package Common.mapping.generator;
 
 import Common.Config;
 import Common.Logger;
+import Common.mapping.ColorJavaLejos;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
+import lejos.robotics.Color;
 import lejos.robotics.geometry.Point;
 
 import javax.imageio.ImageIO;
@@ -20,19 +22,14 @@ import java.util.Arrays;
 public class ImageGenerator {
     private static final String LOG_TAG = ImageGenerator.class.getSimpleName();
 
-    private static final Color LEJOS_BLUE = Color.rgb(0, 117, 191);
-    private static final Color LEJOS_GREEN = Color.rgb(0, 172, 70);
-    private static final Color LEJOS_RED = Color.rgb(237, 28, 36);
-    private static final Color LEJOS_YELLOW = Color.rgb(255, 205, 3);
-
-    private static final Color DEFAULT_COLOR = Color.WHITE;
+    private static final int DEFAULT_COLOR = Color.WHITE;
 
     private static final java.awt.Rectangle boundingRectangle = new java.awt.Rectangle(0, 0, 2362, 1143);
 
     private static final ArrayList<ColoredRegion> regions = new ArrayList<>();
 
     static {
-        regions.add(new Rectangle(LEJOS_BLUE, 0, 0, 412.5F, 1143));
+        regions.add(new Rectangle(Color.BLUE, 0, 0, 412.5F, 1143));
 
         //Vertical lines
         regions.add(new Rectangle(Color.BLACK, 180, 0, 20, 1143));
@@ -52,10 +49,10 @@ public class ImageGenerator {
         regions.add(new Rectangle(Color.BLACK, 1610.5F, 828, 243, 20));
 
         //Temp reg area base
-        regions.add(new Rectangle(LEJOS_YELLOW, 1530.5F, 274, 80, 64));
-        regions.add(new Rectangle(LEJOS_BLUE, 1853, 274, 80, 64));
-        regions.add(new Rectangle(LEJOS_RED, 1530.5F, 807, 80, 64));
-        regions.add(new Rectangle(LEJOS_GREEN, 1853, 807, 80, 64));
+        regions.add(new Rectangle(Color.YELLOW, 1530.5F, 274, 80, 64));
+        regions.add(new Rectangle(Color.BLUE, 1853, 274, 80, 64));
+        regions.add(new Rectangle(Color.RED, 1530.5F, 807, 80, 64));
+        regions.add(new Rectangle(Color.GREEN, 1853, 807, 80, 64));
 
         //TODO Make more precise, slightly off
         //Container lines
@@ -80,7 +77,7 @@ public class ImageGenerator {
         regions.add(new Rectangle(Color.WHITE, 1193.5F, 732, 88, 88)); //Bottom-right
 
         //Starting area
-        regions.add(new Rectangle(LEJOS_GREEN, 2102, 435, 260, 270));
+        regions.add(new Rectangle(Color.GREEN, 2102, 435, 260, 270));
         regions.add(new Rectangle(Color.WHITE, 2112, 445, 250, 250));
 
         //Boats
@@ -90,8 +87,8 @@ public class ImageGenerator {
         }
     }
 
-    private static Color getDisplayColor(Point point) {
-        javafx.scene.paint.Color colorUnderPoint = DEFAULT_COLOR;
+    private static javafx.scene.paint.Color getDisplayColor(Point point, ArrayList<ColoredRegion> regions) {
+        javafx.scene.paint.Color colorUnderPoint = ColorJavaLejos.getJavaColor(DEFAULT_COLOR);
 
         for (ColoredRegion region : regions) {
             if (region.contains(point)) {
@@ -103,11 +100,16 @@ public class ImageGenerator {
     }
 
     public static void main(String[] args) {
+        generateImage(regions);
+    }
+
+    private static void generateImage(ArrayList<ColoredRegion> regions) {
         WritableImage image = new WritableImage(boundingRectangle.width, boundingRectangle.height);
+        PixelWriter pixelWriter = image.getPixelWriter();
 
         for (int x = 0; x < boundingRectangle.getWidth(); x++) {
             for (int y = 0; y < boundingRectangle.getHeight(); y++) {
-                image.getPixelWriter().setColor(x, y, getDisplayColor(new Point(x, y)));
+                pixelWriter.setColor(x, y, getDisplayColor(new Point(x, y), regions));
             }
         }
 

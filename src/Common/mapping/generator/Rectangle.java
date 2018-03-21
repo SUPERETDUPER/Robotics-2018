@@ -2,10 +2,9 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package Common.mapping;
+package Common.mapping.generator;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +13,7 @@ class Rectangle extends SingleColorRegion {
     @NotNull
     final lejos.robotics.geometry.Rectangle mRectangle;
 
-    Rectangle(Color color, float x1, float y1, float w, float h) {
+    Rectangle(int color, float x1, float y1, float w, float h) {
         super(color);
         mRectangle = new lejos.robotics.geometry.Rectangle(x1, y1, w, h);
     }

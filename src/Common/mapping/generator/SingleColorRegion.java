@@ -2,8 +2,9 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package Common.mapping;
+package Common.mapping.generator;
 
+import Common.mapping.ColorJavaLejos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
@@ -13,15 +14,15 @@ public abstract class SingleColorRegion implements ColoredRegion {
 
     private static final String LOG_TAG = ColoredRegion.class.getSimpleName();
 
-    private final Color mColor;
+    private final int mColor;
 
-    SingleColorRegion(Color color) {
+    SingleColorRegion(int color) {
         this.mColor = color;
     }
 
     @Override
     public Color getDisplayColor(Point point) {
-        return mColor;
+        return ColorJavaLejos.getJavaColor(mColor);
     }
 
     @Override

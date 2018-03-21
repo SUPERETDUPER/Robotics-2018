@@ -2,10 +2,9 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package Common.mapping;
+package Common.mapping.generator;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Line;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.geometry.Point2D;
@@ -21,7 +20,7 @@ class Polygon extends SingleColorRegion {
     private final List<Point> points;
     private float maxX;
 
-    Polygon(Color color, List<Point> points) {
+    Polygon(int color, List<Point> points) {
         super(color);
 
         this.points = points;

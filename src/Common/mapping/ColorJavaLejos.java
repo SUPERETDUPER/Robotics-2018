@@ -4,11 +4,16 @@
 
 package Common.mapping;
 
+import Common.Logger;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
 
-public class LejosToJavaColor {
+/**
+ * Mapping of Javafx colors to lejos colors (int). For example Color.rgb(255,0,0) (javaFX) and Color.RED (lejos)
+ */
+public class ColorJavaLejos {
+    private static final String LOG_TAG = ColorJavaLejos.class.getSimpleName();
 
     private static final HashMap<Color, Integer> javaToLejosMap = new HashMap<>();
 
@@ -22,12 +27,18 @@ public class LejosToJavaColor {
     }
 
 
-    public static int getLejosColor(Color color) {
+    static int getLejosColor(Color color) {
         return javaToLejosMap.get(color);
     }
 
-    public static Color getJavaColor(lejos.robotics.Color color) {
-        //TODO
+    public static Color getJavaColor(int color) {
+        for (Color javaColor : javaToLejosMap.keySet()) {
+            if (javaToLejosMap.get(javaColor).equals(color)) {
+                return javaColor;
+            }
+        }
+
+        Logger.error(LOG_TAG, "Java color does not exist");
         return null;
     }
 }
