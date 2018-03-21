@@ -6,8 +6,9 @@ package EV3;
 
 import Common.Config;
 import Common.Logger;
-import PC.EventTypes;
-import PC.GUI.GUILayers.ParticleData;
+import Common.Particles.LogMessageSender;
+import GUI.EventTypes;
+import GUI.ParticleData;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
@@ -17,11 +18,17 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public final class DataSender {
+public final class DataSender implements LogMessageSender {
     private static final String LOG_TAG = DataSender.class.getSimpleName();
+
+    private static final DataSender dataSender = new DataSender();
 
     private static DataOutputStream dos;
     private static boolean isConnected = false;
+
+    public static DataSender get() {
+        return dataSender;
+    }
 
     static void connect() {
         if (isConnected) {
@@ -41,7 +48,7 @@ public final class DataSender {
         Logger.info(LOG_TAG, "Connected to Robotics2018.PC");
     }
 
-    public synchronized static void sendLogMessage(@NotNull String message) {
+    public synchronized void sendLogMessage(@NotNull String message) {
         if (isConnected) {
             try {
                 dos.writeByte(EventTypes.LOG.ordinal());
@@ -77,7 +84,6 @@ public final class DataSender {
             dos.writeByte(eventType.ordinal());
             transmittable.dumpObject(dos);
             dos.flush();
-//            Logger.debug(LOG_TAG, "Sent : " + eventType.name());
         } catch (IOException e) {
             isConnected = false;
             Logger.error(LOG_TAG, "Failed to send transmittable type : " + eventType.name());
