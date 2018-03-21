@@ -50,6 +50,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         return Util.movePose(currentPose, missingMove);
     }
 
+    @Override
     public synchronized void setPose(@NotNull Pose pose) {
         currentPose = pose;
         particleSet = new ParticleSet(pose);

@@ -59,17 +59,13 @@ public final class Controller implements MoveListener, NavigationListener {
 
     @Override
     public void pathComplete(Waypoint waypoint, Pose pose, int i) {
-        Logger.info(LOG_TAG, "Path complete");
     }
-
     @Override
     public void pathInterrupted(Waypoint waypoint, Pose pose, int i) {
-        Logger.info(LOG_TAG, "pathInterrupted");
     }
 
     @Override
     public void atWaypoint(Waypoint waypoint, Pose pose, int i) {
-//        Logger.info(LOG_TAG, "At Waypoint");
     }
 
     public void waitForStop() {
@@ -77,16 +73,11 @@ public final class Controller implements MoveListener, NavigationListener {
             RobotPoseProvider.get().updatePC();
             Thread.yield();
         }
-        Logger.info(LOG_TAG, RobotPoseProvider.get().getPose().toString());
     }
 
     @NotNull
     public Navigator getNavigator() {
         return navigator;
-    }
-
-    public void update(@NotNull Readings readings) {
-        RobotPoseProvider.get().update(readings);
     }
 
     public static void init() {

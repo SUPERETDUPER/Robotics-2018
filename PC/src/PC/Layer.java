@@ -2,13 +2,16 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package PC.GUI;
+package PC;
 
 import Common.Config;
 import Common.mapping.SurfaceMap;
 import Common.GUI.Displayable;
 import javafx.scene.canvas.Canvas;
 
+/**
+ * A layer that is displayed on the GUI. It has a drawn variable that is true when its just been drawn and set false when the value is changed
+ */
 class Layer extends Canvas {
     private boolean isDrawn = false;
 

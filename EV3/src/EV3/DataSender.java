@@ -6,7 +6,7 @@ package EV3;
 
 import Common.Config;
 import Common.Logger;
-import Common.NewLogMessageListener;
+import Common.NewEV3LogMessageListener;
 import Common.GUI.EventTypes;
 import Common.GUI.ParticleData;
 import lejos.robotics.Transmittable;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public final class DataSender implements NewLogMessageListener {
+public final class DataSender implements NewEV3LogMessageListener {
     private static final String LOG_TAG = DataSender.class.getSimpleName();
 
     private static final DataSender dataSender = new DataSender();
@@ -52,7 +52,7 @@ public final class DataSender implements NewLogMessageListener {
         Logger.info(LOG_TAG, "Connected to Robotics2018.PC");
     }
 
-    public synchronized void sendLogMessage(@NotNull String message) {
+    public synchronized void notifyNewEV3Message(@NotNull String message) {
         if (isConnected) {
             try {
                 dos.writeByte(EventTypes.LOG.ordinal());

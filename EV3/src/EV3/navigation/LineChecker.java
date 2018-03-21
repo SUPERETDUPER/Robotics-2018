@@ -28,7 +28,6 @@ public final class LineChecker extends Thread {
     @Override
     public void run() {
         while (true) {
-            //SurfaceReadings
             int surfaceColor = ColorSensor.getSurfaceColor();
 
             if (previousColor != surfaceColor) {

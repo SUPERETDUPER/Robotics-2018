@@ -7,6 +7,6 @@ package Common;
 /**
  * Called when the there is a new log message
  */
-public interface NewLogMessageListener {
-    void sendLogMessage(String message);
+public interface NewEV3LogMessageListener {
+    void notifyNewEV3Message(String message);
 }

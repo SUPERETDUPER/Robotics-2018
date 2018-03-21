@@ -22,9 +22,9 @@ public final class Logger {
         DEBUG
     }
 
-    private static NewLogMessageListener newMessageListener;
+    private static NewEV3LogMessageListener newMessageListener;
 
-    public static void setListener(NewLogMessageListener messageSender) {
+    public static void setListener(NewEV3LogMessageListener messageSender) {
         Logger.newMessageListener = messageSender;
     }
 
@@ -44,15 +44,15 @@ public final class Logger {
     }
 
     /**
-     * If using PC and not sim sends all log messages to PC. Else print on brick
+     * If running on EV3 and using PC send to PC. Else print on brick
      *
      * @param message message to be sent
      * @param type    type of the message. Used to check if should be printed
      */
     private static void print(String message, @NotNull LogTypes type) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
-            if (Config.runningOnEV3 && !Config.useSimulator) {
-                newMessageListener.sendLogMessage(message);
+            if (Config.runningOnEV3 && Config.usePC && !Config.useSimulator) {
+                newMessageListener.notifyNewEV3Message(message);
             } else {
                 System.out.println(message);
             }

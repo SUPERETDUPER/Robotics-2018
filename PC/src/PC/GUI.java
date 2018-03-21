@@ -2,12 +2,10 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package PC.GUI;
+package PC;
 
 import Common.Logger;
 import Common.mapping.SurfaceMap;
-import PC.Connection;
-import PC.DataChangeListener;
 import Common.GUI.EventTypes;
 import Common.GUI.DisplayablePath;
 import Common.GUI.ParticleData;
@@ -78,7 +76,7 @@ public final class GUI extends Application implements DataChangeListener {
      * @throws IOException thrown when reading from dataInputStream
      */
     @Override
-    public void dataChanged(EventTypes event, DataInputStream dis) throws IOException {
+    public synchronized void dataChanged(EventTypes event, DataInputStream dis) throws IOException {
         if (event == EventTypes.LOG) {
             System.out.println(dis.readUTF());
             return;

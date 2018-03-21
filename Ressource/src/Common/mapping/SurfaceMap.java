@@ -24,8 +24,10 @@ public class SurfaceMap implements Displayable {
 
     static {
         try {
-            image = new Image(new FileInputStream(Config.IMAGE_PATH));
+            FileInputStream fileInputStream = new FileInputStream(Config.IMAGE_PATH);
+            image = new Image(fileInputStream);
             pixelReader = image.getPixelReader();
+            fileInputStream.close();
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Unable to read picture");
         }

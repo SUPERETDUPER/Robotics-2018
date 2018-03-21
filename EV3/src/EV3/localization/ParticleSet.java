@@ -27,10 +27,12 @@ class ParticleSet {
     private static final float DISTANCE_NOISE_FACTOR = 0.008F;
     private static final float ANGLE_NOISE_FACTOR = 0.04F;
 
-    private static final Random random = new Random();
-
     private static final int NUM_PARTICLES = 200;
     private static final int MAX_RESAMPLE_ITERATIONS = 1000;
+
+    private static final float VALUE_OF_PREVIOUS_WEIGHT = 0.1F;
+
+    private static final Random random = new Random();
 
     private List<Particle> particles;
 
@@ -43,8 +45,6 @@ class ParticleSet {
     }
 
     synchronized void moveParticles(@NotNull Move move) {
-        Logger.info(LOG_TAG, "Moving particles by : " + move.toString());
-
         List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
         for (Particle particle : particles) {
@@ -60,44 +60,40 @@ class ParticleSet {
         List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
 
         for (Particle particle : particles) {
-            newParticles.add(new Particle(particle.getPose(), readings.calculateWeight(particle.getPose())));
+            float readingWeight = readings.calculateWeight(particle.getPose());
+            float newWeight = VALUE_OF_PREVIOUS_WEIGHT * particle.getWeight() + (1 - VALUE_OF_PREVIOUS_WEIGHT) * readingWeight;
+            newParticles.add(new Particle(particle.getPose(), newWeight));
         }
 
         particles = newParticles;
-
-        Logger.debug(LOG_TAG, "Recalculated weights using readings" + readings.toString());
     }
 
     synchronized void resample() {
         ArrayList<Particle> newParticles = new ArrayList<>(ParticleSet.NUM_PARTICLES);
 
-        int particlesGenerated = 0;
-
         for (int i = 0; i < MAX_RESAMPLE_ITERATIONS; i++) {
 
             //Copy particles with weight higher than random
             for (Particle particle : particles) {
-                if (particle.getWeight() >= random.nextFloat()) {
+                if (particle.getWeight() >= Math.random()) {
                     newParticles.add(particle);
-                    particlesGenerated++;
 
-                    if (particlesGenerated == ParticleSet.NUM_PARTICLES) {
-                        Logger.debug(LOG_TAG, "Successful particle resample");
+                    if (newParticles.size() == ParticleSet.NUM_PARTICLES) {
                         break;
                     }
                 }
             }
 
-            if (particlesGenerated == ParticleSet.NUM_PARTICLES) {
+            if (newParticles.size() == ParticleSet.NUM_PARTICLES) {
                 break;
             }
         }
 
-        if (particlesGenerated == 0) {
+        if (newParticles.size() == 0) {
             Logger.error(LOG_TAG, "Bad resample ; totally lost");
-        } else if (particlesGenerated < ParticleSet.NUM_PARTICLES) {
-            for (int i = particlesGenerated; i < ParticleSet.NUM_PARTICLES; i++) {
-                newParticles.add(newParticles.get(i % particlesGenerated));
+        } else if (newParticles.size() < ParticleSet.NUM_PARTICLES) {
+            for (int i = newParticles.size(); i < ParticleSet.NUM_PARTICLES; i++) {
+                newParticles.add(newParticles.get(i % newParticles.size()));
             }
 
             Logger.warning(LOG_TAG, "Bad resample; had to duplicate existing particles");
