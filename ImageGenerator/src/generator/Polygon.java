@@ -17,6 +17,7 @@ import java.util.List;
 class Polygon extends ColorRegion {
 
     private final com.snatik.polygon.Polygon polygon;
+    @NotNull
     private final List<Point> vertexes;
 
     Polygon(Color color, List<Point> vertexes) {

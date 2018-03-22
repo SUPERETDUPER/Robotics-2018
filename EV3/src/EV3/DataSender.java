@@ -5,10 +5,10 @@
 package EV3;
 
 import Common.Config;
-import Common.Logger;
-import Common.NewEV3LogMessageListener;
 import Common.GUI.EventTypes;
 import Common.GUI.ParticleData;
+import Common.Logger;
+import Common.NewEV3LogMessageListener;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public final class DataSender {
     static {
         Logger.setListener(new NewEV3LogMessageListener() {
             @Override
-            public void notifyNewEV3Message(String message) {
+            public void notifyNewEV3Message(@NotNull String message) {
                 DataSender.notifyNewEV3Message(message);
             }
         }); // To attach to logger

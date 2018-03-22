@@ -35,7 +35,7 @@ public final class MapOperations {
         approachTopOrBottom(TEMP_REG_YELLOW);
     }
 
-    private static void approachLeftRight(Point point) {
+    private static void approachLeftRight(@NotNull Point point) {
         Pose currentPose = RobotPoseProvider.get().getPose();
 
         Pose option1 = getApproachLeft(point);
@@ -50,7 +50,7 @@ public final class MapOperations {
         Controller.get().getNavigator().addWaypoint(new Waypoint(point));
     }
 
-    private static void approachTopOrBottom(Point point) {
+    private static void approachTopOrBottom(@NotNull Point point) {
         Pose currentPose = RobotPoseProvider.get().getPose();
 
         Pose option1 = getApproachTop(point);
@@ -66,22 +66,22 @@ public final class MapOperations {
     }
 
     @NotNull
-    private static Pose getApproachRight(Point point) {
+    private static Pose getApproachRight(@NotNull Point point) {
         return getApproachAt(point, 0);
     }
 
     @NotNull
-    private static Pose getApproachTop(Point point) {
+    private static Pose getApproachTop(@NotNull Point point) {
         return getApproachAt(point, 270); //Opposite of what's expected because Common.GUI flipped
     }
 
     @NotNull
-    private static Pose getApproachLeft(Point point) {
+    private static Pose getApproachLeft(@NotNull Point point) {
         return getApproachAt(point, 180);
     }
 
     @NotNull
-    private static Pose getApproachBottom(Point point) {
+    private static Pose getApproachBottom(@NotNull Point point) {
         return getApproachAt(point, 90); //Opposite of what's expected because Common.GUI flipped
     }
 

@@ -12,6 +12,7 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -110,7 +111,7 @@ public class ImageGenerator {
         return colorUnderPoint;
     }
 
-    private static void generateImage(ArrayList<ColorRegion> regions) {
+    private static void generateImage(@NotNull ArrayList<ColorRegion> regions) {
         WritableImage image = new WritableImage((int) boundingRectangle.getWidth(), (int) boundingRectangle.getHeight());
         PixelWriter pixelWriter = image.getPixelWriter();
 

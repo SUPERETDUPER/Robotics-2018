@@ -9,6 +9,8 @@ import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -18,18 +20,20 @@ class MyNavigator implements WaypointListener {
     private boolean _singleStep;
     private boolean _interrupted;
     private final MoveController _pilot;
+    @Nullable
     private PoseProvider poseProvider;
     private Pose _pose;
     private Waypoint _destination;
     private final double _radius;
     private int _sequenceNr;
+    @NotNull
     private final ArrayList<NavigationListener> _listeners;
 
     public MyNavigator(MoveController pilot) {
         this(pilot, null);
     }
 
-    public MyNavigator(MoveController pilot, PoseProvider poseProvider) {
+    public MyNavigator(MoveController pilot, @Nullable PoseProvider poseProvider) {
         this._path = new Path();
         this._keepGoing = false;
         this._singleStep = false;
@@ -57,6 +61,7 @@ class MyNavigator implements WaypointListener {
         this._listeners.add(listener);
     }
 
+    @Nullable
     public PoseProvider getPoseProvider() {
         return this.poseProvider;
     }
@@ -162,6 +167,7 @@ class MyNavigator implements WaypointListener {
         this.callListeners();
     }
 
+    @Nullable
     public Waypoint getWaypoint() {
         return this._path.size() <= 0 ? null : this._path.get(0);
     }

@@ -36,7 +36,7 @@ class ParticleSet {
 
     private List<Particle> particles;
 
-    ParticleSet(Pose startingPose) {
+    ParticleSet(@NotNull Pose startingPose) {
         this.particles = ParticleSet.getNewParticleSet(startingPose);
     }
 
@@ -106,6 +106,7 @@ class ParticleSet {
      * Estimate currentPose from weighted average of the particles
      * Calculate statistics
      */
+    @NotNull
     synchronized Pose estimateCurrentPose() {
         float totalWeights = 0;
 

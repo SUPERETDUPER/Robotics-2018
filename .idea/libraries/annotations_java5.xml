@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="annotations-java5">
     <CLASSES>
-      <root url="jar://$APPLICATION_HOME_DIR$/lib/annotations.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/annotations.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

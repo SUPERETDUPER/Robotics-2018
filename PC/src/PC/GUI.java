@@ -17,6 +17,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -25,8 +27,10 @@ public final class GUI extends Application implements DataChangeListener {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
     private static final Layer layerPath = new Layer(new DisplayablePath());
+    @Nullable
     private static final Layer layerMCLData = new Layer(new ParticleData(null, null));
 
+    @Nullable
     private static final Layer[] layers = {
             new Layer(new SurfaceMap()),
             layerMCLData,
@@ -36,6 +40,7 @@ public final class GUI extends Application implements DataChangeListener {
     /**
      * Called every new frame to redraw necessary layers
      */
+    @NotNull
     private static AnimationTimer animationTimer = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -75,7 +80,7 @@ public final class GUI extends Application implements DataChangeListener {
      * @throws IOException thrown when reading from dataInputStream
      */
     @Override
-    public synchronized void dataChanged(EventTypes event, DataInputStream dis) throws IOException {
+    public synchronized void dataChanged(@NotNull EventTypes event, @NotNull DataInputStream dis) throws IOException {
         if (event == EventTypes.LOG) {
             System.out.println(dis.readUTF());
             return;

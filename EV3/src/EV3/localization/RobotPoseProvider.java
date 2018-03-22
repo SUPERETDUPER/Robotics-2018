@@ -5,16 +5,17 @@
 package EV3.localization;
 
 import Common.Config;
+import Common.GUI.ParticleData;
 import Common.Logger;
 import EV3.DataSender;
 import EV3.navigation.Readings;
-import Common.GUI.ParticleData;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Based on odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
@@ -29,20 +30,23 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     private Pose currentPose;
 
+    @Nullable
     private Move completedMove;
 
     private RobotPoseProvider() {
     }
 
+    @NotNull
     public static RobotPoseProvider get() {
         return mParticlePoseProvider;
     }
 
-    public void addMoveProvider(MoveProvider moveProvider) {
+    public void addMoveProvider(@NotNull MoveProvider moveProvider) {
         this.mp = moveProvider;
         moveProvider.addMoveListener(this);
     }
 
+    @NotNull
     @Override
     public synchronized Pose getPose() {
         Move missingMove = Util.subtractMove(mp.getMovement(), completedMove);

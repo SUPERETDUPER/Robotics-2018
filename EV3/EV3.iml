@@ -9,9 +9,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Ressource" exported="" />
-    <orderEntry type="library" exported="" name="annotations-java5" level="project" />
-    <orderEntry type="library" name="ev3classes" level="project" />
-    <orderEntry type="module-library" scope="TEST">
+    <orderEntry type="library" exported="" name="ev3classes" level="project" />
+    <orderEntry type="module-library" exported="" scope="TEST">
       <library name="JUnit5.0">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/junit-jupiter-api-5.0.0.jar!/" />
@@ -23,5 +22,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="annotations-java5" level="project" />
   </component>
 </module>

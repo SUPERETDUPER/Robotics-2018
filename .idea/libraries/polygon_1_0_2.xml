@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="ev3classes">
+  <library name="polygon-1.0.2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/ev3classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/polygon-1.0.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

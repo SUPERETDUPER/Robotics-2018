@@ -5,9 +5,10 @@
 package PC;
 
 import Common.Config;
-import Common.mapping.SurfaceMap;
 import Common.GUI.Displayable;
+import Common.mapping.SurfaceMap;
 import javafx.scene.canvas.Canvas;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A layer that is displayed on the GUI. It has a drawn variable that is true when its just been drawn and set false when the value is changed
@@ -15,6 +16,7 @@ import javafx.scene.canvas.Canvas;
 class Layer extends Canvas {
     private boolean isDrawn = false;
 
+    @NotNull
     private final Displayable displayable;
 
     Layer(Displayable displayable) {
@@ -30,6 +32,7 @@ class Layer extends Canvas {
         }
     }
 
+    @NotNull
     Displayable getDisplayable() {
         return displayable;
     }

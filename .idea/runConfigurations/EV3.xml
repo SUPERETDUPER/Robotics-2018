@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="EV3" type="LejosRunConfigurationType" factoryName="LeJOS" singleton="true">
     <option name="MAIN_CLASS_NAME" value="EV3.EV3Main" />
-    <module name="Robotics-2018" />
+    <module name="PC" />
     <method />
   </configuration>
 </component>
