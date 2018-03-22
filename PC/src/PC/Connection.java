@@ -16,7 +16,7 @@ import java.net.Socket;
 /**
  * Manages the connection to the EV3 and calls a listener when new data arrives
  */
-public class Connection {
+class Connection {
     private static final String LOG_TAG = Connection.class.getSimpleName();
 
     private static Socket socket;
@@ -24,7 +24,7 @@ public class Connection {
 
     private volatile static DataChangeListener listener;
 
-    public static void setListener(DataChangeListener listener) {
+    static void setListener(DataChangeListener listener) {
         Connection.listener = listener;
     }
 

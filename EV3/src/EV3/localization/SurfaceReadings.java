@@ -25,13 +25,13 @@ public class SurfaceReadings implements Readings {
         int totalPixels = 0;
         int matchingPixels = 0;
 
-        for (int x = (int) location.x - RADIUS ; x <= location.x + RADIUS ; x++){
-            for (int y = (int) location.y - RADIUS ; y <= location.y + RADIUS ; y++){
-                if (location.distance(x,y) < RADIUS){ //If (x,y) within circle
-                    totalPixels ++;
+        for (int x = (int) location.x - RADIUS; x <= location.x + RADIUS; x++) {
+            for (int y = (int) location.y - RADIUS; y <= location.y + RADIUS; y++) {
+                if (location.distance(x, y) < RADIUS) { //If (x,y) within circle
+                    totalPixels++;
 
-                    if (SurfaceMap.getColorAtPoint(new Point(x,y)) == color){
-                        matchingPixels ++;
+                    if (SurfaceMap.getColorAtPoint(x, y) == color) {
+                        matchingPixels++;
                     }
                 }
             }

@@ -106,7 +106,4 @@ public final class GUI extends Application implements DataChangeListener {
         Platform.exit();
     }
 
-    public static Pose getCurrentPose() {
-        return ((ParticleData) layerMCLData.getDisplayable()).getCurrentPose();
-    }
 }

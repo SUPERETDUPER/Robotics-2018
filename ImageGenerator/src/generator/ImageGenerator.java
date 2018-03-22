@@ -80,13 +80,20 @@ public class ImageGenerator {
         regions.add(new Rectangle(Color.LIGHTGRAY, 753.5F, 766, 88, 88)); //Bottom-left
         regions.add(new Rectangle(Color.LIGHTGRAY, 1191.5F, 695, 88, 88)); //Bottom-right
 
+        //Containers base white small rectangle
+        regions.add(new Rectangle(Color.WHITE, 847.5F, 363, 48, 48)); //Top-left
+        regions.add(new Rectangle(Color.WHITE, 1279.5F, 292, 48, 48)); //Top-right
+        regions.add(new Rectangle(Color.WHITE, 773.5F, 786, 48, 48)); //Bottom-left
+        regions.add(new Rectangle(Color.WHITE, 1211.5F, 715, 48, 48)); //Bottom-right
+
         //Starting area
         regions.add(new Rectangle(ColorJavaLejos.MAP_GREEN, 2102, 435, 260, 270));
         regions.add(new Rectangle(Color.WHITE, 2112, 445, 250, 250));
 
         //Boats
         for (int i = 0; i < 6; i++) {
-            regions.add(new Rectangle(Color.WHITE, 212.5F, 73 + 182.6F * i, 116, 84));
+            regions.add(new Rectangle(Color.LIGHTGRAY, 212.5F, 73 + 182.6F * i, 116, 84));
+            regions.add(new Rectangle(Color.WHITE, 222.5F, 83 + 182.6F * i, 96, 64));
             regions.add(new Rectangle(Color.BLACK, 328.5F, 105 + 182.6F * i, 84, 20));
         }
     }

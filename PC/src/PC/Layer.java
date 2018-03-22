@@ -22,8 +22,12 @@ class Layer extends Canvas {
 
         this.displayable = displayable;
 
-        getGraphicsContext2D().scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
-
+        if (displayable.invert()) {
+            getGraphicsContext2D().scale(Config.GUI_DISPLAY_RATIO, -Config.GUI_DISPLAY_RATIO);
+            getGraphicsContext2D().translate(0, -getHeight());
+        } else {
+            getGraphicsContext2D().scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
+        }
     }
 
     Displayable getDisplayable() {

@@ -33,12 +33,8 @@ public class SurfaceMap implements Displayable {
         }
     }
 
-    public static boolean contains(@NotNull Point point) {
-        return point.x >= 0 && point.x < image.getWidth() && point.y >= 0 && point.y < image.getHeight();
-    }
-
-    public static int getColorAtPoint(Point point) {
-        return ColorJavaLejos.getLejosColor(pixelReader.getColor((int) point.x, (int) point.y));
+    public static int getColorAtPoint(float x, float y) {
+        return ColorJavaLejos.getLejosColor(pixelReader.getColor((int) x, (int) (image.getHeight() - y)));
     }
 
     public static double getHeight() {
@@ -52,5 +48,10 @@ public class SurfaceMap implements Displayable {
     @Override
     public void displayOnGui(@NotNull GraphicsContext g) {
         g.drawImage(image, 0, 0);
+    }
+
+    @Override
+    public boolean invert() {
+        return false;
     }
 }

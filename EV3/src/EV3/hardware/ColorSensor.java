@@ -8,6 +8,7 @@ import Common.Config;
 import Common.mapping.SurfaceMap;
 import EV3.localization.RobotPoseProvider;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -27,7 +28,8 @@ public final class ColorSensor {
 
     public static int getSurfaceColor() {
         if (surfaceColorSensor == null) {
-            return SurfaceMap.getColorAtPoint(RobotPoseProvider.get().getPose().getLocation());
+            Pose currentPose = RobotPoseProvider.get().getPose();
+            return SurfaceMap.getColorAtPoint(currentPose.getX(), currentPose.getY());
         } else {
             return surfaceColorSensor.getColorID();
         }

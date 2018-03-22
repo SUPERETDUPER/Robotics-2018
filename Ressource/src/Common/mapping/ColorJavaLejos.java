@@ -32,7 +32,7 @@ public class ColorJavaLejos {
     }
 
 
-    public static int getLejosColor(Color color) {
+    static int getLejosColor(Color color) {
         return javaToLejosMap.get(color);
     }
 }

@@ -7,7 +7,6 @@ package generator;
 import Common.GUI.Displayable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
 
 abstract class ColorRegion implements Displayable {

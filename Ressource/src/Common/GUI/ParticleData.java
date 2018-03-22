@@ -119,4 +119,9 @@ public class ParticleData implements Transmittable, Displayable {
             }
         }
     }
+
+    @Override
+    public boolean invert() {
+        return true;
+    }
 }

@@ -18,20 +18,19 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public final class DataSender implements NewEV3LogMessageListener {
+public final class DataSender {
     private static final String LOG_TAG = DataSender.class.getSimpleName();
-
-    private static final DataSender dataSender = new DataSender();
 
     private static DataOutputStream dos;
     private static boolean isConnected = false;
 
-    private DataSender() {
-        Logger.setListener(this);
-    }
-
-    public static DataSender get() {
-        return dataSender;
+    static {
+        Logger.setListener(new NewEV3LogMessageListener() {
+            @Override
+            public void notifyNewEV3Message(String message) {
+                DataSender.notifyNewEV3Message(message);
+            }
+        }); // To attach to logger
     }
 
     static void connect() {
@@ -52,7 +51,7 @@ public final class DataSender implements NewEV3LogMessageListener {
         Logger.info(LOG_TAG, "Connected to Robotics2018.PC");
     }
 
-    public synchronized void notifyNewEV3Message(@NotNull String message) {
+    private static synchronized void notifyNewEV3Message(@NotNull String message) {
         if (isConnected) {
             try {
                 dos.writeByte(EventTypes.LOG.ordinal());

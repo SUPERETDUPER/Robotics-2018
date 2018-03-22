@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public final class DisplayablePath extends Path implements Displayable {
@@ -35,5 +36,11 @@ public final class DisplayablePath extends Path implements Displayable {
             g.strokeLine((int) previousWaypoint.x, (int) previousWaypoint.y, (int) waypoint.x, (int) waypoint.y);
             previousWaypoint = waypoint;
         }
+    }
+
+    @Contract(pure = true)
+    @Override
+    public boolean invert() {
+        return true;
     }
 }
