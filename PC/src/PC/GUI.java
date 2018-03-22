@@ -4,11 +4,11 @@
 
 package PC;
 
+import Common.GUI.DisplayablePath;
+import Common.GUI.EventTypes;
+import Common.GUI.ParticleData;
 import Common.Logger;
 import Common.mapping.SurfaceMap;
-import Common.GUI.EventTypes;
-import Common.GUI.DisplayablePath;
-import Common.GUI.ParticleData;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -17,7 +17,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import lejos.robotics.navigation.Pose;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -87,7 +86,7 @@ public final class GUI extends Application implements DataChangeListener {
                 ((ParticleData) layerMCLData.getDisplayable()).loadObject(dis);
                 layerMCLData.markNotDrawn();
                 ((DisplayablePath) layerPath.getDisplayable()).setCurrentPose(((ParticleData) layerMCLData.getDisplayable()).getCurrentPose());
-                layerPath.markNotDrawn();
+//                layerPath.markNotDrawn();
                 break;
             case PATH:
                 ((DisplayablePath) layerPath.getDisplayable()).loadObject(dis);

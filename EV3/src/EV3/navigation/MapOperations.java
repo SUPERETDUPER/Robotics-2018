@@ -13,10 +13,10 @@ import org.jetbrains.annotations.NotNull;
 public final class MapOperations {
     private static final float APPROACH_DIST = 100;
 
-    private static final Point TEMP_REG_GREEN = new Point(1902, 838);
-    private static final Point TEMP_REG_BLUE = new Point(1902, 306);
-    private static final Point TEMP_REG_YELLOW = new Point(1578, 306);
-    private static final Point TEMP_REG_RED = new Point(1578, 838);
+    private static final Point TEMP_REG_GREEN = new Point(1902, 306);
+    private static final Point TEMP_REG_BLUE = new Point(1902, 838);
+    private static final Point TEMP_REG_YELLOW = new Point(1578, 838);
+    private static final Point TEMP_REG_RED = new Point(1578, 306);
 
 
     public static void goToTempRegGreen() {
