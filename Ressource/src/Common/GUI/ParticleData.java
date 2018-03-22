@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Object that gets sent from the EV3 to the computer Common.GUI containing the Particles particles and the currentPosition
@@ -28,10 +26,10 @@ public class ParticleData implements Transmittable, Displayable {
     private static final float DISPLAY_TAIL_LENGTH = 30;
     private static final float DISPLAY_TAIL_ANGLE = 10;
 
-    private List<Particle> particles;
+    private Particle[] particles;
     private Pose currentPose;
 
-    public ParticleData(List<Particle> particles, Pose currentPose) {
+    public ParticleData(Particle[] particles, Pose currentPose) {
         this.particles = particles;
         this.currentPose = currentPose;
     }
@@ -92,7 +90,7 @@ public class ParticleData implements Transmittable, Displayable {
             dos.writeInt(0);
         }
         if (particles != null) {
-            dos.writeInt(particles.size());
+            dos.writeInt(particles.length);
             for (Particle particle : particles) {
                 particle.getPose().dumpObject(dos);
                 dos.writeFloat(particle.getWeight());
@@ -109,13 +107,13 @@ public class ParticleData implements Transmittable, Displayable {
         int numOfParticles = dis.readInt();
 
         if (numOfParticles != 0) {
-            particles = new ArrayList<>(numOfParticles);
+            particles = new Particle[numOfParticles];
 
             for (int i = 0; i < numOfParticles; i++) {
                 Pose particlePose = new Pose();
                 particlePose.loadObject(dis);
 
-                particles.add(new Particle(particlePose, dis.readFloat()));
+                particles[i] = new Particle(particlePose, dis.readFloat());
             }
         }
     }

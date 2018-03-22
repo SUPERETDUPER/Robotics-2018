@@ -11,8 +11,6 @@ import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -34,66 +32,69 @@ class ParticleSet {
 
     private static final Random random = new Random();
 
-    private List<Particle> particles;
+    private Particle[] particles;
 
     ParticleSet(@NotNull Pose startingPose) {
         this.particles = ParticleSet.getNewParticleSet(startingPose);
     }
 
-    List<Particle> getParticles() {
+    Particle[] getParticles() {
         return particles;
     }
 
     synchronized void moveParticles(@NotNull Move move) {
-        List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
+        Particle[] newParticles = new Particle[NUM_PARTICLES];
 
-        for (Particle particle : particles) {
-            Pose newPose = Util.movePose(particle.getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
-            newParticles.add(new Particle(newPose, particle.getWeight()));
-
+        for (int i = 0; i < NUM_PARTICLES; i++) {
+            Pose newPose = Util.movePose(particles[i].getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
+            newParticles[i] = new Particle(newPose, particles[i].getWeight());
         }
 
         particles = newParticles;
     }
 
     synchronized void weightParticles(@NotNull Readings readings) {
-        List<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
+        Particle[] newParticles = new Particle[NUM_PARTICLES];
 
-        for (Particle particle : particles) {
-            float readingWeight = readings.calculateWeight(particle.getPose());
-            float newWeight = VALUE_OF_PREVIOUS_WEIGHT * particle.getWeight() + (1 - VALUE_OF_PREVIOUS_WEIGHT) * readingWeight;
-            newParticles.add(new Particle(particle.getPose(), newWeight));
+        for (int i = 0; i < NUM_PARTICLES; i++) {
+            float readingWeight = readings.calculateWeight(particles[i].getPose());
+            float newWeight = VALUE_OF_PREVIOUS_WEIGHT * particles[i].getWeight() + (1 - VALUE_OF_PREVIOUS_WEIGHT) * readingWeight;
+            newParticles[i] = new Particle(particles[i].getPose(), newWeight);
         }
 
         particles = newParticles;
     }
 
     synchronized void resample() {
-        ArrayList<Particle> newParticles = new ArrayList<>(ParticleSet.NUM_PARTICLES);
+        Particle[] newParticles = new Particle[ParticleSet.NUM_PARTICLES];
 
-        for (int i = 0; i < MAX_RESAMPLE_ITERATIONS; i++) {
+        int counter = 0;
+
+        for (int x = 0; x < MAX_RESAMPLE_ITERATIONS; x++) {
 
             //Copy particles with weight higher than random
-            for (Particle particle : particles) {
-                if (particle.getWeight() >= Math.random()) {
-                    newParticles.add(particle);
+            for (int i = 0; i < NUM_PARTICLES; i++) {
+                if (particles[i].getWeight() >= Math.random()) {
 
-                    if (newParticles.size() == ParticleSet.NUM_PARTICLES) {
+                    newParticles[counter] = particles[i];
+                    counter++;
+
+                    if (counter == ParticleSet.NUM_PARTICLES) {
                         break;
                     }
                 }
             }
 
-            if (newParticles.size() == ParticleSet.NUM_PARTICLES) {
+            if (counter == ParticleSet.NUM_PARTICLES) {
                 break;
             }
         }
 
-        if (newParticles.size() == 0) {
+        if (counter == 0) {
             Logger.error(LOG_TAG, "Bad resample ; totally lost");
-        } else if (newParticles.size() < ParticleSet.NUM_PARTICLES) {
-            for (int i = newParticles.size(); i < ParticleSet.NUM_PARTICLES; i++) {
-                newParticles.add(newParticles.get(i % newParticles.size()));
+        } else if (counter < ParticleSet.NUM_PARTICLES) {
+            for (int i = counter; i < ParticleSet.NUM_PARTICLES; i++) {
+                newParticles[i] = newParticles[i % counter];
             }
 
             Logger.warning(LOG_TAG, "Bad resample; had to duplicate existing particles");
@@ -137,8 +138,8 @@ class ParticleSet {
      * Generates a new particle set around a specific point with weights 0.5
      */
     @NotNull
-    private static ArrayList<Particle> getNewParticleSet(@NotNull Pose centerPose) {
-        ArrayList<Particle> newParticles = new ArrayList<>(NUM_PARTICLES);
+    private static Particle[] getNewParticleSet(@NotNull Pose centerPose) {
+        Particle[] newParticles = new Particle[NUM_PARTICLES];
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
             float radiusFromCenter = STARTING_RADIUS_NOISE * (float) random.nextGaussian();
@@ -150,7 +151,7 @@ class ParticleSet {
 
             float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * (float) random.nextGaussian();
 
-            newParticles.add(new Particle(x, y, heading, 0.5F));
+            newParticles[i] = new Particle(x, y, heading, 0.5F);
         }
 
         return newParticles;
