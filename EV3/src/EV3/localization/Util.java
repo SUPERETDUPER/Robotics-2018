@@ -21,7 +21,7 @@ final class Util {
     private static Pose rotatePose(@NotNull Pose pose, float angleToRotate, float randomFactor) {
         if (angleToRotate == 0) return pose;
 
-        float heading = (pose.getHeading() + angleToRotate + (float) (angleToRotate * randomFactor * random.nextGaussian()) + 0.5F) % 360;
+        float heading = (pose.getHeading() + angleToRotate + (float) (angleToRotate * randomFactor * random.nextGaussian())) % 360;
 
         return new Pose(pose.getX(), pose.getY(), heading);
     }

@@ -5,12 +5,12 @@
 package Common.mapping;
 
 import Common.Config;
-import Common.Logger;
 import Common.GUI.Displayable;
+import Common.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
-import lejos.robotics.geometry.Point;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
@@ -37,10 +37,12 @@ public class SurfaceMap implements Displayable {
         return ColorJavaLejos.getLejosColor(pixelReader.getColor((int) x, (int) (image.getHeight() - y)));
     }
 
+    @Contract(pure = true)
     public static double getHeight() {
         return image.getHeight();
     }
 
+    @Contract(pure = true)
     public static double getWidth() {
         return image.getWidth();
     }
