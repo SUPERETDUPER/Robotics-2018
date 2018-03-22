@@ -5,69 +5,51 @@
 package generator;
 
 import javafx.scene.canvas.GraphicsContext;
-import lejos.robotics.geometry.Line;
+import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
-import lejos.robotics.geometry.Point2D;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
-Any colored region that is a polygon
+ * Any colored region that is a polygon
  */
 class Polygon extends ColorRegion {
 
-    private final List<Point> points;
-    private float maxX;
+    private final com.snatik.polygon.Polygon polygon;
+    private final List<Point> vertexes;
 
-    Polygon(int color, List<Point> points) {
+    Polygon(Color color, List<Point> vertexes) {
         super(color);
 
-        this.points = points;
+        this.vertexes = vertexes;
 
-        maxX = this.points.get(0).x;
+        com.snatik.polygon.Polygon.Builder builder = com.snatik.polygon.Polygon.Builder();
 
-        for (Point2D.Float point : this.points) {
-            if (point.x > maxX) {
-                maxX = point.x;
-            }
+        for (Point currentPoint : vertexes) {
+            builder.addVertex(new com.snatik.polygon.Point(currentPoint.x, currentPoint.y));
         }
+
+        polygon = builder.build();
     }
 
     // Finds polygon by number of intersections check
     @Override
-    public boolean contains(@NotNull Point point) {
-        Line hLine = new Line(point.x, point.y, maxX + 1, point.y);
-
-        int intersections = 0;
-
-        Point previousPoint = points.get(points.size() - 1);
-
-        for (Point currentPoint : points) {
-
-            Line previousToCurrentEdge = new Line(previousPoint.x, previousPoint.y, currentPoint.x, currentPoint.y);
-
-            if (hLine.intersectsLine(previousToCurrentEdge)) {
-                intersections += 1;
-            }
-
-            previousPoint = currentPoint;
-        }
-
-        return intersections % 2 == 1;
+    public boolean contains(float x, float y) {
+        return polygon.contains(new com.snatik.polygon.Point(x, y));
     }
 
     @Override
     public void displayOnGui(@NotNull GraphicsContext g) {
         super.displayOnGui(g);
-        double[] xValues = new double[points.size()];
-        double[] yValues = new double[points.size()];
+        double[] xValues = new double[vertexes.size()];
+        double[] yValues = new double[vertexes.size()];
 
-        for (int i = 0; i < points.size(); i++) {
-            xValues[i] = points.get(i).x;
-            yValues[i] = points.get(i).y;
+        for (int i = 0; i < vertexes.size(); i++) {
+            xValues[i] = vertexes.get(i).x;
+            yValues[i] = vertexes.get(i).y;
         }
 
-        g.fillPolygon(xValues, yValues, points.size());
+        g.fillPolygon(xValues, yValues, vertexes.size());
     }
 }

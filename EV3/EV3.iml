@@ -9,6 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Ressource" exported="" />
     <orderEntry type="library" exported="" name="annotations-java5" level="project" />
-    <orderEntry type="library" exported="" name="ev3classes" level="project" />
+    <orderEntry type="library" name="ev3classes" level="project" />
   </component>
 </module>

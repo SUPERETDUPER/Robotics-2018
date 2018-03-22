@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/ImageGenerator/ImageGenerator.iml" filepath="$PROJECT_DIR$/ImageGenerator/ImageGenerator.iml" />
       <module fileurl="file://$PROJECT_DIR$/PC/PC.iml" filepath="$PROJECT_DIR$/PC/PC.iml" />
       <module fileurl="file://$PROJECT_DIR$/Ressource/Ressource.iml" filepath="$PROJECT_DIR$/Ressource/Ressource.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Robotcs/Robotcs.iml" filepath="$PROJECT_DIR$/Robotcs/Robotcs.iml" />
     </modules>
   </component>
 </project>

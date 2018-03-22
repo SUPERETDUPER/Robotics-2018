@@ -31,5 +31,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="ev3classes" level="project" />
+    <orderEntry type="library" name="polygon-1.0.2" level="project" />
   </component>
 </module>

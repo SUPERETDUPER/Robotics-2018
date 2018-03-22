@@ -6,10 +6,11 @@ package generator;
 
 import Common.Config;
 import Common.Logger;
+import Common.mapping.ColorJavaLejos;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import lejos.robotics.Color;
+import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 
 import javax.imageio.ImageIO;
@@ -26,7 +27,7 @@ public class ImageGenerator {
     private static final ArrayList<ColorRegion> regions = new ArrayList<>();
 
     static {
-        regions.add(new Rectangle(Color.BLUE, 0, 0, 412.5F, 1143));
+        regions.add(new Rectangle(ColorJavaLejos.MAP_BLUE, 0, 0, 412.5F, 1143));
 
         //Vertical lines
         regions.add(new Rectangle(Color.BLACK, 180, 0, 20, 1143));
@@ -46,10 +47,10 @@ public class ImageGenerator {
         regions.add(new Rectangle(Color.BLACK, 1610.5F, 828, 243, 20));
 
         //Temp reg area base
-        regions.add(new Rectangle(Color.YELLOW, 1530.5F, 274, 80, 64));
-        regions.add(new Rectangle(Color.BLUE, 1853, 274, 80, 64));
-        regions.add(new Rectangle(Color.RED, 1530.5F, 807, 80, 64));
-        regions.add(new Rectangle(Color.GREEN, 1853, 807, 80, 64));
+        regions.add(new Rectangle(ColorJavaLejos.MAP_YELLOW, 1530.5F, 274, 80, 64));
+        regions.add(new Rectangle(ColorJavaLejos.MAP_BLUE, 1853, 274, 80, 64));
+        regions.add(new Rectangle(ColorJavaLejos.MAP_RED, 1530.5F, 807, 80, 64));
+        regions.add(new Rectangle(ColorJavaLejos.MAP_GREEN, 1853, 807, 80, 64));
 
         //TODO Make more precise, slightly off
         //Container lines
@@ -62,24 +63,25 @@ public class ImageGenerator {
 //                corner of grey box 1259.5 360 top right
         )));
 
+        //                corner of grey box 915.5 431 top left
+        //                corner of grey box 1191.5 695 bot right
+        //                length of little black part = 10* sqrt(2) = 14.14
         regions.add(new Polygon(Color.BLACK, Arrays.asList(
                 new Point(916, 417),
                 new Point(901, 431),
                 new Point(1192, 709),
                 new Point(1206, 695)
-//                corner of grey box 915.5 431 top left
-//                corner of grey box 1191.5 695 bot right
-//                length of little black part = 10* sqrt(2) = 14.14
+
         )));
 
         //Containers base
-        regions.add(new Rectangle(Color.WHITE, 822.5F, 343, 88, 88)); //Top-left
-        regions.add(new Rectangle(Color.WHITE, 1254.5F, 272, 88, 88)); //Top-right
-        regions.add(new Rectangle(Color.WHITE, 753.5F, 783, 88, 88)); //Bottom-left
-        regions.add(new Rectangle(Color.WHITE, 1193.5F, 732, 88, 88)); //Bottom-right
+        regions.add(new Rectangle(Color.LIGHTGRAY, 827.5F, 343, 88, 88)); //Top-left
+        regions.add(new Rectangle(Color.LIGHTGRAY, 1259.5F, 272, 88, 88)); //Top-right
+        regions.add(new Rectangle(Color.LIGHTGRAY, 753.5F, 766, 88, 88)); //Bottom-left
+        regions.add(new Rectangle(Color.LIGHTGRAY, 1191.5F, 695, 88, 88)); //Bottom-right
 
         //Starting area
-        regions.add(new Rectangle(Color.GREEN, 2102, 435, 260, 270));
+        regions.add(new Rectangle(ColorJavaLejos.MAP_GREEN, 2102, 435, 260, 270));
         regions.add(new Rectangle(Color.WHITE, 2112, 445, 250, 250));
 
         //Boats
@@ -89,11 +91,11 @@ public class ImageGenerator {
         }
     }
 
-    private static javafx.scene.paint.Color getDisplayColor(Point point, ArrayList<ColorRegion> regions) {
+    private static javafx.scene.paint.Color getDisplayColor(float x, float y, ArrayList<ColorRegion> regions) {
         javafx.scene.paint.Color colorUnderPoint = boundingRectangle.getDisplayColor();
 
         for (ColorRegion region : regions) {
-            if (region.contains(point)) {
+            if (region.contains(x, y)) {
                 colorUnderPoint = region.getDisplayColor();
             }
         }
@@ -107,7 +109,11 @@ public class ImageGenerator {
 
         for (int x = 0; x < boundingRectangle.getWidth(); x++) {
             for (int y = 0; y < boundingRectangle.getHeight(); y++) {
-                pixelWriter.setColor(x, y, getDisplayColor(new Point(x, y), regions));
+                if (y == 417) {
+                    Logger.info(LOG_TAG, x + " " + y + " " + getDisplayColor(x, y, regions));
+                }
+
+                pixelWriter.setColor(x, y, getDisplayColor(x, y, regions));
             }
         }
 
