@@ -13,10 +13,8 @@ final class PCMain {
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 
     public static void main(final String[] args) {
-        Config.runningOnEV3 = false;
-
-        if (!Config.usePC) {
-            Logger.error(LOG_TAG, "Config var 'usePC' isFalse");
+        if (Config.currentMode == Config.Mode.SOLO) {
+            Logger.error(LOG_TAG, "No PC required in mode solo");
             return;
         }
 

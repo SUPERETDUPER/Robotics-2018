@@ -14,10 +14,13 @@ public final class Config {
     public final static float SIM_SPEED_FACTOR = 0.5F;
     public static final String IMAGE_PATH = "res/map.png";
 
-    public static boolean runningOnEV3;
+    public enum Mode {
+        SOLO,
+        LINKED,
+        SIM
+    }
 
-    public static final boolean useSimulator = true;
-    public static final boolean usePC = true;
+    public static final Mode currentMode = Mode.SIM;
 
     public static final float GUI_DISPLAY_RATIO = 0.8F;
     public static final String EV3_IP_ADDRESS = "10.0.1.1";

@@ -15,10 +15,7 @@ public final class Brick {
     private static final String LOG_TAG = Brick.class.getSimpleName();
 
     public static void waitForUserConfirmation() {
-        if (!Config.useSimulator) {
-            LCD.drawString("Press enter button to continue", 0, 0);
-            Button.ENTER.waitForPress();
-        } else {
+        if (Config.currentMode == Config.Mode.SIM) {
             try {
                 System.out.println("Press enter to continue");
                 //noinspection ResultOfMethodCallIgnored
@@ -26,6 +23,9 @@ public final class Brick {
             } catch (IOException e) {
                 Logger.error(LOG_TAG, e.toString());
             }
+        } else {
+            LCD.drawString("Press enter button to continue", 0, 0);
+            Button.ENTER.waitForPress();
         }
     }
 }

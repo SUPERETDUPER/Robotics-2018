@@ -34,10 +34,10 @@ class Connection {
      * @return true if successful
      */
     static boolean connect() {
-        Logger.info(LOG_TAG, "Attempting to connect to ev3 ...");
+        Logger.info(LOG_TAG, "Attempting to connect to EV3 ...");
         for (int attempt = 0; attempt < 6; attempt++) {
             try {
-                socket = new Socket(Config.useSimulator ? "localhost" : Config.EV3_IP_ADDRESS, Config.PORT_TO_CONNECT_ON_EV3);
+                socket = new Socket(Config.currentMode == Config.Mode.SIM ? "localhost" : Config.EV3_IP_ADDRESS, Config.PORT_TO_CONNECT_ON_EV3);
                 dis = new DataInputStream(socket.getInputStream());
 
                 Logger.info(LOG_TAG, "Connected to DataSender");

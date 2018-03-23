@@ -19,7 +19,7 @@ public final class ColorSensor {
     private static final EV3ColorSensor surfaceColorSensor;
 
     static {
-        if (Config.useSimulator) {
+        if (Config.currentMode == Config.Mode.SIM) {
             surfaceColorSensor = null;
         } else {
             surfaceColorSensor = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE);

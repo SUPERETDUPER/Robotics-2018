@@ -11,9 +11,7 @@ final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
 
     public static void main(String[] args) {
-        Config.runningOnEV3 = true; //DO NOT REMOVE
-
-        if (Config.usePC) {
+        if (Config.currentMode == Config.Mode.LINKED || Config.currentMode == Config.Mode.SIM) {
             DataSender.connect(); //Try to connect to pc
         }
 

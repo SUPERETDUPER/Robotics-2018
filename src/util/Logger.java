@@ -6,6 +6,11 @@ package util;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Prints to console log messages.
+ *
+ * If listener is set instead of printing to console notifies the listener of new log messages
+ */
 public final class Logger {
     private static final String ESCAPE_CHAR = "\u001B";
 
@@ -22,16 +27,24 @@ public final class Logger {
         DEBUG
     }
 
-    private static NewEV3LogMessageListener newMessageListener;
+    private static LogMessageListener listener;
 
-    public static void setListener(NewEV3LogMessageListener messageSender) {
-        Logger.newMessageListener = messageSender;
+    /**
+     * Allows to set a custom listener
+     * @param listener the custom listener
+     */
+    public static void setListener(LogMessageListener listener) {
+        Logger.listener = listener;
     }
 
+    public static void removeListener(){
+        listener = null;
+    }
+
+    @NotNull
     private static String constructMessage(@NotNull LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
         return ESCAPE_CHAR +
                 color +
-                (Config.runningOnEV3 ? "ev3 : " : "pc : ") +
                 type.name().toUpperCase() +
                 " : " +
                 Thread.currentThread().getName() +
@@ -51,10 +64,10 @@ public final class Logger {
      */
     private static void print(String message, @NotNull LogTypes type) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
-            if (Config.runningOnEV3 && Config.usePC && !Config.useSimulator) {
-                newMessageListener.notifyNewEV3Message(message);
-            } else {
+            if (listener == null){
                 System.out.println(message);
+            } else {
+                listener.notifyLogMessage(message);
             }
         }
     }

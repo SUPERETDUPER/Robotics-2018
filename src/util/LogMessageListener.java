@@ -7,6 +7,6 @@ package util;
 /**
  * Called when the there is a new log message
  */
-public interface NewEV3LogMessageListener {
-    void notifyNewEV3Message(String message);
+public interface LogMessageListener {
+    void notifyLogMessage(String message);
 }

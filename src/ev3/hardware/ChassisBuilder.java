@@ -26,7 +26,7 @@ public final class ChassisBuilder {
         RegulatedMotor leftMotor;
         RegulatedMotor rightMotor;
 
-        if (Config.useSimulator) {
+        if (Config.currentMode == Config.Mode.SIM) {
             leftMotor = new AbstractMotor("Left motor");
             rightMotor = new AbstractMotor("Right motor");
         } else {
