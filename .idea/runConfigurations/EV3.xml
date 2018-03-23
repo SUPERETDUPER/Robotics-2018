@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="EV3" type="LejosRunConfigurationType" factoryName="LeJOS" singleton="true">
+  <configuration default="false" name="EV3" type="LejosRunConfigurationType" factoryName="LeJOS" singleton="false">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="ev3.EV3Main" />
     <option name="VM_PARAMETERS" />
