@@ -4,10 +4,10 @@
 
 package ev3.navigation;
 
-import ev3.DataSender;
 import ev3.hardware.ChassisBuilder;
 import ev3.localization.RobotPoseProvider;
-import lejos.robotics.navigation.*;
+import lejos.robotics.navigation.Navigator;
+import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,7 +1,5 @@
 package ev3.navigation;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.chassis.Wheel;
@@ -10,6 +8,9 @@ import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Move.MoveType;
 import lejos.robotics.navigation.MoveListener;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Taken from the Lejos Source code. Modified isMoving() to fix bug of listener not being called.
@@ -28,19 +29,25 @@ public class MyMovePilot implements ArcRotateMoveController {
     private Move move;
     private boolean _replaceMove;
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     @Deprecated
     public MyMovePilot(double wheelDiameter, double trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
         this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     @Deprecated
     public MyMovePilot(double wheelDiameter, double trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor, boolean reverse) {
         this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     @Deprecated
     public MyMovePilot(double leftWheelDiameter, double rightWheelDiameter, double trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor, boolean reverse) {
         this(new WheeledChassis(new Wheel[]{WheeledChassis.modelWheel(leftMotor, leftWheelDiameter).offset(trackWidth / 2.0D).invert(reverse), WheeledChassis.modelWheel(rightMotor, rightWheelDiameter).offset(-trackWidth / 2.0D).invert(reverse)}, 2));
@@ -133,7 +140,7 @@ public class MyMovePilot implements ArcRotateMoveController {
             this.stop();
         }
 
-        this.move = new Move(MoveType.TRAVEL, (float)distance, 0.0F, (float)this.linearSpeed, (float)this.angularSpeed, this.chassis.isMoving());
+        this.move = new Move(MoveType.TRAVEL, (float) distance, 0.0F, (float) this.linearSpeed, (float) this.angularSpeed, this.chassis.isMoving());
         this.chassis.moveStart();
         this.chassis.travel(distance);
         this.movementStart(immediateReturn);
@@ -184,9 +191,9 @@ public class MyMovePilot implements ArcRotateMoveController {
             }
 
             if (radius == 0.0D) {
-                this.move = new Move(MoveType.ROTATE, 0.0F, (float)angle, (float)this.linearSpeed, (float)this.angularSpeed, this.chassis.isMoving());
+                this.move = new Move(MoveType.ROTATE, 0.0F, (float) angle, (float) this.linearSpeed, (float) this.angularSpeed, this.chassis.isMoving());
             } else {
-                this.move = new Move(MoveType.ARC, (float)(Math.toRadians(angle) * radius), (float)angle, (float)this.linearSpeed, (float)this.angularSpeed, this.chassis.isMoving());
+                this.move = new Move(MoveType.ARC, (float) (Math.toRadians(angle) * radius), (float) angle, (float) this.linearSpeed, (float) this.angularSpeed, this.chassis.isMoving());
             }
 
             this.chassis.moveStart();
@@ -198,7 +205,7 @@ public class MyMovePilot implements ArcRotateMoveController {
     public void stop() {
         this.chassis.stop();
 
-        while(this._moveActive) {
+        while (this._moveActive) {
             Thread.yield();
         }
 
@@ -211,19 +218,19 @@ public class MyMovePilot implements ArcRotateMoveController {
     private void movementStart(boolean immediateReturn) {
         Iterator var2 = this._listeners.iterator();
 
-        while(var2.hasNext()) {
-            MoveListener ml = (MoveListener)var2.next();
+        while (var2.hasNext()) {
+            MoveListener ml = (MoveListener) var2.next();
             ml.moveStarted(this.move, this);
         }
 
         this._moveActive = true;
         MyMovePilot.Monitor var6 = this._monitor;
-        synchronized(this._monitor) {
+        synchronized (this._monitor) {
             this._monitor.notifyAll();
         }
 
         if (!immediateReturn) {
-            while(this._moveActive) {
+            while (this._moveActive) {
                 Thread.yield();
             }
 
@@ -235,8 +242,8 @@ public class MyMovePilot implements ArcRotateMoveController {
             this.chassis.getDisplacement(this.move);
             Iterator var1 = this._listeners.iterator();
 
-            while(var1.hasNext()) {
-                MoveListener ml = (MoveListener)var1.next();
+            while (var1.hasNext()) {
+                MoveListener ml = (MoveListener) var1.next();
                 ml.moveStopped(this.move, this);
             }
         }
@@ -260,7 +267,7 @@ public class MyMovePilot implements ArcRotateMoveController {
         }
 
         public synchronized void run() {
-            while(this.more) {
+            while (this.more) {
                 if (MyMovePilot.this._moveActive) {
                     if (MyMovePilot.this.chassis.isStalled()) {
                         MyMovePilot.this.stop();

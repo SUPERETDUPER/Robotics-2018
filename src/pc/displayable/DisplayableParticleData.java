@@ -9,14 +9,9 @@ import common.gui.ParticleData;
 import common.particles.Particle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 /**
  * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition

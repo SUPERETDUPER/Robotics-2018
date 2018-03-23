@@ -5,13 +5,13 @@
 package common.mapping;
 
 import common.Config;
-import pc.displayable.Displayable;
 import common.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import pc.displayable.Displayable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class SurfaceMap implements Displayable {
 
         try {
             fileInputStream = new FileInputStream(Config.IMAGE_PATH);
-        } catch (IOException  e) {
+        } catch (IOException e) {
             Logger.error(LOG_TAG, "Unable to read picture");
             throw new RuntimeException(e.toString());
         }

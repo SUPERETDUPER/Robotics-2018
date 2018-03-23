@@ -87,6 +87,7 @@ public final class MapOperations {
 
     /**
      * Gets the pose you should be at to approach from angle
+     *
      * @param point point to approach
      * @param angle angle to point when approaching
      * @return pose to approach point at angle

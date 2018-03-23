@@ -5,10 +5,10 @@
 package pc;
 
 import common.Config;
-import pc.displayable.Displayable;
 import common.mapping.SurfaceMap;
 import javafx.scene.canvas.Canvas;
 import org.jetbrains.annotations.NotNull;
+import pc.displayable.Displayable;
 
 /**
  * A layer that is displayed on the gui. It has a drawn variable that is true when its just been drawn and set false when the value is changed

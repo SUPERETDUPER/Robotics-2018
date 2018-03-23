@@ -4,15 +4,10 @@
 
 package common.gui;
 
-import common.Config;
 import common.particles.Particle;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
-import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
-import pc.displayable.Displayable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

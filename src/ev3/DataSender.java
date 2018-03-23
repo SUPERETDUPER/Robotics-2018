@@ -4,14 +4,14 @@
 
 package ev3;
 
-import lejos.robotics.Transmittable;
-import lejos.robotics.pathfinding.Path;
-import org.jetbrains.annotations.NotNull;
 import common.Config;
 import common.LogMessageListener;
 import common.Logger;
 import common.gui.EventTypes;
 import common.gui.ParticleData;
+import lejos.robotics.Transmittable;
+import lejos.robotics.pathfinding.Path;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -62,11 +62,11 @@ public final class DataSender {
     }
 
     public static void sendParticleData(@NotNull ParticleData data) {
-            sendTransmittable(EventTypes.MCL_DATA, data);
+        sendTransmittable(EventTypes.MCL_DATA, data);
     }
 
     public static void sendPath(@NotNull Path path) {
-            sendTransmittable(EventTypes.PATH, path);
+        sendTransmittable(EventTypes.PATH, path);
     }
 
     private synchronized static void sendTransmittable(@NotNull EventTypes eventType, @NotNull Transmittable transmittable) {
@@ -80,12 +80,12 @@ public final class DataSender {
         }
     }
 
-    private static void endConnection(){
+    private static void endConnection() {
         Logger.removeListener();
 
         try {
             dos.close();
-        } catch (IOException e){
+        } catch (IOException e) {
             Logger.error(LOG_TAG, "Could not close data output stream");
         }
     }

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Prints to console log messages.
- *
+ * <p>
  * If listener is set instead of printing to console notifies the listener of new log messages
  */
 public final class Logger {
@@ -31,13 +31,14 @@ public final class Logger {
 
     /**
      * Allows to set a custom listener
+     *
      * @param listener the custom listener
      */
     public static void setListener(LogMessageListener listener) {
         Logger.listener = listener;
     }
 
-    public static void removeListener(){
+    public static void removeListener() {
         listener = null;
     }
 
@@ -64,7 +65,7 @@ public final class Logger {
      */
     private static void print(String message, @NotNull LogTypes type) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
-            if (listener == null){
+            if (listener == null) {
                 System.out.println(message);
             } else {
                 listener.notifyLogMessage(message);

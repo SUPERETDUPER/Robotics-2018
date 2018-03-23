@@ -6,8 +6,6 @@ package ev3;
 
 import common.Config;
 import ev3.hardware.Brick;
-import ev3.hardware.ChassisBuilder;
-import lejos.robotics.chassis.Chassis;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();

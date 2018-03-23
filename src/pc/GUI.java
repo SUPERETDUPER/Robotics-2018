@@ -4,11 +4,9 @@
 
 package pc;
 
-import pc.displayable.DisplayableParticleData;
-import pc.displayable.DisplayablePath;
+import common.Logger;
 import common.gui.EventTypes;
 import common.gui.ParticleData;
-import common.Logger;
 import common.mapping.SurfaceMap;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -20,6 +18,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pc.displayable.DisplayableParticleData;
+import pc.displayable.DisplayablePath;
 
 import java.io.DataInputStream;
 import java.io.IOException;
