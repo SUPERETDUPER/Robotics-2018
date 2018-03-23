@@ -86,7 +86,7 @@ public final class MapOperations {
     }
 
     @NotNull
-    private static Pose getApproachAt(Point point, float angle) {
+    private static Pose getApproachAt(@NotNull Point point, float angle) {
         Point approachPoint = point.pointAt(APPROACH_DIST, angle);
 
         float heading = angle + 180;

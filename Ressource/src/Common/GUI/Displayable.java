@@ -7,12 +7,13 @@ package Common.GUI;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
-Any object that can be draw onto the Common.GUI should implement
+ * Any object that can be draw onto the Common.GUI should implement
  */
 public interface Displayable {
 
     /**
      * Called by JavaFX to request the Object to be draw on the Graphics
+     *
      * @param g Graphics object should be drawn on
      */
     void displayOnGui(GraphicsContext g);

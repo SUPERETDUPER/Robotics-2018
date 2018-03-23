@@ -53,7 +53,7 @@ public class ImageGenerator {
         regions.add(new Rectangle(ColorJavaLejos.MAP_GREEN, 1853, 807, 80, 64));
 
         //Container lines
-        regions.add(new Polygon(Color.BLACK, Arrays.asList(
+        regions.add(new IrregularPolygon(Color.BLACK, Arrays.asList(
                 new Point(827, 766),
                 new Point(842, 780),
                 new Point(1274, 360),
@@ -65,7 +65,7 @@ public class ImageGenerator {
         //                corner of grey box 915.5 431 top left
         //                corner of grey box 1191.5 695 bot right
         //                length of little black part = 10* sqrt(2) = 14.14
-        regions.add(new Polygon(Color.BLACK, Arrays.asList(
+        regions.add(new IrregularPolygon(Color.BLACK, Arrays.asList(
                 new Point(916, 417),
                 new Point(901, 431),
                 new Point(1192, 709),

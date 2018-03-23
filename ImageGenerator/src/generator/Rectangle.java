@@ -19,7 +19,7 @@ class Rectangle extends ColorRegion {
 
     @Override
     public boolean contains(float x, float y) {
-        return mRectangle.contains(x,y);
+        return mRectangle.contains(x, y);
     }
 
     float getWidth() {

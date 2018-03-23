@@ -14,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
  * A layer that is displayed on the GUI. It has a drawn variable that is true when its just been drawn and set false when the value is changed
  */
 class Layer extends Canvas {
-    private boolean isDrawn = false;
+    private boolean flaggedToDraw = true;
 
     @NotNull
     private final Displayable displayable;
 
-    Layer(Displayable displayable) {
+    Layer(@NotNull Displayable displayable) {
         super(SurfaceMap.getWidth(), SurfaceMap.getHeight());
 
         this.displayable = displayable;
@@ -42,14 +42,14 @@ class Layer extends Canvas {
         getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
 
         displayable.displayOnGui(getGraphicsContext2D());
-        isDrawn = true;
+        flaggedToDraw = false;
     }
 
-    void markNotDrawn() {
-        isDrawn = false;
+    void flagToDraw() {
+        flaggedToDraw = true;
     }
 
-    boolean isDrawn() {
-        return isDrawn;
+    boolean flaggedToDraw() {
+        return flaggedToDraw;
     }
 }

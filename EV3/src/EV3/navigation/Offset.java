@@ -16,15 +16,18 @@ public final class Offset {
     private static final float[] RELATIVE_OFFSET_LEFT = {-1, -1};
     private static final float[] RELATIVE_OFFSET_RIGHT = {1, -1};
 
+    @NotNull
     public static Point leftColorSensor(@NotNull Pose pose) {
         return offset(pose, RELATIVE_OFFSET_LEFT[0], RELATIVE_OFFSET_RIGHT[1]);
     }
 
+    @NotNull
     public static Point rightColorSensor(@NotNull Pose pose) {
         return offset(pose, RELATIVE_OFFSET_RIGHT[0], RELATIVE_OFFSET_RIGHT[1]);
     }
 
-    private static Point offset(Pose pose, float xOffset, float yOffset) {
+    @NotNull
+    private static Point offset(@NotNull Pose pose, float xOffset, float yOffset) {
         double originalTheta = Math.atan(yOffset / xOffset);
         double hypotenuse = Math.sqrt(xOffset * xOffset + yOffset * yOffset); //Pythagorean theorem
 

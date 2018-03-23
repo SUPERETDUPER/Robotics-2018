@@ -9,10 +9,10 @@ import EV3.localization.RobotPoseProvider;
 import EV3.navigation.Controller;
 import EV3.navigation.MapOperations;
 
-public class Brain {
+class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
-    public static void start() {
+    static void start() {
         Controller.init();
 
         MapOperations.goToTempRegBlue();

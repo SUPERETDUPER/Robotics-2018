@@ -41,11 +41,11 @@ public final class GUI extends Application implements DataChangeListener {
      * Called every new frame to redraw necessary layers
      */
     @NotNull
-    private static AnimationTimer animationTimer = new AnimationTimer() {
+    private static final AnimationTimer animationTimer = new AnimationTimer() {
         @Override
         public void handle(long now) {
             for (Layer layer : layers) {
-                if (!layer.isDrawn()) {
+                if (layer.flaggedToDraw()) {
                     layer.draw();
                 }
             }
@@ -53,7 +53,7 @@ public final class GUI extends Application implements DataChangeListener {
     };
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(@NotNull Stage primaryStage) {
         Pane root = new Pane(layers);
 
         primaryStage.setScene(new Scene(root));
@@ -76,7 +76,7 @@ public final class GUI extends Application implements DataChangeListener {
      * Called when the data has changed
      *
      * @param event the type of new data
-     * @param dis   the data input strem to read from
+     * @param dis   the data input stream to read from
      * @throws IOException thrown when reading from dataInputStream
      */
     @Override
@@ -89,13 +89,12 @@ public final class GUI extends Application implements DataChangeListener {
         switch (event) {
             case MCL_DATA:
                 ((ParticleData) layerMCLData.getDisplayable()).loadObject(dis);
-                layerMCLData.markNotDrawn();
+                layerMCLData.flagToDraw();
                 ((DisplayablePath) layerPath.getDisplayable()).setCurrentPose(((ParticleData) layerMCLData.getDisplayable()).getCurrentPose());
-//                layerPath.markNotDrawn();
                 break;
             case PATH:
                 ((DisplayablePath) layerPath.getDisplayable()).loadObject(dis);
-                layerPath.markNotDrawn();
+                layerPath.flagToDraw();
                 break;
             default:
                 Logger.error(LOG_TAG, "Not a recognized event type");

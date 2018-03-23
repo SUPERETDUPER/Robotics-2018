@@ -125,7 +125,7 @@ public class AbstractMotor implements RegulatedMotor {
     @Override
     public void setSpeed(int i) {
         update();
-        this.speed = i / Config.SIM_SPEED_REDUCING_FACTOR;
+        this.speed = (int) (i * Config.SIM_SPEED_FACTOR);
     }
 
     @Override

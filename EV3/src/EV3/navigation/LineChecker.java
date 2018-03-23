@@ -16,7 +16,7 @@ public final class LineChecker extends Thread {
 
     private int previousColor;
 
-    public LineChecker() {
+    LineChecker() {
         super();
 
         this.setDaemon(true);

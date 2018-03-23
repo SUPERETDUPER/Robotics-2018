@@ -19,22 +19,35 @@ import java.io.IOException;
 public class SurfaceMap implements Displayable {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
-    private static Image image;
-    private static PixelReader pixelReader;
+    private static final Image image;
+    private static final PixelReader pixelReader;
 
     static {
+        FileInputStream fileInputStream;
+
         try {
-            FileInputStream fileInputStream = new FileInputStream(Config.IMAGE_PATH);
-            image = new Image(fileInputStream);
-            pixelReader = image.getPixelReader();
-            fileInputStream.close();
+            fileInputStream = new FileInputStream(Config.IMAGE_PATH);
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Unable to read picture");
+            throw new RuntimeException(e.toString());
+        }
+
+        image = new Image(fileInputStream);
+        pixelReader = image.getPixelReader();
+
+        try {
+            fileInputStream.close();
+        } catch (IOException e) {
+            Logger.warning(LOG_TAG, "Could not close file input stream");
         }
     }
 
     public static int getColorAtPoint(float x, float y) {
-        return ColorJavaLejos.getLejosColor(pixelReader.getColor((int) x, (int) (image.getHeight() - y)));
+        try {
+            return ColorJavaLejos.getLejosColor(pixelReader.getColor((int) x, (int) (image.getHeight() - y)));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("x : " + x + ". y : " + y + " " + e);
+        }
     }
 
     @Contract(pure = true)

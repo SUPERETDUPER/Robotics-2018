@@ -59,6 +59,7 @@ public final class Controller implements MoveListener, NavigationListener {
     @Override
     public void pathComplete(Waypoint waypoint, Pose pose, int i) {
     }
+
     @Override
     public void pathInterrupted(Waypoint waypoint, Pose pose, int i) {
     }
@@ -74,6 +75,7 @@ public final class Controller implements MoveListener, NavigationListener {
         }
     }
 
+    @Contract(pure = true)
     @NotNull
     public Navigator getNavigator() {
         return navigator;

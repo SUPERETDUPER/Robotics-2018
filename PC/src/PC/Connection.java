@@ -5,8 +5,8 @@
 package PC;
 
 import Common.Config;
-import Common.Logger;
 import Common.GUI.EventTypes;
+import Common.Logger;
 import lejos.utility.Delay;
 
 import java.io.DataInputStream;
@@ -34,6 +34,7 @@ class Connection {
      * @return true if successful
      */
     static boolean connect() {
+        Logger.info(LOG_TAG, "Attempting to connect to EV3 ...");
         for (int attempt = 0; attempt < 6; attempt++) {
             try {
                 socket = new Socket(Config.useSimulator ? "localhost" : Config.EV3_IP_ADDRESS, Config.PORT_TO_CONNECT_ON_EV3);
@@ -44,7 +45,6 @@ class Connection {
                 return true;
 
             } catch (IOException e) {
-                Logger.warning(LOG_TAG, "Failed attempt " + attempt + " to connect to EV3");
                 Delay.msDelay(3000);
             }
         }
@@ -73,7 +73,7 @@ class Connection {
     /**
      * Close the connection
      */
-    public static void close() {
+    static void close() {
         try {
             socket.close();
             dis.close();

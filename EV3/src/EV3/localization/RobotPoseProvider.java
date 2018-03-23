@@ -105,7 +105,8 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         Logger.info(LOG_TAG, "Updated with readings. New position is " + this.getPose().toString());
     }
 
-    private static Move deepCopyMove(Move move) {
+    @NotNull
+    private static Move deepCopyMove(@NotNull Move move) {
         return new Move(move.getMoveType(), move.getDistanceTraveled(), move.getAngleTurned(), move.getTravelSpeed(), move.getRotateSpeed(), move.isMoving());
     }
 }

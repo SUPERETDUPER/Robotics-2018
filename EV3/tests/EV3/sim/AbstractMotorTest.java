@@ -22,6 +22,6 @@ class AbstractMotorTest {
 
         int tachoCount = motor.getTachoCount();
 
-        Assertions.assertEquals(tachoCount, 200 / Config.SIM_SPEED_REDUCING_FACTOR);
+        Assertions.assertEquals(tachoCount, 200 * Config.SIM_SPEED_FACTOR);
     }
 }

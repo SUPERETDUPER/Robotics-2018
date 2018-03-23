@@ -4,6 +4,7 @@
 
 package generator;
 
+import com.snatik.polygon.Polygon;
 import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
@@ -13,18 +14,14 @@ import java.util.List;
 /**
  * Any colored region that is a polygon
  */
-class Polygon extends ColorRegion {
+class IrregularPolygon extends ColorRegion {
 
-    private final com.snatik.polygon.Polygon polygon;
-    @NotNull
-    private final List<Point> vertexes;
+    private final Polygon polygon;
 
-    Polygon(Color color, List<Point> vertexes) {
+    IrregularPolygon(Color color, @NotNull List<Point> vertexes) {
         super(color);
 
-        this.vertexes = vertexes;
-
-        com.snatik.polygon.Polygon.Builder builder = com.snatik.polygon.Polygon.Builder();
+        Polygon.Builder builder = Polygon.Builder();
 
         for (Point currentPoint : vertexes) {
             builder.addVertex(new com.snatik.polygon.Point(currentPoint.x, currentPoint.y));
