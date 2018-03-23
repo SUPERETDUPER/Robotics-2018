@@ -18,8 +18,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ChassisBuilder {
 
+    //Old small robot
+//    private static final double WHEEL_DIAMETER = 55.9;
+//    private static final double WHEEL_OFFSET = 82.4;
+
+    private static final double WHEEL_OFFSET = 81.5;
     private static final double WHEEL_DIAMETER = 55.9;
-    private static final double WHEEL_OFFSET = 82.4;
 
     @NotNull
     public static Chassis getChassis() {

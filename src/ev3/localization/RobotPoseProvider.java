@@ -83,7 +83,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     }
 
     public void updatePC() {
-        if (Config.currentMode == Config.Mode.LINKED || Config.currentMode == Config.Mode.SIM) {
+        if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
             DataSender.sendParticleData(new ParticleData(particleSet.getParticles(), this.getPose()));
         }
     }

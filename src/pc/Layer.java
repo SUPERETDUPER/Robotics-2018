@@ -5,7 +5,7 @@
 package pc;
 
 import common.Config;
-import common.gui.Displayable;
+import pc.displayable.Displayable;
 import common.mapping.SurfaceMap;
 import javafx.scene.canvas.Canvas;
 import org.jetbrains.annotations.NotNull;

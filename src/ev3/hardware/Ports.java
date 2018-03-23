@@ -16,6 +16,6 @@ final class Ports {
     static final Port PORT_MOTOR_RIGHT = MotorPort.A;
     static final Port PORT_MOTOR_PADDLE = MotorPort.D;
     static final Port PORT_MOTOR_ARM = MotorPort.B;
-    static final Port PORT_SENSOR_COLOR_SURFACE = SensorPort.S3;
+    static final Port PORT_SENSOR_COLOR_SURFACE = SensorPort.S2;
     static final Port PORT_SENSOR_COLOR_BLOCKS = SensorPort.S1;
 }

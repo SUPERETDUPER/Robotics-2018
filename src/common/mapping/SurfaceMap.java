@@ -5,7 +5,7 @@
 package common.mapping;
 
 import common.Config;
-import common.gui.Displayable;
+import pc.displayable.Displayable;
 import common.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -13,12 +13,9 @@ import javafx.scene.image.PixelReader;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class SurfaceMap implements Displayable {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();

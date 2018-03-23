@@ -4,7 +4,8 @@
 
 package pc;
 
-import common.gui.DisplayablePath;
+import pc.displayable.DisplayableParticleData;
+import pc.displayable.DisplayablePath;
 import common.gui.EventTypes;
 import common.gui.ParticleData;
 import common.Logger;
@@ -28,7 +29,7 @@ public final class GUI extends Application implements DataChangeListener {
 
     private static final Layer layerPath = new Layer(new DisplayablePath());
     @Nullable
-    private static final Layer layerMCLData = new Layer(new ParticleData(null, null));
+    private static final Layer layerMCLData = new Layer(new DisplayableParticleData(null, null));
 
     @Nullable
     private static final Layer[] layers = {
@@ -88,7 +89,7 @@ public final class GUI extends Application implements DataChangeListener {
 
         switch (event) {
             case MCL_DATA:
-                ((ParticleData) layerMCLData.getDisplayable()).loadObject(dis);
+                ((DisplayableParticleData) layerMCLData.getDisplayable()).loadObject(dis);
                 layerMCLData.flagToDraw();
                 ((DisplayablePath) layerPath.getDisplayable()).setCurrentPose(((ParticleData) layerMCLData.getDisplayable()).getCurrentPose());
                 break;

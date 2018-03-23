@@ -36,7 +36,7 @@ public final class DataSender {
         Logger.info(LOG_TAG, "Connected to Robotics2018.pc");
 
         //Attach the listener if not using the simulator so that log messages are sent
-        if (Config.currentMode == Config.Mode.LINKED) {
+        if (Config.currentMode == Config.Mode.DUAL) {
             attachLogListener();
         }
     }

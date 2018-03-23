@@ -12,6 +12,7 @@ import lejos.robotics.Transmittable;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
+import pc.displayable.Displayable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -20,14 +21,11 @@ import java.io.IOException;
 /**
  * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
  */
-public class ParticleData implements Transmittable, Displayable {
+public class ParticleData implements Transmittable {
     private static final String LOG_TAG = ParticleData.class.getSimpleName();
 
-    private static final float DISPLAY_TAIL_LENGTH = 30;
-    private static final float DISPLAY_TAIL_ANGLE = 10;
-
-    private Particle[] particles;
-    private Pose currentPose;
+    protected Particle[] particles;
+    protected Pose currentPose;
 
     public ParticleData(Particle[] particles, Pose currentPose) {
         this.particles = particles;
@@ -38,47 +36,6 @@ public class ParticleData implements Transmittable, Displayable {
         return currentPose;
     }
 
-    @Override
-    public synchronized void displayOnGui(@NotNull GraphicsContext g) {
-        if (particles != null) {
-            g.setFill(Color.BLUE);
-
-            for (Particle particle : particles) {
-                displayPoseOnGui(particle.getPose(), g);
-                if (Config.DISPLAY_PARTICLE_WEIGHT) {
-                    displayParticleWeight(particle, g);
-                }
-            }
-        }
-
-        if (currentPose != null) {
-            g.setFill(Color.RED);
-            displayPoseOnGui(currentPose, g);
-        }
-    }
-
-    private static void displayPoseOnGui(@NotNull Pose particlePose, @NotNull GraphicsContext g) {
-        Point leftEnd = particlePose.pointAt(DISPLAY_TAIL_LENGTH, particlePose.getHeading() + 180 - DISPLAY_TAIL_ANGLE);
-        Point rightEnd = particlePose.pointAt(DISPLAY_TAIL_LENGTH, particlePose.getHeading() + 180 + DISPLAY_TAIL_ANGLE);
-
-        double[] xValues = new double[]{
-                Math.round(particlePose.getX()),
-                Math.round(leftEnd.x),
-                Math.round(rightEnd.x)
-        };
-
-        double[] yValues = new double[]{
-                Math.round(particlePose.getY()),
-                Math.round(leftEnd.y),
-                Math.round(rightEnd.y)
-        };
-
-        g.fillPolygon(xValues, yValues, xValues.length);
-    }
-
-    private static void displayParticleWeight(@NotNull Particle particle, GraphicsContext g) {
-        g.fillText(String.valueOf(particle.weight), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
-    }
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
         dos.writeBoolean(currentPose != null);
@@ -116,10 +73,5 @@ public class ParticleData implements Transmittable, Displayable {
                 particles[i] = new Particle(particlePose, dis.readFloat());
             }
         }
-    }
-
-    @Override
-    public boolean invert() {
-        return true;
     }
 }

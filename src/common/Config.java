@@ -16,11 +16,11 @@ public final class Config {
 
     public enum Mode {
         SOLO,
-        LINKED,
+        DUAL,
         SIM
     }
 
-    public static final Mode currentMode = Mode.LINKED;
+    public static final Mode currentMode = Mode.DUAL;
 
     public static final float GUI_DISPLAY_RATIO = 0.8F;
     public static final String EV3_IP_ADDRESS = "10.0.1.1";

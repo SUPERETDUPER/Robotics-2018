@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package common.gui;
+package pc.displayable;
 
 import common.Logger;
 import javafx.scene.canvas.GraphicsContext;
