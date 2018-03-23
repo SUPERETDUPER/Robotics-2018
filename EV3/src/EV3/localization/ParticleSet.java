@@ -47,7 +47,7 @@ class ParticleSet {
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
             Pose newPose = Util.movePose(particles[i].getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
-            newParticles[i] = new Particle(newPose, particles[i].getWeight());
+            newParticles[i] = new Particle(newPose, particles[i].weight);
         }
 
         particles = newParticles;
@@ -58,7 +58,7 @@ class ParticleSet {
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
             float readingWeight = readings.calculateWeight(particles[i].getPose());
-            float newWeight = VALUE_OF_PREVIOUS_WEIGHT * particles[i].getWeight() + (1 - VALUE_OF_PREVIOUS_WEIGHT) * readingWeight;
+            float newWeight = VALUE_OF_PREVIOUS_WEIGHT * particles[i].weight + (1 - VALUE_OF_PREVIOUS_WEIGHT) * readingWeight;
             newParticles[i] = new Particle(particles[i].getPose(), newWeight);
         }
 
@@ -74,7 +74,7 @@ class ParticleSet {
 
             //Copy particles with weight higher than random
             for (int i = 0; i < NUM_PARTICLES; i++) {
-                if (particles[i].getWeight() >= Math.random()) {
+                if (particles[i].weight >= Math.random()) {
 
                     newParticles[counter] = particles[i];
                     counter++;
@@ -116,11 +116,11 @@ class ParticleSet {
         float estimatedAngle = 0;
 
         for (Particle particle : particles) {
-            estimatedX += (particle.getPose().getX() * particle.getWeight());
-            estimatedY += (particle.getPose().getY() * particle.getWeight());
-            estimatedAngle += (particle.getPose().getHeading() * particle.getWeight());
+            estimatedX += (particle.getPose().getX() * particle.weight);
+            estimatedY += (particle.getPose().getY() * particle.weight);
+            estimatedAngle += (particle.getPose().getHeading() * particle.weight);
 
-            totalWeights += particle.getWeight();
+            totalWeights += particle.weight;
         }
 
         estimatedX /= totalWeights;

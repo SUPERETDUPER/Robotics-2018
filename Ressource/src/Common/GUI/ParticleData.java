@@ -77,7 +77,7 @@ public class ParticleData implements Transmittable, Displayable {
     }
 
     private static void displayParticleWeight(@NotNull Particle particle, GraphicsContext g) {
-        g.fillText(String.valueOf(particle.getWeight()), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
+        g.fillText(String.valueOf(particle.weight), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
     }
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
@@ -93,7 +93,7 @@ public class ParticleData implements Transmittable, Displayable {
             dos.writeInt(particles.length);
             for (Particle particle : particles) {
                 particle.getPose().dumpObject(dos);
-                dos.writeFloat(particle.getWeight());
+                dos.writeFloat(particle.weight);
             }
         }
     }

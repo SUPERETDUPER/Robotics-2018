@@ -5,7 +5,6 @@
 package Common.Particles;
 
 import lejos.robotics.navigation.Pose;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,7 +15,7 @@ public final class Particle {
 
     @NotNull
     private final Pose pose;
-    private final float weight;
+    public final float weight;
 
     public Particle(float x, float y, float heading, float weight) {
         this.pose = new Pose(x, y, heading);
@@ -32,11 +31,4 @@ public final class Particle {
     public Pose getPose() {
         return new Pose(pose.getX(), pose.getY(), pose.getHeading()); //To make it immutable
     }
-
-    @Contract(pure = true)
-    public float getWeight() {
-        return weight;
-    }
-
-
 }
