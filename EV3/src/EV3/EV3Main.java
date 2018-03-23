@@ -5,7 +5,6 @@
 package EV3;
 
 import Common.Config;
-import Common.Logger;
 import EV3.hardware.Brick;
 
 final class EV3Main {

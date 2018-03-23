@@ -12,7 +12,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
-import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -53,7 +52,6 @@ public class ImageGenerator {
         regions.add(new Rectangle(ColorJavaLejos.MAP_RED, 1530.5F, 807, 80, 64));
         regions.add(new Rectangle(ColorJavaLejos.MAP_GREEN, 1853, 807, 80, 64));
 
-        //TODO Make more precise, slightly off
         //Container lines
         regions.add(new Polygon(Color.BLACK, Arrays.asList(
                 new Point(827, 766),
@@ -99,10 +97,10 @@ public class ImageGenerator {
         }
     }
 
-    private static javafx.scene.paint.Color getDisplayColor(float x, float y, ArrayList<ColorRegion> regions) {
+    private static javafx.scene.paint.Color getDisplayColor(float x, float y) {
         javafx.scene.paint.Color colorUnderPoint = boundingRectangle.getDisplayColor();
 
-        for (ColorRegion region : regions) {
+        for (ColorRegion region : ImageGenerator.regions) {
             if (region.contains(x, y)) {
                 colorUnderPoint = region.getDisplayColor();
             }
@@ -111,17 +109,17 @@ public class ImageGenerator {
         return colorUnderPoint;
     }
 
-    private static void generateImage(@NotNull ArrayList<ColorRegion> regions) {
+    private static void generateImage() {
         WritableImage image = new WritableImage((int) boundingRectangle.getWidth(), (int) boundingRectangle.getHeight());
         PixelWriter pixelWriter = image.getPixelWriter();
 
         for (int x = 0; x < boundingRectangle.getWidth(); x++) {
             for (int y = 0; y < boundingRectangle.getHeight(); y++) {
                 if (y == 417) {
-                    Logger.info(LOG_TAG, x + " " + y + " " + getDisplayColor(x, y, regions));
+                    Logger.info(LOG_TAG, x + " " + y + " " + getDisplayColor(x, y));
                 }
 
-                pixelWriter.setColor(x, y, getDisplayColor(x, y, regions));
+                pixelWriter.setColor(x, y, getDisplayColor(x, y));
             }
         }
 
@@ -134,6 +132,6 @@ public class ImageGenerator {
     }
 
     public static void main(String[] args) {
-        generateImage(regions);
+        generateImage();
     }
 }

@@ -27,6 +27,7 @@ public final class LineChecker extends Thread {
 
     @Override
     public void run() {
+        //noinspection InfiniteLoopStatement
         while (true) {
             int surfaceColor = ColorSensor.getSurfaceColor();
 

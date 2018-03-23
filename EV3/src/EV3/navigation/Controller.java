@@ -4,7 +4,6 @@
 
 package EV3.navigation;
 
-import Common.Logger;
 import EV3.DataSender;
 import EV3.hardware.ChassisBuilder;
 import EV3.localization.RobotPoseProvider;
