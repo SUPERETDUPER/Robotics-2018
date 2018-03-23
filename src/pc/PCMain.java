@@ -4,8 +4,8 @@
 
 package pc;
 
-import util.Config;
-import util.Logger;
+import common.Config;
+import common.Logger;
 import javafx.application.Application;
 
 final class PCMain {

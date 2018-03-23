@@ -2,9 +2,9 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package util;
+package common;
 
-import util.Logger.LogTypes;
+import common.Logger.LogTypes;
 
 /**
  * Environment specific and run specific settings
@@ -20,7 +20,7 @@ public final class Config {
         SIM
     }
 
-    public static final Mode currentMode = Mode.SIM;
+    public static final Mode currentMode = Mode.LINKED;
 
     public static final float GUI_DISPLAY_RATIO = 0.8F;
     public static final String EV3_IP_ADDRESS = "10.0.1.1";

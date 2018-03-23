@@ -7,11 +7,11 @@ package ev3;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
-import util.Config;
-import util.LogMessageListener;
-import util.Logger;
-import util.gui.EventTypes;
-import util.gui.ParticleData;
+import common.Config;
+import common.LogMessageListener;
+import common.Logger;
+import common.gui.EventTypes;
+import common.gui.ParticleData;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

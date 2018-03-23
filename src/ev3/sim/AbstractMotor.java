@@ -4,8 +4,8 @@
 
 package ev3.sim;
 
-import util.Config;
-import util.Logger;
+import common.Config;
+import common.Logger;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 import org.jetbrains.annotations.Nullable;

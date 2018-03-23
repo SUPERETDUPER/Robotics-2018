@@ -2,11 +2,11 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package util.mapping;
+package common.mapping;
 
-import util.Config;
-import util.gui.Displayable;
-import util.Logger;
+import common.Config;
+import common.gui.Displayable;
+import common.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;

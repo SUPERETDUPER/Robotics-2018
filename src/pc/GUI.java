@@ -4,11 +4,11 @@
 
 package pc;
 
-import util.gui.DisplayablePath;
-import util.gui.EventTypes;
-import util.gui.ParticleData;
-import util.Logger;
-import util.mapping.SurfaceMap;
+import common.gui.DisplayablePath;
+import common.gui.EventTypes;
+import common.gui.ParticleData;
+import common.Logger;
+import common.mapping.SurfaceMap;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;

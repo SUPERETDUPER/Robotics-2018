@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package util;
+package common;
 
 import org.jetbrains.annotations.NotNull;
 

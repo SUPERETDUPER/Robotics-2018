@@ -4,7 +4,7 @@
 
 package ev3.hardware;
 
-import util.Config;
+import common.Config;
 import ev3.sim.AbstractMotor;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;

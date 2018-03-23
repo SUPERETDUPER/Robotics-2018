@@ -4,9 +4,9 @@
 
 package pc;
 
-import util.Config;
-import util.gui.EventTypes;
-import util.Logger;
+import common.Config;
+import common.gui.EventTypes;
+import common.Logger;
 import lejos.utility.Delay;
 
 import java.io.DataInputStream;

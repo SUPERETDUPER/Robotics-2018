@@ -4,9 +4,9 @@
 
 package ev3.localization;
 
-import util.Config;
-import util.gui.ParticleData;
-import util.Logger;
+import common.Config;
+import common.gui.ParticleData;
+import common.Logger;
 import ev3.DataSender;
 import ev3.navigation.Readings;
 import lejos.robotics.localization.PoseProvider;

@@ -67,33 +67,34 @@ public final class MapOperations {
 
     @NotNull
     private static Pose getApproachRight(@NotNull Point point) {
-        return getApproachAt(point, 0);
-    }
-
-    @NotNull
-    private static Pose getApproachTop(@NotNull Point point) {
-        return getApproachAt(point, 270); //Opposite of what's expected because util.gui flipped
-    }
-
-    @NotNull
-    private static Pose getApproachLeft(@NotNull Point point) {
         return getApproachAt(point, 180);
     }
 
     @NotNull
-    private static Pose getApproachBottom(@NotNull Point point) {
-        return getApproachAt(point, 90); //Opposite of what's expected because util.gui flipped
+    private static Pose getApproachTop(@NotNull Point point) {
+        return getApproachAt(point, 270);
     }
 
     @NotNull
+    private static Pose getApproachLeft(@NotNull Point point) {
+        return getApproachAt(point, 0);
+    }
+
+    @NotNull
+    private static Pose getApproachBottom(@NotNull Point point) {
+        return getApproachAt(point, 90);
+    }
+
+    /**
+     * Gets the pose you should be at to approach from angle
+     * @param point point to approach
+     * @param angle angle to point when approaching
+     * @return pose to approach point at angle
+     */
+    @NotNull
     private static Pose getApproachAt(@NotNull Point point, float angle) {
-        Point approachPoint = point.pointAt(APPROACH_DIST, angle);
+        Point approachPoint = point.pointAt(APPROACH_DIST, angle + 180);
 
-        float heading = angle + 180;
-
-        while (heading > 360) heading -= 360;
-        while (heading < 0) heading += 360;
-
-        return new Pose(approachPoint.x, approachPoint.y, heading);
+        return new Pose(approachPoint.x, approachPoint.y, angle);
     }
 }

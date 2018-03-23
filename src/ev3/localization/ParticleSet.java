@@ -4,8 +4,8 @@
 
 package ev3.localization;
 
-import util.Logger;
-import util.particles.Particle;
+import common.Logger;
+import common.particles.Particle;
 import ev3.navigation.Readings;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;

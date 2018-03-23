@@ -2,10 +2,10 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package util.gui;
+package common.gui;
 
-import util.Config;
-import util.particles.Particle;
+import common.Config;
+import common.particles.Particle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
@@ -18,7 +18,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * Object that gets sent from the ev3 to the computer util.gui containing the particles particles and the currentPosition
+ * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
  */
 public class ParticleData implements Transmittable, Displayable {
     private static final String LOG_TAG = ParticleData.class.getSimpleName();

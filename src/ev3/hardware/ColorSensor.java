@@ -4,8 +4,8 @@
 
 package ev3.hardware;
 
-import util.Config;
-import util.mapping.SurfaceMap;
+import common.Config;
+import common.mapping.SurfaceMap;
 import ev3.localization.RobotPoseProvider;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.navigation.Pose;

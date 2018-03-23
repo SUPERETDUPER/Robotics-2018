@@ -2,12 +2,12 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package util.gui;
+package common.gui;
 
 import javafx.scene.canvas.GraphicsContext;
 
 /**
- * Any object that can be draw onto the util.gui should implement
+ * Any object that can be draw onto the common.gui should implement
  */
 public interface Displayable {
 

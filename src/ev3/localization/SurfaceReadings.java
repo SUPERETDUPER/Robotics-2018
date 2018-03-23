@@ -4,7 +4,7 @@
 
 package ev3.localization;
 
-import util.mapping.SurfaceMap;
+import common.mapping.SurfaceMap;
 import ev3.navigation.Readings;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;

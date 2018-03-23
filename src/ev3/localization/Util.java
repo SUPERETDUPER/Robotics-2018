@@ -4,7 +4,7 @@
 
 package ev3.localization;
 
-import util.Logger;
+import common.Logger;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;

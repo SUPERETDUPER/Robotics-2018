@@ -4,7 +4,7 @@
 
 package ev3.sim;
 
-import util.Config;
+import common.Config;
 import lejos.utility.Delay;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

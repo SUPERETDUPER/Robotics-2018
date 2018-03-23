@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package util.particles;
+package common.particles;
 
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Assertions;

@@ -4,9 +4,9 @@
 
 package pc;
 
-import util.Config;
-import util.gui.Displayable;
-import util.mapping.SurfaceMap;
+import common.Config;
+import common.gui.Displayable;
+import common.mapping.SurfaceMap;
 import javafx.scene.canvas.Canvas;
 import org.jetbrains.annotations.NotNull;
 

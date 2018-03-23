@@ -4,8 +4,10 @@
 
 package ev3;
 
-import util.Config;
+import common.Config;
 import ev3.hardware.Brick;
+
+import java.awt.*;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
