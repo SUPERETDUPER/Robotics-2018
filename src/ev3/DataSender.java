@@ -5,10 +5,10 @@
 package ev3;
 
 import common.Config;
+import common.EventTypes;
 import common.LogMessageListener;
 import common.Logger;
-import common.gui.EventTypes;
-import common.gui.ParticleData;
+import common.particles.ParticleAndPoseContainer;
 import lejos.robotics.Transmittable;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +61,7 @@ public final class DataSender {
         }
     }
 
-    public static void sendParticleData(@NotNull ParticleData data) {
+    public static void sendParticleData(@NotNull ParticleAndPoseContainer data) {
         sendTransmittable(EventTypes.MCL_DATA, data);
     }
 

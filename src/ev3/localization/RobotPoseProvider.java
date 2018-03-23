@@ -5,8 +5,6 @@
 package ev3.localization;
 
 import common.Config;
-import common.Logger;
-import common.gui.ParticleData;
 import ev3.DataSender;
 import ev3.navigation.Readings;
 import lejos.robotics.localization.PoseProvider;
@@ -26,10 +24,12 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private static final RobotPoseProvider mParticlePoseProvider = new RobotPoseProvider();
 
     private MoveProvider mp;
-    private ParticleSet particleSet;
+    private MCLData data;
 
-    private Pose currentPose;
-
+    /**
+     * The amount the data has been shifted since the start of this move.
+     * completedMove is null when the move starts and each time the data is updated (with update()) the completedMove is updated
+     */
     @Nullable
     private Move completedMove;
 
@@ -46,18 +46,22 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         moveProvider.addMoveListener(this);
     }
 
+    /**
+     * Doesn't update the data object since we don't want the particles to update every time
+     *
+     * @return the current pose
+     */
     @NotNull
     @Override
     public synchronized Pose getPose() {
         Move missingMove = Util.subtractMove(mp.getMovement(), completedMove);
 
-        return Util.movePose(currentPose, missingMove);
+        return Util.movePose(data.getParticlePose(), missingMove);
     }
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        currentPose = pose;
-        particleSet = new ParticleSet(pose);
+        data = new MCLData(pose);
         completedMove = deepCopyMove(mp.getMovement());
 
         updatePC();
@@ -65,44 +69,42 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
-        Logger.debug(LOG_TAG, "Move started : " + move.toString());
     }
 
+    /**
+     * Moves the particles and pose over by the amount remaining
+     *
+     * @param move         the move that was completed
+     * @param moveProvider the move provider
+     */
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Move stopped  : " + move.toString());
-
-        Move missingMove = Util.subtractMove(move, completedMove);
-
-        currentPose = Util.movePose(currentPose, missingMove);
-        particleSet.moveParticles(missingMove);
+        data.moveParticlesAndPose(Util.subtractMove(move, completedMove));
 
         completedMove = null;
 
         updatePC();
     }
 
-    public void updatePC() {
-        if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            DataSender.sendParticleData(new ParticleData(particleSet.getParticles(), this.getPose()));
-        }
-    }
-
     public synchronized void update(@NotNull Readings readings) {
         Move move = mp.getMovement();
 
-        particleSet.moveParticles(Util.subtractMove(move, completedMove)); //Shift particles
-        currentPose = Util.movePose(currentPose, Util.subtractMove(move, completedMove));
+        data.moveParticlesAndPose(Util.subtractMove(move, completedMove));
 
-        completedMove = deepCopyMove(move);
+        completedMove = deepCopyMove(move); //Deep copy because the movement is modified afterwards
 
-        particleSet.weightParticles(readings); //Recalculate all the particle weights
-        particleSet.resample();//Re samples for highest weights
-//        currentPose = particleSet.estimateCurrentPose(); //Updates current pose
+        data.weightParticles(readings); //Recalculate all the particle weights
+        data.resample();//Re samples for highest weights
+//        data.refineCurrentPose(); //Updates current pose
 
         updatePC(); //SendToPc
+    }
 
-        Logger.info(LOG_TAG, "Updated with readings. New position is " + this.getPose().toString());
+    public void updatePC() {
+        if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
+            data.setCurrentPose(getPose());
+            DataSender.sendParticleData(data);
+        }
     }
 
     @NotNull

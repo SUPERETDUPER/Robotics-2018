@@ -5,8 +5,8 @@
 package pc.displayable;
 
 import common.Config;
-import common.gui.ParticleData;
 import common.particles.Particle;
+import common.particles.ParticleAndPoseContainer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
  */
-public class DisplayableParticleData extends ParticleData implements Displayable {
+public class DisplayableParticleData extends ParticleAndPoseContainer implements Displayable {
     private static final String LOG_TAG = DisplayableParticleData.class.getSimpleName();
 
     private static final float DISPLAY_TAIL_LENGTH = 30;
@@ -64,7 +64,7 @@ public class DisplayableParticleData extends ParticleData implements Displayable
         g.fillPolygon(xValues, yValues, xValues.length);
     }
 
-    private static void displayParticleWeight(@NotNull Particle particle, GraphicsContext g) {
+    private static void displayParticleWeight(@NotNull Particle particle, @NotNull GraphicsContext g) {
         g.fillText(String.valueOf(particle.weight), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
     }
 

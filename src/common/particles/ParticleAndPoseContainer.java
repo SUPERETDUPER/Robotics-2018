@@ -2,9 +2,8 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package common.gui;
+package common.particles;
 
-import common.particles.Particle;
 import lejos.robotics.Transmittable;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -16,13 +15,13 @@ import java.io.IOException;
 /**
  * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
  */
-public class ParticleData implements Transmittable {
-    private static final String LOG_TAG = ParticleData.class.getSimpleName();
+public class ParticleAndPoseContainer implements Transmittable {
+    private static final String LOG_TAG = ParticleAndPoseContainer.class.getSimpleName();
 
     protected Particle[] particles;
     protected Pose currentPose;
 
-    public ParticleData(Particle[] particles, Pose currentPose) {
+    public ParticleAndPoseContainer(Particle[] particles, Pose currentPose) {
         this.particles = particles;
         this.currentPose = currentPose;
     }
@@ -31,6 +30,13 @@ public class ParticleData implements Transmittable {
         return currentPose;
     }
 
+    public Particle[] getParticles() {
+        return particles;
+    }
+
+    public void setCurrentPose(Pose currentPose) {
+        this.currentPose = currentPose;
+    }
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
         dos.writeBoolean(currentPose != null);

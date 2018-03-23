@@ -5,6 +5,7 @@
 package ev3.localization;
 
 import common.Logger;
+import common.particles.Particle;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,7 @@ final class Util {
     }
 
     @NotNull
-    static Pose movePose(@NotNull Pose pose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
+    private static Pose movePose(@NotNull Pose pose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
         switch (move.getMoveType()) {
             case STOP:
                 return pose;
@@ -61,6 +62,17 @@ final class Util {
         return movePose(pose, move, 0, 0);
     }
 
+    static Particle[] moveParticleSet(@NotNull Particle[] particles, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
+        Particle[] newParticles = new Particle[particles.length];
+
+        for (int i = 0; i < particles.length; i++) {
+            Pose newPose = Util.movePose(particles[i].getPose(), move, angleNoiseFactor, distanceNoiseFactor);
+            newParticles[i] = new Particle(newPose, particles[i].weight);
+        }
+
+        return newParticles;
+    }
+
     @NotNull
     static Move subtractMove(@NotNull Move move1, @Nullable Move move2) {
         if (move2 == null) {
@@ -68,5 +80,9 @@ final class Util {
         }
 
         return new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());
+    }
+
+    static Pose deepCopyPose(Pose pose) {
+        return new Pose(pose.getX(), pose.getY(), pose.getHeading());
     }
 }

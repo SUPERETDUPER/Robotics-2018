@@ -6,6 +6,7 @@ package ev3.localization;
 
 import common.Logger;
 import common.particles.Particle;
+import common.particles.ParticleAndPoseContainer;
 import ev3.navigation.Readings;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
@@ -16,8 +17,8 @@ import java.util.Random;
 /**
  * Used by the Pose Provider to run operations on its set of particles
  */
-class ParticleSet {
-    private static final String LOG_TAG = ParticleSet.class.getSimpleName();
+class MCLData extends ParticleAndPoseContainer {
+    private static final String LOG_TAG = MCLData.class.getSimpleName();
 
     private static final float STARTING_RADIUS_NOISE = 4;
     private static final float STARTING_HEADING_NOISE = 3;
@@ -32,25 +33,15 @@ class ParticleSet {
 
     private static final Random random = new Random();
 
-    private Particle[] particles;
+    private Pose particlePose;
 
-    ParticleSet(@NotNull Pose startingPose) {
-        this.particles = ParticleSet.getNewParticleSet(startingPose);
+    MCLData(@NotNull Pose startingPose) {
+        super(MCLData.getNewParticleSet(startingPose), startingPose);
+        particlePose = startingPose;
     }
 
-    Particle[] getParticles() {
-        return particles;
-    }
-
-    synchronized void moveParticles(@NotNull Move move) {
-        Particle[] newParticles = new Particle[NUM_PARTICLES];
-
-        for (int i = 0; i < NUM_PARTICLES; i++) {
-            Pose newPose = Util.movePose(particles[i].getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
-            newParticles[i] = new Particle(newPose, particles[i].weight);
-        }
-
-        particles = newParticles;
+    Pose getParticlePose() {
+        return particlePose;
     }
 
     synchronized void weightParticles(@NotNull Readings readings) {
@@ -66,7 +57,7 @@ class ParticleSet {
     }
 
     synchronized void resample() {
-        Particle[] newParticles = new Particle[ParticleSet.NUM_PARTICLES];
+        Particle[] newParticles = new Particle[MCLData.NUM_PARTICLES];
 
         int counter = 0;
 
@@ -79,21 +70,21 @@ class ParticleSet {
                     newParticles[counter] = particles[i];
                     counter++;
 
-                    if (counter == ParticleSet.NUM_PARTICLES) {
+                    if (counter == MCLData.NUM_PARTICLES) {
                         break;
                     }
                 }
             }
 
-            if (counter == ParticleSet.NUM_PARTICLES) {
+            if (counter == MCLData.NUM_PARTICLES) {
                 break;
             }
         }
 
         if (counter == 0) {
             Logger.error(LOG_TAG, "Bad resample ; totally lost");
-        } else if (counter < ParticleSet.NUM_PARTICLES) {
-            for (int i = counter; i < ParticleSet.NUM_PARTICLES; i++) {
+        } else if (counter < MCLData.NUM_PARTICLES) {
+            for (int i = counter; i < MCLData.NUM_PARTICLES; i++) {
                 newParticles[i] = newParticles[i % counter];
             }
 
@@ -107,8 +98,7 @@ class ParticleSet {
      * Estimate currentPose from weighted average of the particles
      * Calculate statistics
      */
-    @NotNull
-    synchronized Pose estimateCurrentPose() {
+    synchronized void refineCurrentPose() {
         float totalWeights = 0;
 
         float estimatedX = 0;
@@ -131,7 +121,14 @@ class ParticleSet {
         while (estimatedAngle > 180) estimatedAngle -= 360;
         while (estimatedAngle < -180) estimatedAngle += 360;
 
-        return new Pose(estimatedX, estimatedY, estimatedAngle);
+        particlePose = new Pose(estimatedX, estimatedY, estimatedAngle);
+        currentPose = Util.deepCopyPose(particlePose);
+    }
+
+    synchronized void moveParticlesAndPose(Move move) {
+        particlePose = Util.movePose(particlePose, move);
+        currentPose = Util.deepCopyPose(particlePose);
+        particles = Util.moveParticleSet(particles, move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
     }
 
     /**
