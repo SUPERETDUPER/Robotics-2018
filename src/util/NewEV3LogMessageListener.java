@@ -1,0 +1,12 @@
+/*
+ * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
+ */
+
+package util;
+
+/**
+ * Called when the there is a new log message
+ */
+public interface NewEV3LogMessageListener {
+    void notifyNewEV3Message(String message);
+}
