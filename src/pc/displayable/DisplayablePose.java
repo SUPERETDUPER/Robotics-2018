@@ -12,14 +12,12 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 public class DisplayablePose extends UpdatableLayer {
-    private static final int DIAMETER = 3;
-
     private Pose pose = new Pose();
 
     @Override
     public void displayOnGui(GraphicsContext g) {
         g.setFill(Color.BLACK);
-        g.fillOval(pose.getX(), pose.getY(), DIAMETER, DIAMETER);
+        Util.displayPoseOnGui(g, pose);
     }
 
     @Override
