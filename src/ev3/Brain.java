@@ -16,15 +16,12 @@ class Brain {
         Controller.init();
 
         MapOperations.goToTempRegBlue();
-        Controller.get().getNavigator().followPath();
         Controller.get().waitForStop();
 
         MapOperations.goToTempRegGreen();
-        Controller.get().getNavigator().followPath();
         Controller.get().waitForStop();
 
         MapOperations.goToTempRegYellow();
-        Controller.get().getNavigator().followPath();
         Controller.get().waitForStop();
 
         Logger.info(LOG_TAG, RobotPoseProvider.get().getPose().toString());

@@ -53,7 +53,7 @@ final class Util {
                 return rotatePose(pose, move.getAngleTurned(), angleNoiseFactor);
             default:
                 Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
-                return pose;
+                throw new RuntimeException(move.toString() + " ... " + pose.toString());
         }
     }
 
@@ -77,6 +77,12 @@ final class Util {
     static Move subtractMove(@NotNull Move move1, @Nullable Move move2) {
         if (move2 == null) {
             return move1;
+        }
+
+        if (move1.getMoveType() != move2.getMoveType() || move1.getMoveType() == Move.MoveType.ARC || move2.getMoveType() == Move.MoveType.ARC) {
+            if (move1.getMoveType() != Move.MoveType.STOP && move2.getMoveType() != Move.MoveType.STOP) {
+                throw new RuntimeException("Can't substract " + move1.toString() + " by " + move2.toString());
+            }
         }
 
         return new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());

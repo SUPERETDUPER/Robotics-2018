@@ -7,11 +7,10 @@ package ev3.navigation;
 import ev3.localization.RobotPoseProvider;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
-import lejos.robotics.navigation.Waypoint;
 import org.jetbrains.annotations.NotNull;
 
 public final class MapOperations {
-    private static final float APPROACH_DIST = 100;
+    private static final float APPROACH_DIST = 250;
 
     private static final Point TEMP_REG_GREEN = new Point(1902, 306);
     private static final Point TEMP_REG_BLUE = new Point(1902, 838);
@@ -42,12 +41,12 @@ public final class MapOperations {
         Pose option2 = getApproachRight(point);
 
         if (currentPose.distanceTo(option1.getLocation()) < currentPose.distanceTo(option2.getLocation())) {
-            Controller.get().getNavigator().addWaypoint(new Waypoint(option1));
+            Controller.get().goTo(option1);
         } else {
-            Controller.get().getNavigator().addWaypoint(new Waypoint(option2));
+            Controller.get().goTo(option2);
         }
 
-        Controller.get().getNavigator().addWaypoint(new Waypoint(point));
+        Controller.get().goTo(point);
     }
 
     private static void approachTopOrBottom(@NotNull Point point) {
@@ -57,12 +56,12 @@ public final class MapOperations {
         Pose option2 = getApproachBottom(point);
 
         if (currentPose.distanceTo(option1.getLocation()) < currentPose.distanceTo(option2.getLocation())) {
-            Controller.get().getNavigator().addWaypoint(new Waypoint(option1));
+            Controller.get().goTo(option1);
         } else {
-            Controller.get().getNavigator().addWaypoint(new Waypoint(option2));
+            Controller.get().goTo(option2);
         }
 
-        Controller.get().getNavigator().addWaypoint(new Waypoint(point));
+        Controller.get().goTo(point);
     }
 
     @NotNull

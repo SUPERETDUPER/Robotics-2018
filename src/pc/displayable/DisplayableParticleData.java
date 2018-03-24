@@ -5,11 +5,11 @@
 package pc.displayable;
 
 import common.Config;
+import common.Logger;
 import common.particles.Particle;
 import common.particles.ParticleAndPoseContainer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class DisplayableParticleData extends ParticleAndPoseContainer implements Displayable {
     private static final String LOG_TAG = DisplayableParticleData.class.getSimpleName();
 
-    private static final float DISPLAY_TAIL_LENGTH = 30;
-    private static final float DISPLAY_TAIL_ANGLE = 10;
+    private static final int PARTICLE_DIAMETER = 4;
 
     public DisplayableParticleData(Particle[] particles, Pose currentPose) {
         super(particles, currentPose);
@@ -46,22 +45,12 @@ public class DisplayableParticleData extends ParticleAndPoseContainer implements
     }
 
     private static void displayPoseOnGui(@NotNull Pose particlePose, @NotNull GraphicsContext g) {
-        Point leftEnd = particlePose.pointAt(DISPLAY_TAIL_LENGTH, particlePose.getHeading() + 180 - DISPLAY_TAIL_ANGLE);
-        Point rightEnd = particlePose.pointAt(DISPLAY_TAIL_LENGTH, particlePose.getHeading() + 180 + DISPLAY_TAIL_ANGLE);
+        g.fillOval(particlePose.getX(), particlePose.getY(), PARTICLE_DIAMETER, PARTICLE_DIAMETER);
 
-        double[] xValues = new double[]{
-                Math.round(particlePose.getX()),
-                Math.round(leftEnd.x),
-                Math.round(rightEnd.x)
-        };
-
-        double[] yValues = new double[]{
-                Math.round(particlePose.getY()),
-                Math.round(leftEnd.y),
-                Math.round(rightEnd.y)
-        };
-
-        g.fillPolygon(xValues, yValues, xValues.length);
+        if (particlePose.getY() < 0) {
+            Logger.warning(LOG_TAG, particlePose.toString());
+            throw new RuntimeException();
+        }
     }
 
     private static void displayParticleWeight(@NotNull Particle particle, @NotNull GraphicsContext g) {

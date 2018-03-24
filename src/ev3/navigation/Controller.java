@@ -6,6 +6,7 @@ package ev3.navigation;
 
 import ev3.hardware.ChassisBuilder;
 import ev3.localization.RobotPoseProvider;
+import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
@@ -50,12 +51,28 @@ public final class Controller {
         }
     }
 
-    @Contract(pure = true)
-    @NotNull
-    public Navigator getNavigator() {
-        return navigator;
+    void goTo(Pose pose) {
+        goTo(pose.getX(), pose.getY(), pose.getHeading());
+    }
+
+    void goTo(float x, float y, float heading) {
+        navigator.goTo(x, y, normalize(heading));
+    }
+
+    void goTo(Point point) {
+        goTo(point.x, point.y);
+    }
+
+    void goTo(float x, float y) {
+        navigator.goTo(x, y);
     }
 
     public static void init() {
+    }
+
+    private static float normalize(float heading) {
+        while (heading >= 360) heading -= 360;
+        while (heading < 0) heading += 360;
+        return heading;
     }
 }
