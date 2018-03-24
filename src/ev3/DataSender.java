@@ -10,6 +10,7 @@ import common.LogMessageListener;
 import common.Logger;
 import common.particles.ParticleAndPoseContainer;
 import lejos.robotics.Transmittable;
+import lejos.robotics.navigation.Pose;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +64,10 @@ public final class DataSender {
 
     public static void sendParticleData(@NotNull ParticleAndPoseContainer data) {
         sendTransmittable(EventTypes.MCL_DATA, data);
+    }
+
+    public static void sendCurrentPose(@NotNull Pose currentPose) {
+        sendTransmittable(EventTypes.CURRENT_POSE, currentPose);
     }
 
     public static void sendPath(@NotNull Path path) {

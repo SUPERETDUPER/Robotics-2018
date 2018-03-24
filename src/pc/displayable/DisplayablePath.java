@@ -13,10 +13,14 @@ import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public final class DisplayablePath extends Path implements Displayable {
+import java.io.DataInputStream;
+import java.io.IOException;
+
+public final class DisplayablePath extends UpdatableLayer {
     private static final String LOG_TAG = DisplayablePath.class.getSimpleName();
 
     private Pose currentPose;
+    private Path path = new Path();
 
     public void setCurrentPose(Pose currentPose) {
         this.currentPose = currentPose;
@@ -32,7 +36,7 @@ public final class DisplayablePath extends Path implements Displayable {
 
         g.setStroke(Color.RED);
 
-        for (Waypoint waypoint : this) {
+        for (Waypoint waypoint : path) {
             g.strokeLine((int) previousWaypoint.x, (int) previousWaypoint.y, (int) waypoint.x, (int) waypoint.y);
             previousWaypoint = waypoint;
         }
@@ -42,5 +46,10 @@ public final class DisplayablePath extends Path implements Displayable {
     @Override
     public boolean invert() {
         return true;
+    }
+
+    @Override
+    public synchronized void updateLayer(DataInputStream dataInputStream) throws IOException {
+        path.loadObject(dataInputStream);
     }
 }

@@ -6,18 +6,15 @@ package common.mapping;
 
 import common.Config;
 import common.Logger;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import pc.displayable.Displayable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SurfaceMap implements Displayable {
+public class SurfaceMap {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
     private static final Image image;
@@ -61,13 +58,7 @@ public class SurfaceMap implements Displayable {
         return image.getWidth();
     }
 
-    @Override
-    public void displayOnGui(@NotNull GraphicsContext g) {
-        g.drawImage(image, 0, 0);
-    }
-
-    @Override
-    public boolean invert() {
-        return false;
+    public static Image getImage() {
+        return image;
     }
 }

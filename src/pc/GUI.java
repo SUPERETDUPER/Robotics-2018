@@ -6,20 +6,15 @@ package pc;
 
 import common.EventTypes;
 import common.Logger;
-import common.mapping.SurfaceMap;
-import common.particles.ParticleAndPoseContainer;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import pc.displayable.DisplayableParticleData;
-import pc.displayable.DisplayablePath;
+import pc.displayable.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -27,15 +22,15 @@ import java.io.IOException;
 public final class GUI extends Application implements DataChangeListener {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
-    private static final Layer layerPath = new Layer(new DisplayablePath());
-    @Nullable
-    private static final Layer layerMCLData = new Layer(new DisplayableParticleData(null, null));
+    private static final DisplayablePath layerPath = new DisplayablePath();
+    private static final DisplayableParticleData layerMCLData = new DisplayableParticleData();
+    private static final DisplayablePose layerCurrentPose = new DisplayablePose();
 
-    @Nullable
     private static final Layer[] layers = {
-            new Layer(new SurfaceMap()),
+            new DisplayableSurfaceMap(),
             layerMCLData,
-            layerPath
+            layerPath,
+            layerCurrentPose
     };
 
     /**
@@ -46,8 +41,12 @@ public final class GUI extends Application implements DataChangeListener {
         @Override
         public void handle(long now) {
             for (Layer layer : layers) {
-                if (layer.flaggedToDraw()) {
-                    layer.draw();
+                if (layer instanceof UpdatableLayer) {
+                    UpdatableLayer updatableLayer = (UpdatableLayer) layer;
+
+                    if (updatableLayer.hasNewData()) {
+                        updatableLayer.draw();
+                    }
                 }
             }
         }
@@ -65,6 +64,10 @@ public final class GUI extends Application implements DataChangeListener {
                 Connection.close();
             }
         });
+
+        for (Layer layer : layers) {
+            layer.draw();
+        }
 
         Connection.setListener(this);
 
@@ -89,13 +92,17 @@ public final class GUI extends Application implements DataChangeListener {
 
         switch (event) {
             case MCL_DATA:
-                ((DisplayableParticleData) layerMCLData.getDisplayable()).loadObject(dis);
-                layerMCLData.flagToDraw();
-                ((DisplayablePath) layerPath.getDisplayable()).setCurrentPose(((ParticleAndPoseContainer) layerMCLData.getDisplayable()).getCurrentPose());
+                layerMCLData.updateLayer(dis);
+                layerMCLData.markNew();
+                layerPath.setCurrentPose(layerMCLData.getCurrentPose());
                 break;
             case PATH:
-                ((DisplayablePath) layerPath.getDisplayable()).loadObject(dis);
-                layerPath.flagToDraw();
+                layerPath.updateLayer(dis);
+                layerPath.markNew();
+                break;
+            case CURRENT_POSE:
+                layerCurrentPose.updateLayer(dis);
+                layerCurrentPose.markNew();
                 break;
             default:
                 Logger.error(LOG_TAG, "Not a recognized event type");
@@ -107,7 +114,7 @@ public final class GUI extends Application implements DataChangeListener {
      */
     @Override
     public void connectionLost() {
-        Platform.exit();
+//        Platform.exit();
     }
 
 }

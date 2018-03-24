@@ -7,5 +7,6 @@ package common;
 public enum EventTypes {
     MCL_DATA,
     LOG,
-    PATH
+    PATH,
+    CURRENT_POSE
 }

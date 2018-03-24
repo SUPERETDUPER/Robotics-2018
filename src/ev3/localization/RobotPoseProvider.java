@@ -57,7 +57,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     public synchronized Pose getPose() {
         Move missingMove = Util.subtractMove(deepCopyMove(mp.getMovement()), completedMove);
 
-        return Util.movePose(data.getParticlePose(), missingMove);
+        return Util.movePose(data.getCurrentPose(), missingMove);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         completedMove = null;
 
-        updatePC();
+        DataSender.sendParticleData(data);
     }
 
     public synchronized void update(@NotNull Readings readings) {
@@ -103,15 +103,14 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         data.weightParticles(readings); //Recalculate all the particle weights
         data.resample();//Re samples for highest weights
-//        data.refineCurrentPose(); //Updates current pose
+        data.refineCurrentPose(); //Updates current pose
 
-        updatePC(); //SendToPc
+        DataSender.sendParticleData(data); //SendToPc
     }
 
     public void updatePC() {
         if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            data.setCurrentPose(getPose());
-            DataSender.sendParticleData(data);
+            DataSender.sendCurrentPose(getPose());
         }
     }
 

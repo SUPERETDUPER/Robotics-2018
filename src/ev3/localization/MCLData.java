@@ -33,15 +33,9 @@ class MCLData extends ParticleAndPoseContainer {
 
     private static final Random random = new Random();
 
-    private Pose particlePose;
-
     MCLData(@NotNull Pose startingPose) {
         super(MCLData.getNewParticleSet(startingPose), startingPose);
-        particlePose = startingPose;
-    }
-
-    Pose getParticlePose() {
-        return particlePose;
+        currentPose = startingPose;
     }
 
     synchronized void weightParticles(@NotNull Readings readings) {
@@ -121,13 +115,11 @@ class MCLData extends ParticleAndPoseContainer {
         while (estimatedAngle > 180) estimatedAngle -= 360;
         while (estimatedAngle < -180) estimatedAngle += 360;
 
-        particlePose = new Pose(estimatedX, estimatedY, estimatedAngle);
-        currentPose = Util.deepCopyPose(particlePose);
+        currentPose = new Pose(estimatedX, estimatedY, estimatedAngle);
     }
 
     synchronized void moveParticlesAndPose(Move move) {
-        particlePose = Util.movePose(particlePose, move);
-        currentPose = Util.deepCopyPose(particlePose);
+        currentPose = Util.movePose(currentPose, move);
         particles = Util.moveParticleSet(particles, move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
     }
 

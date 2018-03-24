@@ -5,7 +5,6 @@
 package ev3;
 
 import common.Config;
-import ev3.hardware.Brick;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
@@ -16,6 +15,6 @@ final class EV3Main {
         }
 
         Brain.start();
-        Brick.waitForUserConfirmation(); //And wait for complete
+//        Brick.waitForUserConfirmation(); //And wait for complete
     }
 }

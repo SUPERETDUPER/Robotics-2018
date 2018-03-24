@@ -12,32 +12,32 @@ import javafx.scene.paint.Color;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+
 /**
  * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
  */
-public class DisplayableParticleData extends ParticleAndPoseContainer implements Displayable {
+public class DisplayableParticleData extends UpdatableLayer {
     private static final String LOG_TAG = DisplayableParticleData.class.getSimpleName();
 
     private static final int PARTICLE_DIAMETER = 4;
 
-    public DisplayableParticleData(Particle[] particles, Pose currentPose) {
-        super(particles, currentPose);
-    }
+    private ParticleAndPoseContainer data = new ParticleAndPoseContainer(null, null);
 
-    @Override
     public synchronized void displayOnGui(@NotNull GraphicsContext g) {
-        if (particles != null) {
+        if (data.getParticles() != null) {
             g.setFill(Color.BLUE);
 
-            for (Particle particle : particles) {
+            for (Particle particle : data.getParticles()) {
                 g.setFill(Color.rgb((int) (particle.weight * 255), (int) (255 - (particle.weight * 255)), 0));
                 displayPoseOnGui(particle.getPose(), g);
             }
         }
 
-        if (currentPose != null) {
+        if (data.getCurrentPose() != null) {
             g.setFill(Color.BLUE);
-            displayPoseOnGui(currentPose, g);
+            displayPoseOnGui(data.getCurrentPose(), g);
         }
     }
 
@@ -50,8 +50,16 @@ public class DisplayableParticleData extends ParticleAndPoseContainer implements
         }
     }
 
-    @Override
+    public Pose getCurrentPose() {
+        return data.getCurrentPose();
+    }
+
     public boolean invert() {
         return true;
+    }
+
+    @Override
+    public synchronized void updateLayer(DataInputStream dataInputStream) throws IOException {
+        data.loadObject(dataInputStream);
     }
 }

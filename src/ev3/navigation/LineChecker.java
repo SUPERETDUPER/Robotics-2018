@@ -7,6 +7,7 @@ package ev3.navigation;
 import ev3.hardware.ColorSensor;
 import ev3.localization.RobotPoseProvider;
 import ev3.localization.SurfaceReadings;
+import lejos.utility.Delay;
 
 /**
  * Check method checks if the color under the robot has changed. If so it calls the pose provider update method
@@ -14,27 +15,20 @@ import ev3.localization.SurfaceReadings;
 public final class LineChecker extends Thread {
     private static final String LOG_TAG = LineChecker.class.getSimpleName();
 
-    private int previousColor;
-
     LineChecker() {
         super();
 
         this.setDaemon(true);
         this.setName(LineChecker.class.getSimpleName());
-
-        this.previousColor = ColorSensor.getSurfaceColor();
     }
 
     @Override
     public void run() {
         //noinspection InfiniteLoopStatement
         while (true) {
-            int surfaceColor = ColorSensor.getSurfaceColor();
+            RobotPoseProvider.get().update(new SurfaceReadings(ColorSensor.getSurfaceColor()));
 
-            if (previousColor != surfaceColor) {
-                RobotPoseProvider.get().update(new SurfaceReadings(surfaceColor));
-                previousColor = surfaceColor;
-            }
+            Delay.msDelay(100);
         }
     }
 }

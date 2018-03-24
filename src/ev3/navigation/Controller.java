@@ -4,6 +4,7 @@
 
 package ev3.navigation;
 
+import ev3.DataSender;
 import ev3.hardware.ChassisBuilder;
 import ev3.localization.RobotPoseProvider;
 import lejos.robotics.geometry.Point;
@@ -57,6 +58,7 @@ public final class Controller {
 
     void goTo(float x, float y, float heading) {
         navigator.goTo(x, y, normalize(heading));
+        DataSender.sendPath(navigator.getPath());
     }
 
     void goTo(Point point) {
@@ -65,6 +67,7 @@ public final class Controller {
 
     void goTo(float x, float y) {
         navigator.goTo(x, y);
+        DataSender.sendPath(navigator.getPath());
     }
 
     public static void init() {
