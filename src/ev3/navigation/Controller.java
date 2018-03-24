@@ -74,8 +74,8 @@ public final class Controller {
     }
 
     private static float normalize(float heading) {
-        while (heading >= 360) heading -= 360;
-        while (heading < 0) heading += 360;
+        while (heading >= 180) heading -= 360;
+        while (heading < -180) heading += 360;
         return heading;
     }
 }
