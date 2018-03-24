@@ -79,10 +79,8 @@ final class Util {
             return move1;
         }
 
-        if (move1.getMoveType() != move2.getMoveType() || move1.getMoveType() == Move.MoveType.ARC || move2.getMoveType() == Move.MoveType.ARC) {
-            if (move1.getMoveType() != Move.MoveType.STOP && move2.getMoveType() != Move.MoveType.STOP) {
-                throw new RuntimeException("Can't substract " + move1.toString() + " by " + move2.toString());
-            }
+        if (move1.getMoveType() == Move.MoveType.ARC) {
+            throw new RuntimeException(move1.toString() + " " + move1.getDistanceTraveled() + " " + move1.getAngleTurned());
         }
 
         return new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());

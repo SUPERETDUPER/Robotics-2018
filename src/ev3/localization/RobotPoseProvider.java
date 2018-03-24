@@ -5,6 +5,7 @@
 package ev3.localization;
 
 import common.Config;
+import common.Logger;
 import ev3.DataSender;
 import ev3.navigation.Readings;
 import lejos.robotics.localization.PoseProvider;
@@ -54,7 +55,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @NotNull
     @Override
     public synchronized Pose getPose() {
-        Move missingMove = Util.subtractMove(mp.getMovement(), completedMove);
+        Move missingMove = Util.subtractMove(deepCopyMove(mp.getMovement()), completedMove);
 
         return Util.movePose(data.getParticlePose(), missingMove);
     }
@@ -68,7 +69,8 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     }
 
     @Override
-    public void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
+    public synchronized void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
+        Logger.info(LOG_TAG, "Started move " + move.toString());
     }
 
     /**
@@ -79,7 +81,13 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
      */
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
-        data.moveParticlesAndPose(Util.subtractMove(move, completedMove));
+        Logger.info(LOG_TAG, "Stopped move " + move.toString());
+
+//        if (move.getMoveType() == Move.MoveType.STOP){
+//            throw new RuntimeException(move.toString());
+//        }
+
+        data.moveParticlesAndPose(Util.subtractMove(deepCopyMove(move), completedMove));
 
         completedMove = null;
 
@@ -87,11 +95,11 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     }
 
     public synchronized void update(@NotNull Readings readings) {
-        Move move = mp.getMovement();
+        Move move = deepCopyMove(mp.getMovement());
 
         data.moveParticlesAndPose(Util.subtractMove(move, completedMove));
 
-        completedMove = deepCopyMove(move); //Deep copy because the movement is modified afterwards
+        completedMove = move; //Deep copy because the movement is modified afterwards
 
         data.weightParticles(readings); //Recalculate all the particle weights
         data.resample();//Re samples for highest weights

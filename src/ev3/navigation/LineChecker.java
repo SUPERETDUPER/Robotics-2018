@@ -5,8 +5,8 @@
 package ev3.navigation;
 
 import ev3.hardware.ColorSensor;
-import ev3.localization.EdgeReadings;
 import ev3.localization.RobotPoseProvider;
+import ev3.localization.SurfaceReadings;
 
 /**
  * Check method checks if the color under the robot has changed. If so it calls the pose provider update method
@@ -32,7 +32,7 @@ public final class LineChecker extends Thread {
             int surfaceColor = ColorSensor.getSurfaceColor();
 
             if (previousColor != surfaceColor) {
-                RobotPoseProvider.get().update(new EdgeReadings(previousColor, surfaceColor));
+                RobotPoseProvider.get().update(new SurfaceReadings(surfaceColor));
                 previousColor = surfaceColor;
             }
         }

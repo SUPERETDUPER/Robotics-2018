@@ -4,7 +4,6 @@
 
 package pc.displayable;
 
-import common.Config;
 import common.Logger;
 import common.particles.Particle;
 import common.particles.ParticleAndPoseContainer;
@@ -31,15 +30,13 @@ public class DisplayableParticleData extends ParticleAndPoseContainer implements
             g.setFill(Color.BLUE);
 
             for (Particle particle : particles) {
+                g.setFill(Color.rgb((int) (particle.weight * 255), (int) (255 - (particle.weight * 255)), 0));
                 displayPoseOnGui(particle.getPose(), g);
-                if (Config.DISPLAY_PARTICLE_WEIGHT) {
-                    displayParticleWeight(particle, g);
-                }
             }
         }
 
         if (currentPose != null) {
-            g.setFill(Color.RED);
+            g.setFill(Color.BLUE);
             displayPoseOnGui(currentPose, g);
         }
     }
@@ -51,10 +48,6 @@ public class DisplayableParticleData extends ParticleAndPoseContainer implements
             Logger.warning(LOG_TAG, particlePose.toString());
             throw new RuntimeException();
         }
-    }
-
-    private static void displayParticleWeight(@NotNull Particle particle, @NotNull GraphicsContext g) {
-        g.fillText(String.valueOf(particle.weight), Math.round(particle.getPose().getX()), Math.round(particle.getPose().getY()));
     }
 
     @Override

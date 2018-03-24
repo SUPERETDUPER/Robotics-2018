@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
+ */
+
 package ev3.navigation;
 
 import lejos.robotics.RegulatedMotor;
@@ -252,7 +256,13 @@ public class MyMovePilot implements ArcRotateMoveController {
     }
 
     public Move getMovement() {
-        return this._moveActive ? this.chassis.getDisplacement(this.move) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
+        Move result = this._moveActive ? this.chassis.getDisplacement(this.move) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
+
+        if (result.getMoveType() == MoveType.ARC) {
+            throw new RuntimeException(result.toString() + "\n" + this.move.toString());
+        }
+
+        return result;
     }
 
     public void addMoveListener(MoveListener listener) {
