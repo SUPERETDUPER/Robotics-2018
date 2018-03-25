@@ -2,11 +2,12 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc.displayable;
+package pc.layers;
 
 import common.Config;
 import common.Logger;
 import common.mapping.SurfaceMap;
+import common.particles.Particle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
@@ -34,5 +35,29 @@ class Util {
             g.setStroke(Color.BLACK);
             g.strokeLine(pose.getX(), pose.getY(), point.x, point.y);
         }
+    }
+
+    /**
+     * Multiples all the particle weights by a constant so that the highest weight reaches 255
+     *
+     * @param unNormalizedParticles un-normalized particles
+     * @return normalized normalized particles
+     */
+    static Particle[] normalizeWeightTo255(@NotNull Particle[] unNormalizedParticles) {
+        float maxWeight = 0;
+
+        for (Particle particle : unNormalizedParticles) {
+            if (particle.weight > maxWeight) {
+                maxWeight = particle.weight;
+            }
+        }
+
+        Particle[] normalizedParticles = new Particle[unNormalizedParticles.length];
+
+        for (int i = 0; i < unNormalizedParticles.length; i++) {
+            normalizedParticles[i] = unNormalizedParticles[i].getParticleWithNewWeight(unNormalizedParticles[i].weight * 255 / maxWeight);
+        }
+
+        return normalizedParticles;
     }
 }

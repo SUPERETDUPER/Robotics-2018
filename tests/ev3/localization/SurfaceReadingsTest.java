@@ -20,7 +20,7 @@ class SurfaceReadingsTest {
      * Requires PC to test
      */
     @Test
-    void readingsAccrossTheMap() {
+    void readingsAcrossTheMap() {
         ArrayList<Particle> particles = new ArrayList<>();
 
         SurfaceReadings readings = new SurfaceReadings(Color.WHITE);
@@ -33,6 +33,6 @@ class SurfaceReadingsTest {
         }
 
         DataSender.connect();
-        DataSender.sendParticleData(new ParticleAndPoseContainer(particles.toArray(new Particle[particles.size()]), null));
+        DataSender.sendParticleData(new ParticleAndPoseContainer(particles.toArray(new Particle[0]), null));
     }
 }

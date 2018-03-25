@@ -8,6 +8,7 @@ import common.Config;
 import common.EventTypes;
 import common.Logger;
 import lejos.utility.Delay;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -31,7 +32,7 @@ class Connection {
         Logger.info(LOG_TAG, "Attempting to connect to EV3 ...");
         for (int attempt = 0; attempt < 6; attempt++) {
             try {
-                socket = new Socket(Config.currentMode == Config.Mode.SIM ? "localhost" : Config.EV3_IP_ADDRESS, Config.PORT_TO_CONNECT_ON_EV3);
+                socket = new Socket(getIPAddress(), Config.PORT_TO_CONNECT_ON_EV3);
                 dis = new DataInputStream(socket.getInputStream());
 
                 Logger.info(LOG_TAG, "Connected to DataSender");
@@ -49,16 +50,14 @@ class Connection {
     /**
      * Listen for data
      */
-    static void listen(DataChangeListener listener) {
+    static void listen(@NotNull DataChangeListener listener) {
         try {
             //noinspection InfiniteLoopStatement
             while (true) {
                 readNext(listener);
             }
         } catch (IOException e) {
-            if (listener != null) {
-                listener.connectionLost();
-            }
+            listener.connectionLost();
         } finally {
             close();
         }
@@ -72,19 +71,23 @@ class Connection {
             socket.close();
             dis.close();
         } catch (IOException e) {
-            Logger.error(LOG_TAG, "Failed closing socket or dis" + e);
+            Logger.error(LOG_TAG, "Failed closing socket or dis " + e);
         }
     }
 
-    private synchronized static void readNext(DataChangeListener listener) throws IOException {
-        if (listener != null) {
-            EventTypes dataType = EventTypes.values()[dis.readByte()];
+    private synchronized static void readNext(@NotNull DataChangeListener listener) throws IOException {
+        EventTypes dataType = EventTypes.values()[dis.readByte()];
 
-            if (dataType == EventTypes.LOG) {
-                System.out.println(dis.readUTF());
-            } else {
-                listener.dataChanged(dataType, dis);
-            }
+        if (dataType == EventTypes.LOG) {
+            System.out.println(dis.readUTF());
+        } else {
+            listener.dataChanged(dataType, dis);
         }
+
+    }
+
+    @NotNull
+    private static String getIPAddress() {
+        return Config.currentMode == Config.Mode.SIM ? "localhost" : Config.EV3_IP_ADDRESS;
     }
 }

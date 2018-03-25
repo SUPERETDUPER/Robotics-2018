@@ -2,19 +2,17 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc.displayable;
+package pc.layers;
 
 import common.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import lejos.robotics.Transmittable;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.DataInputStream;
-import java.io.IOException;
 
 public final class PathLayer extends UpdatableLayer {
     private static final String LOG_TAG = PathLayer.class.getSimpleName();
@@ -26,7 +24,8 @@ public final class PathLayer extends UpdatableLayer {
         this.currentPose = currentPose;
     }
 
-    public void displayOnGui(@NotNull GraphicsContext g) {
+    @Override
+    void displayOnGui(@NotNull GraphicsContext g) {
         if (currentPose == null) {
             Logger.warning(LOG_TAG, "Could not display path, no current position");
             return;
@@ -44,12 +43,12 @@ public final class PathLayer extends UpdatableLayer {
 
     @Contract(pure = true)
     @Override
-    public boolean invert() {
+    boolean shouldInvert() {
         return true;
     }
 
     @Override
-    public synchronized void updateLayer(DataInputStream dataInputStream) throws IOException {
-        path.loadObject(dataInputStream);
+    Transmittable getContent() {
+        return path;
     }
 }

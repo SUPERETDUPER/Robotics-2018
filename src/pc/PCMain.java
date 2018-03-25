@@ -17,9 +17,9 @@ final class PCMain {
             return;
         }
 
-        boolean success = Connection.connect();
+        boolean successfullyConnected = Connection.connect();
 
-        if (!success) {
+        if (!successfullyConnected) {
             Logger.error(LOG_TAG, "Could not connect to ev3");
             return;
         }

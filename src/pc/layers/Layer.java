@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc.displayable;
+package pc.layers;
 
 import common.Config;
 import common.mapping.SurfaceMap;
@@ -10,24 +10,32 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
- * A layer that is displayed on the gui. It has a drawn variable that is true when its just been drawn and set false when the value is changed
+ * A canvas that is displayed on the gui.
  */
 public abstract class Layer extends Canvas {
+
+    private final GraphicsContext graphics = getGraphicsContext2D();
+
     Layer() {
         super(SurfaceMap.getWidth(), SurfaceMap.getHeight());
 
-        if (invert()) {
-            getGraphicsContext2D().scale(Config.GUI_DISPLAY_RATIO, -Config.GUI_DISPLAY_RATIO);
-            getGraphicsContext2D().translate(0, -getHeight());
+        applyTransformations();
+        draw();
+    }
+
+    private void applyTransformations() {
+        if (shouldInvert()) {
+            graphics.scale(Config.GUI_DISPLAY_RATIO, -Config.GUI_DISPLAY_RATIO);
+            graphics.translate(0, -SurfaceMap.getHeight());
         } else {
-            getGraphicsContext2D().scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
+            graphics.scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
         }
     }
 
-    public synchronized void draw() {
-        getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
+    synchronized void draw() {
+        graphics.clearRect(0, 0, getWidth(), getHeight()); //Clear layer
 
-        displayOnGui(getGraphicsContext2D());
+        displayOnGui(graphics); //Display on gui
     }
 
 
@@ -40,9 +48,9 @@ public abstract class Layer extends Canvas {
 
     /**
      * JavaFx has an inverted display ( (0,0) is the top left). However most of the data uses (0,0) in bottom left.
-     * If invert true JavaFX will flip to allow (0,0) to be in the bottom left when being displayed
+     * If shouldInvert true JavaFX will flip to allow (0,0) to be in the bottom left when being displayed
      *
      * @return true if the object should be displayed with (0,0) in bottom left (traditional cartesian)
      */
-    abstract boolean invert();
+    abstract boolean shouldInvert();
 }

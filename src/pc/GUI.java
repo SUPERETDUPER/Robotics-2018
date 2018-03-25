@@ -5,7 +5,6 @@
 package pc;
 
 import common.EventTypes;
-import common.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -13,25 +12,29 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
-import pc.displayable.*;
+import pc.layers.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.EnumMap;
+import java.util.Map;
 
 public final class GUI extends Application {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
-    private static final PathLayer layerPath = new PathLayer();
-    private static final ParticleDataLayer layerMCLData = new ParticleDataLayer();
-    private static final CurrentPoseLayer layerCurrentPose = new CurrentPoseLayer();
-
-    private static final Layer[] layers = {
+    private static final Layer[] staticLayers = {
             new SurfaceMapLayer(),
-            layerMCLData,
-            layerPath,
-            layerCurrentPose
     };
+
+    private static final Map<EventTypes, UpdatableLayer> updatableLayers = new EnumMap<>(EventTypes.class);
+
+    static {
+        updatableLayers.put(EventTypes.PATH, new PathLayer());
+        updatableLayers.put(EventTypes.CURRENT_POSE, new CurrentPoseLayer());
+        updatableLayers.put(EventTypes.MCL_DATA, new ParticleDataLayer());
+    }
 
     static final DataChangeListener listener = new DataChangeListener() {
         /**
@@ -43,22 +46,11 @@ public final class GUI extends Application {
          */
         @Override
         public synchronized void dataChanged(@NotNull EventTypes event, @NotNull DataInputStream dis) throws IOException {
-            switch (event) {
-                case MCL_DATA:
-                    layerMCLData.updateLayer(dis);
-                    layerMCLData.markNew();
-                    layerPath.setCurrentPose(layerMCLData.getCurrentPose());
-                    break;
-                case PATH:
-                    layerPath.updateLayer(dis);
-                    layerPath.markNew();
-                    break;
-                case CURRENT_POSE:
-                    layerCurrentPose.updateLayer(dis);
-                    layerCurrentPose.markNew();
-                    break;
-                default:
-                    Logger.error(LOG_TAG, "Not a recognized event type");
+            updatableLayers.get(event).update(dis);
+
+            if (event == EventTypes.MCL_DATA) {
+                Pose currentPose = ((ParticleDataLayer) updatableLayers.get(EventTypes.MCL_DATA)).getCurrentPose();
+                ((PathLayer) updatableLayers.get(EventTypes.PATH)).setCurrentPose(currentPose);
             }
         }
 
@@ -79,19 +71,19 @@ public final class GUI extends Application {
     private static final AnimationTimer animationTimer = new AnimationTimer() {
         @Override
         public void handle(long now) {
-            for (Layer layer : layers) {
-                if (layer instanceof UpdatableLayer) {
-                    if (((UpdatableLayer) layer).hasNewData()) {
-                        layer.draw();
-                    }
-                }
+            for (UpdatableLayer layer : updatableLayers.values()) {
+                layer.draw();
             }
         }
     };
 
     @Override
     public void start(@NotNull Stage primaryStage) {
-        Pane root = new Pane(layers);
+        Pane root = new Pane(staticLayers);
+
+        for (UpdatableLayer updatableLayer : updatableLayers.values()) {
+            root.getChildren().add(updatableLayer);
+        }
 
         primaryStage.setScene(new Scene(root));
         primaryStage.setMaximized(true);
@@ -102,9 +94,6 @@ public final class GUI extends Application {
             }
         });
 
-        for (Layer layer : layers) {
-            layer.draw();
-        }
 
         primaryStage.show();
 
@@ -116,7 +105,7 @@ public final class GUI extends Application {
             @Override
             public void run() {
                 super.run();
-                Application.launch(GUI.class, null);
+                Application.launch(GUI.class, (String[]) null);
             }
         }.start();
     }
