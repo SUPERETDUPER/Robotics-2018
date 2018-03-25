@@ -5,6 +5,7 @@
 package pc;
 
 import common.EventTypes;
+import common.TestUtils;
 import ev3.DataSender;
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Assertions;
@@ -33,10 +34,10 @@ class ConnectionTest {
             public void dataChanged(EventTypes event, DataInputStream dis) throws IOException {
                 Assertions.assertEquals(event, EventTypes.CURRENT_POSE);
 
-                Pose pose = new Pose();
-                pose.loadObject(dis);
+                Pose loadedPose = new Pose();
+                loadedPose.loadObject(dis);
 
-                poseEquals(poseToSend, pose);
+                TestUtils.assertPoseEqual(poseToSend, loadedPose);
             }
 
             @Override
@@ -46,12 +47,5 @@ class ConnectionTest {
         });
 
         DataReader.read();
-    }
-
-    @Test
-    void poseEquals(Pose pose1, Pose pose2) {
-        Assertions.assertEquals(pose1.getX(), pose2.getX());
-        Assertions.assertEquals(pose1.getY(), pose2.getY());
-        Assertions.assertEquals(pose1.getHeading(), pose2.getHeading());
     }
 }

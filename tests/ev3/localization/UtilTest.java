@@ -4,11 +4,8 @@
 
 package ev3.localization;
 
-import common.particles.Particle;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -56,14 +53,4 @@ class UtilTest {
         Assertions.assertEquals(result.getMoveType(), Move.MoveType.ROTATE);
     }
 
-    @Contract(pure = true)
-    private static boolean sumOfWeightsIsOne(@NotNull Particle[] particles) {
-        float totalWeight = 0;
-
-        for (Particle particle : particles) {
-            totalWeight += particle.weight;
-        }
-
-        return totalWeight > 0.99 && totalWeight < 1.01;
-    }
 }

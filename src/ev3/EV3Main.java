@@ -5,6 +5,7 @@
 package ev3;
 
 import common.Config;
+import common.Logger;
 
 import java.io.OutputStream;
 
@@ -16,6 +17,7 @@ final class EV3Main {
             OutputStream outputStream = PCConnection.getConnection();
 
             if (outputStream == null) {
+                Logger.error(LOG_TAG, "Failed to connect to PC. Stopping program");
                 return;
             }
 

@@ -24,7 +24,6 @@ public class PCConnection {
         try {
             outputStream = new ServerSocket(Config.PORT_TO_CONNECT_ON_EV3).accept().getOutputStream();
         } catch (IOException e) {
-            Logger.error(LOG_TAG, "Failed to getConnection to pc");
             return null;
         }
 
