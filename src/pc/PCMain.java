@@ -7,6 +7,8 @@ package pc;
 import common.Config;
 import common.Logger;
 
+import java.io.InputStream;
+
 final class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();
@@ -17,15 +19,17 @@ final class PCMain {
             return;
         }
 
-        boolean successfullyConnected = Connection.connect();
+        InputStream inputStream = EV3Connection.getConnection();
 
-        if (!successfullyConnected) {
-            Logger.error(LOG_TAG, "Could not connect to ev3");
+        if (inputStream == null) {
+            Logger.error(LOG_TAG, "Could not getConnection to ev3");
             return;
         }
 
+        DataReader.init(inputStream, GUI.listener);
+
         GUI.launchGUI();
 
-        Connection.listen(GUI.listener);
+        DataReader.read();
     }
 }

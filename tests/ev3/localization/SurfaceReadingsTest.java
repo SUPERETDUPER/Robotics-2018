@@ -8,6 +8,7 @@ import common.mapping.SurfaceMap;
 import common.particles.Particle;
 import common.particles.ParticleAndPoseContainer;
 import ev3.DataSender;
+import ev3.PCConnection;
 import lejos.robotics.Color;
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class SurfaceReadingsTest {
             }
         }
 
-        DataSender.connect();
+        PCConnection.getConnection();
         DataSender.sendParticleData(new ParticleAndPoseContainer(particles.toArray(new Particle[0]), null));
     }
 }

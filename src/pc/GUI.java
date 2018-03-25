@@ -90,7 +90,7 @@ public final class GUI extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                Connection.close();
+                DataReader.close();
             }
         });
 
