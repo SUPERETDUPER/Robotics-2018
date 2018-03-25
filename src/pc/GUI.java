@@ -19,19 +19,58 @@ import pc.displayable.*;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class GUI extends Application implements DataChangeListener {
+public final class GUI extends Application {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
-    private static final DisplayablePath layerPath = new DisplayablePath();
-    private static final DisplayableParticleData layerMCLData = new DisplayableParticleData();
-    private static final DisplayablePose layerCurrentPose = new DisplayablePose();
+    private static final PathLayer layerPath = new PathLayer();
+    private static final ParticleDataLayer layerMCLData = new ParticleDataLayer();
+    private static final CurrentPoseLayer layerCurrentPose = new CurrentPoseLayer();
 
     private static final Layer[] layers = {
-            new DisplayableSurfaceMap(),
+            new SurfaceMapLayer(),
             layerMCLData,
             layerPath,
             layerCurrentPose
     };
+
+    static final DataChangeListener listener = new DataChangeListener() {
+        /**
+         * Called when the data has changed
+         *
+         * @param event the type of new data
+         * @param dis   the data input stream to read from
+         * @throws IOException thrown when reading from dataInputStream
+         */
+        @Override
+        public synchronized void dataChanged(@NotNull EventTypes event, @NotNull DataInputStream dis) throws IOException {
+            switch (event) {
+                case MCL_DATA:
+                    layerMCLData.updateLayer(dis);
+                    layerMCLData.markNew();
+                    layerPath.setCurrentPose(layerMCLData.getCurrentPose());
+                    break;
+                case PATH:
+                    layerPath.updateLayer(dis);
+                    layerPath.markNew();
+                    break;
+                case CURRENT_POSE:
+                    layerCurrentPose.updateLayer(dis);
+                    layerCurrentPose.markNew();
+                    break;
+                default:
+                    Logger.error(LOG_TAG, "Not a recognized event type");
+            }
+        }
+
+        /**
+         * Shuts down the window if connection is lost
+         */
+        @Override
+        public void connectionLost() {
+//        Platform.exit();
+        }
+    };
+
 
     /**
      * Called every new frame to redraw necessary layers
@@ -42,10 +81,8 @@ public final class GUI extends Application implements DataChangeListener {
         public void handle(long now) {
             for (Layer layer : layers) {
                 if (layer instanceof UpdatableLayer) {
-                    UpdatableLayer updatableLayer = (UpdatableLayer) layer;
-
-                    if (updatableLayer.hasNewData()) {
-                        updatableLayer.draw();
+                    if (((UpdatableLayer) layer).hasNewData()) {
+                        layer.draw();
                     }
                 }
             }
@@ -69,52 +106,18 @@ public final class GUI extends Application implements DataChangeListener {
             layer.draw();
         }
 
-        Connection.setListener(this);
-
         primaryStage.show();
 
         animationTimer.start();
     }
 
-    /**
-     * Called when the data has changed
-     *
-     * @param event the type of new data
-     * @param dis   the data input stream to read from
-     * @throws IOException thrown when reading from dataInputStream
-     */
-    @Override
-    public synchronized void dataChanged(@NotNull EventTypes event, @NotNull DataInputStream dis) throws IOException {
-        if (event == EventTypes.LOG) {
-            System.out.println(dis.readUTF());
-            return;
-        }
-
-        switch (event) {
-            case MCL_DATA:
-                layerMCLData.updateLayer(dis);
-                layerMCLData.markNew();
-                layerPath.setCurrentPose(layerMCLData.getCurrentPose());
-                break;
-            case PATH:
-                layerPath.updateLayer(dis);
-                layerPath.markNew();
-                break;
-            case CURRENT_POSE:
-                layerCurrentPose.updateLayer(dis);
-                layerCurrentPose.markNew();
-                break;
-            default:
-                Logger.error(LOG_TAG, "Not a recognized event type");
-        }
+    static void launchGUI() {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                Application.launch(GUI.class, null);
+            }
+        }.start();
     }
-
-    /**
-     * Shuts down the window if connection is lost
-     */
-    @Override
-    public void connectionLost() {
-//        Platform.exit();
-    }
-
 }

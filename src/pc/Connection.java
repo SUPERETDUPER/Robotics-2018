@@ -22,12 +22,6 @@ class Connection {
     private static Socket socket;
     private static DataInputStream dis;
 
-    private volatile static DataChangeListener listener;
-
-    static void setListener(DataChangeListener listener) {
-        Connection.listener = listener;
-    }
-
     /**
      * Connect to ev3
      *
@@ -55,11 +49,11 @@ class Connection {
     /**
      * Listen for data
      */
-    static void listen() {
+    static void listen(DataChangeListener listener) {
         try {
             //noinspection InfiniteLoopStatement
             while (true) {
-                readNext();
+                readNext(listener);
             }
         } catch (IOException e) {
             if (listener != null) {
@@ -82,11 +76,15 @@ class Connection {
         }
     }
 
-    private synchronized static void readNext() throws IOException {
+    private synchronized static void readNext(DataChangeListener listener) throws IOException {
         if (listener != null) {
             EventTypes dataType = EventTypes.values()[dis.readByte()];
 
-            listener.dataChanged(dataType, dis);
+            if (dataType == EventTypes.LOG) {
+                System.out.println(dis.readUTF());
+            } else {
+                listener.dataChanged(dataType, dis);
+            }
         }
     }
 }

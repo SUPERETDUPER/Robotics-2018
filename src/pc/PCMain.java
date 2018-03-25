@@ -6,7 +6,6 @@ package pc;
 
 import common.Config;
 import common.Logger;
-import javafx.application.Application;
 
 final class PCMain {
 
@@ -25,14 +24,8 @@ final class PCMain {
             return;
         }
 
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                Application.launch(GUI.class, args);
-            }
-        }.start();
+        GUI.launchGUI();
 
-        Connection.listen();
+        Connection.listen(GUI.listener);
     }
 }

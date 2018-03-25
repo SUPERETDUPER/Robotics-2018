@@ -11,7 +11,7 @@ import lejos.robotics.navigation.Pose;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class DisplayablePose extends UpdatableLayer {
+public class CurrentPoseLayer extends UpdatableLayer {
     private Pose pose;
 
     @Override

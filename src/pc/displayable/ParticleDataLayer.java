@@ -17,8 +17,8 @@ import java.io.IOException;
 /**
  * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
  */
-public class DisplayableParticleData extends UpdatableLayer {
-    private static final String LOG_TAG = DisplayableParticleData.class.getSimpleName();
+public class ParticleDataLayer extends UpdatableLayer {
+    private static final String LOG_TAG = ParticleDataLayer.class.getSimpleName();
 
     private ParticleAndPoseContainer data = new ParticleAndPoseContainer(null, null);
 

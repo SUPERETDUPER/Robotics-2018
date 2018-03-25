@@ -4,6 +4,7 @@
 
 package common.particles;
 
+import common.mapping.SurfaceMap;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,11 @@ public final class Particle {
 
     public Particle(float x, float y, float heading, float weight) {
         this.pose = new Pose(x, y, heading);
+
+        if (!SurfaceMap.contains((int) x, (int) y)) {
+            throw new RuntimeException(pose.toString());
+        }
+
         this.weight = weight;
     }
 

@@ -17,6 +17,26 @@ public final class MapOperations {
     private static final Point TEMP_REG_YELLOW = new Point(1578, 838);
     private static final Point TEMP_REG_RED = new Point(1578, 306);
 
+    private static final Point CONTAINER_TOP_LEFT = new Point(871.5F, 743);
+    private static final Point CONTAINER_TOP_RIGHT = new Point(1303.5F, 858);
+    private static final Point CONTAINER_BOTTOM_LEFT = new Point(797.5F, 316);
+    private static final Point CONTAINER_BOTTOM_RIGHT = new Point(1235.5F, 387);
+
+    public static void goToContainerTopLeft() {
+        approachLeftRight(CONTAINER_TOP_LEFT);
+    }
+
+    public static void goToContainerTopRight() {
+        approachLeftRight(CONTAINER_TOP_RIGHT);
+    }
+
+    public static void goToContainerBottomLeft() {
+        approachLeftRight(CONTAINER_BOTTOM_LEFT);
+    }
+
+    public static void goToContainerBottomRight() {
+        approachLeftRight(CONTAINER_BOTTOM_RIGHT);
+    }
 
     public static void goToTempRegGreen() {
         approachTopOrBottom(TEMP_REG_GREEN);
@@ -35,33 +55,24 @@ public final class MapOperations {
     }
 
     private static void approachLeftRight(@NotNull Point point) {
-        Pose currentPose = RobotPoseProvider.get().getPose();
-
-        Pose option1 = getApproachLeft(point);
-        Pose option2 = getApproachRight(point);
-
-        if (currentPose.distanceTo(option1.getLocation()) < currentPose.distanceTo(option2.getLocation())) {
-            Controller.get().goTo(option1);
-        } else {
-            Controller.get().goTo(option2);
-        }
+        goToClosest(RobotPoseProvider.get().getPose(), getApproachLeft(point), getApproachRight(point));
 
         Controller.get().goTo(point);
     }
 
     private static void approachTopOrBottom(@NotNull Point point) {
-        Pose currentPose = RobotPoseProvider.get().getPose();
 
-        Pose option1 = getApproachTop(point);
-        Pose option2 = getApproachBottom(point);
+        goToClosest(RobotPoseProvider.get().getPose(), getApproachTop(point), getApproachBottom(point));
 
+        Controller.get().goTo(point);
+    }
+
+    private static void goToClosest(Pose currentPose, Pose option1, Pose option2) {
         if (currentPose.distanceTo(option1.getLocation()) < currentPose.distanceTo(option2.getLocation())) {
             Controller.get().goTo(option1);
         } else {
             Controller.get().goTo(option2);
         }
-
-        Controller.get().goTo(point);
     }
 
     @NotNull

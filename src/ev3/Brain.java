@@ -16,6 +16,11 @@ class Brain {
         Controller.init();
         RobotPoseProvider.get().sendCurrentPoseToPC();
 
+        MapOperations.goToContainerBottomLeft();
+        MapOperations.goToContainerBottomRight();
+        MapOperations.goToContainerTopLeft();
+        MapOperations.goToContainerTopRight();
+
         MapOperations.goToTempRegBlue();
         MapOperations.goToTempRegGreen();
         MapOperations.goToTempRegYellow();

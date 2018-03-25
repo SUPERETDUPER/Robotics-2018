@@ -9,7 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 import org.jetbrains.annotations.NotNull;
 
 
-public class DisplayableSurfaceMap extends Layer {
+public class SurfaceMapLayer extends Layer {
     @Override
     public void displayOnGui(@NotNull GraphicsContext g) {
         g.drawImage(SurfaceMap.getImage(), 0, 0);

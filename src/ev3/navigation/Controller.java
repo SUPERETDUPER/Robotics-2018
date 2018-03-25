@@ -59,6 +59,7 @@ public final class Controller {
     private void goTo(float x, float y, float heading) {
         navigator.goTo(x, y, normalize(heading));
         DataSender.sendPath(navigator.getPath());
+        waitForStop();
     }
 
     void goTo(Point point) {
@@ -68,6 +69,7 @@ public final class Controller {
     private void goTo(float x, float y) {
         navigator.goTo(x, y);
         DataSender.sendPath(navigator.getPath());
+        waitForStop();
     }
 
     public static void init() {

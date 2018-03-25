@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class DisplayablePath extends UpdatableLayer {
-    private static final String LOG_TAG = DisplayablePath.class.getSimpleName();
+public final class PathLayer extends UpdatableLayer {
+    private static final String LOG_TAG = PathLayer.class.getSimpleName();
 
     private Pose currentPose;
     private Path path = new Path();

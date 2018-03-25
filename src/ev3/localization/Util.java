@@ -5,6 +5,7 @@
 package ev3.localization;
 
 import common.Logger;
+import common.mapping.SurfaceMap;
 import common.particles.Particle;
 import ev3.navigation.Readings;
 import lejos.robotics.navigation.Move;
@@ -182,16 +183,23 @@ final class Util {
         float totalWeight = 0;
 
         for (int i = 0; i < numParticles; i++) {
-            float randomFactorDistance = (float) random.nextGaussian() / 2;
+            float randomFactorDistance;
+            float x;
+            float y;
+
+            do {
+                randomFactorDistance = (float) random.nextGaussian() / 2;
+
+
+                float radiusFromCenter = STARTING_RADIUS_NOISE * randomFactorDistance;
+
+                float thetaInRad = (float) (2 * Math.PI * Math.random());  //Random angle between 0 and 2pi
+
+                x = centerPose.getX() + radiusFromCenter * (float) Math.cos(thetaInRad);
+                y = centerPose.getY() + radiusFromCenter * (float) Math.sin(thetaInRad);
+            } while (!SurfaceMap.contains((int) x, (int) y));
+
             float randomFactorAngle = (float) random.nextGaussian() / 2;
-
-
-            float radiusFromCenter = STARTING_RADIUS_NOISE * randomFactorDistance;
-
-            float thetaInRad = (float) (2 * Math.PI * Math.random());  //Random angle between 0 and 2pi
-
-            float x = centerPose.getX() + radiusFromCenter * (float) Math.cos(thetaInRad);
-            float y = centerPose.getY() + radiusFromCenter * (float) Math.sin(thetaInRad);
 
             float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * randomFactorDistance;
 
