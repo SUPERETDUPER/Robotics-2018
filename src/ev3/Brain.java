@@ -14,14 +14,13 @@ class Brain {
 
     static void start() {
         Controller.init();
+        RobotPoseProvider.get().sendCurrentPoseToPC();
 
         MapOperations.goToTempRegBlue();
-        Controller.get().waitForStop();
-
         MapOperations.goToTempRegGreen();
-        Controller.get().waitForStop();
-
         MapOperations.goToTempRegYellow();
+        MapOperations.goToTempRegRed();
+
         Controller.get().waitForStop();
 
         Logger.info(LOG_TAG, RobotPoseProvider.get().getPose().toString());

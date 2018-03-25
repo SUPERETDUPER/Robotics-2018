@@ -29,7 +29,7 @@ public final class ColorSensor {
     public static int getSurfaceColor() {
         if (surfaceColorSensor == null) {
             Pose currentPose = RobotPoseProvider.get().getPose();
-            return SurfaceMap.getColorAtPoint(currentPose.getX(), currentPose.getY());
+            return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
         } else {
             return surfaceColorSensor.getColorID();
         }

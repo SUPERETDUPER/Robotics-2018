@@ -24,7 +24,7 @@ public final class DataSender {
 
     private static DataOutputStream dos;
 
-    static void connect() {
+    public static void connect() {
         Logger.info(LOG_TAG, "Waiting for pc to connect...");
 
         try {

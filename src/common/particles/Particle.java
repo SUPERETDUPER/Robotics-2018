@@ -31,4 +31,9 @@ public final class Particle {
     public Pose getPose() {
         return new Pose(pose.getX(), pose.getY(), pose.getHeading()); //To make it immutable
     }
+
+    @NotNull
+    public Particle getParticleWithNewWeight(float weight) {
+        return new Particle(pose, weight);
+    }
 }

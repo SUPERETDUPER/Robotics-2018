@@ -18,8 +18,8 @@ import java.io.IOException;
 public class ParticleAndPoseContainer implements Transmittable {
     private static final String LOG_TAG = ParticleAndPoseContainer.class.getSimpleName();
 
-    protected Particle[] particles;
-    protected Pose currentPose;
+    private Particle[] particles;
+    private Pose currentPose;
 
     public ParticleAndPoseContainer(Particle[] particles, Pose currentPose) {
         this.particles = particles;
@@ -36,6 +36,10 @@ public class ParticleAndPoseContainer implements Transmittable {
 
     public void setCurrentPose(Pose currentPose) {
         this.currentPose = currentPose;
+    }
+
+    public void setParticles(Particle[] particles) {
+        this.particles = particles;
     }
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {

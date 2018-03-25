@@ -6,6 +6,7 @@ package ev3.localization;
 
 import common.Config;
 import common.Logger;
+import common.particles.ParticleAndPoseContainer;
 import ev3.DataSender;
 import ev3.navigation.Readings;
 import lejos.robotics.localization.PoseProvider;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ * Singleton pattern
  * Based on odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
  */
 public class RobotPoseProvider implements MoveListener, PoseProvider {
@@ -24,8 +26,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     private static final RobotPoseProvider mParticlePoseProvider = new RobotPoseProvider();
 
+    private static final int NUM_PARTICLES = 300;
+
     private MoveProvider mp;
-    private MCLData data;
+    private ParticleAndPoseContainer data;
 
     /**
      * The amount the data has been shifted since the start of this move.
@@ -48,22 +52,22 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     }
 
     /**
-     * Doesn't update the data object since we don't want the particles to update every time
+     * Doesn't update the data object since we don't want to need to update the particles each time
      *
      * @return the current pose
      */
     @NotNull
     @Override
     public synchronized Pose getPose() {
-        Move missingMove = Util.subtractMove(deepCopyMove(mp.getMovement()), completedMove);
+        Move missingMove = Util.subtractMove(getCurrentCompletedMove(), completedMove);
 
         return Util.movePose(data.getCurrentPose(), missingMove);
     }
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data = new MCLData(pose);
-        completedMove = deepCopyMove(mp.getMovement());
+        data = new ParticleAndPoseContainer(Util.getNewParticleSet(pose, NUM_PARTICLES), pose);
+        completedMove = getCurrentCompletedMove();
 
         updatePC();
     }
@@ -83,39 +87,42 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Stopped move " + move.toString());
 
-//        if (move.getMoveType() == Move.MoveType.STOP){
-//            throw new RuntimeException(move.toString());
-//        }
+        Move missingMove = Util.subtractMove(Util.deepCopyMove(move), completedMove);
 
-        data.moveParticlesAndPose(Util.subtractMove(deepCopyMove(move), completedMove));
+        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
+        data.setParticles(Util.moveParticleSet(data.getParticles(), missingMove));
 
         completedMove = null;
 
-        DataSender.sendParticleData(data);
+        updatePC();
     }
 
     public synchronized void update(@NotNull Readings readings) {
-        Move move = deepCopyMove(mp.getMovement());
+        Move move = getCurrentCompletedMove();
 
-        data.moveParticlesAndPose(Util.subtractMove(move, completedMove));
+        Move missingMove = Util.subtractMove(move, completedMove);
 
-        completedMove = move; //Deep copy because the movement is modified afterwards
+        data.setParticles(Util.update(data.getParticles(), missingMove, readings));
+        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
+//        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
 
-        data.weightParticles(readings); //Recalculate all the particle weights
-        data.resample();//Re samples for highest weights
-        data.refineCurrentPose(); //Updates current pose
+        completedMove = move;
 
-        DataSender.sendParticleData(data); //SendToPc
+        updatePC();
     }
 
-    public void updatePC() {
+    private void updatePC() {
+        DataSender.sendParticleData(data);
+    }
+
+    public void sendCurrentPoseToPC() {
         if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
             DataSender.sendCurrentPose(getPose());
         }
     }
 
     @NotNull
-    private static Move deepCopyMove(@NotNull Move move) {
-        return new Move(move.getMoveType(), move.getDistanceTraveled(), move.getAngleTurned(), move.getTravelSpeed(), move.getRotateSpeed(), move.isMoving());
+    private Move getCurrentCompletedMove() {
+        return Util.deepCopyMove(mp.getMovement());
     }
 }

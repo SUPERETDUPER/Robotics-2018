@@ -40,12 +40,16 @@ public class SurfaceMap {
         }
     }
 
-    public static int getColorAtPoint(float x, float y) {
+    public static int getColorAtPoint(int x, int y) {
         try {
-            return ColorJavaLejos.getLejosColor(pixelReader.getColor((int) x, (int) (image.getHeight() - y)));
+            return ColorJavaLejos.getLejosColor(pixelReader.getColor(x, (int) (image.getHeight() - y)));
         } catch (IndexOutOfBoundsException e) {
             throw new IndexOutOfBoundsException("x : " + x + ". y : " + y + " " + e);
         }
+    }
+
+    public static boolean contains(int x, int y) {
+        return x >= 0 && y > 0 && x < image.getWidth() && y <= image.getHeight(); //Weird equals check because y is inverted
     }
 
     @Contract(pure = true)

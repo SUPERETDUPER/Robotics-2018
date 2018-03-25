@@ -12,12 +12,14 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 public class DisplayablePose extends UpdatableLayer {
-    private Pose pose = new Pose();
+    private Pose pose;
 
     @Override
     public void displayOnGui(GraphicsContext g) {
-        g.setFill(Color.BLACK);
-        Util.displayPoseOnGui(g, pose);
+        if (pose != null) {
+            g.setFill(Color.BLACK);
+            Util.displayPoseOnGui(g, pose);
+        }
     }
 
     @Override
@@ -27,6 +29,10 @@ public class DisplayablePose extends UpdatableLayer {
 
     @Override
     public synchronized void updateLayer(DataInputStream dataInputStream) throws IOException {
+        if (pose == null) {
+            pose = new Pose();
+        }
+
         pose.loadObject(dataInputStream);
     }
 }

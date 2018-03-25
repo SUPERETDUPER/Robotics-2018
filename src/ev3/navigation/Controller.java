@@ -47,7 +47,7 @@ public final class Controller {
 
     public void waitForStop() {
         while (navigator.isMoving()) {
-            RobotPoseProvider.get().updatePC();
+            RobotPoseProvider.get().sendCurrentPoseToPC();
             Thread.yield();
         }
     }
@@ -56,7 +56,7 @@ public final class Controller {
         goTo(pose.getX(), pose.getY(), pose.getHeading());
     }
 
-    void goTo(float x, float y, float heading) {
+    private void goTo(float x, float y, float heading) {
         navigator.goTo(x, y, normalize(heading));
         DataSender.sendPath(navigator.getPath());
     }
@@ -65,7 +65,7 @@ public final class Controller {
         goTo(point.x, point.y);
     }
 
-    void goTo(float x, float y) {
+    private void goTo(float x, float y) {
         navigator.goTo(x, y);
         DataSender.sendPath(navigator.getPath());
     }
@@ -73,9 +73,10 @@ public final class Controller {
     public static void init() {
     }
 
+    @Contract(pure = true)
     private static float normalize(float heading) {
-        while (heading >= 180) heading -= 360;
-        while (heading < -180) heading += 360;
+        while (heading >= 360) heading -= 360;
+        while (heading < 0) heading += 360;
         return heading;
     }
 }

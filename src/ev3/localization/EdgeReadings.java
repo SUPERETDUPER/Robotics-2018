@@ -12,7 +12,7 @@ import lejos.robotics.navigation.Pose;
 public class EdgeReadings implements Readings {
     private static final String LOG_TAG = EdgeReadings.class.getSimpleName();
 
-    private static final int RADIUS = 10;
+    private static final int RADIUS = 20;
 
     private final int previousColor;
     private final int currentColor;
@@ -48,9 +48,8 @@ public class EdgeReadings implements Readings {
 
         float errorOfPrevious = Math.abs(0.5F - (previousColorPixels / totalPixels));
         float errorOfCurrent = Math.abs(0.5F - (currentColorPixels / totalPixels));
-        float weight = 1 - (errorOfPrevious + errorOfCurrent);
 
 //        Logger.info(LOG_TAG, "tot : " + weight + " prev : " + errorOfPrevious + ".  cur : " + errorOfCurrent);
-        return weight;
+        return 1 - (errorOfPrevious + errorOfCurrent);
     }
 }
