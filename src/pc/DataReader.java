@@ -56,7 +56,7 @@ class DataReader {
     /**
      * Close the connection
      */
-    static synchronized void close() {
+    static void close() {
         if (dis != null) {
             try {
                 dis.close();
