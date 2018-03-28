@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc;
+package pc.gui;
 
 import common.TransmittableType;
 import javafx.animation.AnimationTimer;
@@ -14,7 +14,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
-import pc.layers.*;
+import pc.communication.DataReceivedListener;
+import pc.communication.DataReceiver;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -36,7 +37,7 @@ public final class GUI extends Application {
         updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer());
     }
 
-    static final DataReceivedListener listener = new DataReceivedListener() {
+    public static final DataReceivedListener listener = new DataReceivedListener() {
         /**
          * Called when the data has changed
          *
@@ -57,7 +58,7 @@ public final class GUI extends Application {
 
 
     /**
-     * Called every new frame to redraw necessary layers
+     * Called every new frame to redraw necessary gui
      */
     @NotNull
     private static final AnimationTimer animationTimer = new AnimationTimer() {
@@ -92,7 +93,7 @@ public final class GUI extends Application {
         animationTimer.start();
     }
 
-    static void launchGUI() {
+    public static void launchGUI() {
         new Thread() {
             @Override
             public void run() {

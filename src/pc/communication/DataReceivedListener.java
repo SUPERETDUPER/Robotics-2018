@@ -2,13 +2,13 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc;
+package pc.communication;
 
 import common.TransmittableType;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
-interface DataReceivedListener {
+public interface DataReceivedListener {
     void dataReceived(TransmittableType event, DataInputStream dis) throws IOException;
 }

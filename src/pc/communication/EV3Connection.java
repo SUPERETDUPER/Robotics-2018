@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc;
+package pc.communication;
 
 import common.Config;
 import common.logger.Logger;
@@ -16,13 +16,13 @@ import java.net.Socket;
 /**
  * Provides the Input Stream of the connection with the EV3
  */
-class EV3Connection {
+public class EV3Connection {
     private static final String LOG_TAG = EV3Connection.class.getSimpleName();
 
     /**
      * @return the input stream of the connection
      */
-    static InputStream getConnection() {
+    public static InputStream getConnection() {
         Logger.info(LOG_TAG, "Attempting to getConnection to EV3 ...");
         for (int attempt = 0; attempt < 6; attempt++) {
             try {

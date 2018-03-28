@@ -6,6 +6,9 @@ package pc;
 
 import common.Config;
 import common.logger.Logger;
+import pc.communication.DataReceiver;
+import pc.communication.EV3Connection;
+import pc.gui.GUI;
 
 import java.io.InputStream;
 

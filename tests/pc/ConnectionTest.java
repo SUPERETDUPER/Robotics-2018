@@ -10,6 +10,8 @@ import ev3.communication.PCDataSender;
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pc.communication.DataReceivedListener;
+import pc.communication.DataReceiver;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

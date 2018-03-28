@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc.layers;
+package pc.gui;
 
 import common.particles.Particle;
 import lejos.robotics.navigation.Pose;

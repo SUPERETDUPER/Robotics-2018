@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc;
+package pc.communication;
 
 import common.logger.Logger;
 import common.TransmittableType;
@@ -14,13 +14,13 @@ import java.io.InputStream;
 /**
  * Takes data from an input stream, parses it and then notifies the listener
  */
-class DataReceiver {
+public class DataReceiver {
     private static final String LOG_TAG = DataReceiver.class.getSimpleName();
 
     private static DataInputStream dis = null;
     private static DataReceivedListener listenerToNotify = null;
 
-    static void init(InputStream inputStream, DataReceivedListener listenerToNotify) {
+    public static void init(InputStream inputStream, DataReceivedListener listenerToNotify) {
         dis = new DataInputStream(inputStream);
         DataReceiver.listenerToNotify = listenerToNotify;
     }
@@ -28,7 +28,7 @@ class DataReceiver {
     /**
      * Listen for data
      */
-    static synchronized void read() {
+    public static synchronized void read() {
         if (dis == null || listenerToNotify == null) {
             Logger.error(LOG_TAG, "Did not initiate reader");
             return;
@@ -56,7 +56,7 @@ class DataReceiver {
     /**
      * Close the connection
      */
-    static void close() {
+    public static void close() {
         if (dis != null) {
             try {
                 dis.close();
