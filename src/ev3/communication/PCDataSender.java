@@ -15,31 +15,22 @@ import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.crypto.Data;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public final class PCDataSender {
+public final class PCDataSender implements DataSender {
     private static final String LOG_TAG = PCDataSender.class.getSimpleName();
 
     @Nullable
-    private static DataOutputStream dos;
+    private DataOutputStream dos;
 
-    public static void init(OutputStream outputStream) {
+    public PCDataSender(OutputStream outputStream) {
         dos = new DataOutputStream(outputStream);
-
-        //Attach the listener if not using the simulator so that log messages are sent
-        if (Config.currentMode == Config.Mode.DUAL) {
-            Logger.setListener(new LogMessageListener() {
-                @Override
-                public void notifyLogMessage(@NotNull String message) {
-                    PCDataSender.sendLogMessage("From EV3 : " + message);
-                }
-            });
-        }
     }
 
-    private static synchronized void sendLogMessage(@NotNull String message) {
+    public synchronized void sendLogMessage(@NotNull String message) {
         if (dos != null) {
             try {
                 dos.writeByte(TransmittableType.LOG.ordinal());
@@ -52,19 +43,19 @@ public final class PCDataSender {
         }
     }
 
-    public static void sendParticleData(@NotNull ParticleAndPoseContainer data) {
+    public void sendParticleData(@NotNull ParticleAndPoseContainer data) {
         sendTransmittable(TransmittableType.MCL_DATA, data);
     }
 
-    public static void sendCurrentPose(@NotNull Pose currentPose) {
+    public void sendCurrentPose(@NotNull Pose currentPose) {
         sendTransmittable(TransmittableType.CURRENT_POSE, currentPose);
     }
 
-    public static void sendPath(@NotNull Path path) {
+    public void sendPath(@NotNull Path path) {
         sendTransmittable(TransmittableType.PATH, path);
     }
 
-    private static synchronized void sendTransmittable(@NotNull TransmittableType eventType, @NotNull Transmittable transmittable) {
+    public synchronized void sendTransmittable(@NotNull TransmittableType eventType, @NotNull Transmittable transmittable) {
         if (dos != null) {
             try {
                 dos.writeByte(eventType.ordinal());
@@ -77,7 +68,7 @@ public final class PCDataSender {
         }
     }
 
-    private static void endConnection() {
+    private void endConnection() {
         Logger.removeListener();
 
         if (dos != null) {

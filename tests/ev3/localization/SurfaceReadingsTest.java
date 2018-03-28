@@ -18,7 +18,7 @@ import java.util.ArrayList;
 class SurfaceReadingsTest {
 
     /**
-     * Requires PC to test
+     * Requires PC to run to test
      */
     @Test
     void readingsAcrossTheMap() {
@@ -33,7 +33,6 @@ class SurfaceReadingsTest {
             }
         }
 
-        PCConnection.getConnection();
-        PCDataSender.sendParticleData(new ParticleAndPoseContainer(particles.toArray(new Particle[0]), null));
+        new PCDataSender(PCConnection.getConnection()).sendParticleData(new ParticleAndPoseContainer(particles.toArray(new Particle[0]), null));
     }
 }

@@ -6,6 +6,7 @@ package ev3;
 
 import common.Config;
 import common.Logger;
+import ev3.communication.ComManager;
 import ev3.communication.PCConnection;
 import ev3.communication.PCDataSender;
 
@@ -16,14 +17,11 @@ final class EV3Main {
 
     public static void main(String[] args) {
         if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            OutputStream outputStream = PCConnection.getConnection();
+            boolean sucess = ComManager.build();
 
-            if (outputStream == null) {
-                Logger.error(LOG_TAG, "Failed to connect to PC. Stopping program");
+            if (!sucess){
                 return;
             }
-
-            PCDataSender.init(outputStream); //Try to getConnection to pc
         }
 
         Brain.start();

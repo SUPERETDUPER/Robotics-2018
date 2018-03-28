@@ -7,6 +7,7 @@ package ev3.localization;
 import common.Config;
 import common.Logger;
 import common.particles.ParticleAndPoseContainer;
+import ev3.communication.ComManager;
 import ev3.communication.PCDataSender;
 import ev3.navigation.Readings;
 import lejos.robotics.localization.PoseProvider;
@@ -112,12 +113,12 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     }
 
     private void updatePC() {
-        PCDataSender.sendParticleData(data);
+        ComManager.getDataSender().sendParticleData(data);
     }
 
     public void sendCurrentPoseToPC() {
         if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            PCDataSender.sendCurrentPose(getPose());
+            ComManager.getDataSender().sendCurrentPose(getPose());
         }
     }
 
