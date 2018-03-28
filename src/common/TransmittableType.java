@@ -4,7 +4,7 @@
 
 package common;
 
-public enum EventType {
+public enum TransmittableType {
     MCL_DATA,
     LOG,
     PATH,

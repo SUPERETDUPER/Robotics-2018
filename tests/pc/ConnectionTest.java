@@ -4,9 +4,9 @@
 
 package pc;
 
-import common.EventType;
 import common.TestUtils;
-import ev3.communication.DataSender;
+import common.TransmittableType;
+import ev3.communication.PCDataSender;
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,15 +24,15 @@ class ConnectionTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        DataSender.init(out);
-        DataSender.sendCurrentPose(poseToSend);
+        PCDataSender.init(out);
+        PCDataSender.sendCurrentPose(poseToSend);
 
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
 
         DataReader.init(input, new DataChangeListener() {
             @Override
-            public void dataChanged(EventType event, DataInputStream dis) throws IOException {
-                Assertions.assertEquals(event, EventType.CURRENT_POSE);
+            public void dataChanged(TransmittableType event, DataInputStream dis) throws IOException {
+                Assertions.assertEquals(event, TransmittableType.CURRENT_POSE);
 
                 Pose loadedPose = new Pose();
                 loadedPose.loadObject(dis);

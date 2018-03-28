@@ -7,8 +7,8 @@ package ev3.localization;
 import common.mapping.SurfaceMap;
 import common.particles.Particle;
 import common.particles.ParticleAndPoseContainer;
-import ev3.communication.DataSender;
 import ev3.communication.PCConnection;
+import ev3.communication.PCDataSender;
 import lejos.robotics.Color;
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Test;
@@ -34,6 +34,6 @@ class SurfaceReadingsTest {
         }
 
         PCConnection.getConnection();
-        DataSender.sendParticleData(new ParticleAndPoseContainer(particles.toArray(new Particle[0]), null));
+        PCDataSender.sendParticleData(new ParticleAndPoseContainer(particles.toArray(new Particle[0]), null));
     }
 }

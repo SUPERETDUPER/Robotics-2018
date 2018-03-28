@@ -6,8 +6,8 @@ package ev3;
 
 import common.Config;
 import common.Logger;
-import ev3.communication.DataSender;
 import ev3.communication.PCConnection;
+import ev3.communication.PCDataSender;
 
 import java.io.OutputStream;
 
@@ -23,7 +23,7 @@ final class EV3Main {
                 return;
             }
 
-            DataSender.init(outputStream); //Try to getConnection to pc
+            PCDataSender.init(outputStream); //Try to getConnection to pc
         }
 
         Brain.start();

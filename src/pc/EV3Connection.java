@@ -28,7 +28,7 @@ class EV3Connection {
             try {
                 InputStream inputStream = new Socket(getIPAddress(), Config.PORT_TO_CONNECT_ON_EV3).getInputStream();
 
-                Logger.info(LOG_TAG, "Connected to DataSender");
+                Logger.info(LOG_TAG, "Connected to PCDataSender");
 
                 return inputStream;
 
