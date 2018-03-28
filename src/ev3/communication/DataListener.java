@@ -7,22 +7,34 @@ package ev3.communication;
 import common.Config;
 import common.LogMessageListener;
 import common.Logger;
-import org.jetbrains.annotations.NotNull;
+import common.TransmittableType;
+import common.particles.ParticleAndPoseContainer;
+import ev3.localization.MCLDataListener;
+import ev3.localization.RobotPoseProvider;
 
-public class DataListener {
+public class DataListener implements MCLDataListener, LogMessageListener{
     private final DataSender sender;
 
     public DataListener(final DataSender sender) {
         this.sender = sender;
+    }
 
+    void startListening() {
         //Attach the listener if not using the simulator so that log messages are sent
         if (Config.currentMode == Config.Mode.DUAL) {
-            Logger.setListener(new LogMessageListener() {
-                @Override
-                public void notifyLogMessage(@NotNull String message) {
-                    sender.sendLogMessage("From EV3 : " + message);
-                }
-            });
+            Logger.setListener(this);
         }
+
+        RobotPoseProvider.get().addListener(this);
+    }
+
+    @Override
+    public void notifyLogMessage(String message) {
+        sender.sendLogMessage("From EV3 : " + message);
+    }
+
+    @Override
+    public void notifyNewMCLData(ParticleAndPoseContainer data) {
+        sender.sendTransmittable(TransmittableType.MCL_DATA, data);
     }
 }

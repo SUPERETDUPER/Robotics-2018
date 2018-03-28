@@ -18,6 +18,8 @@ import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 /**
  * Singleton pattern
  * Based on odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
@@ -32,6 +34,8 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private MoveProvider mp;
     private ParticleAndPoseContainer data;
 
+    private ArrayList<MCLDataListener> listeners = new ArrayList<>();
+
     /**
      * The amount the data has been shifted since the start of this move.
      * completedMove is null when the move starts and each time the data is updated (with update()) the completedMove is updated
@@ -40,6 +44,18 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private Move completedMove;
 
     private RobotPoseProvider() {
+    }
+
+    public synchronized void addListener(MCLDataListener listener) {
+        listeners.add(listener);
+    }
+
+    public synchronized void removeListener(MCLDataListener listener) {
+        for (int i = 0; i < listeners.size(); i++) {
+            if (listener == listeners.get(i)) {
+                listeners.remove(i);
+            }
+        }
     }
 
     @NotNull
@@ -113,7 +129,9 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     }
 
     private void updatePC() {
-        ComManager.getDataSender().sendParticleData(data);
+        for (MCLDataListener listener : listeners) {
+            listener.notifyNewMCLData(data);
+        }
     }
 
     public void sendCurrentPoseToPC() {

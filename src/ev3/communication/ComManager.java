@@ -25,6 +25,7 @@ public class ComManager {
 
         dataSender = new PCDataSender(connection);
         dataListener = new DataListener(dataSender);
+        dataListener.startListening();
 
         return true;
     }
