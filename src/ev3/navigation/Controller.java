@@ -4,7 +4,7 @@
 
 package ev3.navigation;
 
-import ev3.DataSender;
+import ev3.communication.DataSender;
 import ev3.hardware.ChassisBuilder;
 import ev3.localization.RobotPoseProvider;
 import lejos.robotics.geometry.Point;

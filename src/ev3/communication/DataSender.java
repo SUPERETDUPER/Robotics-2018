@@ -2,10 +2,10 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3;
+package ev3.communication;
 
 import common.Config;
-import common.EventTypes;
+import common.EventType;
 import common.LogMessageListener;
 import common.Logger;
 import common.particles.ParticleAndPoseContainer;
@@ -42,7 +42,7 @@ public final class DataSender {
     private static synchronized void sendLogMessage(@NotNull String message) {
         if (dos != null) {
             try {
-                dos.writeByte(EventTypes.LOG.ordinal());
+                dos.writeByte(EventType.LOG.ordinal());
                 dos.writeUTF(message);
                 dos.flush();
             } catch (IOException e) {
@@ -53,18 +53,18 @@ public final class DataSender {
     }
 
     public static void sendParticleData(@NotNull ParticleAndPoseContainer data) {
-        sendTransmittable(EventTypes.MCL_DATA, data);
+        sendTransmittable(EventType.MCL_DATA, data);
     }
 
     public static void sendCurrentPose(@NotNull Pose currentPose) {
-        sendTransmittable(EventTypes.CURRENT_POSE, currentPose);
+        sendTransmittable(EventType.CURRENT_POSE, currentPose);
     }
 
     public static void sendPath(@NotNull Path path) {
-        sendTransmittable(EventTypes.PATH, path);
+        sendTransmittable(EventType.PATH, path);
     }
 
-    private static synchronized void sendTransmittable(@NotNull EventTypes eventType, @NotNull Transmittable transmittable) {
+    private static synchronized void sendTransmittable(@NotNull EventType eventType, @NotNull Transmittable transmittable) {
         if (dos != null) {
             try {
                 dos.writeByte(eventType.ordinal());

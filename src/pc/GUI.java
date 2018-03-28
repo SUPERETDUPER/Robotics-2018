@@ -4,7 +4,7 @@
 
 package pc;
 
-import common.EventTypes;
+import common.EventType;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -28,12 +28,12 @@ public final class GUI extends Application {
             new SurfaceMapLayer(),
     };
 
-    private static final Map<EventTypes, UpdatableLayer> updatableLayers = new EnumMap<>(EventTypes.class);
+    private static final Map<EventType, UpdatableLayer> updatableLayers = new EnumMap<>(EventType.class);
 
     static {
-        updatableLayers.put(EventTypes.PATH, new PathLayer());
-        updatableLayers.put(EventTypes.CURRENT_POSE, new CurrentPoseLayer());
-        updatableLayers.put(EventTypes.MCL_DATA, new ParticleDataLayer());
+        updatableLayers.put(EventType.PATH, new PathLayer());
+        updatableLayers.put(EventType.CURRENT_POSE, new CurrentPoseLayer());
+        updatableLayers.put(EventType.MCL_DATA, new ParticleDataLayer());
     }
 
     static final DataChangeListener listener = new DataChangeListener() {
@@ -45,12 +45,12 @@ public final class GUI extends Application {
          * @throws IOException thrown when reading from dataInputStream
          */
         @Override
-        public synchronized void dataChanged(@NotNull EventTypes event, @NotNull DataInputStream dis) throws IOException {
+        public synchronized void dataChanged(@NotNull EventType event, @NotNull DataInputStream dis) throws IOException {
             updatableLayers.get(event).update(dis);
 
-            if (event == EventTypes.MCL_DATA) {
-                Pose currentPose = ((ParticleDataLayer) updatableLayers.get(EventTypes.MCL_DATA)).getCurrentPose();
-                ((PathLayer) updatableLayers.get(EventTypes.PATH)).setCurrentPose(currentPose);
+            if (event == EventType.MCL_DATA) {
+                Pose currentPose = ((ParticleDataLayer) updatableLayers.get(EventType.MCL_DATA)).getCurrentPose();
+                ((PathLayer) updatableLayers.get(EventType.PATH)).setCurrentPose(currentPose);
             }
         }
 

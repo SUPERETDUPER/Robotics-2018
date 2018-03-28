@@ -4,13 +4,13 @@
 
 package pc;
 
-import common.EventTypes;
+import common.EventType;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
 interface DataChangeListener {
-    void dataChanged(EventTypes event, DataInputStream dis) throws IOException;
+    void dataChanged(EventType event, DataInputStream dis) throws IOException;
 
     void connectionLost();
 }

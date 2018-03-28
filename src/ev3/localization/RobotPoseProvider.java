@@ -7,7 +7,7 @@ package ev3.localization;
 import common.Config;
 import common.Logger;
 import common.particles.ParticleAndPoseContainer;
-import ev3.DataSender;
+import ev3.communication.DataSender;
 import ev3.navigation.Readings;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;

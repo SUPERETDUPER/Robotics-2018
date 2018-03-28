@@ -6,6 +6,8 @@ package ev3;
 
 import common.Config;
 import common.Logger;
+import ev3.communication.DataSender;
+import ev3.communication.PCConnection;
 
 import java.io.OutputStream;
 

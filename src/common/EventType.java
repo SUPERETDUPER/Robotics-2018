@@ -4,7 +4,7 @@
 
 package common;
 
-public enum EventTypes {
+public enum EventType {
     MCL_DATA,
     LOG,
     PATH,

@@ -4,7 +4,7 @@
 
 package pc;
 
-import common.EventTypes;
+import common.EventType;
 import common.Logger;
 
 import java.io.DataInputStream;
@@ -37,9 +37,9 @@ class DataReader {
         try {
             //noinspection InfiniteLoopStatement
             while (true) {
-                EventTypes dataType = EventTypes.values()[dis.readByte()];
+                EventType dataType = EventType.values()[dis.readByte()];
 
-                if (dataType == EventTypes.LOG) {
+                if (dataType == EventType.LOG) {
                     System.out.println(dis.readUTF());
                     continue;
                 }
