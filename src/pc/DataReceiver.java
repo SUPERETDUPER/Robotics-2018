@@ -14,15 +14,15 @@ import java.io.InputStream;
 /**
  * Takes data from an input stream, parses it and then notifies the listener
  */
-class DataReader {
-    private static final String LOG_TAG = DataReader.class.getSimpleName();
+class DataReceiver {
+    private static final String LOG_TAG = DataReceiver.class.getSimpleName();
 
     private static DataInputStream dis = null;
-    private static DataChangeListener listenerToNotify = null;
+    private static DataReceivedListener listenerToNotify = null;
 
-    static void init(InputStream inputStream, DataChangeListener listenerToNotify) {
+    static void init(InputStream inputStream, DataReceivedListener listenerToNotify) {
         dis = new DataInputStream(inputStream);
-        DataReader.listenerToNotify = listenerToNotify;
+        DataReceiver.listenerToNotify = listenerToNotify;
     }
 
     /**
@@ -44,10 +44,10 @@ class DataReader {
                     continue;
                 }
 
-                listenerToNotify.dataChanged(dataType, dis);
+                listenerToNotify.dataReceived(dataType, dis);
             }
         } catch (IOException e) {
-            listenerToNotify.connectionLost();
+            Logger.warning(LOG_TAG, "Connection lost. Could not read input stream");
         } finally {
             close();
         }

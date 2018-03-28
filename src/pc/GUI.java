@@ -36,7 +36,7 @@ public final class GUI extends Application {
         updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer());
     }
 
-    static final DataChangeListener listener = new DataChangeListener() {
+    static final DataReceivedListener listener = new DataReceivedListener() {
         /**
          * Called when the data has changed
          *
@@ -45,21 +45,13 @@ public final class GUI extends Application {
          * @throws IOException thrown when reading from dataInputStream
          */
         @Override
-        public synchronized void dataChanged(@NotNull TransmittableType event, @NotNull DataInputStream dis) throws IOException {
+        public synchronized void dataReceived(@NotNull TransmittableType event, @NotNull DataInputStream dis) throws IOException {
             updatableLayers.get(event).update(dis);
 
             if (event == TransmittableType.MCL_DATA) {
                 Pose currentPose = ((ParticleDataLayer) updatableLayers.get(TransmittableType.MCL_DATA)).getCurrentPose();
                 ((PathLayer) updatableLayers.get(TransmittableType.PATH)).setCurrentPose(currentPose);
             }
-        }
-
-        /**
-         * Shuts down the window if connection is lost
-         */
-        @Override
-        public void connectionLost() {
-//        Platform.exit();
         }
     };
 
@@ -90,7 +82,7 @@ public final class GUI extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                DataReader.close();
+                DataReceiver.close();
             }
         });
 

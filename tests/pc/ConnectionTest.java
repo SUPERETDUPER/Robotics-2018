@@ -29,9 +29,9 @@ class ConnectionTest {
 
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
 
-        DataReader.init(input, new DataChangeListener() {
+        DataReceiver.init(input, new DataReceivedListener() {
             @Override
-            public void dataChanged(TransmittableType event, DataInputStream dis) throws IOException {
+            public void dataReceived(TransmittableType event, DataInputStream dis) throws IOException {
                 Assertions.assertEquals(event, TransmittableType.CURRENT_POSE);
 
                 Pose loadedPose = new Pose();
@@ -39,13 +39,8 @@ class ConnectionTest {
 
                 TestUtils.assertPoseEqual(poseToSend, loadedPose);
             }
-
-            @Override
-            public void connectionLost() {
-
-            }
         });
 
-        DataReader.read();
+        DataReceiver.read();
     }
 }

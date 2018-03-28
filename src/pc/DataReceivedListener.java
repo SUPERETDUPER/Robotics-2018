@@ -9,8 +9,6 @@ import common.TransmittableType;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-interface DataChangeListener {
-    void dataChanged(TransmittableType event, DataInputStream dis) throws IOException;
-
-    void connectionLost();
+interface DataReceivedListener {
+    void dataReceived(TransmittableType event, DataInputStream dis) throws IOException;
 }

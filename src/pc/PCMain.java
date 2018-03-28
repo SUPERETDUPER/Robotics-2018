@@ -26,10 +26,10 @@ final class PCMain {
             return;
         }
 
-        DataReader.init(inputStream, GUI.listener);
+        DataReceiver.init(inputStream, GUI.listener);
 
         GUI.launchGUI();
 
-        DataReader.read();
+        DataReceiver.read();
     }
 }
