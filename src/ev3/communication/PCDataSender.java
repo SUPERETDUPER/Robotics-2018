@@ -4,9 +4,7 @@
 
 package ev3.communication;
 
-import common.Config;
-import common.LogMessageListener;
-import common.Logger;
+import common.logger.Logger;
 import common.TransmittableType;
 import common.particles.ParticleAndPoseContainer;
 import lejos.robotics.Transmittable;
@@ -15,7 +13,6 @@ import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.crypto.Data;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;

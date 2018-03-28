@@ -5,7 +5,7 @@
 package ev3.communication;
 
 import common.Config;
-import common.Logger;
+import common.logger.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;

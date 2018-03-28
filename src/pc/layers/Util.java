@@ -5,7 +5,7 @@
 package pc.layers;
 
 import common.Config;
-import common.Logger;
+import common.logger.Logger;
 import common.mapping.SurfaceMap;
 import common.particles.Particle;
 import javafx.scene.canvas.GraphicsContext;

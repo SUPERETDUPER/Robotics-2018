@@ -4,7 +4,7 @@
 
 package ev3.communication;
 
-import common.Logger;
+import common.logger.Logger;
 import org.jetbrains.annotations.Contract;
 
 import java.io.OutputStream;
@@ -33,10 +33,5 @@ public class ComManager {
     @Contract(pure = true)
     public static PCDataSender getDataSender() {
         return dataSender;
-    }
-
-    @Contract(pure = true)
-    public static DataListener getDataListener() {
-        return dataListener;
     }
 }

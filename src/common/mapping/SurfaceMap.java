@@ -5,7 +5,7 @@
 package common.mapping;
 
 import common.Config;
-import common.Logger;
+import common.logger.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import org.jetbrains.annotations.Contract;

@@ -4,7 +4,7 @@
 
 package ev3.localization;
 
-import common.Logger;
+import common.logger.Logger;
 import common.mapping.SurfaceMap;
 import common.particles.Particle;
 import ev3.navigation.Readings;

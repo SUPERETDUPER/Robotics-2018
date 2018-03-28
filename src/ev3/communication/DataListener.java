@@ -5,8 +5,8 @@
 package ev3.communication;
 
 import common.Config;
-import common.LogMessageListener;
-import common.Logger;
+import common.logger.LogMessageListener;
+import common.logger.Logger;
 import common.TransmittableType;
 import common.particles.ParticleAndPoseContainer;
 import ev3.localization.MCLDataListener;

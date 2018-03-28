@@ -5,7 +5,7 @@
 package pc;
 
 import common.Config;
-import common.Logger;
+import common.logger.Logger;
 
 import java.io.InputStream;
 

@@ -4,7 +4,7 @@
 
 package pc;
 
-import common.Logger;
+import common.logger.Logger;
 import common.TransmittableType;
 
 import java.io.DataInputStream;

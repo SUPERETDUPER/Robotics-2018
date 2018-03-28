@@ -5,12 +5,7 @@
 package ev3;
 
 import common.Config;
-import common.Logger;
 import ev3.communication.ComManager;
-import ev3.communication.PCConnection;
-import ev3.communication.PCDataSender;
-
-import java.io.OutputStream;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();

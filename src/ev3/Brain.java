@@ -4,7 +4,7 @@
 
 package ev3;
 
-import common.Logger;
+import common.logger.Logger;
 import ev3.localization.RobotPoseProvider;
 import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;

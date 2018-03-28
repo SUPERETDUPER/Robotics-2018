@@ -5,7 +5,7 @@
 package ev3.hardware;
 
 import common.Config;
-import common.Logger;
+import common.logger.Logger;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 

@@ -4,7 +4,7 @@
 
 package pc.layers;
 
-import common.Logger;
+import common.logger.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;

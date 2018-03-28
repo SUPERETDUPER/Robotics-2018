@@ -2,8 +2,9 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package common;
+package common.logger;
 
+import common.Config;
 import org.jetbrains.annotations.NotNull;
 
 /**

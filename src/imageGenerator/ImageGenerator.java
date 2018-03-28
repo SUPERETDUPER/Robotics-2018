@@ -5,7 +5,7 @@
 package imageGenerator;
 
 import common.Config;
-import common.Logger;
+import common.logger.Logger;
 import common.mapping.ColorJavaLejos;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.PixelWriter;
