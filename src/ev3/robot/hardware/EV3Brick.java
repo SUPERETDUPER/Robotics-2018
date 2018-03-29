@@ -2,19 +2,20 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3.hardware;
+package ev3.robot.hardware;
 
 import common.Config;
 import common.logger.Logger;
+import ev3.robot.Brick;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 
 import java.io.IOException;
 
-public final class Brick {
-    private static final String LOG_TAG = Brick.class.getSimpleName();
+public final class EV3Brick implements Brick {
+    private static final String LOG_TAG = EV3Brick.class.getSimpleName();
 
-    public static void waitForUserConfirmation() {
+    public void waitForUserConfirmation() {
         if (Config.currentMode == Config.Mode.SIM) {
             try {
                 System.out.println("Press enter to continue");

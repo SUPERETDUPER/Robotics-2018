@@ -2,9 +2,11 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3.hardware;
+package ev3.robot.hardware;
 
-public class Arm {
+import ev3.robot.Arm;
+
+public class EV3Arm implements Arm{
 
     public void goToBoat(boolean immediateReturn) {
 

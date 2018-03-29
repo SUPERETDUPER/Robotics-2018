@@ -2,10 +2,10 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3.hardware;
+package ev3.robot.hardware;
 
 import common.Config;
-import ev3.sim.AbstractMotor;
+import ev3.robot.sim.SimMotor;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
@@ -31,8 +31,8 @@ public final class ChassisBuilder {
         RegulatedMotor rightMotor;
 
         if (Config.currentMode == Config.Mode.SIM) {
-            leftMotor = new AbstractMotor("Left motor");
-            rightMotor = new AbstractMotor("Right motor");
+            leftMotor = new SimMotor("Left motor");
+            rightMotor = new SimMotor("Right motor");
         } else {
             leftMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT);
             rightMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT);

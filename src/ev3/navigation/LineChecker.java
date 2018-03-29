@@ -4,7 +4,7 @@
 
 package ev3.navigation;
 
-import ev3.hardware.ColorSensor;
+import ev3.robot.hardware.EV3ColorSensors;
 import ev3.localization.RobotPoseProvider;
 import ev3.localization.SurfaceReadings;
 import lejos.utility.Delay;
@@ -26,7 +26,7 @@ public final class LineChecker extends Thread {
     public void run() {
         //noinspection InfiniteLoopStatement
         while (true) {
-            RobotPoseProvider.get().update(new SurfaceReadings(ColorSensor.getSurfaceColor()));
+            RobotPoseProvider.get().update(new SurfaceReadings(EV3ColorSensors.getSurfaceColor()));
 
             Delay.msDelay(100);
         }

@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3.sim;
+package ev3.robot.sim;
 
 import common.Config;
 import lejos.utility.Delay;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 class AbstractMotorTest {
     @Test
     void main() {
-        AbstractMotor motor = new AbstractMotor(null);
+        SimMotor motor = new SimMotor(null);
 
         motor.setSpeed(100);
 

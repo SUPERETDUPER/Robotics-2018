@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3.hardware;
+package ev3.robot.hardware;
 
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;

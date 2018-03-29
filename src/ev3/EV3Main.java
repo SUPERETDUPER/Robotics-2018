@@ -20,6 +20,6 @@ final class EV3Main {
         }
 
         Brain.start();
-//        Brick.waitForUserConfirmation(); //And wait for complete
+//        EV3Brick.waitForUserConfirmation(); //And wait for complete
     }
 }

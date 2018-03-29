@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3.sim;
+package ev3.robot.sim;
 
 import common.Config;
 import common.logger.Logger;
@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Replicates the behaviour of an ev3 motor. Is used by the simulator
  */
-public class AbstractMotor implements RegulatedMotor {
-    private static final String LOG_TAG = AbstractMotor.class.getSimpleName();
+public class SimMotor implements RegulatedMotor {
+    private static final String LOG_TAG = SimMotor.class.getSimpleName();
 
     private final static int MAX_SPEED = 1050;
     private final static int DEFAULT_SPEED = 360;
@@ -29,7 +29,7 @@ public class AbstractMotor implements RegulatedMotor {
 
     private int speed = DEFAULT_SPEED;
 
-    public AbstractMotor(String name) {
+    public SimMotor(String name) {
         this.name = name;
     }
 

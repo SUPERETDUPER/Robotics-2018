@@ -2,9 +2,11 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3.hardware;
+package ev3.robot.hardware;
 
-public class Paddle {
+import ev3.robot.Paddle;
+
+public class EV3Paddle implements Paddle{
 
     public void moveBlockOffConveyor(boolean immediateReturn) {
 
