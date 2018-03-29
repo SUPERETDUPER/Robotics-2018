@@ -8,14 +8,14 @@ import common.Config;
 import common.logger.LogMessageListener;
 import common.logger.Logger;
 import common.TransmittableType;
-import common.particles.ParticleAndPoseContainer;
+import common.particles.MCLData;
 import ev3.localization.MCLDataListener;
 import ev3.localization.RobotPoseProvider;
 
 public class DataListener implements MCLDataListener, LogMessageListener{
     private final DataSender sender;
 
-    public DataListener(final DataSender sender) {
+    DataListener(final DataSender sender) {
         this.sender = sender;
     }
 
@@ -34,7 +34,7 @@ public class DataListener implements MCLDataListener, LogMessageListener{
     }
 
     @Override
-    public void notifyNewMCLData(ParticleAndPoseContainer data) {
+    public void notifyNewMCLData(MCLData data) {
         sender.sendTransmittable(TransmittableType.MCL_DATA, data);
     }
 }

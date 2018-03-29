@@ -5,7 +5,7 @@
 package pc.gui;
 
 import common.particles.Particle;
-import common.particles.ParticleAndPoseContainer;
+import common.particles.MCLData;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class ParticleDataLayer extends UpdatableLayer {
     private static final String LOG_TAG = ParticleDataLayer.class.getSimpleName();
 
-    private final ParticleAndPoseContainer data = new ParticleAndPoseContainer(null, null);
+    private final MCLData data = new MCLData(null, null);
 
     @Override
     synchronized void displayOnGui(@NotNull GraphicsContext g) {

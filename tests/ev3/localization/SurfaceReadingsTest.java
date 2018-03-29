@@ -6,7 +6,7 @@ package ev3.localization;
 
 import common.mapping.SurfaceMap;
 import common.particles.Particle;
-import common.particles.ParticleAndPoseContainer;
+import common.particles.MCLData;
 import ev3.communication.PCConnection;
 import ev3.communication.PCDataSender;
 import lejos.robotics.Color;
@@ -33,6 +33,6 @@ class SurfaceReadingsTest {
             }
         }
 
-        new PCDataSender(PCConnection.getConnection()).sendParticleData(new ParticleAndPoseContainer(particles.toArray(new Particle[0]), null));
+        new PCDataSender(PCConnection.getConnection()).sendParticleData(new MCLData(particles.toArray(new Particle[0]), null));
     }
 }

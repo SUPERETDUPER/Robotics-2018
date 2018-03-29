@@ -8,6 +8,7 @@ import common.TransmittableType;
 import lejos.robotics.Transmittable;
 
 public interface DataSender {
-    public void sendTransmittable(TransmittableType type, Transmittable data);
-    public void sendLogMessage(String message);
+    void sendTransmittable(TransmittableType type, Transmittable data);
+
+    void sendLogMessage(String message);
 }

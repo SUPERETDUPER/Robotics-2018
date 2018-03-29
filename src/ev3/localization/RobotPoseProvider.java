@@ -6,7 +6,7 @@ package ev3.localization;
 
 import common.Config;
 import common.logger.Logger;
-import common.particles.ParticleAndPoseContainer;
+import common.particles.MCLData;
 import ev3.communication.ComManager;
 import ev3.navigation.Readings;
 import lejos.robotics.localization.PoseProvider;
@@ -31,7 +31,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private static final int NUM_PARTICLES = 300;
 
     private MoveProvider mp;
-    private ParticleAndPoseContainer data;
+    private MCLData data;
 
     private ArrayList<MCLDataListener> listeners = new ArrayList<>();
 
@@ -82,7 +82,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data = new ParticleAndPoseContainer(Util.getNewParticleSet(pose, NUM_PARTICLES), pose);
+        data = new MCLData(Util.getNewParticleSet(pose, NUM_PARTICLES), pose);
         completedMove = getCurrentCompletedMove();
 
         updatePC();
@@ -120,7 +120,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         data.setParticles(Util.update(data.getParticles(), missingMove, readings));
         data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
-//        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
+        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
 
         completedMove = move;
 

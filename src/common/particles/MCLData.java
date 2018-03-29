@@ -15,13 +15,13 @@ import java.io.IOException;
 /**
  * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
  */
-public class ParticleAndPoseContainer implements Transmittable {
-    private static final String LOG_TAG = ParticleAndPoseContainer.class.getSimpleName();
+public class MCLData implements Transmittable {
+    private static final String LOG_TAG = MCLData.class.getSimpleName();
 
     private Particle[] particles;
     private Pose currentPose;
 
-    public ParticleAndPoseContainer(Particle[] particles, Pose currentPose) {
+    public MCLData(Particle[] particles, Pose currentPose) {
         this.particles = particles;
         this.currentPose = currentPose;
     }

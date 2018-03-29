@@ -14,6 +14,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Reads the colors from the map image
+ */
 public class SurfaceMap {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
@@ -42,7 +45,7 @@ public class SurfaceMap {
 
     public static int getColorAtPoint(int x, int y) {
         try {
-            return ColorJavaLejos.getLejosColor(pixelReader.getColor(x, (int) (image.getHeight() - y)));
+            return ColorJavaLejos.getLejosColor(pixelReader.getColor(x, getInvertedY(y)));
         } catch (IndexOutOfBoundsException e) {
             throw new IndexOutOfBoundsException("x : " + x + ". y : " + y + " " + e);
         }
@@ -58,10 +61,16 @@ public class SurfaceMap {
     }
 
     @Contract(pure = true)
+    private static int getInvertedY(int y) {
+        return (int) (image.getHeight() - y);
+    }
+
+    @Contract(pure = true)
     public static double getWidth() {
         return image.getWidth();
     }
 
+    @Contract(pure = true)
     public static Image getImage() {
         return image;
     }

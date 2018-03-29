@@ -6,7 +6,7 @@ package ev3.communication;
 
 import common.logger.Logger;
 import common.TransmittableType;
-import common.particles.ParticleAndPoseContainer;
+import common.particles.MCLData;
 import lejos.robotics.Transmittable;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.pathfinding.Path;
@@ -40,7 +40,7 @@ public final class PCDataSender implements DataSender {
         }
     }
 
-    public void sendParticleData(@NotNull ParticleAndPoseContainer data) {
+    public void sendParticleData(@NotNull MCLData data) {
         sendTransmittable(TransmittableType.MCL_DATA, data);
     }
 

@@ -4,8 +4,8 @@
 
 package ev3.localization;
 
-import common.particles.ParticleAndPoseContainer;
+import common.particles.MCLData;
 
 public interface MCLDataListener {
-    void notifyNewMCLData(ParticleAndPoseContainer data);
+    void notifyNewMCLData(MCLData data);
 }
