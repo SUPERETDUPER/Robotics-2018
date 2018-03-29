@@ -30,7 +30,10 @@ final class EV3Main {
             robot = new EV3Robot();
         }
 
-        Brain.start(robot);
+
+        robot.getPaddle().hitBlock(true);
+        robot.getBrick().waitForUserConfirmation();
+        //Brain.start(robot);
 //        EV3Brick.waitForUserConfirmation(); //And wait for complete
     }
 }
