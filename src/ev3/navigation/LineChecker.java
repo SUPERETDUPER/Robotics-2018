@@ -4,9 +4,9 @@
 
 package ev3.navigation;
 
-import ev3.robot.hardware.EV3ColorSensors;
 import ev3.localization.RobotPoseProvider;
 import ev3.localization.SurfaceReadings;
+import ev3.robot.ColorSensors;
 import lejos.utility.Delay;
 
 /**
@@ -15,8 +15,12 @@ import lejos.utility.Delay;
 public final class LineChecker extends Thread {
     private static final String LOG_TAG = LineChecker.class.getSimpleName();
 
-    LineChecker() {
+    private final ColorSensors colorSensors;
+
+    LineChecker(ColorSensors colorSensors) {
         super();
+
+        this.colorSensors = colorSensors;
 
         this.setDaemon(true);
         this.setName(LineChecker.class.getSimpleName());
@@ -26,7 +30,7 @@ public final class LineChecker extends Thread {
     public void run() {
         //noinspection InfiniteLoopStatement
         while (true) {
-            RobotPoseProvider.get().update(new SurfaceReadings(EV3ColorSensors.getSurfaceColor()));
+            RobotPoseProvider.get().update(new SurfaceReadings(colorSensors.getColorSurfaceLeft()));
 
             Delay.msDelay(100);
         }

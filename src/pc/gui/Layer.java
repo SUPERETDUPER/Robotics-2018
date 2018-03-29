@@ -12,7 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 /**
  * A canvas that is displayed on the gui.
  */
-public abstract class Layer extends Canvas {
+abstract class Layer extends Canvas {
 
     private final GraphicsContext graphics = getGraphicsContext2D();
 

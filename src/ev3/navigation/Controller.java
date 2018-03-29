@@ -6,6 +6,7 @@ package ev3.navigation;
 
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
+import ev3.robot.Robot;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.Pose;
@@ -21,21 +22,10 @@ public final class Controller {
 
     private static final Controller controller = new Controller();
 
-    @NotNull
-    private final Navigator navigator;
+    private Navigator navigator;
 
     private Controller() {
-        MyMovePilot pilot = new MyMovePilot(ChassisBuilder.getChassis());
 
-        pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
-        pilot.setLinearAcceleration(LINEAR_ACCELERATION);
-
-        RobotPoseProvider.get().addMoveProvider(pilot);
-        RobotPoseProvider.get().setPose(STARTING_POSE);
-
-        navigator = new Navigator(pilot, RobotPoseProvider.get());
-
-        new LineChecker().start();
     }
 
     @NotNull
@@ -71,7 +61,18 @@ public final class Controller {
         waitForStop();
     }
 
-    public static void init() {
+    public void init(Robot robot) {
+        MyMovePilot pilot = new MyMovePilot(robot.getChassis());
+
+        pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
+        pilot.setLinearAcceleration(LINEAR_ACCELERATION);
+
+        RobotPoseProvider.get().addMoveProvider(pilot);
+        RobotPoseProvider.get().setPose(STARTING_POSE);
+
+        navigator = new Navigator(pilot, RobotPoseProvider.get());
+
+        new LineChecker(robot.getColorSensors()).start();
     }
 
     @Contract(pure = true)

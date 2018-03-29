@@ -8,12 +8,13 @@ import common.logger.Logger;
 import ev3.localization.RobotPoseProvider;
 import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;
+import ev3.robot.Robot;
 
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
-    static void start() {
-        Controller.init();
+    static void start(Robot robot) {
+        Controller.get().init(robot);
         RobotPoseProvider.get().sendCurrentPoseToPC();
 
         MapOperations.goToContainerBottomLeft();

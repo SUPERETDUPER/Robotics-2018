@@ -6,6 +6,7 @@ package pc;
 
 import common.Config;
 import common.logger.Logger;
+import lejos.utility.Delay;
 import pc.communication.DataReceiver;
 import pc.communication.EV3Connection;
 import pc.gui.GUI;
@@ -32,6 +33,8 @@ final class PCMain {
         DataReceiver.init(inputStream, GUI.listener);
 
         GUI.launchGUI();
+
+        Delay.msDelay(1000);
 
         DataReceiver.read();
     }
