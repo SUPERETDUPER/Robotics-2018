@@ -31,11 +31,6 @@ public final class GUI extends Application {
 
     private static final Map<TransmittableType, UpdatableLayer> updatableLayers = new EnumMap<>(TransmittableType.class);
 
-    static {
-
-    }
-
-
     public GUI() {
         super();
 
