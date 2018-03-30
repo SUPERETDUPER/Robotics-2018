@@ -27,7 +27,7 @@ final class EV3Main {
 
     private static void initialize() {
         if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            ComManager.build();
+            ComManager.startCommunication();
         }
 
         if (Config.currentMode == Config.Mode.SIM) {

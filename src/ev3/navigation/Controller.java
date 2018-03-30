@@ -4,6 +4,7 @@
 
 package ev3.navigation;
 
+import common.TransmittableType;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
 import ev3.robot.Robot;
@@ -49,7 +50,7 @@ public final class Controller {
 
     private void goTo(float x, float y, float heading) {
         navigator.goTo(x, y, normalize(heading));
-        ComManager.getDataSender().sendPath(navigator.getPath());
+        ComManager.getDataSender().sendTransmittable(TransmittableType.PATH, navigator.getPath());
         waitForStop();
     }
 
@@ -59,7 +60,7 @@ public final class Controller {
 
     private void goTo(float x, float y) {
         navigator.goTo(x, y);
-        ComManager.getDataSender().sendPath(navigator.getPath());
+        ComManager.getDataSender().sendTransmittable(TransmittableType.PATH, navigator.getPath());
         waitForStop();
     }
 
@@ -87,6 +88,7 @@ public final class Controller {
         return heading;
     }
 
+    @NotNull
     public Pose getPose() {
         return robotPoseProvider.getPose();
     }
