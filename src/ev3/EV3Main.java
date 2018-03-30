@@ -16,7 +16,7 @@ final class EV3Main {
     private static Robot robot;
 
     public static void main(String[] args) {
-        if (!initialize()) return;
+        initialize();
 
         runMain();
 
@@ -25,13 +25,9 @@ final class EV3Main {
         cleanUp();
     }
 
-    private static boolean initialize() {
+    private static void initialize() {
         if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            boolean success = ComManager.build();
-
-            if (!success) {
-                return false;
-            }
+            ComManager.build();
         }
 
         if (Config.currentMode == Config.Mode.SIM) {
@@ -39,7 +35,6 @@ final class EV3Main {
         } else {
             robot = new EV3Robot();
         }
-        return true;
     }
 
     private static void runMain() {

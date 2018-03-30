@@ -4,7 +4,6 @@
 
 package ev3.communication;
 
-import common.logger.Logger;
 import org.jetbrains.annotations.Contract;
 
 import java.io.OutputStream;
@@ -15,19 +14,13 @@ public class ComManager {
     private static PCDataSender dataSender;
     private static DataListener dataListener;
 
-    public static boolean build() {
+    public static void build() {
         OutputStream connection = PCConnection.getConnection();
-
-        if (connection == null) {
-            Logger.error(LOG_TAG, "Failed to connect to PC. Stopping program");
-            return false;
-        }
 
         dataSender = new PCDataSender(connection);
         dataListener = new DataListener(dataSender);
-        dataListener.startListening();
 
-        return true;
+        dataListener.startListening();
     }
 
     public static void stop() {

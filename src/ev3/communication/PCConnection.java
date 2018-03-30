@@ -6,7 +6,7 @@ package ev3.communication;
 
 import common.Config;
 import common.logger.Logger;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,7 +15,7 @@ import java.net.ServerSocket;
 public class PCConnection {
     private static final String LOG_TAG = PCConnection.class.getSimpleName();
 
-    @Nullable
+    @NotNull
     public static OutputStream getConnection() {
         Logger.info(LOG_TAG, "Waiting for pc to getConnection...");
 
@@ -24,7 +24,7 @@ public class PCConnection {
         try {
             outputStream = new ServerSocket(Config.PORT_TO_CONNECT_ON_EV3).accept().getOutputStream();
         } catch (IOException e) {
-            return null;
+            throw new RuntimeException("Could not connect to EV3");
         }
 
         Logger.info(LOG_TAG, "Connected to Robotics2018.pc");
