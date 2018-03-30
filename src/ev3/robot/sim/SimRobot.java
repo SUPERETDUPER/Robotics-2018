@@ -4,12 +4,9 @@
 
 package ev3.robot.sim;
 
-import common.logger.Logger;
 import ev3.localization.RobotPoseProvider;
 import ev3.robot.*;
 import lejos.robotics.chassis.Chassis;
-
-import java.io.IOException;
 
 public class SimRobot implements Robot {
     private static final String LOG_TAG = SimRobot.class.getSimpleName();
@@ -19,46 +16,58 @@ public class SimRobot implements Robot {
 
     private final RobotPoseProvider robotPoseProvider;
 
+    private Chassis chassis;
+    private Paddle paddle;
+    private Arm arm;
+    private ColorSensors colorSensors;
+    private Brick brick;
+
     public SimRobot(RobotPoseProvider robotPoseProvider) {
         this.robotPoseProvider = robotPoseProvider;
     }
 
     @Override
     public Arm getArm() {
-        return new SimArm();
+        if (arm == null) {
+            arm = new SimArm();
+        }
+
+        return arm;
     }
 
     @Override
     public Chassis getChassis() {
-        return Util.buildChassis(new SimMotor("leftMotor"), new SimMotor("rightMotor"), WHEEL_DIAMETER, WHEEL_OFFSET);
+        if (chassis == null) {
+            chassis = Util.buildChassis(new SimMotor("leftMotor"), new SimMotor("rightMotor"), WHEEL_DIAMETER, WHEEL_OFFSET);
+        }
+
+        return chassis;
     }
 
     @Override
     public Paddle getPaddle() {
-        return new SimPaddle();
+        if (paddle == null) {
+            paddle = new SimPaddle();
+        }
+
+        return paddle;
     }
 
     @Override
     public ColorSensors getColorSensors() {
-        return new SimColorSensors(robotPoseProvider);
+        if (colorSensors == null) {
+            colorSensors = new SimColorSensors(robotPoseProvider);
+        }
+
+        return colorSensors;
     }
 
     @Override
     public Brick getBrick() {
-        return new SimBrick();
-    }
-
-    private class SimBrick implements Brick {
-        @Override
-        public void waitForUserConfirmation() {
-            try {
-                System.out.println("Press enter to continue");
-                //noinspection ResultOfMethodCallIgnored
-                System.in.read();
-            } catch (IOException e) {
-                Logger.error(LOG_TAG, e.toString());
-            }
+        if (brick == null) {
+            brick = new SimBrick();
         }
-    }
 
+        return brick;
+    }
 }
