@@ -126,7 +126,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         data.setParticles(Util.update(data.getParticles(), missingMove, readings));
         data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
-        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
+//        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
 
         completedMove = move;
 

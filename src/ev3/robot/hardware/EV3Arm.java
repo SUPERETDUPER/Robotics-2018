@@ -10,39 +10,35 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 public class EV3Arm implements Arm {
 
     private static EV3LargeRegulatedMotor motor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_ARM);
-    private static int startingAngle = 0;
-    private static int boatAngle = 270;
-    private static int foodPickUpAngle = 20;
-    private static int foodDropOffAngle = 200;
-    private static int foodHangingAngle = 160;
-    private static int tempRedPickUpAngle = 20;
+
+    private static final int startingAngle = 0;
+    private static final int boatAngle = 270;
+    private static final int foodPickUpAngle = 20;
+    private static final int foodDropOffAngle = 200;
+    private static final int foodHangingAngle = 160;
+    private static final int tempRedPickUpAngle = 20;
 
     static {
         motor.setSpeed(10);
     }
 
     public void goToBoat(boolean immediateReturn) {
-        motor.rotate(boatAngle);
+        motor.rotateTo(boatAngle);
     }
 
     public void goToFoodIn(boolean immediateReturn) {
-        motor.rotate(foodPickUpAngle);
+        motor.rotateTo(foodPickUpAngle);
     }
 
     public void goToFoodOut(boolean immediateReturn) {
-        motor.rotate(foodDropOffAngle);
+        motor.rotateTo(foodDropOffAngle);
     }
 
     public void goToFoodHanging(boolean immediateReturn) {
-        motor.rotate(foodHangingAngle);
+        motor.rotateTo(foodHangingAngle);
     }
 
     public void goToTempReg(boolean immediateReturn) {
-        motor.rotate(tempRedPickUpAngle);
+        motor.rotateTo(tempRedPickUpAngle);
     }
-    public void reset(boolean immediateReturn){
-        motor.rotateTo(startingAngle);
-
-    }
-
 }
