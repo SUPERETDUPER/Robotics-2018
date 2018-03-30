@@ -5,7 +5,6 @@
 package ev3.robot;
 
 public interface Paddle {
-    void moveBlockOffConveyor(boolean immediateReturn);
 
-    void hitBlock(boolean immediateReturn);
+    void useMotor(boolean immediateReturn);
 }

@@ -15,6 +15,10 @@ public class ComManager {
     private static PCDataSender dataSender;
     private static DataListener dataListener;
 
+    public static boolean running(){
+        return dataListener != null && dataSender != null;
+    }
+
     public static boolean build() {
         OutputStream connection = PCConnection.getConnection();
 

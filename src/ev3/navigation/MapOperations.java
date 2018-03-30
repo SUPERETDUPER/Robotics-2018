@@ -15,7 +15,7 @@ public final class MapOperations {
     private static final Point TEMP_REG_BLUE = new Point(1902, 838);
     private static final Point TEMP_REG_YELLOW = new Point(1578, 838);
     private static final Point TEMP_REG_RED = new Point(1578, 306);
-
+    private static final Point TEST = new Point(10,10);
 
     private static final Point CONTAINER_TOP_LEFT = new Point(871.5F, 756);
     private static final Point CONTAINER_TOP_RIGHT = new Point(1303.5F, 827);
@@ -24,6 +24,10 @@ public final class MapOperations {
 
     public static void goToContainerTopLeft(Pose currentPose) {
         approachLeftRight(CONTAINER_TOP_LEFT, currentPose);
+    }
+
+    public static void goToTest(Pose currentPose) {
+        approachLeftRight(TEST, currentPose);
     }
 
     public static void goToContainerTopRight(Pose currentPose) {

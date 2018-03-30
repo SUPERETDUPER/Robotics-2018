@@ -9,6 +9,9 @@ import ev3.communication.ComManager;
 import ev3.robot.Robot;
 import ev3.robot.hardware.EV3Robot;
 import ev3.robot.sim.SimRobot;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.port.MotorPort;
+import lejos.utility.Delay;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
@@ -44,10 +47,31 @@ final class EV3Main {
 
     private static void runMain() {
        // Brain.start(robot);
-        robot.getPaddle().hitBlock(true);
+
+        EV3LargeRegulatedMotor A = new EV3LargeRegulatedMotor(MotorPort.A);
+        EV3LargeRegulatedMotor C = new EV3LargeRegulatedMotor(MotorPort.C);
+        A.forward();
+        C.forward();
+        Delay.msDelay(2000);
+        A.stop();
+        C.stop();
+
+        robot.getPaddle().useMotor(true);
+
+        /*robot.getArm().goToFoodHanging(true);
+        Delay.msDelay(2000);
+        robot.getArm().goToFoodIn(true);
+        Delay.msDelay(2000);
+        robot.getArm().goToFoodHanging(true);
+        Delay.msDelay(2000);
+        robot.getArm().goToFoodOut(true);
+*/
+
     }
 
     private static void cleanUp() {
-        ComManager.stop();
+        if (ComManager.running()) {
+            ComManager.stop();
+        }
     }
 }

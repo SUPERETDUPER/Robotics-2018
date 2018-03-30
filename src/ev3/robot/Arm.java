@@ -14,4 +14,6 @@ public interface Arm {
     void goToFoodHanging(boolean immediateReturn);
 
     void goToTempReg(boolean immediateReturn);
+
+    void goToReset(boolean immediateReturn);
 }

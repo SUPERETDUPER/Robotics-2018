@@ -21,7 +21,7 @@ class Brain {
         Controller.get().init(robot);
         Controller.get().getPose();
 
-        
+
         MapOperations.goToContainerBottomLeft(Controller.get().getPose());
         MapOperations.goToContainerBottomRight(Controller.get().getPose());
         MapOperations.goToContainerTopLeft(Controller.get().getPose());
