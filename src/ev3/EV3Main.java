@@ -38,8 +38,8 @@ final class EV3Main {
     }
 
     private static void runMain() {
-        Brain.start(robot);
-//        robot.getPaddle().hitBlock(true);
+       // Brain.start(robot);
+        robot.getPaddle().hitBlock(true);
     }
 
     private static void cleanUp() {

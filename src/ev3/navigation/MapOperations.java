@@ -16,6 +16,7 @@ public final class MapOperations {
     private static final Point TEMP_REG_YELLOW = new Point(1578, 838);
     private static final Point TEMP_REG_RED = new Point(1578, 306);
 
+
     private static final Point CONTAINER_TOP_LEFT = new Point(871.5F, 756);
     private static final Point CONTAINER_TOP_RIGHT = new Point(1303.5F, 827);
     private static final Point CONTAINER_BOTTOM_LEFT = new Point(797.5F, 333);
