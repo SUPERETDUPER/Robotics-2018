@@ -9,13 +9,19 @@ import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;
 import ev3.robot.Robot;
 
+import java.util.List;
+
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
     static void start(Robot robot) {
+
+        int [] listFoodColor = new int [3];
+
         Controller.get().init(robot);
         Controller.get().getPose();
 
+        
         MapOperations.goToContainerBottomLeft(Controller.get().getPose());
         MapOperations.goToContainerBottomRight(Controller.get().getPose());
         MapOperations.goToContainerTopLeft(Controller.get().getPose());
