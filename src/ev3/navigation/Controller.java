@@ -31,7 +31,7 @@ public final class Controller {
 
     }
 
-    public void init(Robot robot) {
+    public void init(@NotNull Robot robot) {
         MyMovePilot pilot = new MyMovePilot(robot.getChassis());
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
@@ -63,7 +63,7 @@ public final class Controller {
         }
     }
 
-    void goTo(Pose pose) {
+    void goTo(@NotNull Pose pose) {
         goTo(pose.getX(), pose.getY(), pose.getHeading());
     }
 
@@ -73,7 +73,7 @@ public final class Controller {
         waitForStop();
     }
 
-    void goTo(Point point) {
+    void goTo(@NotNull Point point) {
         goTo(point.x, point.y);
     }
 
@@ -90,6 +90,7 @@ public final class Controller {
         return heading;
     }
 
+    @Contract(pure = true)
     @NotNull
     public Pose getPose() {
         return robotPoseProvider.getPose();

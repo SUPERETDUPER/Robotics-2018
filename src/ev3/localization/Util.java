@@ -10,6 +10,7 @@ import common.particles.Particle;
 import ev3.navigation.Readings;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,7 @@ final class Util {
     private static final float STARTING_RADIUS_NOISE = 100;
     private static final float STARTING_HEADING_NOISE = 30;
 
+    @Contract(pure = true)
     @NotNull
     private static Pose rotatePose(@NotNull Pose pose, float angleToRotate, float randomFactor) {
         if (angleToRotate == 0) return pose;
@@ -35,6 +37,7 @@ final class Util {
         return new Pose(pose.getX(), pose.getY(), heading);
     }
 
+    @Contract(pure = true)
     @NotNull
     private static Pose shiftPose(@NotNull Pose pose, float distance, float randomFactor) {
         if (distance == 0) return pose;
@@ -50,6 +53,7 @@ final class Util {
         return new Pose(x, y, pose.getHeading());
     }
 
+    @Contract(pure = true)
     @NotNull
     private static Pose movePose(@NotNull Pose pose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
         switch (move.getMoveType()) {
@@ -65,11 +69,13 @@ final class Util {
         }
     }
 
+    @Contract(pure = true)
     @NotNull
     static Pose movePose(@NotNull Pose pose, @NotNull Move move) {
         return movePose(pose, move, 0, 0);
     }
 
+    @Contract(pure = true)
     static Particle[] moveParticleSet(@NotNull Particle[] particles, @NotNull Move move) {
         Particle[] newParticles = new Particle[particles.length];
 
@@ -90,6 +96,7 @@ final class Util {
      * @param move2 smaller move
      * @return result of subtraction
      */
+    @Contract(pure = true)
     @NotNull
     static Move subtractMove(@NotNull Move move1, @Nullable Move move2) {
         if (move2 == null) {
@@ -125,6 +132,7 @@ final class Util {
      * @param readings  readings the sensors took
      * @return updated particles
      */
+    @Contract(pure = true)
     static Particle[] update(@NotNull Particle[] particles, Move move, Readings readings) {
         Particle[] newParticles = new Particle[particles.length];
 
@@ -161,10 +169,12 @@ final class Util {
      * @param x x
      * @return f(x)
      */
+    @Contract(pure = true)
     private static float bellCurve(float x) {
         return (float) Math.pow(Math.E, -Math.pow(x, 2) / 2);
     }
 
+    @Contract(pure = true)
     private static Particle[] normalize(@NotNull Particle[] particles, float totalWeight) {
         for (int i = 0; i < particles.length; i++) {
             particles[i] = particles[i].getParticleWithNewWeight(particles[i].weight / totalWeight);
@@ -176,6 +186,7 @@ final class Util {
     /**
      * Generates a new particle set around a specific point with weights 0.5
      */
+    @Contract(pure = true)
     @NotNull
     static Particle[] getNewParticleSet(@NotNull Pose centerPose, int numParticles) {
         Particle[] newParticles = new Particle[numParticles];
@@ -222,6 +233,8 @@ final class Util {
      *
      * @param particles particles to use
      */
+    @NotNull
+    @Contract(pure = true)
     static synchronized Pose refineCurrentPose(Particle[] particles) {
         float totalWeights = 0;
 
@@ -248,6 +261,7 @@ final class Util {
         return new Pose(estimatedX, estimatedY, estimatedAngle);
     }
 
+    @Contract(pure = true)
     @NotNull
     static Move deepCopyMove(@NotNull Move move) {
         return new Move(move.getMoveType(), move.getDistanceTraveled(), move.getAngleTurned(), move.getTravelSpeed(), move.getRotateSpeed(), move.isMoving());

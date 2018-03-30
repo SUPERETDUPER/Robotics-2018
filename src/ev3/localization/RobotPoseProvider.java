@@ -17,6 +17,7 @@ import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
 import lejos.utility.Delay;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,11 +72,6 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         new Updater(colorSensors).start();
     }
 
-    @NotNull
-    public RobotPoseProvider get() {
-        return null;
-    }
-
     /**
      * Doesn't update the data object since we don't want to need to update the particles each time
      *
@@ -83,6 +79,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
      */
     @NotNull
     @Override
+    @Contract(pure = true)
     public synchronized Pose getPose() {
         Move missingMove = Util.subtractMove(getCurrentCompletedMove(), completedMove);
 
@@ -122,7 +119,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         notifyUpdate();
     }
 
-    public synchronized void update(@NotNull Readings readings) {
+    private synchronized void update(@NotNull Readings readings) {
         Move move = getCurrentCompletedMove();
 
         Move missingMove = Util.subtractMove(move, completedMove);
