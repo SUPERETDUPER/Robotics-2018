@@ -31,6 +31,25 @@ public final class Controller {
 
     }
 
+    public void init(Robot robot) {
+        MyMovePilot pilot = new MyMovePilot(robot.getChassis());
+
+        pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
+        pilot.setLinearAcceleration(LINEAR_ACCELERATION);
+
+        robotPoseProvider = new RobotPoseProvider(pilot, STARTING_POSE);
+
+        if (robot instanceof SimRobot) {
+            ((SimRobot) robot).setPoseProvider(robotPoseProvider);
+        }
+
+        ComManager.getDataListener().attachToRobotPoseProvider(robotPoseProvider);
+
+        robotPoseProvider.startUpdater(robot.getColorSensors());
+
+        navigator = new Navigator(pilot, robotPoseProvider);
+    }
+
     @NotNull
     @Contract(pure = true)
     public static Controller get() {
@@ -62,23 +81,6 @@ public final class Controller {
         navigator.goTo(x, y);
         ComManager.getDataSender().sendTransmittable(TransmittableType.PATH, navigator.getPath());
         waitForStop();
-    }
-
-    public void init(Robot robot) {
-        MyMovePilot pilot = new MyMovePilot(robot.getChassis());
-
-        pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
-        pilot.setLinearAcceleration(LINEAR_ACCELERATION);
-
-        robotPoseProvider = new RobotPoseProvider(pilot, STARTING_POSE);
-
-        if (robot instanceof SimRobot) {
-            ((SimRobot) robot).setPoseProvider(robotPoseProvider);
-        }
-
-        robotPoseProvider.startUpdater(robot.getColorSensors());
-
-        navigator = new Navigator(pilot, robotPoseProvider);
     }
 
     @Contract(pure = true)

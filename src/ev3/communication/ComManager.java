@@ -36,6 +36,11 @@ public class ComManager {
         return dataSender;
     }
 
+    @Contract(pure = true)
+    public static DataListener getDataListener() {
+        return dataListener;
+    }
+
     @NotNull
     public static OutputStream getConnection() {
         Logger.info(LOG_TAG, "Waiting for PC to connect to EV3...");
