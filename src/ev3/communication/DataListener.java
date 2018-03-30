@@ -11,12 +11,23 @@ import common.logger.Logger;
 import common.particles.MCLData;
 import ev3.localization.MCLDataListener;
 import ev3.localization.RobotPoseProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DataListener implements MCLDataListener, LogMessageListener{
+    @NotNull
     private final DataSender sender;
 
-    DataListener(final DataSender sender) {
+    @Nullable
+    private RobotPoseProvider robotPoseProvider;
+
+    DataListener(@NotNull DataSender sender) {
         this.sender = sender;
+    }
+
+    public void attachToRobotPoseProvider(RobotPoseProvider robotPoseProvider) {
+        this.robotPoseProvider = robotPoseProvider;
+        this.robotPoseProvider.addListener(this);
     }
 
     void startListening() {
@@ -24,14 +35,14 @@ public class DataListener implements MCLDataListener, LogMessageListener{
         if (Config.currentMode == Config.Mode.DUAL) {
             Logger.setListener(this);
         }
-
-        RobotPoseProvider.get().addListener(this);
     }
 
     void stopListening() {
         Logger.removeListener();
 
-        RobotPoseProvider.get().removeListener(this);
+        if (robotPoseProvider != null) {
+            robotPoseProvider.removeListener(this);
+        }
     }
 
     @Override

@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
+ */
+
+package ev3.robot.sim;
+
+import common.mapping.SurfaceMap;
+import ev3.localization.RobotPoseProvider;
+import ev3.robot.ColorSensors;
+import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.NotNull;
+
+class SimColorSensors implements ColorSensors {
+    @NotNull
+    private final RobotPoseProvider poseProvider;
+
+    SimColorSensors(@NotNull RobotPoseProvider poseProvider) {
+        this.poseProvider = poseProvider;
+    }
+
+    @Override
+    public int getColorSurfaceLeft() {
+        Pose currentPose = poseProvider.getPose();
+        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+    }
+
+    @Override
+    public int getColorSurfaceRight() {
+        Pose currentPose = poseProvider.getPose();
+        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+    }
+
+    @Override
+    public int getColorContainer() {
+        Pose currentPose = poseProvider.getPose();
+        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+    }
+
+    @Override
+    public int getColorBoat() {
+        Pose currentPose = poseProvider.getPose();
+        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+    }
+}

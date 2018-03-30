@@ -23,6 +23,7 @@ public final class Controller {
     private static final Controller controller = new Controller();
 
     private Navigator navigator;
+    private RobotPoseProvider robotPoseProvider;
 
     private Controller() {
 
@@ -36,7 +37,7 @@ public final class Controller {
 
     public void waitForStop() {
         while (navigator.isMoving()) {
-            RobotPoseProvider.get().sendCurrentPoseToPC();
+            robotPoseProvider.sendCurrentPoseToPC();
             Thread.yield();
         }
     }
@@ -67,12 +68,10 @@ public final class Controller {
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
-        RobotPoseProvider.get().addMoveProvider(pilot);
-        RobotPoseProvider.get().setPose(STARTING_POSE);
+        robotPoseProvider = new RobotPoseProvider(pilot, STARTING_POSE);
+        robotPoseProvider.startUpdater(robot.getColorSensors());
 
-        navigator = new Navigator(pilot, RobotPoseProvider.get());
-
-        new LineChecker(robot.getColorSensors()).start();
+        navigator = new Navigator(pilot, robotPoseProvider);
     }
 
     @Contract(pure = true)
@@ -80,5 +79,9 @@ public final class Controller {
         while (heading >= 360) heading -= 360;
         while (heading < 0) heading += 360;
         return heading;
+    }
+
+    public Pose getPose() {
+        return robotPoseProvider.getPose();
     }
 }

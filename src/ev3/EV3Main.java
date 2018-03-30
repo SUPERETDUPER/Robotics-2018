@@ -35,7 +35,7 @@ final class EV3Main {
         }
 
         if (Config.currentMode == Config.Mode.SIM) {
-            robot = new SimRobot();
+            robot = new SimRobot(null);
         } else {
             robot = new EV3Robot();
         }
@@ -43,8 +43,8 @@ final class EV3Main {
     }
 
     private static void runMain() {
-        //Brain.start(robot);
-        robot.getPaddle().hitBlock(true);
+        Brain.start(robot);
+//        robot.getPaddle().hitBlock(true);
     }
 
     private static void cleanUp() {

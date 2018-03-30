@@ -5,7 +5,6 @@
 package ev3;
 
 import common.logger.Logger;
-import ev3.localization.RobotPoseProvider;
 import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;
 import ev3.robot.Robot;
@@ -15,20 +14,20 @@ class Brain {
 
     static void start(Robot robot) {
         Controller.get().init(robot);
-        RobotPoseProvider.get().sendCurrentPoseToPC();
+        Controller.get().getPose();
 
-        MapOperations.goToContainerBottomLeft();
-        MapOperations.goToContainerBottomRight();
-        MapOperations.goToContainerTopLeft();
-        MapOperations.goToContainerTopRight();
+        MapOperations.goToContainerBottomLeft(Controller.get().getPose());
+        MapOperations.goToContainerBottomRight(Controller.get().getPose());
+        MapOperations.goToContainerTopLeft(Controller.get().getPose());
+        MapOperations.goToContainerTopRight(Controller.get().getPose());
 
-        MapOperations.goToTempRegBlue();
-        MapOperations.goToTempRegGreen();
-        MapOperations.goToTempRegYellow();
-        MapOperations.goToTempRegRed();
+        MapOperations.goToTempRegBlue(Controller.get().getPose());
+        MapOperations.goToTempRegGreen(Controller.get().getPose());
+        MapOperations.goToTempRegYellow(Controller.get().getPose());
+        MapOperations.goToTempRegRed(Controller.get().getPose());
 
         Controller.get().waitForStop();
 
-        Logger.info(LOG_TAG, RobotPoseProvider.get().getPose().toString());
+        Logger.info(LOG_TAG, Controller.get().getPose().toString());
     }
 }

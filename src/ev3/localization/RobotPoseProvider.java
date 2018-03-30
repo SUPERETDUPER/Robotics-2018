@@ -9,11 +9,13 @@ import common.logger.Logger;
 import common.particles.MCLData;
 import ev3.communication.ComManager;
 import ev3.navigation.Readings;
+import ev3.robot.ColorSensors;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
+import lejos.utility.Delay;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,14 +28,15 @@ import java.util.ArrayList;
 public class RobotPoseProvider implements MoveListener, PoseProvider {
     private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
 
-    private static final RobotPoseProvider mParticlePoseProvider = new RobotPoseProvider();
-
     private static final int NUM_PARTICLES = 300;
 
-    private MoveProvider mp;
+    @NotNull
+    private final MoveProvider mp;
+    @NotNull
     private MCLData data;
 
-    private ArrayList<MCLDataListener> listeners = new ArrayList<>();
+    @NotNull
+    private final ArrayList<MCLDataListener> listeners = new ArrayList<>();
 
     /**
      * The amount the data has been shifted since the start of this move.
@@ -42,7 +45,13 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Nullable
     private Move completedMove;
 
-    private RobotPoseProvider() {
+    public RobotPoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose currentPose) {
+        this.mp = moveProvider;
+        this.data = new MCLData(Util.getNewParticleSet(currentPose, NUM_PARTICLES), currentPose);
+
+        completedMove = getCurrentCompletedMove();
+
+        notifyUpdate();
     }
 
     public synchronized void addListener(MCLDataListener listener) {
@@ -57,14 +66,13 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         }
     }
 
-    @NotNull
-    public static RobotPoseProvider get() {
-        return mParticlePoseProvider;
+    public void startUpdater(ColorSensors colorSensors) {
+        new Updater(colorSensors).start();
     }
 
-    public void addMoveProvider(@NotNull MoveProvider moveProvider) {
-        this.mp = moveProvider;
-        moveProvider.addMoveListener(this);
+    @NotNull
+    public RobotPoseProvider get() {
+        return null;
     }
 
     /**
@@ -85,7 +93,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         data = new MCLData(Util.getNewParticleSet(pose, NUM_PARTICLES), pose);
         completedMove = getCurrentCompletedMove();
 
-        updatePC();
+        notifyUpdate();
     }
 
     @Override
@@ -110,7 +118,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         completedMove = null;
 
-        updatePC();
+        notifyUpdate();
     }
 
     public synchronized void update(@NotNull Readings readings) {
@@ -124,10 +132,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         completedMove = move;
 
-        updatePC();
+        notifyUpdate();
     }
 
-    private void updatePC() {
+    private void notifyUpdate() {
         for (MCLDataListener listener : listeners) {
             listener.notifyNewMCLData(data);
         }
@@ -142,5 +150,33 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @NotNull
     private Move getCurrentCompletedMove() {
         return Util.deepCopyMove(mp.getMovement());
+    }
+
+    /**
+     * Check method checks if the color under the robot has changed. If so it calls the pose provider update method
+     */
+    public final class Updater extends Thread {
+        private final String LOG_TAG = Updater.class.getSimpleName();
+
+        private final ColorSensors colorSensors;
+
+        Updater(ColorSensors colorSensors) {
+            super();
+
+            this.colorSensors = colorSensors;
+
+            this.setDaemon(true);
+            this.setName(Updater.class.getSimpleName());
+        }
+
+        @Override
+        public void run() {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                RobotPoseProvider.this.update(new SurfaceReadings(colorSensors.getColorSurfaceLeft()));
+
+                Delay.msDelay(100);
+            }
+        }
     }
 }

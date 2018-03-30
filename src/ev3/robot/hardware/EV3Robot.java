@@ -5,8 +5,6 @@
 package ev3.robot.hardware;
 
 import ev3.robot.*;
-import ev3.robot.Arm;
-import ev3.robot.Paddle;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 

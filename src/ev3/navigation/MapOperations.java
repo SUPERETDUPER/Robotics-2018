@@ -4,7 +4,6 @@
 
 package ev3.navigation;
 
-import ev3.localization.RobotPoseProvider;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -22,47 +21,47 @@ public final class MapOperations {
     private static final Point CONTAINER_BOTTOM_LEFT = new Point(797.5F, 333);
     private static final Point CONTAINER_BOTTOM_RIGHT = new Point(1235.5F, 404);
 
-    public static void goToContainerTopLeft() {
-        approachLeftRight(CONTAINER_TOP_LEFT);
+    public static void goToContainerTopLeft(Pose currentPose) {
+        approachLeftRight(CONTAINER_TOP_LEFT, currentPose);
     }
 
-    public static void goToContainerTopRight() {
-        approachLeftRight(CONTAINER_TOP_RIGHT);
+    public static void goToContainerTopRight(Pose currentPose) {
+        approachLeftRight(CONTAINER_TOP_RIGHT, currentPose);
     }
 
-    public static void goToContainerBottomLeft() {
-        approachLeftRight(CONTAINER_BOTTOM_LEFT);
+    public static void goToContainerBottomLeft(Pose currentPose) {
+        approachLeftRight(CONTAINER_BOTTOM_LEFT, currentPose);
     }
 
-    public static void goToContainerBottomRight() {
-        approachLeftRight(CONTAINER_BOTTOM_RIGHT);
+    public static void goToContainerBottomRight(Pose currentPose) {
+        approachLeftRight(CONTAINER_BOTTOM_RIGHT, currentPose);
     }
 
-    public static void goToTempRegGreen() {
-        approachTopOrBottom(TEMP_REG_GREEN);
+    public static void goToTempRegGreen(Pose currentPose) {
+        approachTopOrBottom(TEMP_REG_GREEN, currentPose);
     }
 
-    public static void goToTempRegBlue() {
-        approachTopOrBottom(TEMP_REG_BLUE);
+    public static void goToTempRegBlue(Pose currentPose) {
+        approachTopOrBottom(TEMP_REG_BLUE, currentPose);
     }
 
-    public static void goToTempRegRed() {
-        approachTopOrBottom(TEMP_REG_RED);
+    public static void goToTempRegRed(Pose currentPose) {
+        approachTopOrBottom(TEMP_REG_RED, currentPose);
     }
 
-    public static void goToTempRegYellow() {
-        approachTopOrBottom(TEMP_REG_YELLOW);
+    public static void goToTempRegYellow(Pose currentPose) {
+        approachTopOrBottom(TEMP_REG_YELLOW, currentPose);
     }
 
-    private static void approachLeftRight(@NotNull Point point) {
-        goToClosest(RobotPoseProvider.get().getPose(), getApproachLeft(point), getApproachRight(point));
+    private static void approachLeftRight(@NotNull Point point, Pose currentPose) {
+        goToClosest(currentPose, getApproachLeft(point), getApproachRight(point));
 
         Controller.get().goTo(point);
     }
 
-    private static void approachTopOrBottom(@NotNull Point point) {
+    private static void approachTopOrBottom(@NotNull Point point, Pose currentPose) {
 
-        goToClosest(RobotPoseProvider.get().getPose(), getApproachTop(point), getApproachBottom(point));
+        goToClosest(currentPose, getApproachTop(point), getApproachBottom(point));
 
         Controller.get().goTo(point);
     }

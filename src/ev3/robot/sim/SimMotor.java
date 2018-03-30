@@ -29,7 +29,7 @@ public class SimMotor implements RegulatedMotor {
 
     private int speed = DEFAULT_SPEED;
 
-    public SimMotor(String name) {
+    SimMotor(String name) {
         this.name = name;
     }
 
