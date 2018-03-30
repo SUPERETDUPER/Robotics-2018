@@ -28,7 +28,7 @@ public class ColorJavaLejos {
         javaToLejosMap.put(MAP_YELLOW, lejos.robotics.Color.YELLOW);
         javaToLejosMap.put(Color.WHITE, lejos.robotics.Color.WHITE);
         javaToLejosMap.put(Color.BLACK, lejos.robotics.Color.BLACK);
-        javaToLejosMap.put(Color.LIGHTGRAY, lejos.robotics.Color.LIGHT_GRAY);
+        javaToLejosMap.put(Color.LIGHTGRAY, lejos.robotics.Color.WHITE);
     }
 
 
