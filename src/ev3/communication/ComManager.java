@@ -13,6 +13,7 @@ public class ComManager {
     private static final String LOG_TAG = ComManager.class.getSimpleName();
 
     private static PCDataSender dataSender;
+    private static DataListener dataListener;
 
     public static boolean build() {
         OutputStream connection = PCConnection.getConnection();
@@ -23,10 +24,15 @@ public class ComManager {
         }
 
         dataSender = new PCDataSender(connection);
-        DataListener dataListener = new DataListener(dataSender);
+        dataListener = new DataListener(dataSender);
         dataListener.startListening();
 
         return true;
+    }
+
+    public static void stop() {
+        dataSender.close();
+        dataListener.stopListening();
     }
 
     @Contract(pure = true)

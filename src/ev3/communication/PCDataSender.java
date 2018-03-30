@@ -4,8 +4,8 @@
 
 package ev3.communication;
 
-import common.logger.Logger;
 import common.TransmittableType;
+import common.logger.Logger;
 import common.particles.MCLData;
 import lejos.robotics.Transmittable;
 import lejos.robotics.navigation.Pose;
@@ -34,7 +34,7 @@ public final class PCDataSender implements DataSender {
                 dos.writeUTF(message);
                 dos.flush();
             } catch (IOException e) {
-                endConnection();
+                close();
                 Logger.error(LOG_TAG, "Failed to send log message");
             }
         }
@@ -59,15 +59,14 @@ public final class PCDataSender implements DataSender {
                 transmittable.dumpObject(dos);
                 dos.flush();
             } catch (IOException e) {
-                endConnection();
+                close();
                 Logger.error(LOG_TAG, "Failed to send transmittable type : " + eventType.name());
             }
         }
     }
 
-    private void endConnection() {
-        Logger.removeListener();
-
+    @Override
+    public void close() {
         if (dos != null) {
             try {
                 dos.close();

@@ -13,27 +13,41 @@ import ev3.robot.sim.SimRobot;
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
 
-    public static void main(String[] args) {
-        if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            boolean sucess = ComManager.build();
+    private static Robot robot;
 
-            if (!sucess){
-                return;
+    public static void main(String[] args) {
+        if (!initialize()) return;
+
+        runMain();
+
+        robot.getBrick().waitForUserConfirmation();
+
+        cleanUp();
+    }
+
+    private static boolean initialize() {
+        if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
+            boolean success = ComManager.build();
+
+            if (!success) {
+                return false;
             }
         }
-
-        Robot robot;
 
         if (Config.currentMode == Config.Mode.SIM) {
             robot = new SimRobot();
         } else {
             robot = new EV3Robot();
         }
+        return true;
+    }
 
-
-        robot.getPaddle().hitBlock(true);
-        robot.getBrick().waitForUserConfirmation();
+    private static void runMain() {
         //Brain.start(robot);
-//        EV3Brick.waitForUserConfirmation(); //And wait for complete
+        robot.getPaddle().hitBlock(true);
+    }
+
+    private static void cleanUp() {
+        ComManager.stop();
     }
 }

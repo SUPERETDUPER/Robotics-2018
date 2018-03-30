@@ -65,7 +65,7 @@ public final class GUI extends Application {
      * Called every new frame to redraw necessary gui
      */
     @NotNull
-    private static final AnimationTimer animationTimer = new AnimationTimer() {
+    private final AnimationTimer animationTimer = new AnimationTimer() {
         @Override
         public void handle(long now) {
             for (UpdatableLayer layer : updatableLayers.values()) {
