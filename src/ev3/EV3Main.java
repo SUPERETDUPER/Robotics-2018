@@ -35,7 +35,7 @@ final class EV3Main {
         }
 
         if (Config.currentMode == Config.Mode.SIM) {
-            robot = new SimRobot(null);
+            robot = new SimRobot();
         } else {
             robot = new EV3Robot();
         }

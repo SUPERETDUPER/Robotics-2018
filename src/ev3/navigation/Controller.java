@@ -7,6 +7,7 @@ package ev3.navigation;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
 import ev3.robot.Robot;
+import ev3.robot.sim.SimRobot;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.Pose;
@@ -69,6 +70,11 @@ public final class Controller {
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
         robotPoseProvider = new RobotPoseProvider(pilot, STARTING_POSE);
+
+        if (robot instanceof SimRobot) {
+            ((SimRobot) robot).setPoseProvider(robotPoseProvider);
+        }
+
         robotPoseProvider.startUpdater(robot.getColorSensors());
 
         navigator = new Navigator(pilot, robotPoseProvider);

@@ -4,9 +4,9 @@
 
 package ev3.robot.sim;
 
-import ev3.localization.RobotPoseProvider;
 import ev3.robot.*;
 import lejos.robotics.chassis.Chassis;
+import lejos.robotics.localization.PoseProvider;
 
 public class SimRobot implements Robot {
     private static final String LOG_TAG = SimRobot.class.getSimpleName();
@@ -14,7 +14,7 @@ public class SimRobot implements Robot {
     private static final double WHEEL_OFFSET = 81.5;
     private static final double WHEEL_DIAMETER = 55.9;
 
-    private final RobotPoseProvider robotPoseProvider;
+    private PoseProvider poseProvider;
 
     private Chassis chassis;
     private Paddle paddle;
@@ -22,8 +22,11 @@ public class SimRobot implements Robot {
     private ColorSensors colorSensors;
     private Brick brick;
 
-    public SimRobot(RobotPoseProvider robotPoseProvider) {
-        this.robotPoseProvider = robotPoseProvider;
+    public SimRobot() {
+    }
+
+    public void setPoseProvider(PoseProvider poseProvider) {
+        this.poseProvider = poseProvider;
     }
 
     @Override
@@ -56,7 +59,11 @@ public class SimRobot implements Robot {
     @Override
     public ColorSensors getColorSensors() {
         if (colorSensors == null) {
-            colorSensors = new SimColorSensors(robotPoseProvider);
+            if (poseProvider == null) {
+                return null;
+            }
+
+            colorSensors = new SimColorSensors(poseProvider);
         }
 
         return colorSensors;
