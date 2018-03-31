@@ -20,25 +20,23 @@ final class EV3Main {
 
         runMain();
 
-        robot.getBrick().waitForUserConfirmation();
+        robot.getBrick().waitForUserConfirmation();  //When code is down this can be removed
 
         cleanUp();
     }
 
     private static void initialize() {
-        if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
+        //Connect to PC unless in SOLO
+        if (Config.currentMode != Config.Mode.SOLO) {
             ComManager.startCommunication();
         }
 
-        if (Config.currentMode == Config.Mode.SIM) {
-            robot = new SimRobot();
-        } else {
-            robot = new EV3Robot();
-        }
+        //Builds either a sim or an ev3 robot depending on config
+        robot = Config.currentMode == Config.Mode.SIM ? new SimRobot() : new EV3Robot();
     }
 
     private static void runMain() {
-        Brain.start(robot);
+        new Brain(robot).start();
 //        robot.getPaddle().hitBlock(true);
     }
 

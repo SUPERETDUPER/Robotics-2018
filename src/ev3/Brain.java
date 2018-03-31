@@ -12,13 +12,16 @@ import lejos.robotics.Color;
 
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
-    private static int[] listFoodColor = new int[3];
-    private static int index = 0;
-    private static Robot robot;
 
-    static void start(Robot robot) {
-        Brain.robot = robot;
+    private int[] listFoodColor = new int[3];
+    private int index = 0;
+    private Robot robot;
 
+    public Brain(Robot robot) {
+        this.robot = robot;
+    }
+
+    void start() {
         Controller controller = robot.getController();
 
         robot.getArm().goToFoodIn(true);
@@ -54,7 +57,7 @@ class Brain {
         Logger.info(LOG_TAG, controller.getPose().toString());
     }
 
-    private static void pickupFood(int color) {
+    private void pickupFood(int color) {
         if (color != Color.NONE) {
             listFoodColor[index] = color;
             index++;
