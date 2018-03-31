@@ -4,6 +4,7 @@
 
 package ev3.localization;
 
+import common.TransmittableType;
 import common.mapping.SurfaceMap;
 import common.particles.MCLData;
 import common.particles.Particle;
@@ -33,6 +34,9 @@ class SurfaceReadingsTest {
             }
         }
 
-        new PCDataSender(ComManager.getConnection()).sendParticleData(new MCLData(particles.toArray(new Particle[0]), null));
+        new PCDataSender(ComManager.getConnection()).sendTransmittable(
+                TransmittableType.MCL_DATA,
+                new MCLData(particles.toArray(new Particle[0]), null)
+        );
     }
 }

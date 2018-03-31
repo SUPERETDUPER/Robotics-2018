@@ -6,10 +6,7 @@ package ev3.communication;
 
 import common.TransmittableType;
 import common.logger.Logger;
-import common.particles.MCLData;
 import lejos.robotics.Transmittable;
-import lejos.robotics.navigation.Pose;
-import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,18 +35,6 @@ public final class PCDataSender implements DataSender {
                 Logger.error(LOG_TAG, "Failed to send log message");
             }
         }
-    }
-
-    public void sendParticleData(@NotNull MCLData data) {
-        sendTransmittable(TransmittableType.MCL_DATA, data);
-    }
-
-    public void sendCurrentPose(@NotNull Pose currentPose) {
-        sendTransmittable(TransmittableType.CURRENT_POSE, currentPose);
-    }
-
-    public void sendPath(@NotNull Path path) {
-        sendTransmittable(TransmittableType.PATH, path);
     }
 
     public synchronized void sendTransmittable(@NotNull TransmittableType eventType, @NotNull Transmittable transmittable) {
