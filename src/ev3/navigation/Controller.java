@@ -23,7 +23,7 @@ public final class Controller implements MoveListener, NavigationListener {
     private static final double ANGULAR_SPEED_PERCENT = 0.5;
     private static final double LINEAR_SPEED_PERCENT = 0.5;
 
-    private static final Pose STARTING_POSE = new Pose(2242, 573, 180);
+    private static final Pose STARTING_POSE = new Pose(2152, 573, 180);
 
     private Navigator navigator;
     private PoseProvider robotPoseProvider;
@@ -63,8 +63,9 @@ public final class Controller implements MoveListener, NavigationListener {
 
     public void followPath(@NotNull Path path) {
         for (int i = 0; i < path.size(); i++) {
-            if (path.get(i).isHeadingRequired()) {
-                Waypoint waypoint = path.get(i);
+            Waypoint waypoint = path.get(i);
+
+            if (waypoint.isHeadingRequired()) {
                 path.set(i, new Waypoint(waypoint.x, waypoint.y, normalize(waypoint.getHeading())));
             }
         }
@@ -113,7 +114,7 @@ public final class Controller implements MoveListener, NavigationListener {
 
     @Override
     public void pathComplete(Waypoint waypoint, Pose pose, int i) {
-        Logger.info(LOG_TAG, "Path complete : " + waypoint + " pose : " + pose.toString());
+//        Logger.info(LOG_TAG, "Path complete : " + waypoint + " pose : " + pose.toString());
     }
 
     @Override

@@ -39,8 +39,8 @@ final class EV3Main {
 //        Path path = new Path();
 //        path.add(new Waypoint(242, 573));
 //        robot.getController().followPath(path);
-        robot.getController().getPilot().rotate(1080);
-//        new Brain(robot).start();
+//        robot.getController().getPilot().rotate(1080);
+        new Brain(robot).start();
 //        robot.getPaddle().hitBlock(true);
     }
 

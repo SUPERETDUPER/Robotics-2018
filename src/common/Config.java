@@ -10,7 +10,7 @@ import common.logger.Logger.LogTypes;
  * Environment specific and run specific settings
  */
 public final class Config {
-    public static final float SIM_SPEED_FACTOR = 0.4F;
+    public static final float SIM_SPEED_FACTOR = 0.7F;
     public static final String IMAGE_PATH = "res/map.png";
     public static final boolean SHOW_PARTICLE_TAILS = true;
 
@@ -20,7 +20,7 @@ public final class Config {
         SIM
     }
 
-    public static final Mode currentMode = Mode.DUAL;
+    public static final Mode currentMode = Mode.SIM;
 
     public static final float GUI_DISPLAY_RATIO = 0.8F;
     public static final String EV3_IP_ADDRESS = "10.0.1.1";
