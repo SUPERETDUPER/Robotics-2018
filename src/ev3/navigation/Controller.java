@@ -18,20 +18,27 @@ import org.jetbrains.annotations.NotNull;
 public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
-    private static final double ANGULAR_ACCELERATION = 120;
+    private static final double ANGULAR_ACCELERATION = 200;
     private static final double LINEAR_ACCELERATION = 400;
+    private static final double ANGULAR_SPEED_PERCENT = 0.5;
+    private static final double LINEAR_SPEED_PERCENT = 0.5;
+
     private static final Pose STARTING_POSE = new Pose(2242, 573, 180);
 
     private Navigator navigator;
     private PoseProvider robotPoseProvider;
+    private final MyMovePilot pilot;
 
     public Controller(Robot robot) {
         Chassis chassis = robot.getChassis();
 
-        MyMovePilot pilot = new MyMovePilot(chassis);
+        pilot = new MyMovePilot(chassis);
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
+        pilot.setLinearSpeed(pilot.getMaxLinearSpeed() * LINEAR_SPEED_PERCENT);
+        pilot.setAngularSpeed(pilot.getMaxAngularSpeed() * ANGULAR_SPEED_PERCENT);
+
         pilot.addMoveListener(this);
 
         robotPoseProvider = chassis.getPoseProvider();
@@ -49,12 +56,18 @@ public final class Controller implements MoveListener, NavigationListener {
         navigator.addNavigationListener(this);
     }
 
-    public void followPath(Path path) {
-        for (int i = 0; i < path.size(); i++) {
-            Waypoint waypoint = path.get(i);
-            path.set(i, new Waypoint(waypoint.x, waypoint.y, normalize(waypoint.getHeading())));
-        }
+    @Contract(pure = true)
+    public MyMovePilot getPilot() {
+        return pilot;
+    }
 
+    public void followPath(@NotNull Path path) {
+        for (int i = 0; i < path.size(); i++) {
+            if (path.get(i).isHeadingRequired()) {
+                Waypoint waypoint = path.get(i);
+                path.set(i, new Waypoint(waypoint.x, waypoint.y, normalize(waypoint.getHeading())));
+            }
+        }
 
         navigator.followPath(path);
 
