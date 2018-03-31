@@ -8,5 +8,5 @@ package common.logger;
  * Called when the there is a new log message
  */
 public interface LogMessageListener {
-    void notifyLogMessage(String message);
+    void notifyLogMessage(LogMessage message);
 }

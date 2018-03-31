@@ -24,19 +24,6 @@ public final class PCDataSender implements DataSender {
         dos = new DataOutputStream(outputStream);
     }
 
-    public synchronized void sendLogMessage(@NotNull String message) {
-        if (dos != null) {
-            try {
-                dos.writeByte(TransmittableType.LOG.ordinal());
-                dos.writeUTF(message);
-                dos.flush();
-            } catch (IOException e) {
-                close();
-                Logger.error(LOG_TAG, "Failed to send log message");
-            }
-        }
-    }
-
     public synchronized void sendTransmittable(@NotNull TransmittableType eventType, @NotNull Transmittable transmittable) {
         if (dos != null) {
             try {

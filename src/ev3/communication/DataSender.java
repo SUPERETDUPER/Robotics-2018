@@ -10,7 +10,5 @@ import lejos.robotics.Transmittable;
 interface DataSender {
     void sendTransmittable(TransmittableType type, Transmittable data);
 
-    void sendLogMessage(String message);
-
     void close();
 }

@@ -13,9 +13,6 @@ import org.jetbrains.annotations.NotNull;
  * If listener is set instead of printing to console notifies the listener of new log messages
  */
 public final class Logger {
-    private static final String ESCAPE_CHAR = "\u001B";
-
-    private static final String ANSI_RESET = "[0m";
     private static final String ANSI_BLACK = "[30m";
     private static final String ANSI_BRIGHT_RED = "[1;31m";
     private static final String ANSI_BLUE = "[34m";
@@ -43,50 +40,36 @@ public final class Logger {
         listener = null;
     }
 
-    @NotNull
-    private static String constructMessage(@NotNull LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
-        return ESCAPE_CHAR +
-                color +
-                type.name().toUpperCase() +
-                " : " +
-                Thread.currentThread().getName() +
-                " : " +
-                tag +
-                " : " +
-                message +
-                ESCAPE_CHAR +
-                ANSI_RESET;
-    }
-
     /**
      * If running on ev3 and using pc send to pc. Else print on brick
      *
      * @param message message to be sent
-     * @param type    type of the message. Used to check if should be printed
      */
-    private static void print(String message, @NotNull LogTypes type) {
+    private static void print(@NotNull LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
         if (type.ordinal() <= Config.IMPORTANCE_TO_PRINT.ordinal()) {
+            LogMessage logMessage = new LogMessage(type, color, tag, message);
+
             if (listener == null) {
-                System.out.println(message);
+                logMessage.printToSysOut(null);
             } else {
-                listener.notifyLogMessage(message);
+                listener.notifyLogMessage(logMessage);
             }
         }
     }
 
     public static void error(@NotNull String tag, @NotNull String message) {
-        print(constructMessage(LogTypes.ERROR, ANSI_BRIGHT_RED, tag, message), LogTypes.ERROR);
+        print(LogTypes.ERROR, ANSI_BRIGHT_RED, tag, message);
     }
 
     public static void warning(@NotNull String tag, @NotNull String message) {
-        print(constructMessage(LogTypes.WARNING, ANSI_BRIGHT_YELLOW, tag, message), LogTypes.WARNING);
+        print(LogTypes.WARNING, ANSI_BRIGHT_YELLOW, tag, message);
     }
 
     public static void info(@NotNull String tag, @NotNull String message) {
-        print(constructMessage(LogTypes.INFO, ANSI_BLUE, tag, message), LogTypes.INFO);
+        print(LogTypes.INFO, ANSI_BLUE, tag, message);
     }
 
     public static void debug(@NotNull String tag, @NotNull String message) {
-        print(constructMessage(LogTypes.DEBUG, ANSI_BLACK, tag, message), LogTypes.DEBUG);
+        print(LogTypes.DEBUG, ANSI_BLACK, tag, message);
     }
 }

@@ -5,6 +5,7 @@
 package pc.communication;
 
 import common.TransmittableType;
+import common.logger.LogMessage;
 import common.logger.Logger;
 
 import java.io.DataInputStream;
@@ -42,7 +43,9 @@ public class DataReceiver {
                 TransmittableType dataType = TransmittableType.values()[dis.readByte()];
 
                 if (dataType == TransmittableType.LOG) {
-                    System.out.println(dis.readUTF());
+                    LogMessage logMessage = new LogMessage();
+                    logMessage.loadObject(dis);
+                    logMessage.printToSysOut("From EV3 : ");
                     continue;
                 }
 

@@ -6,6 +6,7 @@ package ev3.communication;
 
 import common.Config;
 import common.TransmittableType;
+import common.logger.LogMessage;
 import common.logger.LogMessageListener;
 import common.logger.Logger;
 import common.particles.MCLData;
@@ -46,8 +47,8 @@ public class DataListener implements MCLDataListener, LogMessageListener{
     }
 
     @Override
-    public void notifyLogMessage(String message) {
-        sender.sendLogMessage("From EV3 : " + message);
+    public void notifyLogMessage(LogMessage message) {
+        sender.sendTransmittable(TransmittableType.LOG, message);
     }
 
     @Override
