@@ -12,6 +12,7 @@ import lejos.robotics.chassis.Chassis;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,6 @@ public final class Controller {
 
     private Navigator navigator;
     private PoseProvider robotPoseProvider;
-
 
     public Controller(Robot robot) {
         Chassis chassis = robot.getChassis();
@@ -49,25 +49,31 @@ public final class Controller {
         navigator = new Navigator(pilot, robotPoseProvider);
     }
 
-    public void waitForStop() {
-        while (navigator.isMoving()) {
-            ComManager.getDataSender().sendTransmittable(TransmittableType.CURRENT_POSE, robotPoseProvider.getPose());
-            Thread.yield();
-        }
-    }
-
     public void followPath(Path path) {
+        for (int i = 0; i < path.size(); i++) {
+            Waypoint waypoint = path.get(i);
+            path.set(i, new Waypoint(waypoint.x, waypoint.y, normalize(waypoint.getHeading())));
+        }
+
+
         navigator.followPath(path);
 
         ComManager.getDataSender().sendTransmittable(TransmittableType.PATH, navigator.getPath());
         waitForStop();
     }
 
+    private void waitForStop() {
+        while (navigator.isMoving()) {
+            ComManager.getDataSender().sendTransmittable(TransmittableType.CURRENT_POSE, robotPoseProvider.getPose());
+            Thread.yield();
+        }
+    }
+
 
     @Contract(pure = true)
-    private static float normalize(float heading) {
-        while (heading >= 360) heading -= 360;
-        while (heading < 0) heading += 360;
+    private static double normalize(double heading) {
+        while (heading >= 180) heading -= 360;
+        while (heading < -180) heading += 360;
         return heading;
     }
 

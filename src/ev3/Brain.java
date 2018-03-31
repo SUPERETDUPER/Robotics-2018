@@ -23,35 +23,33 @@ class Brain {
 
         robot.getArm().goToFoodIn(true);
 
-        robot.getController().followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
+        controller.followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
-        robot.getController().followPath(MapOperations.goToContainerBottomLeft(controller.getPose()));
+
+        controller.followPath(MapOperations.goToContainerBottomLeft(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
-        robot.getController().followPath(MapOperations.getPathToContainerTopLeft(controller.getPose()));
+
+        controller.followPath(MapOperations.getPathToContainerTopLeft(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
-        robot.getController().followPath(MapOperations.getPathToContainerTopRight(controller.getPose()));
+
+        controller.followPath(MapOperations.getPathToContainerTopRight(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
 
         for (int i = 0; i < 3; i++) {
             switch (listFoodColor[i]) {
                 case Color.BLUE:
-                    robot.getController().followPath(MapOperations.goToTempRegBlue(controller.getPose()));
+                    controller.followPath(MapOperations.goToTempRegBlue(controller.getPose()));
                     break;
                 case Color.GREEN:
-                    robot.getController().followPath(MapOperations.goToTempRegGreen(controller.getPose()));
+                    controller.followPath(MapOperations.goToTempRegGreen(controller.getPose()));
                     break;
                 case Color.YELLOW:
-                    robot.getController().followPath(MapOperations.goToTempRegYellow(controller.getPose()));
+                    controller.followPath(MapOperations.goToTempRegYellow(controller.getPose()));
                     break;
                 case Color.RED:
-                    robot.getController().followPath(MapOperations.goToTempRegRed(controller.getPose()));
+                    controller.followPath(MapOperations.goToTempRegRed(controller.getPose()));
             }
-
-
         }
-
-
-        controller.waitForStop();
 
         Logger.info(LOG_TAG, controller.getPose().toString());
     }
