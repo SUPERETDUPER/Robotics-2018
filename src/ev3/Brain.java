@@ -7,11 +7,8 @@ package ev3;
 import common.logger.Logger;
 import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;
-import ev3.robot.Paddle;
 import ev3.robot.Robot;
 import lejos.robotics.Color;
-
-import java.util.List;
 
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
@@ -49,6 +46,8 @@ class Brain {
                 case Color.RED:
                     MapOperations.goToTempRegRed(Controller.get().getPose());
             }
+
+
         }
 
 
@@ -57,11 +56,14 @@ class Brain {
         Logger.info(LOG_TAG, Controller.get().getPose().toString());
     }
 
-    private static void pickupFood(int tempColor) {
-        if (tempColor != Color.NONE) {
-            listFoodColor[index] = tempColor;
+    private static void pickupFood(int color) {
+        if (color != Color.NONE) {
+            listFoodColor[index] = color;
             index++;
             robot.getPaddle().hitBlock(true);
+            if (index == 1) {
+                robot.getArm().goToFoodHanging(true);
+            }
         }
     }
 }
