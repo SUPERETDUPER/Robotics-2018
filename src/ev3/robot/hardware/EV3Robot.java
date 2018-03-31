@@ -9,8 +9,6 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 
 public class EV3Robot implements Robot {
-    private static final double WHEEL_OFFSET = 81.5;
-    private static final double WHEEL_DIAMETER = 55.9;
 
     private EV3Arm arm;
     private EV3Paddle paddle;
@@ -32,9 +30,7 @@ public class EV3Robot implements Robot {
         if (chassis == null) {
             chassis = Util.buildChassis(
                     new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT),
-                    new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT),
-                    WHEEL_DIAMETER,
-                    WHEEL_OFFSET
+                    new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT)
             );
         }
 

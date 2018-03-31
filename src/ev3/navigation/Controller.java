@@ -6,10 +6,11 @@ package ev3.navigation;
 
 import common.TransmittableType;
 import ev3.communication.ComManager;
-import ev3.localization.RobotPoseProvider;
 import ev3.robot.Robot;
 import ev3.robot.sim.SimRobot;
+import lejos.robotics.chassis.Chassis;
 import lejos.robotics.geometry.Point;
+import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
@@ -25,27 +26,28 @@ public final class Controller {
     private static final Controller controller = new Controller();
 
     private Navigator navigator;
-    private RobotPoseProvider robotPoseProvider;
+    private PoseProvider robotPoseProvider;
 
     private Controller() {
 
     }
 
     public void init(@NotNull Robot robot) {
-        MyMovePilot pilot = new MyMovePilot(robot.getChassis());
+        Chassis chassis = robot.getChassis();
+        MyMovePilot pilot = new MyMovePilot(chassis);
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
-        robotPoseProvider = new RobotPoseProvider(pilot, STARTING_POSE);
+        robotPoseProvider = chassis.getPoseProvider();
 
         if (robot instanceof SimRobot) {
             ((SimRobot) robot).setPoseProvider(robotPoseProvider);
         }
 
-        ComManager.getDataListener().attachToRobotPoseProvider(robotPoseProvider);
+//        ComManager.getDataListener().attachToRobotPoseProvider(robotPoseProvider);
 
-        robotPoseProvider.startUpdater(robot.getColorSensors());
+//        robotPoseProvider.startUpdater(robot.getColorSensors());
 
         navigator = new Navigator(pilot, robotPoseProvider);
     }
@@ -58,7 +60,7 @@ public final class Controller {
 
     public void waitForStop() {
         while (navigator.isMoving()) {
-            robotPoseProvider.sendCurrentPoseToPC();
+//            robotPoseProvider.sendCurrentPoseToPC();
             Thread.yield();
         }
     }

@@ -11,9 +11,6 @@ import lejos.robotics.localization.PoseProvider;
 public class SimRobot implements Robot {
     private static final String LOG_TAG = SimRobot.class.getSimpleName();
 
-    private static final double WHEEL_OFFSET = 81.5;
-    private static final double WHEEL_DIAMETER = 55.9;
-
     private PoseProvider poseProvider;
 
     private Chassis chassis;
@@ -41,7 +38,10 @@ public class SimRobot implements Robot {
     @Override
     public Chassis getChassis() {
         if (chassis == null) {
-            chassis = Util.buildChassis(new SimMotor("leftMotor"), new SimMotor("rightMotor"), WHEEL_DIAMETER, WHEEL_OFFSET);
+            chassis = Util.buildChassis(
+                    new SimMotor("leftMotor"),
+                    new SimMotor("rightMotor")
+            );
         }
 
         return chassis;
