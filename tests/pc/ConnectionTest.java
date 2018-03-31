@@ -31,7 +31,7 @@ class ConnectionTest {
 
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
 
-        DataReceiver.init(input, new DataReceivedListener() {
+        DataReceiver dataReceiver = new DataReceiver(input, new DataReceivedListener() {
             @Override
             public void dataReceived(TransmittableType event, DataInputStream dis) throws IOException {
                 Assertions.assertEquals(event, TransmittableType.CURRENT_POSE);
@@ -43,6 +43,6 @@ class ConnectionTest {
             }
         });
 
-        DataReceiver.read();
+        dataReceiver.read();
     }
 }

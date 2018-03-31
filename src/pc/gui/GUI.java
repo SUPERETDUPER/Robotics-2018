@@ -14,8 +14,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pc.communication.DataReceivedListener;
-import pc.communication.DataReceiver;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -30,6 +30,9 @@ public final class GUI extends Application {
     private static final List<Layer> staticLayers = new ArrayList<>();
 
     private static final Map<TransmittableType, UpdatableLayer> updatableLayers = new EnumMap<>(TransmittableType.class);
+
+    @Nullable
+    private static EventHandler<WindowEvent> onWindowCloseListener;
 
     private static boolean isGUIReady = false;
 
@@ -95,20 +98,16 @@ public final class GUI extends Application {
 
         primaryStage.setScene(new Scene(root));
         primaryStage.setMaximized(true);
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                DataReceiver.stop();
-            }
-        });
-
+        primaryStage.setOnCloseRequest(onWindowCloseListener);
 
         primaryStage.show();
 
         animationTimer.start();
     }
 
-    public static void launchGUI() {
+    public static void launchGUI(@Nullable EventHandler<WindowEvent> onWindowCloseListener) {
+        GUI.onWindowCloseListener = onWindowCloseListener;
+
         new Thread() {
             @Override
             public void run() {

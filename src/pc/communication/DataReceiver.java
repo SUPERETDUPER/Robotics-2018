@@ -17,21 +17,20 @@ import java.io.InputStream;
 public class DataReceiver {
     private static final String LOG_TAG = DataReceiver.class.getSimpleName();
 
-    private static DataInputStream dis;
-    private static DataReceivedListener listenerToNotify;
+    private DataInputStream dis;
+    private DataReceivedListener listenerToNotify;
 
-    private static boolean shouldRun = false;
+    private boolean shouldRun = true;
 
-    public static void init(InputStream inputStream, DataReceivedListener listenerToNotify) {
-        dis = new DataInputStream(inputStream);
-        DataReceiver.listenerToNotify = listenerToNotify;
-        shouldRun = true;
+    public DataReceiver(InputStream inputStream, DataReceivedListener listenerToNotify) {
+        this.dis = new DataInputStream(inputStream);
+        this.listenerToNotify = listenerToNotify;
     }
 
     /**
      * Listen for data
      */
-    public static synchronized void read() {
+    public synchronized void read() {
         if (dis == null || listenerToNotify == null) {
             Logger.error(LOG_TAG, "Did not initiate reader");
             return;
@@ -56,14 +55,14 @@ public class DataReceiver {
         }
     }
 
-    public static void stop() {
+    public void stop() {
         shouldRun = false;
     }
 
     /**
      * Close the connection
      */
-    private static void close() {
+    private void close() {
         if (dis != null) {
             try {
                 dis.close();

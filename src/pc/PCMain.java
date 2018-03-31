@@ -6,6 +6,8 @@ package pc;
 
 import common.Config;
 import common.logger.Logger;
+import javafx.event.EventHandler;
+import javafx.stage.WindowEvent;
 import pc.communication.DataReceiver;
 import pc.communication.EV3Connection;
 import pc.gui.GUI;
@@ -29,10 +31,15 @@ final class PCMain {
             return;
         }
 
-        DataReceiver.init(inputStream, GUI.listener);
+        final DataReceiver dataReceiver = new DataReceiver(inputStream, GUI.listener);
 
-        GUI.launchGUI();
+        GUI.launchGUI(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                dataReceiver.stop();
+            }
+        });
 
-        DataReceiver.read();
+        dataReceiver.read();
     }
 }
