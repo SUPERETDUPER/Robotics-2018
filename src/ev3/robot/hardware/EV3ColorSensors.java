@@ -11,7 +11,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
  * Static class allowing access to color sensors
  */
 public final class EV3ColorSensors implements ColorSensors {
-    private static final EV3ColorSensor surfaceColorSensorLeft = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE);
+    private static final EV3ColorSensor surfaceColorSensorLeft = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_LEFT);
 
     @Override
     public int getColorSurfaceLeft() {
