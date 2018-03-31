@@ -4,8 +4,8 @@
 
 package pc.communication;
 
-import common.logger.Logger;
 import common.TransmittableType;
+import common.logger.Logger;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -17,12 +17,15 @@ import java.io.InputStream;
 public class DataReceiver {
     private static final String LOG_TAG = DataReceiver.class.getSimpleName();
 
-    private static DataInputStream dis = null;
-    private static DataReceivedListener listenerToNotify = null;
+    private static DataInputStream dis;
+    private static DataReceivedListener listenerToNotify;
+
+    private static boolean shouldRun = false;
 
     public static void init(InputStream inputStream, DataReceivedListener listenerToNotify) {
         dis = new DataInputStream(inputStream);
         DataReceiver.listenerToNotify = listenerToNotify;
+        shouldRun = true;
     }
 
     /**
@@ -36,7 +39,7 @@ public class DataReceiver {
 
         try {
             //noinspection InfiniteLoopStatement
-            while (true) {
+            while (shouldRun) {
                 TransmittableType dataType = TransmittableType.values()[dis.readByte()];
 
                 if (dataType == TransmittableType.LOG) {
@@ -53,10 +56,14 @@ public class DataReceiver {
         }
     }
 
+    public static void stop() {
+        shouldRun = false;
+    }
+
     /**
      * Close the connection
      */
-    public static void close() {
+    private static void close() {
         if (dis != null) {
             try {
                 dis.close();

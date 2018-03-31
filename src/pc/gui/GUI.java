@@ -31,6 +31,8 @@ public final class GUI extends Application {
 
     private static final Map<TransmittableType, UpdatableLayer> updatableLayers = new EnumMap<>(TransmittableType.class);
 
+    private static boolean isGUIReady = false;
+
     public GUI() {
         super();
 
@@ -39,6 +41,8 @@ public final class GUI extends Application {
         updatableLayers.put(TransmittableType.PATH, new PathLayer());
         updatableLayers.put(TransmittableType.CURRENT_POSE, new CurrentPoseLayer());
         updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer());
+
+        isGUIReady = true;
     }
 
     public static final DataReceivedListener listener = new DataReceivedListener() {
@@ -51,6 +55,8 @@ public final class GUI extends Application {
          */
         @Override
         public synchronized void dataReceived(@NotNull TransmittableType event, @NotNull DataInputStream dis) throws IOException {
+            while (!isGUIReady) Thread.yield(); //So that we don't try to update a layer that has not yet been created
+
             updatableLayers.get(event).update(dis);
 
             if (event == TransmittableType.CURRENT_POSE) {
@@ -92,7 +98,7 @@ public final class GUI extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                DataReceiver.close();
+                DataReceiver.stop();
             }
         });
 
