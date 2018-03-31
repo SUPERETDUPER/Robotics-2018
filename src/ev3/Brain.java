@@ -13,7 +13,7 @@ import lejos.robotics.Color;
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
-    private int[] listFoodColor = new int[3];
+    private int[] listFoodColor = {Color.NONE, Color.NONE, Color.NONE};
     private int index = 0;
     private Robot robot;
 
@@ -51,6 +51,9 @@ class Brain {
                     break;
                 case Color.RED:
                     controller.followPath(MapOperations.goToTempRegRed(controller.getPose()));
+                    break;
+                default:
+                    Logger.warning(LOG_TAG, "Could not find temp reg of color : " + listFoodColor[i]);
             }
         }
 
@@ -59,9 +62,9 @@ class Brain {
 
     private void pickupFood(int color) {
         if (color != Color.NONE) {
-            listFoodColor[index] = color;
-            index++;
+            listFoodColor[index++] = color;
             robot.getPaddle().hitBlock(true);
+
             if (index == 1) {
                 robot.getArm().goToFoodHanging(true);
             }
