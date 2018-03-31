@@ -17,34 +17,37 @@ import java.io.OutputStream;
 public final class PCDataSender implements DataSender {
     private static final String LOG_TAG = PCDataSender.class.getSimpleName();
 
-    @Nullable
-    private DataOutputStream dos;
+    @NotNull
+    private final DataOutputStream dos;
 
-    public PCDataSender(OutputStream outputStream) {
+    @Nullable
+    private final LostConnectionListener lostConnectionListener;
+
+    public PCDataSender(@NotNull OutputStream outputStream, @Nullable LostConnectionListener lostConnectionListener) {
         dos = new DataOutputStream(outputStream);
+        this.lostConnectionListener = lostConnectionListener;
     }
 
     public synchronized void sendTransmittable(@NotNull TransmittableType eventType, @NotNull Transmittable transmittable) {
-        if (dos != null) {
-            try {
-                dos.writeByte(eventType.ordinal());
-                transmittable.dumpObject(dos);
-                dos.flush();
-            } catch (IOException e) {
-                close();
-                Logger.error(LOG_TAG, "Failed to send transmittable type : " + eventType.name());
+        try {
+            dos.writeByte(eventType.ordinal());
+            transmittable.dumpObject(dos);
+            dos.flush();
+        } catch (IOException e) {
+            if (lostConnectionListener != null) {
+                lostConnectionListener.lostConnection();
             }
+
+            Logger.error(LOG_TAG, "Lost connection");
         }
     }
 
     @Override
     public void close() {
-        if (dos != null) {
-            try {
-                dos.close();
-            } catch (IOException e) {
-                Logger.error(LOG_TAG, "Could not close data output stream");
-            }
+        try {
+            dos.close();
+        } catch (IOException e) {
+            Logger.error(LOG_TAG, "Could not close data output stream");
         }
     }
 }

@@ -140,7 +140,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     public void sendCurrentPoseToPC() {
         if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            ComManager.sendTransmittable(getPose());
+            ComManager.get().sendTransmittable(getPose());
         }
     }
 

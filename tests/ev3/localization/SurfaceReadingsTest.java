@@ -34,7 +34,7 @@ class SurfaceReadingsTest {
             }
         }
 
-        new PCDataSender(ComManager.getConnection()).sendTransmittable(
+        new PCDataSender(ComManager.getConnection(), null).sendTransmittable(
                 TransmittableType.MCL_DATA,
                 new MCLData(particles.toArray(new Particle[0]), null)
         );

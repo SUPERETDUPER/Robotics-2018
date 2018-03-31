@@ -26,7 +26,7 @@ class ConnectionTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        PCDataSender dataSender = new PCDataSender(out);
+        PCDataSender dataSender = new PCDataSender(out, null);
         dataSender.sendTransmittable(TransmittableType.CURRENT_POSE, poseToSend);
 
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());

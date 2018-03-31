@@ -4,19 +4,18 @@
 
 package ev3.navigation;
 
+import common.logger.Logger;
 import ev3.communication.ComManager;
 import ev3.robot.Robot;
 import ev3.robot.sim.SimRobot;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.localization.PoseProvider;
-import lejos.robotics.navigation.Navigator;
-import lejos.robotics.navigation.Pose;
-import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public final class Controller {
+public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
     private static final double ANGULAR_ACCELERATION = 120;
@@ -33,6 +32,7 @@ public final class Controller {
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
+        pilot.addMoveListener(this);
 
         robotPoseProvider = chassis.getPoseProvider();
         robotPoseProvider.setPose(STARTING_POSE);
@@ -46,6 +46,7 @@ public final class Controller {
 //        robotPoseProvider.startUpdater(robot.getColorSensors());
 
         navigator = new Navigator(pilot, robotPoseProvider);
+        navigator.addNavigationListener(this);
     }
 
     public void followPath(Path path) {
@@ -57,13 +58,13 @@ public final class Controller {
 
         navigator.followPath(path);
 
-        ComManager.sendTransmittable(navigator.getPath());
+        ComManager.get().sendTransmittable(navigator.getPath());
         waitForStop();
     }
 
     private void waitForStop() {
         while (navigator.isMoving()) {
-            ComManager.sendTransmittable(robotPoseProvider.getPose());
+            ComManager.get().sendTransmittable(robotPoseProvider.getPose());
             Thread.yield();
         }
     }
@@ -80,5 +81,30 @@ public final class Controller {
     @NotNull
     public Pose getPose() {
         return robotPoseProvider.getPose();
+    }
+
+    @Override
+    public void moveStarted(Move move, MoveProvider moveProvider) {
+        Logger.info(LOG_TAG, "Started : " + move.toString());
+    }
+
+    @Override
+    public void moveStopped(Move move, MoveProvider moveProvider) {
+        Logger.info(LOG_TAG, "Stopped : " + move.toString());
+    }
+
+    @Override
+    public void atWaypoint(Waypoint waypoint, Pose pose, int i) {
+        Logger.info(LOG_TAG, "At waypoint : " + waypoint + " pose : " + pose.toString());
+    }
+
+    @Override
+    public void pathComplete(Waypoint waypoint, Pose pose, int i) {
+        Logger.info(LOG_TAG, "Path complete : " + waypoint + " pose : " + pose.toString());
+    }
+
+    @Override
+    public void pathInterrupted(Waypoint waypoint, Pose pose, int i) {
+        Logger.info(LOG_TAG, "Path interrupted : " + waypoint + " pose : " + pose.toString());
     }
 }

@@ -13,48 +13,78 @@ import lejos.robotics.navigation.Pose;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 
-public class ComManager {
+public class ComManager implements LostConnectionListener {
     private static final String LOG_TAG = ComManager.class.getSimpleName();
 
-    private static DataSender dataSender;
-    private static DataListener dataListener;
+    private static final ComManager mComManager = new ComManager();
 
-    public static void startCommunication() {
-        dataSender = new PCDataSender(getConnection());
-        dataListener = new DataListener(dataSender);
+    private DataSender dataSender;
+    private DataListener dataListener;
 
-        dataListener.startListening();
-    }
+    private boolean enabled = false;
 
-    public static void stop() {
-        dataSender.close();
-        dataListener.stopListening();
-    }
-
-    public static void sendTransmittable(Transmittable transmittable) {
-        TransmittableType type;
-
-        if (transmittable instanceof MCLData) {
-            type = TransmittableType.MCL_DATA;
-        } else if (transmittable instanceof Path) {
-            type = TransmittableType.PATH;
-        } else if (transmittable instanceof Pose) {
-            type = TransmittableType.CURRENT_POSE;
-        } else {
-            Logger.error(LOG_TAG, "Not a registered transmittable");
-            return;
-        }
-
-        dataSender.sendTransmittable(type, transmittable);
+    private ComManager() {
     }
 
     @Contract(pure = true)
-    public static DataListener getDataListener() {
+    public static ComManager get() {
+        return mComManager;
+    }
+
+    public synchronized void enable() {
+        dataSender = new PCDataSender(getConnection(), this);
+        dataListener = new DataListener(dataSender);
+
+        dataListener.startListening();
+
+        enabled = true;
+    }
+
+    @Override
+    public void lostConnection() {
+        stop();
+    }
+
+    public void stop() {
+        enabled = false;
+
+        if (dataSender != null) {
+            dataSender.close();
+        }
+
+        if (dataListener != null) {
+            dataListener.stopListening();
+        }
+    }
+
+    public void sendTransmittable(Transmittable transmittable) {
+        if (enabled) {
+            TransmittableType type;
+
+            if (transmittable instanceof MCLData) {
+                type = TransmittableType.MCL_DATA;
+            } else if (transmittable instanceof Path) {
+                type = TransmittableType.PATH;
+            } else if (transmittable instanceof Pose) {
+                type = TransmittableType.CURRENT_POSE;
+            } else {
+                Logger.error(LOG_TAG, "Not a registered transmittable");
+                return;
+            }
+
+            dataSender.sendTransmittable(type, transmittable);
+        }
+    }
+
+    @Contract(pure = true)
+    @Nullable
+    public DataListener getDataListener() {
         return dataListener;
     }
 
