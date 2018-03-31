@@ -11,7 +11,7 @@ import lejos.robotics.chassis.WheeledChassis;
 import org.jetbrains.annotations.NotNull;
 
 public class Util {
-    private static final double WHEEL_OFFSET = 111;
+    private static final double WHEEL_OFFSET = 55.5;
     private static final double WHEEL_DIAMETER = 81.6;
 
     @NotNull
