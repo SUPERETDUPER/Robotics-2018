@@ -18,42 +18,42 @@ class Brain {
 
     static void start(Robot robot) {
         Brain.robot = robot;
-        Controller.get().init(robot);
-        Controller.get().getPose();
+
+        Controller controller = robot.getController();
 
         robot.getArm().goToFoodIn(true);
 
-        MapOperations.goToContainerBottomRight(Controller.get().getPose());
+        MapOperations.goToContainerBottomRight(controller.getPose(), controller);
         pickupFood(robot.getColorSensors().getColorContainer());
-        MapOperations.goToContainerBottomLeft(Controller.get().getPose());
+        MapOperations.goToContainerBottomLeft(controller.getPose(), controller);
         pickupFood(robot.getColorSensors().getColorContainer());
-        MapOperations.goToContainerTopLeft(Controller.get().getPose());
+        MapOperations.goToContainerTopLeft(controller.getPose(), controller);
         pickupFood(robot.getColorSensors().getColorContainer());
-        MapOperations.goToContainerTopRight(Controller.get().getPose());
+        MapOperations.goToContainerTopRight(controller.getPose(), controller);
         pickupFood(robot.getColorSensors().getColorContainer());
 
         for (int i = 0; i < 3; i++) {
             switch (listFoodColor[i]) {
                 case Color.BLUE:
-                    MapOperations.goToTempRegBlue(Controller.get().getPose());
+                    MapOperations.goToTempRegBlue(controller.getPose(), controller);
                     break;
                 case Color.GREEN:
-                    MapOperations.goToTempRegGreen(Controller.get().getPose());
+                    MapOperations.goToTempRegGreen(controller.getPose(), controller);
                     break;
                 case Color.YELLOW:
-                    MapOperations.goToTempRegYellow(Controller.get().getPose());
+                    MapOperations.goToTempRegYellow(controller.getPose(), controller);
                     break;
                 case Color.RED:
-                    MapOperations.goToTempRegRed(Controller.get().getPose());
+                    MapOperations.goToTempRegRed(controller.getPose(), controller);
             }
 
 
         }
 
 
-        Controller.get().waitForStop();
+        controller.waitForStop();
 
-        Logger.info(LOG_TAG, Controller.get().getPose().toString());
+        Logger.info(LOG_TAG, controller.getPose().toString());
     }
 
     private static void pickupFood(int color) {

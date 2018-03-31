@@ -53,8 +53,9 @@ public final class GUI extends Application {
         public synchronized void dataReceived(@NotNull TransmittableType event, @NotNull DataInputStream dis) throws IOException {
             updatableLayers.get(event).update(dis);
 
-            if (event == TransmittableType.MCL_DATA) {
-                Pose currentPose = ((ParticleDataLayer) updatableLayers.get(TransmittableType.MCL_DATA)).getCurrentPose();
+            if (event == TransmittableType.CURRENT_POSE) {
+                Pose currentPose = ((CurrentPoseLayer) updatableLayers.get(TransmittableType.CURRENT_POSE)).getPose();
+
                 ((PathLayer) updatableLayers.get(TransmittableType.PATH)).setCurrentPose(currentPose);
             }
         }

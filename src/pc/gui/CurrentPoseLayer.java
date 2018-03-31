@@ -33,4 +33,8 @@ public class CurrentPoseLayer extends UpdatableLayer {
 
         return pose;
     }
+
+    public Pose getPose() {
+        return pose;
+    }
 }

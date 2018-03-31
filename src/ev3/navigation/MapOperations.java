@@ -22,56 +22,56 @@ public final class MapOperations {
     private static final Point CONTAINER_BOTTOM_LEFT = new Point(797.5F, 333);
     private static final Point CONTAINER_BOTTOM_RIGHT = new Point(1235.5F, 404);
 
-    public static void goToContainerTopLeft(Pose currentPose) {
-        approachLeftRight(CONTAINER_TOP_LEFT, currentPose);
+    public static void goToContainerTopLeft(Pose currentPose, Controller controller) {
+        approachLeftRight(CONTAINER_TOP_LEFT, currentPose, controller);
     }
 
-    public static void goToContainerTopRight(Pose currentPose) {
-        approachLeftRight(CONTAINER_TOP_RIGHT, currentPose);
+    public static void goToContainerTopRight(Pose currentPose, Controller controller) {
+        approachLeftRight(CONTAINER_TOP_RIGHT, currentPose, controller);
     }
 
-    public static void goToContainerBottomLeft(Pose currentPose) {
-        approachLeftRight(CONTAINER_BOTTOM_LEFT, currentPose);
+    public static void goToContainerBottomLeft(Pose currentPose, Controller controller) {
+        approachLeftRight(CONTAINER_BOTTOM_LEFT, currentPose, controller);
     }
 
-    public static void goToContainerBottomRight(Pose currentPose) {
-        approachLeftRight(CONTAINER_BOTTOM_RIGHT, currentPose);
+    public static void goToContainerBottomRight(Pose currentPose, Controller controller) {
+        approachLeftRight(CONTAINER_BOTTOM_RIGHT, currentPose, controller);
     }
 
-    public static void goToTempRegGreen(Pose currentPose) {
-        approachTopOrBottom(TEMP_REG_GREEN, currentPose);
+    public static void goToTempRegGreen(Pose currentPose, Controller controller) {
+        approachTopOrBottom(TEMP_REG_GREEN, currentPose, controller);
     }
 
-    public static void goToTempRegBlue(Pose currentPose) {
-        approachTopOrBottom(TEMP_REG_BLUE, currentPose);
+    public static void goToTempRegBlue(Pose currentPose, Controller controller) {
+        approachTopOrBottom(TEMP_REG_BLUE, currentPose, controller);
     }
 
-    public static void goToTempRegRed(Pose currentPose) {
-        approachTopOrBottom(TEMP_REG_RED, currentPose);
+    public static void goToTempRegRed(Pose currentPose, Controller controller) {
+        approachTopOrBottom(TEMP_REG_RED, currentPose, controller);
     }
 
-    public static void goToTempRegYellow(Pose currentPose) {
-        approachTopOrBottom(TEMP_REG_YELLOW, currentPose);
+    public static void goToTempRegYellow(Pose currentPose, Controller controller) {
+        approachTopOrBottom(TEMP_REG_YELLOW, currentPose, controller);
     }
 
-    private static void approachLeftRight(@NotNull Point point, Pose currentPose) {
-        goToClosest(currentPose, getApproachLeft(point), getApproachRight(point));
+    private static void approachLeftRight(@NotNull Point point, Pose currentPose, Controller controller) {
+        goToClosest(currentPose, getApproachLeft(point), getApproachRight(point), controller);
 
-        Controller.get().goTo(point);
+        controller.goTo(point);
     }
 
-    private static void approachTopOrBottom(@NotNull Point point, Pose currentPose) {
+    private static void approachTopOrBottom(@NotNull Point point, Pose currentPose, Controller controller) {
 
-        goToClosest(currentPose, getApproachTop(point), getApproachBottom(point));
+        goToClosest(currentPose, getApproachTop(point), getApproachBottom(point), controller);
 
-        Controller.get().goTo(point);
+        controller.goTo(point);
     }
 
-    private static void goToClosest(Pose currentPose, Pose option1, Pose option2) {
+    private static void goToClosest(Pose currentPose, Pose option1, Pose option2, Controller controller) {
         if (currentPose.distanceTo(option1.getLocation()) < currentPose.distanceTo(option2.getLocation())) {
-            Controller.get().goTo(option1);
+            controller.goTo(option1);
         } else {
-            Controller.get().goTo(option2);
+            controller.goTo(option2);
         }
     }
 

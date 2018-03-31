@@ -23,23 +23,21 @@ public final class Controller {
     private static final double LINEAR_ACCELERATION = 400;
     private static final Pose STARTING_POSE = new Pose(2242, 573, 180);
 
-    private static final Controller controller = new Controller();
-
     private Navigator navigator;
     private PoseProvider robotPoseProvider;
 
-    private Controller() {
 
-    }
-
-    public void init(@NotNull Robot robot) {
+    public Controller(Robot robot) {
         Chassis chassis = robot.getChassis();
+
+
         MyMovePilot pilot = new MyMovePilot(chassis);
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
 
         robotPoseProvider = chassis.getPoseProvider();
+        robotPoseProvider.setPose(STARTING_POSE);
 
         if (robot instanceof SimRobot) {
             ((SimRobot) robot).setPoseProvider(robotPoseProvider);
@@ -52,15 +50,9 @@ public final class Controller {
         navigator = new Navigator(pilot, robotPoseProvider);
     }
 
-    @NotNull
-    @Contract(pure = true)
-    public static Controller get() {
-        return controller;
-    }
-
     public void waitForStop() {
         while (navigator.isMoving()) {
-//            robotPoseProvider.sendCurrentPoseToPC();
+            ComManager.getDataSender().sendTransmittable(TransmittableType.CURRENT_POSE, robotPoseProvider.getPose());
             Thread.yield();
         }
     }
@@ -81,6 +73,7 @@ public final class Controller {
 
     private void goTo(float x, float y) {
         navigator.goTo(x, y);
+        ComManager.getDataSender().sendTransmittable(TransmittableType.CURRENT_POSE, robotPoseProvider.getPose());
         ComManager.getDataSender().sendTransmittable(TransmittableType.PATH, navigator.getPath());
         waitForStop();
     }

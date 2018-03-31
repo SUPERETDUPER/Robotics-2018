@@ -4,6 +4,7 @@
 
 package ev3.robot.hardware;
 
+import ev3.navigation.Controller;
 import ev3.robot.*;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.chassis.Chassis;
@@ -62,5 +63,10 @@ public class EV3Robot implements Robot {
         }
 
         return brick;
+    }
+
+    @Override
+    public Controller getController() {
+        return new Controller(this);
     }
 }

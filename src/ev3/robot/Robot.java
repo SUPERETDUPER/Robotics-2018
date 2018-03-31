@@ -4,6 +4,7 @@
 
 package ev3.robot;
 
+import ev3.navigation.Controller;
 import lejos.robotics.chassis.Chassis;
 
 public interface Robot {
@@ -16,4 +17,6 @@ public interface Robot {
     ColorSensors getColorSensors();
 
     Brick getBrick();
+
+    Controller getController();
 }

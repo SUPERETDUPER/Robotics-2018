@@ -32,13 +32,11 @@ class SimColorSensors implements ColorSensors {
 
     @Override
     public int getColorContainer() {
-        Pose currentPose = poseProvider.getPose();
-        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        return -1;
     }
 
     @Override
     public int getColorBoat() {
-        Pose currentPose = poseProvider.getPose();
-        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        return -1;
     }
 }
