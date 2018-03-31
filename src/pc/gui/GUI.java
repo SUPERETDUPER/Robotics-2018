@@ -36,26 +36,7 @@ public final class GUI extends Application {
 
     private static boolean isGUIReady = false;
 
-    public GUI() {
-        super();
-
-        staticLayers.add(new SurfaceMapLayer());
-
-        updatableLayers.put(TransmittableType.PATH, new PathLayer());
-        updatableLayers.put(TransmittableType.CURRENT_POSE, new CurrentPoseLayer());
-        updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer());
-
-        isGUIReady = true;
-    }
-
     public static final DataReceivedListener listener = new DataReceivedListener() {
-        /**
-         * Called when the data has changed
-         *
-         * @param event the type of new data
-         * @param dis   the data input stream to read from
-         * @throws IOException thrown when reading from dataInputStream
-         */
         @Override
         public synchronized void dataReceived(@NotNull TransmittableType event, @NotNull DataInputStream dis) throws IOException {
             while (!isGUIReady) Thread.yield(); //So that we don't try to update a layer that has not yet been created
@@ -70,7 +51,6 @@ public final class GUI extends Application {
         }
     };
 
-
     /**
      * Called every new frame to redraw necessary gui
      */
@@ -83,6 +63,19 @@ public final class GUI extends Application {
             }
         }
     };
+
+    public GUI() {
+        super();
+
+        staticLayers.add(new SurfaceMapLayer());
+
+        updatableLayers.put(TransmittableType.PATH, new PathLayer());
+        updatableLayers.put(TransmittableType.CURRENT_POSE, new CurrentPoseLayer());
+        updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer());
+
+        isGUIReady = true;
+    }
+
 
     @Override
     public void start(@NotNull Stage primaryStage) {
