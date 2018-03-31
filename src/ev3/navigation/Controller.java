@@ -9,10 +9,10 @@ import ev3.communication.ComManager;
 import ev3.robot.Robot;
 import ev3.robot.sim.SimRobot;
 import lejos.robotics.chassis.Chassis;
-import lejos.robotics.geometry.Point;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.Pose;
+import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,6 @@ public final class Controller {
 
     public Controller(Robot robot) {
         Chassis chassis = robot.getChassis();
-
 
         MyMovePilot pilot = new MyMovePilot(chassis);
 
@@ -57,26 +56,13 @@ public final class Controller {
         }
     }
 
-    void goTo(@NotNull Pose pose) {
-        goTo(pose.getX(), pose.getY(), pose.getHeading());
-    }
+    public void followPath(Path path) {
+        navigator.followPath(path);
 
-    private void goTo(float x, float y, float heading) {
-        navigator.goTo(x, y, normalize(heading));
         ComManager.getDataSender().sendTransmittable(TransmittableType.PATH, navigator.getPath());
         waitForStop();
     }
 
-    void goTo(@NotNull Point point) {
-        goTo(point.x, point.y);
-    }
-
-    private void goTo(float x, float y) {
-        navigator.goTo(x, y);
-        ComManager.getDataSender().sendTransmittable(TransmittableType.CURRENT_POSE, robotPoseProvider.getPose());
-        ComManager.getDataSender().sendTransmittable(TransmittableType.PATH, navigator.getPath());
-        waitForStop();
-    }
 
     @Contract(pure = true)
     private static float normalize(float heading) {

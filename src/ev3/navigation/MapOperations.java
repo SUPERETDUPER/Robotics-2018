@@ -6,6 +6,9 @@ package ev3.navigation;
 
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.pathfinding.Path;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public final class MapOperations {
@@ -22,74 +25,107 @@ public final class MapOperations {
     private static final Point CONTAINER_BOTTOM_LEFT = new Point(797.5F, 333);
     private static final Point CONTAINER_BOTTOM_RIGHT = new Point(1235.5F, 404);
 
-    public static void goToContainerTopLeft(Pose currentPose, Controller controller) {
-        approachLeftRight(CONTAINER_TOP_LEFT, currentPose, controller);
+    @Contract(pure = true)
+    @NotNull
+    public static Path getPathToContainerTopLeft(@NotNull Pose currentPose) {
+        return approachLeftRight(CONTAINER_TOP_LEFT, currentPose);
     }
 
-    public static void goToContainerTopRight(Pose currentPose, Controller controller) {
-        approachLeftRight(CONTAINER_TOP_RIGHT, currentPose, controller);
+    @Contract(pure = true)
+    @NotNull
+    public static Path getPathToContainerTopRight(@NotNull Pose currentPose) {
+        return approachLeftRight(CONTAINER_TOP_RIGHT, currentPose);
     }
 
-    public static void goToContainerBottomLeft(Pose currentPose, Controller controller) {
-        approachLeftRight(CONTAINER_BOTTOM_LEFT, currentPose, controller);
+    @Contract(pure = true)
+    @NotNull
+    public static Path goToContainerBottomLeft(@NotNull Pose currentPose) {
+        return approachLeftRight(CONTAINER_BOTTOM_LEFT, currentPose);
     }
 
-    public static void goToContainerBottomRight(Pose currentPose, Controller controller) {
-        approachLeftRight(CONTAINER_BOTTOM_RIGHT, currentPose, controller);
+    @Contract(pure = true)
+    @NotNull
+    public static Path goToContainerBottomRight(@NotNull Pose currentPose) {
+        return approachLeftRight(CONTAINER_BOTTOM_RIGHT, currentPose);
     }
 
-    public static void goToTempRegGreen(Pose currentPose, Controller controller) {
-        approachTopOrBottom(TEMP_REG_GREEN, currentPose, controller);
+    @Contract(pure = true)
+    @NotNull
+    public static Path goToTempRegGreen(@NotNull Pose currentPose) {
+        return approachTopOrBottom(TEMP_REG_GREEN, currentPose);
     }
 
-    public static void goToTempRegBlue(Pose currentPose, Controller controller) {
-        approachTopOrBottom(TEMP_REG_BLUE, currentPose, controller);
+    @Contract(pure = true)
+    @NotNull
+    public static Path goToTempRegBlue(@NotNull Pose currentPose) {
+        return approachTopOrBottom(TEMP_REG_BLUE, currentPose);
     }
 
-    public static void goToTempRegRed(Pose currentPose, Controller controller) {
-        approachTopOrBottom(TEMP_REG_RED, currentPose, controller);
+    @Contract(pure = true)
+    @NotNull
+    public static Path goToTempRegRed(@NotNull Pose currentPose) {
+        return approachTopOrBottom(TEMP_REG_RED, currentPose);
     }
 
-    public static void goToTempRegYellow(Pose currentPose, Controller controller) {
-        approachTopOrBottom(TEMP_REG_YELLOW, currentPose, controller);
+    @Contract(pure = true)
+    @NotNull
+    public static Path goToTempRegYellow(@NotNull Pose currentPose) {
+        return approachTopOrBottom(TEMP_REG_YELLOW, currentPose);
     }
 
-    private static void approachLeftRight(@NotNull Point point, Pose currentPose, Controller controller) {
-        goToClosest(currentPose, getApproachLeft(point), getApproachRight(point), controller);
+    @NotNull
+    @Contract(pure = true)
+    private static Path approachLeftRight(@NotNull Point point, @NotNull Pose currentPose) {
+        Path path = goToClosest(currentPose, getApproachLeft(point), getApproachRight(point));
 
-        controller.goTo(point);
+        path.add(new Waypoint(point));
+
+        return path;
     }
 
-    private static void approachTopOrBottom(@NotNull Point point, Pose currentPose, Controller controller) {
+    @NotNull
+    @Contract(pure = true)
+    private static Path approachTopOrBottom(@NotNull Point point, @NotNull Pose currentPose) {
+        Path path = goToClosest(currentPose, getApproachTop(point), getApproachBottom(point));
 
-        goToClosest(currentPose, getApproachTop(point), getApproachBottom(point), controller);
+        path.add(new Waypoint(point));
 
-        controller.goTo(point);
+        return path;
     }
 
-    private static void goToClosest(Pose currentPose, Pose option1, Pose option2, Controller controller) {
+    @NotNull
+    @Contract(pure = true)
+    private static Path goToClosest(@NotNull Pose currentPose, @NotNull Pose option1, @NotNull Pose option2) {
+        Path path = new Path();
+
         if (currentPose.distanceTo(option1.getLocation()) < currentPose.distanceTo(option2.getLocation())) {
-            controller.goTo(option1);
+            path.add(new Waypoint(option1));
         } else {
-            controller.goTo(option2);
+            path.add(new Waypoint(option2));
         }
+
+        return path;
     }
 
+    @Contract(pure = true)
     @NotNull
     private static Pose getApproachRight(@NotNull Point point) {
         return getApproachAt(point, 180);
     }
 
+    @Contract(pure = true)
     @NotNull
     private static Pose getApproachTop(@NotNull Point point) {
         return getApproachAt(point, 270);
     }
 
+    @Contract(pure = true)
     @NotNull
     private static Pose getApproachLeft(@NotNull Point point) {
         return getApproachAt(point, 0);
     }
 
+    @Contract(pure = true)
     @NotNull
     private static Pose getApproachBottom(@NotNull Point point) {
         return getApproachAt(point, 90);
@@ -103,6 +139,7 @@ public final class MapOperations {
      * @return pose to approach point at angle
      */
     @NotNull
+    @Contract(pure = true)
     private static Pose getApproachAt(@NotNull Point point, float angle) {
         Point approachPoint = point.pointAt(APPROACH_DIST, angle + 180);
 

@@ -4,12 +4,11 @@
 
 package ev3.robot.sim;
 
-import ev3.navigation.Controller;
 import ev3.robot.*;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.localization.PoseProvider;
 
-public class SimRobot implements Robot {
+public class SimRobot extends Robot {
     private static final String LOG_TAG = SimRobot.class.getSimpleName();
 
     private PoseProvider poseProvider;
@@ -77,10 +76,5 @@ public class SimRobot implements Robot {
         }
 
         return brick;
-    }
-
-    @Override
-    public Controller getController() {
-        return new Controller(this);
     }
 }

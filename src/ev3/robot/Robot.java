@@ -7,16 +7,26 @@ package ev3.robot;
 import ev3.navigation.Controller;
 import lejos.robotics.chassis.Chassis;
 
-public interface Robot {
-    Arm getArm();
+public abstract class Robot {
+    private Controller controller;
 
-    Chassis getChassis();
+    public abstract Arm getArm();
 
-    Paddle getPaddle();
+    public abstract Chassis getChassis();
 
-    ColorSensors getColorSensors();
+    public abstract Paddle getPaddle();
 
-    Brick getBrick();
+    public abstract ColorSensors getColorSensors();
 
-    Controller getController();
+    public abstract Brick getBrick();
+
+    public Controller getController() {
+        if (controller == null) {
+            controller = new Controller(this);
+        }
+
+        return controller;
+    }
+
+    ;
 }

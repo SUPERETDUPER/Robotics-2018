@@ -23,28 +23,28 @@ class Brain {
 
         robot.getArm().goToFoodIn(true);
 
-        MapOperations.goToContainerBottomRight(controller.getPose(), controller);
+        robot.getController().followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
-        MapOperations.goToContainerBottomLeft(controller.getPose(), controller);
+        robot.getController().followPath(MapOperations.goToContainerBottomLeft(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
-        MapOperations.goToContainerTopLeft(controller.getPose(), controller);
+        robot.getController().followPath(MapOperations.getPathToContainerTopLeft(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
-        MapOperations.goToContainerTopRight(controller.getPose(), controller);
+        robot.getController().followPath(MapOperations.getPathToContainerTopRight(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
 
         for (int i = 0; i < 3; i++) {
             switch (listFoodColor[i]) {
                 case Color.BLUE:
-                    MapOperations.goToTempRegBlue(controller.getPose(), controller);
+                    robot.getController().followPath(MapOperations.goToTempRegBlue(controller.getPose()));
                     break;
                 case Color.GREEN:
-                    MapOperations.goToTempRegGreen(controller.getPose(), controller);
+                    robot.getController().followPath(MapOperations.goToTempRegGreen(controller.getPose()));
                     break;
                 case Color.YELLOW:
-                    MapOperations.goToTempRegYellow(controller.getPose(), controller);
+                    robot.getController().followPath(MapOperations.goToTempRegYellow(controller.getPose()));
                     break;
                 case Color.RED:
-                    MapOperations.goToTempRegRed(controller.getPose(), controller);
+                    robot.getController().followPath(MapOperations.goToTempRegRed(controller.getPose()));
             }
 
 
