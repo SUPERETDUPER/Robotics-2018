@@ -5,7 +5,12 @@
 package ev3.communication;
 
 import common.Config;
+import common.TransmittableType;
 import common.logger.Logger;
+import common.particles.MCLData;
+import lejos.robotics.Transmittable;
+import lejos.robotics.navigation.Pose;
+import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,9 +36,21 @@ public class ComManager {
         dataListener.stopListening();
     }
 
-    @Contract(pure = true)
-    public static DataSender getDataSender() {
-        return dataSender;
+    public static void sendTransmittable(Transmittable transmittable) {
+        TransmittableType type;
+
+        if (transmittable instanceof MCLData) {
+            type = TransmittableType.MCL_DATA;
+        } else if (transmittable instanceof Path) {
+            type = TransmittableType.PATH;
+        } else if (transmittable instanceof Pose) {
+            type = TransmittableType.CURRENT_POSE;
+        } else {
+            Logger.error(LOG_TAG, "Not a registered transmittable");
+            return;
+        }
+
+        dataSender.sendTransmittable(type, transmittable);
     }
 
     @Contract(pure = true)

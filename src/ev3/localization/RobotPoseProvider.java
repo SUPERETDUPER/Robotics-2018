@@ -5,7 +5,6 @@
 package ev3.localization;
 
 import common.Config;
-import common.TransmittableType;
 import common.logger.Logger;
 import common.particles.MCLData;
 import ev3.communication.ComManager;
@@ -141,7 +140,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     public void sendCurrentPoseToPC() {
         if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            ComManager.getDataSender().sendTransmittable(TransmittableType.CURRENT_POSE, getPose());
+            ComManager.sendTransmittable(getPose());
         }
     }
 

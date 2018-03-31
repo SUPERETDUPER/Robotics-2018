@@ -4,7 +4,6 @@
 
 package ev3.navigation;
 
-import common.TransmittableType;
 import ev3.communication.ComManager;
 import ev3.robot.Robot;
 import ev3.robot.sim.SimRobot;
@@ -58,13 +57,13 @@ public final class Controller {
 
         navigator.followPath(path);
 
-        ComManager.getDataSender().sendTransmittable(TransmittableType.PATH, navigator.getPath());
+        ComManager.sendTransmittable(navigator.getPath());
         waitForStop();
     }
 
     private void waitForStop() {
         while (navigator.isMoving()) {
-            ComManager.getDataSender().sendTransmittable(TransmittableType.CURRENT_POSE, robotPoseProvider.getPose());
+            ComManager.sendTransmittable(robotPoseProvider.getPose());
             Thread.yield();
         }
     }
