@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ImageSaver" type="LejosRunConfigurationType" factoryName="LeJOS">
+    <option name="MAIN_CLASS_NAME" value="imageuploader.EV3" />
+    <module name="Robotics" />
+    <method />
+  </configuration>
+</component>
