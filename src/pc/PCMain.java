@@ -24,10 +24,10 @@ final class PCMain {
             return;
         }
 
-        InputStream inputStream = EV3Connection.getConnection();
+        InputStream inputStream = EV3Connection.getInputStream(EV3Connection.getIPAddress());
 
         if (inputStream == null) {
-            Logger.error(LOG_TAG, "Could not getConnection to ev3");
+            Logger.error(LOG_TAG, "Could not getOutputStream to ev3");
             return;
         }
 

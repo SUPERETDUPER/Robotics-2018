@@ -4,6 +4,7 @@
 
 package ev3.robot.sim;
 
+import common.mapping.SurfaceMap;
 import ev3.robot.*;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.localization.PoseProvider;
@@ -18,12 +19,17 @@ public class SimRobot extends Robot {
     private Arm arm;
     private ColorSensors colorSensors;
     private Brick brick;
+    private SurfaceMap surfaceMap;
 
     public SimRobot() {
     }
 
     public void setPoseProvider(PoseProvider poseProvider) {
         this.poseProvider = poseProvider;
+    }
+
+    public void setSurfaceMap(SurfaceMap surfaceMap) {
+        this.surfaceMap = surfaceMap;
     }
 
     @Override
@@ -63,7 +69,7 @@ public class SimRobot extends Robot {
                 return null;
             }
 
-            colorSensors = new SimColorSensors(poseProvider);
+            colorSensors = new SimColorSensors(poseProvider, surfaceMap);
         }
 
         return colorSensors;

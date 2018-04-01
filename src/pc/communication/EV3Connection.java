@@ -21,12 +21,13 @@ public class EV3Connection {
 
     /**
      * @return the input stream of the connection
+     * @param ipAddress
      */
-    public static InputStream getConnection() {
-        Logger.info(LOG_TAG, "Attempting to getConnection to EV3 ...");
+    public static InputStream getInputStream(String ipAddress) {
+        Logger.info(LOG_TAG, "Attempting to getOutputStream to EV3 ...");
         for (int attempt = 0; attempt < 6; attempt++) {
             try {
-                InputStream inputStream = new Socket(getIPAddress(), Config.PORT_TO_CONNECT_ON_EV3).getInputStream();
+                InputStream inputStream = new Socket(ipAddress, Config.PORT_TO_CONNECT_ON_EV3).getInputStream();
 
                 Logger.info(LOG_TAG, "Connected to PCDataSender");
 
@@ -37,13 +38,13 @@ public class EV3Connection {
             }
         }
 
-        Logger.warning(LOG_TAG, "Failed to getConnection");
+        Logger.warning(LOG_TAG, "Failed to getOutputStream");
 
         return null;
     }
 
     @NotNull
-    private static String getIPAddress() {
+    public static String getIPAddress() {
         return Config.currentMode == Config.Mode.SIM ? "localhost" : Config.EV3_IP_ADDRESS;
     }
 }

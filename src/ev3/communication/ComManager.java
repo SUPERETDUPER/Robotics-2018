@@ -38,7 +38,7 @@ public class ComManager implements LostConnectionListener {
     }
 
     public synchronized void enable() {
-        dataSender = new PCDataSender(getConnection(), this);
+        dataSender = new PCDataSender(getOutputStream(), this);
         dataListener = new DataListener(dataSender);
 
         dataListener.startListening();
@@ -89,7 +89,7 @@ public class ComManager implements LostConnectionListener {
     }
 
     @NotNull
-    public static OutputStream getConnection() {
+    public static OutputStream getOutputStream() {
         Logger.info(LOG_TAG, "Waiting for PC to connect to EV3...");
 
         OutputStream outputStream;

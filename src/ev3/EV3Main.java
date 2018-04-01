@@ -20,7 +20,7 @@ final class EV3Main {
 
         runMain();
 
-//        robot.getBrick().waitForUserConfirmation();  //When code is down this can be removed
+        robot.getBrick().waitForUserConfirmation();  //When code is down this can be removed
 
         cleanUp();
     }
@@ -36,12 +36,7 @@ final class EV3Main {
     }
 
     private static void runMain() {
-//        Path path = new Path();
-//        path.add(new Waypoint(242, 573));
-//        robot.getController().followPath(path);
-//        robot.getController().getPilot().rotate(1080);
         new Brain(robot).start();
-//        robot.getPaddle().hitBlock(true);
     }
 
     private static void cleanUp() {

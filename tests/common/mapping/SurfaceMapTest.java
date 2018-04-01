@@ -4,6 +4,7 @@
 
 package common.mapping;
 
+import common.Config;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,11 +12,11 @@ class SurfaceMapTest {
 
     @Test
     void getHeight() {
-        Assertions.assertEquals(SurfaceMap.getHeight(), 1143);
+        Assertions.assertEquals(new SurfaceMap(Config.PC_IMAGE_PATH).getHeight(), 1143);
     }
 
     @Test
     void getWidth() {
-        Assertions.assertEquals(SurfaceMap.getWidth(), 2362);
+        Assertions.assertEquals(new SurfaceMap(Config.PC_IMAGE_PATH).getWidth(), 2362);
     }
 }

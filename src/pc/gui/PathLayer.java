@@ -20,6 +20,10 @@ public final class PathLayer extends UpdatableLayer {
     private Pose currentPose;
     private Path path = new Path();
 
+    public PathLayer(int width, int height) {
+        super(width, height);
+    }
+
     public void setCurrentPose(Pose currentPose) {
         this.currentPose = currentPose;
     }

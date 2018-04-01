@@ -15,6 +15,10 @@ import java.io.IOException;
 public abstract class UpdatableLayer extends Layer {
     private boolean dataNew = true;
 
+    public UpdatableLayer(int width, int height) {
+        super(width, height);
+    }
+
     public void update(DataInputStream dataInputStream) throws IOException {
         getContent().loadObject(dataInputStream);
         dataNew = true;

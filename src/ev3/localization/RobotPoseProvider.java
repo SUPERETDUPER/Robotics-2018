@@ -6,6 +6,7 @@ package ev3.localization;
 
 import common.Config;
 import common.logger.Logger;
+import common.mapping.SurfaceMap;
 import common.particles.MCLData;
 import ev3.communication.ComManager;
 import ev3.navigation.Readings;
@@ -33,6 +34,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @NotNull
     private final MoveProvider mp;
+    private final SurfaceMap surfaceMap;
     @NotNull
     private MCLData data;
 
@@ -46,9 +48,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Nullable
     private Move completedMove;
 
-    public RobotPoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose currentPose) {
+    public RobotPoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose currentPose, SurfaceMap surfaceMap) {
         this.mp = moveProvider;
-        this.data = new MCLData(Util.getNewParticleSet(currentPose, NUM_PARTICLES), currentPose);
+        this.surfaceMap = surfaceMap;
+        this.data = new MCLData(Util.getNewParticleSet(currentPose, NUM_PARTICLES, this.surfaceMap), currentPose);
 
         completedMove = getCurrentCompletedMove();
 
@@ -87,7 +90,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data = new MCLData(Util.getNewParticleSet(pose, NUM_PARTICLES), pose);
+        data = new MCLData(Util.getNewParticleSet(pose, NUM_PARTICLES, surfaceMap), pose);
         completedMove = getCurrentCompletedMove();
 
         notifyUpdate();
@@ -170,7 +173,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         public void run() {
             //noinspection InfiniteLoopStatement
             while (true) {
-                RobotPoseProvider.this.update(new SurfaceReadings(colorSensors.getColorSurfaceLeft()));
+                RobotPoseProvider.this.update(new SurfaceReadings(colorSensors.getColorSurfaceLeft(), surfaceMap));
 
                 Delay.msDelay(100);
             }

@@ -4,7 +4,9 @@
 
 package ev3.navigation;
 
+import common.Config;
 import common.logger.Logger;
+import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
 import ev3.robot.Robot;
 import ev3.robot.sim.SimRobot;
@@ -28,6 +30,7 @@ public final class Controller implements MoveListener, NavigationListener {
     private Navigator navigator;
     private PoseProvider robotPoseProvider;
     private final MyMovePilot pilot;
+    private final SurfaceMap surfaceMap = new SurfaceMap(Config.currentMode == Config.Mode.SIM ? Config.PC_IMAGE_PATH : Config.EV3_IMAGE_PATH);
 
     public Controller(Robot robot) {
         Chassis chassis = robot.getChassis();
@@ -43,12 +46,18 @@ public final class Controller implements MoveListener, NavigationListener {
 
         robotPoseProvider = chassis.getPoseProvider();
         robotPoseProvider.setPose(STARTING_POSE);
+//        robotPoseProvider = new RobotPoseProvider(pilot, STARTING_POSE, surfaceMap);
 
         if (robot instanceof SimRobot) {
             ((SimRobot) robot).setPoseProvider(robotPoseProvider);
+            ((SimRobot) robot).setSurfaceMap(surfaceMap);
         }
 
-//        ComManager.getDataListener().attachToRobotPoseProvider(robotPoseProvider);
+//        DataListener dataListener = ComManager.get().getDataListener();
+//
+//        if (dataListener != null) {
+//            dataListener.attachToRobotPoseProvider(robotPoseProvider);
+//        }
 
 //        robotPoseProvider.startUpdater(robot.getColorSensors());
 

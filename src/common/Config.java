@@ -11,7 +11,8 @@ import common.logger.Logger.LogTypes;
  */
 public final class Config {
     public static final float SIM_SPEED_FACTOR = 0.7F;
-    public static final String IMAGE_PATH = "res/map.png";
+    public static final String PC_IMAGE_PATH = "res/map.png";
+    public static final String EV3_IMAGE_PATH = "/map.png";
     public static final boolean SHOW_PARTICLE_TAILS = true;
 
     public enum Mode {

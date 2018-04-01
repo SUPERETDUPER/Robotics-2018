@@ -4,8 +4,7 @@
 
 package common.mapping;
 
-import javafx.scene.paint.Color;
-
+import java.awt.*;
 import java.util.HashMap;
 
 /**
@@ -16,10 +15,10 @@ public class ColorJavaLejos {
 
     private static final HashMap<Color, Integer> javaToLejosMap = new HashMap<>();
 
-    public static final Color MAP_RED = Color.rgb(237, 28, 36);
-    public static final Color MAP_GREEN = Color.rgb(0, 172, 70);
-    public static final Color MAP_BLUE = Color.rgb(0, 117, 191);
-    public static final Color MAP_YELLOW = Color.rgb(255, 205, 3);
+    public static final Color MAP_RED = new Color(237, 28, 36);
+    public static final Color MAP_GREEN = new Color(0, 172, 70);
+    public static final Color MAP_BLUE = new Color(0, 117, 191);
+    public static final Color MAP_YELLOW = new Color(255, 205, 3);
 
     static {
         javaToLejosMap.put(MAP_RED, lejos.robotics.Color.RED);
@@ -28,9 +27,8 @@ public class ColorJavaLejos {
         javaToLejosMap.put(MAP_YELLOW, lejos.robotics.Color.YELLOW);
         javaToLejosMap.put(Color.WHITE, lejos.robotics.Color.WHITE);
         javaToLejosMap.put(Color.BLACK, lejos.robotics.Color.BLACK);
-        javaToLejosMap.put(Color.LIGHTGRAY, lejos.robotics.Color.WHITE);
+        javaToLejosMap.put(Color.LIGHT_GRAY, lejos.robotics.Color.WHITE);
     }
-
 
     static int getLejosColor(Color color) {
         return javaToLejosMap.get(color);

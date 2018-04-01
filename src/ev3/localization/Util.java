@@ -188,7 +188,7 @@ final class Util {
      */
     @Contract(pure = true)
     @NotNull
-    static Particle[] getNewParticleSet(@NotNull Pose centerPose, int numParticles) {
+    static Particle[] getNewParticleSet(@NotNull Pose centerPose, int numParticles, SurfaceMap surfaceMap) {
         Particle[] newParticles = new Particle[numParticles];
 
         float totalWeight = 0;
@@ -208,7 +208,7 @@ final class Util {
 
                 x = centerPose.getX() + radiusFromCenter * (float) Math.cos(thetaInRad);
                 y = centerPose.getY() + radiusFromCenter * (float) Math.sin(thetaInRad);
-            } while (!SurfaceMap.contains((int) x, (int) y));
+            } while (!surfaceMap.contains((int) x, (int) y));
 
             float randomFactorAngle = (float) random.nextGaussian() / 2;
 

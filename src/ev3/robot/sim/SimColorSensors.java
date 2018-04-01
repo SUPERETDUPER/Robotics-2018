@@ -13,21 +13,23 @@ import org.jetbrains.annotations.NotNull;
 class SimColorSensors implements ColorSensors {
     @NotNull
     private final PoseProvider poseProvider;
+    private final SurfaceMap surfaceMap;
 
-    SimColorSensors(@NotNull PoseProvider poseProvider) {
+    SimColorSensors(@NotNull PoseProvider poseProvider, SurfaceMap surfaceMap) {
         this.poseProvider = poseProvider;
+        this.surfaceMap = surfaceMap;
     }
 
     @Override
     public int getColorSurfaceLeft() {
         Pose currentPose = poseProvider.getPose();
-        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        return surfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
     }
 
     @Override
     public int getColorSurfaceRight() {
         Pose currentPose = poseProvider.getPose();
-        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        return surfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
     }
 
     @Override

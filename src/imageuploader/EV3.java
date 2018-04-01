@@ -27,7 +27,7 @@ public class EV3 {
             return;
         }
 
-        File file = new File("/map.png");
+        File file = new File(Config.EV3_IMAGE_PATH);
         System.out.println("Create file");
 
         try {

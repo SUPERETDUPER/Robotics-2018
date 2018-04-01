@@ -17,9 +17,12 @@ public class EdgeReadings implements Readings {
     private final int previousColor;
     private final int currentColor;
 
-    public EdgeReadings(int previousColor, int currentColor) {
+    private final SurfaceMap surfaceMap;
+
+    public EdgeReadings(int previousColor, int currentColor, SurfaceMap surfaceMap) {
         this.previousColor = previousColor;
         this.currentColor = currentColor;
+        this.surfaceMap = surfaceMap;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class EdgeReadings implements Readings {
                 if (location.distance(x, y) < RADIUS) { //If (x,y) within circle
                     totalPixels++;
 
-                    int colorAtPoint = SurfaceMap.getColorAtPoint(x, y);
+                    int colorAtPoint = surfaceMap.getColorAtPoint(x, y);
 
                     if (colorAtPoint == previousColor) {
                         previousColorPixels++;

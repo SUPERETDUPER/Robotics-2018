@@ -4,8 +4,8 @@
 
 package pc.gui;
 
-import common.particles.Particle;
 import common.particles.MCLData;
+import common.particles.Particle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
@@ -19,6 +19,10 @@ public class ParticleDataLayer extends UpdatableLayer {
     private static final String LOG_TAG = ParticleDataLayer.class.getSimpleName();
 
     private final MCLData data = new MCLData(null, null);
+
+    public ParticleDataLayer(int width, int height) {
+        super(width, height);
+    }
 
     @Override
     synchronized void displayOnGui(@NotNull GraphicsContext g) {

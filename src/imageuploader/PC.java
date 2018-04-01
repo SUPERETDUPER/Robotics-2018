@@ -28,7 +28,7 @@ public class PC {
         }
 
         try {
-            BufferedImage image = ImageIO.read(new File(Config.IMAGE_PATH));
+            BufferedImage image = ImageIO.read(new File(Config.PC_IMAGE_PATH));
             ImageIO.write(image, "png", outputStream);
 
         } catch (IOException e) {

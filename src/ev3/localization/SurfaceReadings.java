@@ -18,9 +18,11 @@ public class SurfaceReadings implements Readings {
     private static final int RADIUS = 10;
 
     private final int color;
+    private SurfaceMap surfaceMap;
 
-    public SurfaceReadings(int color) {
+    public SurfaceReadings(int color, SurfaceMap surfaceMap) {
         this.color = color;
+        this.surfaceMap = surfaceMap;
     }
 
     public float calculateWeight(@NotNull Pose pose) {
@@ -32,10 +34,10 @@ public class SurfaceReadings implements Readings {
         //Loop through every pixel in the circle
         for (int x = (int) location.x - RADIUS; x <= location.x + RADIUS; x++) {
             for (int y = (int) location.y - RADIUS; y <= location.y + RADIUS; y++) {
-                if (location.distance(x, y) < RADIUS && SurfaceMap.contains(x, y)) { //If (x,y) within circle
+                if (location.distance(x, y) < RADIUS && surfaceMap.contains(x, y)) { //If (x,y) within circle
                     totalPixels++;
 
-                    if (SurfaceMap.getColorAtPoint(x, y) == color) matchingPixels++;
+                    if (surfaceMap.getColorAtPoint(x, y) == color) matchingPixels++;
                 }
             }
         }

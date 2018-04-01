@@ -4,6 +4,7 @@
 
 package ev3.localization;
 
+import common.Config;
 import common.TransmittableType;
 import common.mapping.SurfaceMap;
 import common.particles.MCLData;
@@ -25,16 +26,17 @@ class SurfaceReadingsTest {
     void readingsAcrossTheMap() {
         ArrayList<Particle> particles = new ArrayList<>();
 
-        SurfaceReadings readings = new SurfaceReadings(Color.WHITE);
+        SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
+        SurfaceReadings readings = new SurfaceReadings(Color.WHITE, surfaceMap);
 
-        for (int x = 0; x < SurfaceMap.getWidth(); x += 10) {
-            for (int y = 0; y < SurfaceMap.getHeight(); y += 10) {
+        for (int x = 0; x < surfaceMap.getWidth(); x += 10) {
+            for (int y = 0; y < surfaceMap.getHeight(); y += 10) {
                 Pose pose = new Pose(x, y, 0);
                 particles.add(new Particle(x, y, 0, readings.calculateWeight(pose)));
             }
         }
 
-        new PCDataSender(ComManager.getConnection(), null).sendTransmittable(
+        new PCDataSender(ComManager.getOutputStream(), null).sendTransmittable(
                 TransmittableType.MCL_DATA,
                 new MCLData(particles.toArray(new Particle[0]), null)
         );

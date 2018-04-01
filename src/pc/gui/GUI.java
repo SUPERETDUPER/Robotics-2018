@@ -4,7 +4,9 @@
 
 package pc.gui;
 
+import common.Config;
 import common.TransmittableType;
+import common.mapping.SurfaceMap;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -67,11 +69,13 @@ public final class GUI extends Application {
     public GUI() {
         super();
 
-        staticLayers.add(new SurfaceMapLayer());
+        SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
 
-        updatableLayers.put(TransmittableType.PATH, new PathLayer());
-        updatableLayers.put(TransmittableType.CURRENT_POSE, new CurrentPoseLayer());
-        updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer());
+        staticLayers.add(new SurfaceMapLayer(surfaceMap));
+
+        updatableLayers.put(TransmittableType.PATH, new PathLayer(surfaceMap.getWidth(), surfaceMap.getHeight()));
+        updatableLayers.put(TransmittableType.CURRENT_POSE, new CurrentPoseLayer(surfaceMap.getWidth(), surfaceMap.getHeight()));
+        updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer(surfaceMap.getWidth(), surfaceMap.getHeight()));
 
         isGUIReady = true;
     }
@@ -83,6 +87,7 @@ public final class GUI extends Application {
 
         for (Layer staticLayer : staticLayers) {
             root.getChildren().add(staticLayer);
+            staticLayer.draw();
         }
 
         for (UpdatableLayer updatableLayer : updatableLayers.values()) {
