@@ -4,6 +4,8 @@
 
 package common.mapping;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.util.HashMap;
 
@@ -13,6 +15,7 @@ import java.util.HashMap;
 public class ColorJavaLejos {
     private static final String LOG_TAG = ColorJavaLejos.class.getSimpleName();
 
+    @NotNull
     private static final HashMap<Color, Integer> javaToLejosMap = new HashMap<>();
 
     public static final Color MAP_RED = new Color(237, 28, 36);

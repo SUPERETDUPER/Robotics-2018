@@ -4,17 +4,18 @@
 
 package pc.gui;
 
-import common.mapping.SurfaceMap;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.GraphicsContext;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.image.BufferedImage;
+
 
 public class SurfaceMapLayer extends Layer {
 
-    private final SurfaceMap surfaceMap;
+    private final BufferedImage surfaceMap;
 
-    public SurfaceMapLayer(SurfaceMap surfaceMap) {
+    public SurfaceMapLayer(BufferedImage surfaceMap) {
         super(surfaceMap.getWidth(), surfaceMap.getHeight());
 
         this.surfaceMap = surfaceMap;
@@ -22,7 +23,7 @@ public class SurfaceMapLayer extends Layer {
 
     @Override
     void displayOnGui(@NotNull GraphicsContext g) {
-        g.drawImage(SwingFXUtils.toFXImage(surfaceMap.getImage(), null), 0, 0);
+        g.drawImage(SwingFXUtils.toFXImage(surfaceMap, null), 0, 0);
     }
 
     @Override

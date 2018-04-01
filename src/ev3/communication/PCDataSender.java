@@ -38,6 +38,8 @@ public final class PCDataSender implements DataSender {
                 lostConnectionListener.lostConnection();
             }
 
+            //Not calling close because close will be called by the lostConnectionListener
+
             Logger.error(LOG_TAG, "Lost connection");
         }
     }

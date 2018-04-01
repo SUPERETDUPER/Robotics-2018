@@ -19,8 +19,6 @@ public class EV3 {
     private static final String LOG_TAG = EV3.class.getSimpleName();
 
     public static void main(String[] args) {
-
-
         BufferedImage image = getBufferedImage();
 
         if (image == null) {

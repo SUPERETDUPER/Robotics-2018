@@ -9,6 +9,7 @@ import ev3.navigation.Readings;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 
+@Deprecated
 public class EdgeReadings implements Readings {
     private static final String LOG_TAG = EdgeReadings.class.getSimpleName();
 

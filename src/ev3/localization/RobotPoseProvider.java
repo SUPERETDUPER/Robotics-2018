@@ -48,14 +48,14 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Nullable
     private Move completedMove;
 
-    public RobotPoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose currentPose, SurfaceMap surfaceMap) {
+    public RobotPoseProvider(SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider, Pose currentPose) {
         this.mp = moveProvider;
         this.surfaceMap = surfaceMap;
         this.data = new MCLData(Util.getNewParticleSet(currentPose, NUM_PARTICLES, this.surfaceMap), currentPose);
 
-        completedMove = getCurrentCompletedMove();
+        completedMove = getCurrentCompletedMove(mp);
 
-        notifyUpdate();
+        notifyListeners();
     }
 
     public synchronized void addListener(MCLDataListener listener) {
@@ -83,7 +83,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Override
     @Contract(pure = true)
     public synchronized Pose getPose() {
-        Move missingMove = Util.subtractMove(getCurrentCompletedMove(), completedMove);
+        Move missingMove = Util.subtractMove(getCurrentCompletedMove(mp), completedMove);
 
         return Util.movePose(data.getCurrentPose(), missingMove);
     }
@@ -91,9 +91,9 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
         data = new MCLData(Util.getNewParticleSet(pose, NUM_PARTICLES, surfaceMap), pose);
-        completedMove = getCurrentCompletedMove();
+        completedMove = getCurrentCompletedMove(mp);
 
-        notifyUpdate();
+        notifyListeners();
     }
 
     @Override
@@ -118,11 +118,11 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         completedMove = null;
 
-        notifyUpdate();
+        notifyListeners();
     }
 
     private synchronized void update(@NotNull Readings readings) {
-        Move move = getCurrentCompletedMove();
+        Move move = getCurrentCompletedMove(mp);
 
         Move missingMove = Util.subtractMove(move, completedMove);
 
@@ -132,10 +132,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         completedMove = move;
 
-        notifyUpdate();
+        notifyListeners();
     }
 
-    private void notifyUpdate() {
+    private void notifyListeners() {
         for (MCLDataListener listener : listeners) {
             listener.notifyNewMCLData(data);
         }
@@ -148,7 +148,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     }
 
     @NotNull
-    private Move getCurrentCompletedMove() {
+    private static Move getCurrentCompletedMove(MoveProvider mp) {
         return Util.deepCopyMove(mp.getMovement());
     }
 

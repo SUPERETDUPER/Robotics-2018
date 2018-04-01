@@ -7,6 +7,7 @@ package common.particles;
 import lejos.robotics.Transmittable;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,40 +19,45 @@ import java.io.IOException;
 public class MCLData implements Transmittable {
     private static final String LOG_TAG = MCLData.class.getSimpleName();
 
+    @Nullable
     private Particle[] particles;
+    @Nullable
     private Pose currentPose;
 
-    public MCLData(Particle[] particles, Pose currentPose) {
+    public MCLData(@Nullable Particle[] particles, @Nullable Pose currentPose) {
         this.particles = particles;
         this.currentPose = currentPose;
     }
 
+    @Nullable
     public Pose getCurrentPose() {
         return currentPose;
     }
 
+    @Nullable
     public Particle[] getParticles() {
         return particles;
     }
 
-    public void setCurrentPose(Pose currentPose) {
+    public void setCurrentPose(@Nullable Pose currentPose) {
         this.currentPose = currentPose;
     }
 
-    public void setParticles(Particle[] particles) {
+    public void setParticles(@Nullable Particle[] particles) {
         this.particles = particles;
     }
 
     public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
-        dos.writeBoolean(currentPose != null);
-        if (currentPose != null) {
+        boolean hasCurrentPose = currentPose != null;
+
+        dos.writeBoolean(hasCurrentPose);
+        if (hasCurrentPose) {
             currentPose.dumpObject(dos);
         }
 
         if (particles == null) {
             dos.writeInt(0);
-        }
-        if (particles != null) {
+        } else {
             dos.writeInt(particles.length);
             for (Particle particle : particles) {
                 particle.getPose().dumpObject(dos);

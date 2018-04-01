@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pc.communication.DataReceivedListener;
 
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public final class GUI extends Application {
     public GUI() {
         super();
 
-        SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
+        BufferedImage surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH).getImage();
 
         staticLayers.add(new SurfaceMapLayer(surfaceMap));
 

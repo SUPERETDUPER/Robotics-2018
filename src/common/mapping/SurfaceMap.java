@@ -6,6 +6,7 @@ package common.mapping;
 
 import common.logger.Logger;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -19,6 +20,7 @@ import java.io.IOException;
 public class SurfaceMap {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
+    @NotNull
     private final BufferedImage image;
 
     public SurfaceMap(String filePath) {
@@ -34,6 +36,7 @@ public class SurfaceMap {
         try {
             return ColorJavaLejos.getLejosColor(new Color(image.getRGB(x, getInvertedY(y))));
         } catch (IndexOutOfBoundsException e) {
+            Logger.error(LOG_TAG, "x : " + x + ". y : " + y + " " + e);
             throw new IndexOutOfBoundsException("x : " + x + ". y : " + y + " " + e);
         }
     }
@@ -43,21 +46,12 @@ public class SurfaceMap {
     }
 
     @Contract(pure = true)
-    public int getHeight() {
-        return image.getHeight();
-    }
-
-    @Contract(pure = true)
     private int getInvertedY(int y) {
         return (image.getHeight() - y);
     }
 
     @Contract(pure = true)
-    public int getWidth() {
-        return image.getWidth();
-    }
-
-    @Contract(pure = true)
+    @NotNull
     public BufferedImage getImage() {
         return image;
     }
