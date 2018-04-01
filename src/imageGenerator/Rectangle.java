@@ -4,8 +4,9 @@
 
 package imageGenerator;
 
-import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 class Rectangle extends ColorRegion {
 

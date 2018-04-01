@@ -5,10 +5,10 @@
 package imageGenerator;
 
 import com.snatik.polygon.Polygon;
-import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.List;
 
 /**
