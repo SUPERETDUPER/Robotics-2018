@@ -5,6 +5,7 @@
 package ev3.localization;
 
 import common.mapping.SurfaceMap;
+import ev3.navigation.Offset;
 import ev3.navigation.Readings;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
@@ -26,7 +27,7 @@ public class SurfaceReadings implements Readings {
     }
 
     public float calculateWeight(@NotNull Pose pose) {
-        Point location = pose.getLocation();
+        Point location = Offset.LEFT_COLOR_SENSOR.offset(pose);
 
         int totalPixels = 0;
         int matchingPixels = 0;

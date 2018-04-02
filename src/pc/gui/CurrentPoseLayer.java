@@ -4,9 +4,11 @@
 
 package pc.gui;
 
+import ev3.navigation.Offset;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
+import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 
 class CurrentPoseLayer extends UpdatableLayer {
@@ -21,6 +23,9 @@ class CurrentPoseLayer extends UpdatableLayer {
         if (pose != null) {
             g.setFill(Color.BLACK);
             Util.displayPoseOnGui(g, pose);
+            g.setFill(Color.PURPLE);
+            Point leftColorSensorPoint = Offset.LEFT_COLOR_SENSOR.offset(pose);
+            Util.displayPoseOnGui(g, new Pose(leftColorSensorPoint.x, leftColorSensorPoint.y, pose.getHeading()));
         }
     }
 

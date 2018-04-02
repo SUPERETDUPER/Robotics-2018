@@ -5,7 +5,9 @@
 package ev3.robot.sim;
 
 import common.mapping.SurfaceMap;
+import ev3.navigation.Offset;
 import ev3.robot.ColorSensors;
+import lejos.robotics.geometry.Point;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +24,8 @@ class SimColorSensors implements ColorSensors {
 
     @Override
     public int getColorSurfaceLeft() {
-        Pose currentPose = poseProvider.getPose();
-        return surfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        Point currentPose = Offset.LEFT_COLOR_SENSOR.offset(poseProvider.getPose());
+        return surfaceMap.getColorAtPoint((int) currentPose.x, (int) currentPose.y);
     }
 
     @Override

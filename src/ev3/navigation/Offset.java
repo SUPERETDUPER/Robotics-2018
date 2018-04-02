@@ -11,25 +11,38 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Responsible of offsetting readings
  */
-final class Offset {
+public final class Offset {
     // (x,y) offsets when robot is facing to the right (heading = 0)
-    private static final float[] RELATIVE_OFFSET_LEFT = {-1, -1};
-    private static final float[] RELATIVE_OFFSET_RIGHT = {1, -1};
+    public static final Offset LEFT_COLOR_SENSOR = new Offset(-171, 80);
 
-    @NotNull
-    public static Point leftColorSensor(@NotNull Pose pose) {
-        return offset(pose, RELATIVE_OFFSET_LEFT[0], RELATIVE_OFFSET_RIGHT[1]);
+    private final float deltaX;
+    private final float deltaY;
+
+    public Offset(float deltaX, float deltaY) {
+        this.deltaX = deltaX;
+        this.deltaY = deltaY;
     }
 
     @NotNull
-    public static Point rightColorSensor(@NotNull Pose pose) {
-        return offset(pose, RELATIVE_OFFSET_RIGHT[0], RELATIVE_OFFSET_RIGHT[1]);
+    public Point offset(@NotNull Pose pose) {
+        return offset(pose, deltaX, deltaY);
     }
 
     @NotNull
-    private static Point offset(@NotNull Pose pose, float xOffset, float yOffset) {
-        double originalTheta = Math.atan(yOffset / xOffset);
-        double hypotenuse = Math.sqrt(xOffset * xOffset + yOffset * yOffset); //Pythagorean theorem
+    public Point reverseOffset(@NotNull Pose pose) {
+        return offset(pose, -deltaX, -deltaY);
+    }
+
+    @NotNull
+    private static Point offset(@NotNull Pose pose, float deltaX, float deltaY) {
+        double originalTheta = Math.atan(deltaY / deltaX);
+
+        //To fix problem with CAST rule
+        if (deltaY >= 0) {
+            originalTheta += Math.PI;
+        }
+
+        double hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY); //Pythagorean theorem
 
         double newTheta = originalTheta + Math.toRadians(pose.getHeading());
 
