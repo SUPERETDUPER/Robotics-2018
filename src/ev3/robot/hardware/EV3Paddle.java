@@ -16,6 +16,6 @@ public class EV3Paddle implements Paddle{
     }
 
     public void hitBlock(boolean immediateReturn) {
-        motor.rotate(-360);
+        motor.rotate(360);
     }
 }
