@@ -9,7 +9,6 @@ import common.particles.Particle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
-import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,10 +38,6 @@ class ParticleDataLayer extends UpdatableLayer {
             g.setFill(Color.BLUE);
             Util.displayPoseOnGui(g, data.getCurrentPose());
         }
-    }
-
-    public Pose getCurrentPose() {
-        return data.getCurrentPose();
     }
 
     @Override

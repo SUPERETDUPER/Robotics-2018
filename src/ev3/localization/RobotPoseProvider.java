@@ -14,7 +14,6 @@ import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
-import lejos.utility.Delay;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -181,7 +180,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
                         new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft())
                 );
 
-                Delay.msDelay(100);
+                Thread.yield();
             }
         }
     }

@@ -47,7 +47,7 @@ public class MCLData implements Transmittable {
         this.particles = particles;
     }
 
-    public void dumpObject(@NotNull DataOutputStream dos) throws IOException {
+    public synchronized void dumpObject(@NotNull DataOutputStream dos) throws IOException {
         boolean hasCurrentPose = currentPose != null;
 
         dos.writeBoolean(hasCurrentPose);

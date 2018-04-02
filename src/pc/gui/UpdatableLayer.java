@@ -19,7 +19,7 @@ abstract class UpdatableLayer extends Layer {
         super(width, height);
     }
 
-    public void update(DataInputStream dataInputStream) throws IOException {
+    synchronized void update(DataInputStream dataInputStream) throws IOException {
         getContent().loadObject(dataInputStream);
         dataNew = true;
     }
