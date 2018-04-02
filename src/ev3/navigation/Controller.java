@@ -13,7 +13,6 @@ import ev3.localization.RobotPoseProvider;
 import ev3.robot.Robot;
 import ev3.robot.sim.SimRobot;
 import lejos.robotics.chassis.Chassis;
-import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
@@ -30,7 +29,7 @@ public final class Controller implements MoveListener, NavigationListener {
     private static final Pose STARTING_POSE = new Pose(2152, 573, 180);
 
     private final Navigator navigator;
-    private final PoseProvider poseProvider;
+    private final RobotPoseProvider poseProvider;
 
     public Controller(@NotNull Robot robot) {
         Chassis chassis = robot.getChassis();
@@ -44,11 +43,9 @@ public final class Controller implements MoveListener, NavigationListener {
 
         pilot.addMoveListener(this);
 
-        poseProvider = chassis.getPoseProvider();
-
         SurfaceMap surfaceMap = new SurfaceMap(Config.currentMode == Config.Mode.SIM ? Config.PC_IMAGE_PATH : Config.EV3_IMAGE_PATH);
 
-
+        poseProvider = new RobotPoseProvider(surfaceMap, pilot);
         poseProvider.setPose(STARTING_POSE);
 
         if (robot instanceof SimRobot) {
@@ -56,16 +53,13 @@ public final class Controller implements MoveListener, NavigationListener {
             ((SimRobot) robot).setSurfaceMap(surfaceMap);
         }
 
-        RobotPoseProvider robotPoseProvider = new RobotPoseProvider(surfaceMap, pilot);
-        robotPoseProvider.setPose(STARTING_POSE);
-
         DataListener dataListener = ComManager.get().getDataListener();
 
         if (dataListener != null) {
-            dataListener.attachToRobotPoseProvider(robotPoseProvider);
+            dataListener.attachToRobotPoseProvider(poseProvider);
         }
 
-        robotPoseProvider.startUpdater(robot.getColorSensors());
+        poseProvider.startUpdater(robot.getColorSensors());
 
         navigator = new Navigator(pilot, poseProvider);
         navigator.addNavigationListener(this);
@@ -96,8 +90,8 @@ public final class Controller implements MoveListener, NavigationListener {
 
     @Contract(pure = true)
     private static double normalize(double heading) {
-        while (heading >= 180) heading -= 360;
-        while (heading < -180) heading += 360;
+        while (heading > 180) heading -= 360;
+        while (heading <= -180) heading += 360;
         return heading;
     }
 

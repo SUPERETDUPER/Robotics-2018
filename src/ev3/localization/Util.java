@@ -94,17 +94,18 @@ final class Util {
     static Particle[] update(@NotNull Particle[] particles, Move move, Readings readings) {
         Particle[] newParticles = new Particle[particles.length];
 
-        float sizeOfSlice = 1.0F / particles.length;
-        float offset = (float) Math.random() * sizeOfSlice;
-        float pastWeights = 0;
+        double sizeOfSlice = 1.0 / particles.length;
+        double offset = Math.random() * sizeOfSlice;
+        double pastWeights = 0;
         float totalForNewWeights = 0;
         int index = 0;
 
         for (int spokeCounter = 0; spokeCounter < particles.length; spokeCounter++) {
             //Keep increasing index until we have found the particle that matches the spoke
-            while (pastWeights + particles[index].weight < offset + spokeCounter * sizeOfSlice) {
+            while (index != particles.length - 1 && pastWeights + particles[index].weight < offset + spokeCounter * sizeOfSlice) {
                 pastWeights += particles[index++].weight; //Add weight of current particle to sum
             }
+
 
             /*Now index points to correct sampled particle*/
 
