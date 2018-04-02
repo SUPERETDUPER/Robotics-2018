@@ -5,9 +5,9 @@
 package ev3.localization;
 
 import common.logger.Logger;
-import common.mapping.SurfaceMap;
 import common.particles.Particle;
 import ev3.navigation.Readings;
+import lejos.robotics.geometry.Rectangle;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
@@ -26,48 +26,6 @@ final class Util {
 
     private static final float STARTING_RADIUS_NOISE = 100;
     private static final float STARTING_HEADING_NOISE = 30;
-
-    @Contract(pure = true)
-    @NotNull
-    private static Pose rotatePose(@NotNull Pose pose, float angleToRotate, float randomFactor) {
-        if (angleToRotate == 0) return pose;
-
-        float heading = (pose.getHeading() + angleToRotate + (float) (angleToRotate * randomFactor * random.nextGaussian())) % 360;
-
-        return new Pose(pose.getX(), pose.getY(), heading);
-    }
-
-    @Contract(pure = true)
-    @NotNull
-    private static Pose shiftPose(@NotNull Pose pose, float distance, float randomFactor) {
-        if (distance == 0) return pose;
-
-        double theta = Math.toRadians(pose.getHeading());
-
-        double ym = distance * Math.sin(theta);
-        double xm = distance * Math.cos(theta);
-
-        float x = (float) (pose.getX() + xm + randomFactor * xm * random.nextGaussian());
-        float y = (float) (pose.getY() + ym + randomFactor * ym * random.nextGaussian());
-
-        return new Pose(x, y, pose.getHeading());
-    }
-
-    @Contract(pure = true)
-    @NotNull
-    private static Pose movePose(@NotNull Pose pose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
-        switch (move.getMoveType()) {
-            case STOP:
-                return pose;
-            case TRAVEL:
-                return shiftPose(pose, move.getDistanceTraveled(), distanceNoiseFactor);
-            case ROTATE:
-                return rotatePose(pose, move.getAngleTurned(), angleNoiseFactor);
-            default:
-                Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
-                throw new RuntimeException(move.toString() + " ... " + pose.toString());
-        }
-    }
 
     @Contract(pure = true)
     @NotNull
@@ -164,31 +122,11 @@ final class Util {
     }
 
     /**
-     * Returns f(x) for a standard bell curve with standard deviation 1, mean 0 and max 1
-     *
-     * @param x x
-     * @return f(x)
-     */
-    @Contract(pure = true)
-    private static float bellCurve(float x) {
-        return (float) Math.pow(Math.E, -Math.pow(x, 2) / 2);
-    }
-
-    @Contract(pure = true)
-    private static Particle[] normalize(@NotNull Particle[] particles, float totalWeight) {
-        for (int i = 0; i < particles.length; i++) {
-            particles[i] = particles[i].getParticleWithNewWeight(particles[i].weight / totalWeight);
-        }
-
-        return particles;
-    }
-
-    /**
      * Generates a new particle set around a specific point with weights 0.5
      */
     @Contract(pure = true)
     @NotNull
-    static Particle[] getNewParticleSet(@NotNull Pose centerPose, int numParticles, SurfaceMap surfaceMap) {
+    static Particle[] getNewParticleSet(Rectangle boundingRectangle, @NotNull Pose centerPose, int numParticles) {
         Particle[] newParticles = new Particle[numParticles];
 
         float totalWeight = 0;
@@ -208,7 +146,7 @@ final class Util {
 
                 x = centerPose.getX() + radiusFromCenter * (float) Math.cos(thetaInRad);
                 y = centerPose.getY() + radiusFromCenter * (float) Math.sin(thetaInRad);
-            } while (!surfaceMap.contains((int) x, (int) y));
+            } while (!boundingRectangle.contains((int) x, (int) y));
 
             float randomFactorAngle = (float) random.nextGaussian() / 2;
 
@@ -235,7 +173,7 @@ final class Util {
      */
     @NotNull
     @Contract(pure = true)
-    static synchronized Pose refineCurrentPose(Particle[] particles) {
+    static synchronized Pose refineCurrentPose(@NotNull Particle[] particles) {
         float totalWeights = 0;
 
         float estimatedX = 0;
@@ -265,5 +203,67 @@ final class Util {
     @NotNull
     static Move deepCopyMove(@NotNull Move move) {
         return new Move(move.getMoveType(), move.getDistanceTraveled(), move.getAngleTurned(), move.getTravelSpeed(), move.getRotateSpeed(), move.isMoving());
+    }
+
+    /**
+     * Returns f(x) for a standard bell curve with standard deviation 1, mean 0 and max 1
+     *
+     * @param x x
+     * @return f(x)
+     */
+    @Contract(pure = true)
+    private static float bellCurve(float x) {
+        return (float) Math.pow(Math.E, -Math.pow(x, 2) / 2);
+    }
+
+    @Contract(pure = true)
+    private static Particle[] normalize(@NotNull Particle[] particles, float totalWeight) {
+        for (int i = 0; i < particles.length; i++) {
+            particles[i] = particles[i].getParticleWithNewWeight(particles[i].weight / totalWeight);
+        }
+
+        return particles;
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    private static Pose movePose(@NotNull Pose pose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
+        switch (move.getMoveType()) {
+            case STOP:
+                return pose;
+            case TRAVEL:
+                return shiftPose(pose, move.getDistanceTraveled(), distanceNoiseFactor);
+            case ROTATE:
+                return rotatePose(pose, move.getAngleTurned(), angleNoiseFactor);
+            default:
+                Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
+                throw new RuntimeException(move.toString() + " ... " + pose.toString());
+        }
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    private static Pose rotatePose(@NotNull Pose pose, float angleToRotate, float randomFactor) {
+        if (angleToRotate == 0) return pose;
+
+        float heading = (pose.getHeading() + angleToRotate + (float) (angleToRotate * randomFactor * random.nextGaussian())) % 360;
+
+        return new Pose(pose.getX(), pose.getY(), heading);
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    private static Pose shiftPose(@NotNull Pose pose, float distance, float randomFactor) {
+        if (distance == 0) return pose;
+
+        double theta = Math.toRadians(pose.getHeading());
+
+        double ym = distance * Math.sin(theta);
+        double xm = distance * Math.cos(theta);
+
+        float x = (float) (pose.getX() + xm + randomFactor * xm * random.nextGaussian());
+        float y = (float) (pose.getY() + ym + randomFactor * ym * random.nextGaussian());
+
+        return new Pose(x, y, pose.getHeading());
     }
 }

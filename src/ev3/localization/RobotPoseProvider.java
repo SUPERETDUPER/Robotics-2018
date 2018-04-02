@@ -4,11 +4,9 @@
 
 package ev3.localization;
 
-import common.Config;
 import common.logger.Logger;
 import common.mapping.SurfaceMap;
 import common.particles.MCLData;
-import ev3.communication.ComManager;
 import ev3.navigation.Readings;
 import ev3.robot.ColorSensors;
 import lejos.robotics.localization.PoseProvider;
@@ -36,7 +34,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private final MoveProvider mp;
     private final SurfaceMap surfaceMap;
     @NotNull
-    private MCLData data;
+    private final MCLData data = new MCLData(null, null);
 
     @NotNull
     private final ArrayList<MCLDataListener> listeners = new ArrayList<>();
@@ -48,14 +46,11 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Nullable
     private Move completedMove;
 
-    public RobotPoseProvider(SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider, Pose currentPose) {
-        this.mp = moveProvider;
+    public RobotPoseProvider(SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider) {
         this.surfaceMap = surfaceMap;
-        this.data = new MCLData(Util.getNewParticleSet(currentPose, NUM_PARTICLES, this.surfaceMap), currentPose);
+        this.mp = moveProvider;
 
         completedMove = getCurrentCompletedMove(mp);
-
-        notifyListeners();
     }
 
     public synchronized void addListener(MCLDataListener listener) {
@@ -66,6 +61,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         for (int i = 0; i < listeners.size(); i++) {
             if (listener == listeners.get(i)) {
                 listeners.remove(i);
+                return;
             }
         }
     }
@@ -79,10 +75,14 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
      *
      * @return the current pose
      */
-    @NotNull
+    @Nullable
     @Override
     @Contract(pure = true)
     public synchronized Pose getPose() {
+        if (data.getCurrentPose() == null) {
+            return null;
+        }
+
         Move missingMove = Util.subtractMove(getCurrentCompletedMove(mp), completedMove);
 
         return Util.movePose(data.getCurrentPose(), missingMove);
@@ -90,7 +90,9 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data = new MCLData(Util.getNewParticleSet(pose, NUM_PARTICLES, surfaceMap), pose);
+        data.setParticles(Util.getNewParticleSet(surfaceMap.getBoundingRectangle(), pose, NUM_PARTICLES));
+        data.setCurrentPose(pose);
+
         completedMove = getCurrentCompletedMove(mp);
 
         notifyListeners();
@@ -111,10 +113,12 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Stopped move " + move.toString());
 
-        Move missingMove = Util.subtractMove(Util.deepCopyMove(move), completedMove);
+        if (data.getCurrentPose() != null && data.getParticles() != null) {
+            Move missingMove = Util.subtractMove(Util.deepCopyMove(move), completedMove);
 
-        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
-        data.setParticles(Util.moveParticleSet(data.getParticles(), missingMove));
+            data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
+            data.setParticles(Util.moveParticleSet(data.getParticles(), missingMove));
+        }
 
         completedMove = null;
 
@@ -126,9 +130,11 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         Move missingMove = Util.subtractMove(move, completedMove);
 
-        data.setParticles(Util.update(data.getParticles(), missingMove, readings));
-        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
+        if (data.getParticles() != null && data.getCurrentPose() != null) {
+            data.setParticles(Util.update(data.getParticles(), missingMove, readings));
+            data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
 //        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
+        }
 
         completedMove = move;
 
@@ -141,14 +147,8 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         }
     }
 
-    public void sendCurrentPoseToPC() {
-        if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            ComManager.get().sendTransmittable(getPose());
-        }
-    }
-
     @NotNull
-    private static Move getCurrentCompletedMove(MoveProvider mp) {
+    private static Move getCurrentCompletedMove(@NotNull MoveProvider mp) {
         return Util.deepCopyMove(mp.getMovement());
     }
 
@@ -173,7 +173,9 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         public void run() {
             //noinspection InfiniteLoopStatement
             while (true) {
-                RobotPoseProvider.this.update(new SurfaceReadings(colorSensors.getColorSurfaceLeft(), surfaceMap));
+                RobotPoseProvider.this.update(
+                        new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft())
+                );
 
                 Delay.msDelay(100);
             }

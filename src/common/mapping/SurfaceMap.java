@@ -5,6 +5,7 @@
 package common.mapping;
 
 import common.logger.Logger;
+import lejos.robotics.geometry.Rectangle;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +23,7 @@ public class SurfaceMap {
 
     @NotNull
     private final BufferedImage image;
+    private final Rectangle boundingRectangle;
 
     public SurfaceMap(String filePath) {
         try {
@@ -30,6 +32,8 @@ public class SurfaceMap {
             Logger.error(LOG_TAG, "Unable to read picture");
             throw new RuntimeException(e.toString());
         }
+
+        boundingRectangle = new Rectangle(0, 0, image.getWidth(), image.getHeight());
     }
 
     public int getColorAtPoint(int x, int y) {
@@ -39,6 +43,10 @@ public class SurfaceMap {
             Logger.error(LOG_TAG, "x : " + x + ". y : " + y + " " + e);
             throw new IndexOutOfBoundsException("x : " + x + ". y : " + y + " " + e);
         }
+    }
+
+    public Rectangle getBoundingRectangle() {
+        return boundingRectangle;
     }
 
     public boolean contains(int x, int y) {

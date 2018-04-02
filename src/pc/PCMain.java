@@ -8,8 +8,8 @@ import common.Config;
 import common.logger.Logger;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
+import pc.communication.Connection;
 import pc.communication.DataReceiver;
-import pc.communication.EV3Connection;
 import pc.gui.GUI;
 
 import java.io.InputStream;
@@ -24,7 +24,7 @@ final class PCMain {
             return;
         }
 
-        InputStream inputStream = EV3Connection.getInputStream(EV3Connection.getIPAddress());
+        InputStream inputStream = Connection.getInputStream(Connection.getIPAddress());
 
         if (inputStream == null) {
             Logger.error(LOG_TAG, "Could not getOutputStream to ev3");

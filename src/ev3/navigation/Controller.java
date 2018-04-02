@@ -8,6 +8,8 @@ import common.Config;
 import common.logger.Logger;
 import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
+import ev3.communication.DataListener;
+import ev3.localization.RobotPoseProvider;
 import ev3.robot.Robot;
 import ev3.robot.sim.SimRobot;
 import lejos.robotics.chassis.Chassis;
@@ -28,11 +30,10 @@ public final class Controller implements MoveListener, NavigationListener {
     private static final Pose STARTING_POSE = new Pose(2152, 573, 180);
 
     private Navigator navigator;
-    private PoseProvider robotPoseProvider;
+    private PoseProvider poseProvider;
     private final MyMovePilot pilot;
-    private final SurfaceMap surfaceMap = new SurfaceMap(Config.currentMode == Config.Mode.SIM ? Config.PC_IMAGE_PATH : Config.EV3_IMAGE_PATH);
 
-    public Controller(Robot robot) {
+    public Controller(@NotNull Robot robot) {
         Chassis chassis = robot.getChassis();
 
         pilot = new MyMovePilot(chassis);
@@ -44,24 +45,30 @@ public final class Controller implements MoveListener, NavigationListener {
 
         pilot.addMoveListener(this);
 
-        robotPoseProvider = chassis.getPoseProvider();
-        robotPoseProvider.setPose(STARTING_POSE);
-//        robotPoseProvider = new RobotPoseProvider(pilot, STARTING_POSE, surfaceMap);
+        poseProvider = chassis.getPoseProvider();
+
+        SurfaceMap surfaceMap = new SurfaceMap(Config.currentMode == Config.Mode.SIM ? Config.PC_IMAGE_PATH : Config.EV3_IMAGE_PATH);
+
+
+        poseProvider.setPose(STARTING_POSE);
 
         if (robot instanceof SimRobot) {
-            ((SimRobot) robot).setPoseProvider(robotPoseProvider);
+            ((SimRobot) robot).setPoseProvider(poseProvider);
             ((SimRobot) robot).setSurfaceMap(surfaceMap);
         }
 
-//        DataListener dataListener = ComManager.get().getDataListener();
-//
-//        if (dataListener != null) {
-//            dataListener.attachToRobotPoseProvider(robotPoseProvider);
-//        }
+        RobotPoseProvider robotPoseProvider = new RobotPoseProvider(surfaceMap, pilot);
+        robotPoseProvider.setPose(STARTING_POSE);
 
-//        robotPoseProvider.startUpdater(robot.getColorSensors());
+        DataListener dataListener = ComManager.get().getDataListener();
 
-        navigator = new Navigator(pilot, robotPoseProvider);
+        if (dataListener != null) {
+            dataListener.attachToRobotPoseProvider(robotPoseProvider);
+        }
+
+        robotPoseProvider.startUpdater(robot.getColorSensors());
+
+        navigator = new Navigator(pilot, poseProvider);
         navigator.addNavigationListener(this);
     }
 
@@ -87,7 +94,7 @@ public final class Controller implements MoveListener, NavigationListener {
 
     private void waitForStop() {
         while (navigator.isMoving()) {
-            ComManager.get().sendTransmittable(robotPoseProvider.getPose());
+            ComManager.get().sendTransmittable(poseProvider.getPose());
             Thread.yield();
         }
     }
@@ -103,7 +110,7 @@ public final class Controller implements MoveListener, NavigationListener {
     @Contract(pure = true)
     @NotNull
     public Pose getPose() {
-        return robotPoseProvider.getPose();
+        return poseProvider.getPose();
     }
 
     @Override

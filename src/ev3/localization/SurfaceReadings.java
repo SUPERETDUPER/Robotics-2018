@@ -17,12 +17,12 @@ import org.jetbrains.annotations.NotNull;
 public class SurfaceReadings implements Readings {
     private static final int RADIUS = 10;
 
+    private final SurfaceMap surfaceMap;
     private final int color;
-    private SurfaceMap surfaceMap;
 
-    public SurfaceReadings(int color, SurfaceMap surfaceMap) {
-        this.color = color;
+    public SurfaceReadings(SurfaceMap surfaceMap, int color) {
         this.surfaceMap = surfaceMap;
+        this.color = color;
     }
 
     public float calculateWeight(@NotNull Pose pose) {

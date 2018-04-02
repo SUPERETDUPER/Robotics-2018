@@ -27,10 +27,10 @@ class SurfaceReadingsTest {
         ArrayList<Particle> particles = new ArrayList<>();
 
         SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
-        SurfaceReadings readings = new SurfaceReadings(Color.WHITE, surfaceMap);
+        SurfaceReadings readings = new SurfaceReadings(surfaceMap, Color.WHITE);
 
-        for (int x = 0; x < surfaceMap.getWidth(); x += 10) {
-            for (int y = 0; y < surfaceMap.getHeight(); y += 10) {
+        for (int x = 0; x < surfaceMap.getBoundingRectangle().getWidth(); x += 10) {
+            for (int y = 0; y < surfaceMap.getBoundingRectangle().getHeight(); y += 10) {
                 Pose pose = new Pose(x, y, 0);
                 particles.add(new Particle(x, y, 0, readings.calculateWeight(pose)));
             }
