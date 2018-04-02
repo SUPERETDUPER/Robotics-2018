@@ -18,8 +18,8 @@ import java.io.InputStream;
 public class DataReceiver {
     private static final String LOG_TAG = DataReceiver.class.getSimpleName();
 
-    private DataInputStream dis;
-    private DataReceivedListener listenerToNotify;
+    private final DataInputStream dis;
+    private final DataReceivedListener listenerToNotify;
 
     private boolean shouldRun = true;
 
@@ -32,11 +32,6 @@ public class DataReceiver {
      * Listen for data
      */
     public synchronized void read() {
-        if (dis == null || listenerToNotify == null) {
-            Logger.error(LOG_TAG, "Did not initiate reader");
-            return;
-        }
-
         try {
             //noinspection InfiniteLoopStatement
             while (shouldRun) {
@@ -66,12 +61,10 @@ public class DataReceiver {
      * Close the connection
      */
     private void close() {
-        if (dis != null) {
-            try {
-                dis.close();
-            } catch (IOException e) {
-                Logger.error(LOG_TAG, "Failed closing socket or dis " + e);
-            }
+        try {
+            dis.close();
+        } catch (IOException e) {
+            Logger.error(LOG_TAG, "Failed closing socket or dis " + e);
         }
     }
 }

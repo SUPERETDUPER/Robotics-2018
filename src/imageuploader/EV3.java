@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 
-public class EV3 {
+class EV3 {
     private static final String LOG_TAG = EV3.class.getSimpleName();
 
     public static void main(String[] args) {
@@ -29,6 +29,7 @@ public class EV3 {
         System.out.println("Create file");
 
         try {
+            //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
         } catch (IOException e) {
             System.out.println("Could not create new file");

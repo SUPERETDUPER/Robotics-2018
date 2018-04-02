@@ -51,6 +51,8 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         this.mp = moveProvider;
 
         completedMove = getCurrentCompletedMove(mp);
+
+        mp.addMoveListener(this);
     }
 
     public synchronized void addListener(MCLDataListener listener) {
@@ -63,6 +65,14 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
                 listeners.remove(i);
                 return;
             }
+        }
+    }
+
+    @SuppressWarnings("ForLoopReplaceableByForEach")
+    // No advanced for loop because caused concurrent modification exception
+    private synchronized void notifyListeners() {
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).notifyNewMCLData(data);
         }
     }
 
@@ -141,12 +151,6 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         notifyListeners();
     }
 
-    private void notifyListeners() {
-        for (MCLDataListener listener : listeners) {
-            listener.notifyNewMCLData(data);
-        }
-    }
-
     @NotNull
     private static Move getCurrentCompletedMove(@NotNull MoveProvider mp) {
         return Util.deepCopyMove(mp.getMovement());
@@ -155,7 +159,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     /**
      * Check method checks if the color under the robot has changed. If so it calls the pose provider update method
      */
-    public final class Updater extends Thread {
+    final class Updater extends Thread {
         private final String LOG_TAG = Updater.class.getSimpleName();
 
         private final ColorSensors colorSensors;

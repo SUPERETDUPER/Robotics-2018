@@ -20,7 +20,7 @@ public class TestUtils {
     }
 
     @Contract(pure = true)
-    private static boolean sumOfWeightsIsOne(@NotNull Particle[] particles) {
+    static boolean sumOfWeightsIsOne(@NotNull Particle[] particles) {
         float totalWeight = 0;
 
         for (Particle particle : particles) {

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Responsible of offsetting readings
  */
-public final class Offset {
+final class Offset {
     // (x,y) offsets when robot is facing to the right (heading = 0)
     private static final float[] RELATIVE_OFFSET_LEFT = {-1, -1};
     private static final float[] RELATIVE_OFFSET_RIGHT = {1, -1};

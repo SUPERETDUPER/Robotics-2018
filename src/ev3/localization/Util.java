@@ -124,6 +124,7 @@ final class Util {
     /**
      * Generates a new particle set around a specific point with weights 0.5
      */
+    @SuppressWarnings("SameParameterValue")
     @Contract(pure = true)
     @NotNull
     static Particle[] getNewParticleSet(Rectangle boundingRectangle, @NotNull Pose centerPose, int numParticles) {

@@ -13,9 +13,9 @@ import lejos.robotics.Color;
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
-    private int[] listFoodColor = {Color.NONE, Color.NONE, Color.NONE};
+    private final int[] listFoodColor = {Color.NONE, Color.NONE, Color.NONE};
     private int index = 0;
-    private Robot robot;
+    private final Robot robot;
 
     public Brain(Robot robot) {
         this.robot = robot;

@@ -18,6 +18,7 @@ class IrregularPolygon extends ColorRegion {
 
     private final Polygon polygon;
 
+    @SuppressWarnings("SameParameterValue")
     IrregularPolygon(Color color, @NotNull List<Point> vertexes) {
         super(color);
 

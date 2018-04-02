@@ -4,6 +4,6 @@
 
 package ev3.communication;
 
-public interface LostConnectionListener {
+interface LostConnectionListener {
     void lostConnection();
 }

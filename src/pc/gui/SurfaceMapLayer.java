@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.image.BufferedImage;
 
 
-public class SurfaceMapLayer extends Layer {
+class SurfaceMapLayer extends Layer {
 
     private final BufferedImage surfaceMap;
 

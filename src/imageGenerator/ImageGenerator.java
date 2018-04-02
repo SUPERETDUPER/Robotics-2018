@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ImageGenerator {
+class ImageGenerator {
     private static final String LOG_TAG = ImageGenerator.class.getSimpleName();
 
     private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143);
@@ -112,6 +112,7 @@ public class ImageGenerator {
      *
      * @param pathToSave where to save the image
      */
+    @SuppressWarnings("SameParameterValue")
     private static void generateImage(String pathToSave) {
         BufferedImage image = new BufferedImage(
                 (int) boundingRectangle.getWidth(),

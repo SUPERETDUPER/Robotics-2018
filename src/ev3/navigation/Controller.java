@@ -29,14 +29,13 @@ public final class Controller implements MoveListener, NavigationListener {
 
     private static final Pose STARTING_POSE = new Pose(2152, 573, 180);
 
-    private Navigator navigator;
-    private PoseProvider poseProvider;
-    private final MyMovePilot pilot;
+    private final Navigator navigator;
+    private final PoseProvider poseProvider;
 
     public Controller(@NotNull Robot robot) {
         Chassis chassis = robot.getChassis();
 
-        pilot = new MyMovePilot(chassis);
+        MyMovePilot pilot = new MyMovePilot(chassis);
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
@@ -70,11 +69,6 @@ public final class Controller implements MoveListener, NavigationListener {
 
         navigator = new Navigator(pilot, poseProvider);
         navigator.addNavigationListener(this);
-    }
-
-    @Contract(pure = true)
-    public MyMovePilot getPilot() {
-        return pilot;
     }
 
     public void followPath(@NotNull Path path) {
@@ -115,12 +109,12 @@ public final class Controller implements MoveListener, NavigationListener {
 
     @Override
     public void moveStarted(Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Started : " + move.toString());
+//        Logger.info(LOG_TAG, "Started : " + move.toString());
     }
 
     @Override
     public void moveStopped(Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Stopped : " + move.toString());
+//        Logger.info(LOG_TAG, "Stopped : " + move.toString());
     }
 
     @Override

@@ -13,7 +13,6 @@ import java.util.HashMap;
  * Mapping of Javafx colors to lejos colors (int). For example Color.rgb(255,0,0) (javaFX) and Color.RED (lejos)
  */
 public class ColorJavaLejos {
-    private static final String LOG_TAG = ColorJavaLejos.class.getSimpleName();
 
     @NotNull
     private static final HashMap<Color, Integer> javaToLejosMap = new HashMap<>();

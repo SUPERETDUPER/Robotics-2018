@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
  */
-public class ParticleDataLayer extends UpdatableLayer {
+class ParticleDataLayer extends UpdatableLayer {
     private static final String LOG_TAG = ParticleDataLayer.class.getSimpleName();
 
     private final MCLData data = new MCLData(null, null);

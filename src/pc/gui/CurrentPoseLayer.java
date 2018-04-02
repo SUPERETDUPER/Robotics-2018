@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
 import lejos.robotics.navigation.Pose;
 
-public class CurrentPoseLayer extends UpdatableLayer {
+class CurrentPoseLayer extends UpdatableLayer {
     private Pose pose;
 
     public CurrentPoseLayer(int width, int height) {

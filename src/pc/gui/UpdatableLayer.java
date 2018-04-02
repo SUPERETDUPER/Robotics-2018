@@ -12,10 +12,10 @@ import java.io.IOException;
 /**
  * A special type of layer that can be updated with a data output stream. Only gets drawn if there is new data.
  */
-public abstract class UpdatableLayer extends Layer {
+abstract class UpdatableLayer extends Layer {
     private boolean dataNew = true;
 
-    public UpdatableLayer(int width, int height) {
+    UpdatableLayer(int width, int height) {
         super(width, height);
     }
 

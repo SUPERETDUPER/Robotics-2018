@@ -9,9 +9,8 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class EV3Arm implements Arm {
 
-    private static EV3LargeRegulatedMotor motor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_ARM);
+    private static final EV3LargeRegulatedMotor motor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_ARM);
 
-    private static final int startingAngle = 0;
     private static final int boatAngle = 270;
     private static final int foodPickUpAngle = 20;
     private static final int foodDropOffAngle = 200;

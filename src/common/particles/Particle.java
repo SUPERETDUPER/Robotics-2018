@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
  * Immutable particle (position + weight)
  */
 public final class Particle {
-    private static final String LOG_TAG = Particle.class.getSimpleName();
 
     @NotNull
     private final Pose pose;

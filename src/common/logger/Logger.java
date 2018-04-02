@@ -69,6 +69,7 @@ public final class Logger {
         print(LogTypes.INFO, ANSI_BLUE, tag, message);
     }
 
+    @SuppressWarnings("unused")
     public static void debug(@NotNull String tag, @NotNull String message) {
         print(LogTypes.DEBUG, ANSI_BLACK, tag, message);
     }
