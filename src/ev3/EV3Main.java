@@ -40,8 +40,10 @@ final class EV3Main {
     }
 
     private static void cleanUp() {
-        if (ComManager.isEnabled()) {
-            ComManager.get().stop();
+        ComManager comManager = ComManager.get();
+
+        if (comManager != null) {
+            comManager.stop();
         }
     }
 }

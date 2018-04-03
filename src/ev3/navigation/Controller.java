@@ -17,6 +17,7 @@ import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
@@ -53,9 +54,10 @@ public final class Controller implements MoveListener, NavigationListener {
             ((SimRobot) robot).setSurfaceMap(surfaceMap);
         }
 
-        DataListener dataListener = ComManager.get().getDataListener();
+        ComManager comManager = ComManager.get();
 
-        if (dataListener != null) {
+        if (comManager != null) {
+            DataListener dataListener = comManager.getDataListener();
             dataListener.attachToRobotPoseProvider(poseProvider);
         }
 
@@ -76,13 +78,21 @@ public final class Controller implements MoveListener, NavigationListener {
 
         navigator.followPath(path);
 
-        ComManager.get().sendTransmittable(navigator.getPath());
+        ComManager comManager = ComManager.get();
+        if (comManager != null) {
+            comManager.sendTransmittable(navigator.getPath());
+        }
+
         waitForStop();
     }
 
     private void waitForStop() {
         while (navigator.isMoving()) {
-            ComManager.get().sendTransmittable(poseProvider.getPose());
+            ComManager comManager = ComManager.get();
+            if (comManager != null) {
+                comManager.sendTransmittable(poseProvider.getPose());
+            }
+
             Thread.yield();
         }
     }
@@ -96,7 +106,7 @@ public final class Controller implements MoveListener, NavigationListener {
     }
 
     @Contract(pure = true)
-    @NotNull
+    @Nullable
     public Pose getPose() {
         return poseProvider.getPose();
     }
