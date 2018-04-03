@@ -4,7 +4,6 @@
 
 package ev3.localization;
 
-import common.logger.Logger;
 import common.particles.Particle;
 import ev3.navigation.Readings;
 import lejos.robotics.geometry.Rectangle;
@@ -230,42 +229,15 @@ final class Util {
     @Contract(pure = true)
     @NotNull
     private static Pose movePose(@NotNull Pose pose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
-        switch (move.getMoveType()) {
-            case STOP:
-                return pose;
-            case TRAVEL:
-                return shiftPose(pose, move.getDistanceTraveled(), distanceNoiseFactor);
-            case ROTATE:
-                return rotatePose(pose, move.getAngleTurned(), angleNoiseFactor);
-            default:
-                Logger.warning(LOG_TAG, "Move type not implemented " + move.toString());
-                throw new RuntimeException(move.toString() + " ... " + pose.toString());
-        }
-    }
+        double angleInRad = Math.toRadians(pose.getHeading());
 
-    @Contract(pure = true)
-    @NotNull
-    private static Pose rotatePose(@NotNull Pose pose, float angleToRotate, float randomFactor) {
-        if (angleToRotate == 0) return pose;
+        double ym = move.getDistanceTraveled() * Math.sin(angleInRad);
+        double xm = move.getDistanceTraveled() * Math.cos(angleInRad);
 
-        float heading = (pose.getHeading() + angleToRotate + (float) (angleToRotate * randomFactor * random.nextGaussian())) % 360;
-
-        return new Pose(pose.getX(), pose.getY(), heading);
-    }
-
-    @Contract(pure = true)
-    @NotNull
-    private static Pose shiftPose(@NotNull Pose pose, float distance, float randomFactor) {
-        if (distance == 0) return pose;
-
-        double theta = Math.toRadians(pose.getHeading());
-
-        double ym = distance * Math.sin(theta);
-        double xm = distance * Math.cos(theta);
-
-        float x = (float) (pose.getX() + xm + randomFactor * xm * random.nextGaussian());
-        float y = (float) (pose.getY() + ym + randomFactor * ym * random.nextGaussian());
-
-        return new Pose(x, y, pose.getHeading());
+        return new Pose(
+                (float) (pose.getX() + xm + distanceNoiseFactor * xm * random.nextGaussian()),
+                (float) (pose.getY() + ym + distanceNoiseFactor * ym * random.nextGaussian()),
+                (float) ((pose.getHeading() + move.getAngleTurned() + move.getAngleTurned() * angleNoiseFactor * random.nextGaussian()) % 360)
+        );
     }
 }
