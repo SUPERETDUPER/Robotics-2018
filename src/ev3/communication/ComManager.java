@@ -22,28 +22,42 @@ import java.net.ServerSocket;
 public class ComManager implements LostConnectionListener {
     private static final String LOG_TAG = ComManager.class.getSimpleName();
 
-    private static final ComManager mComManager = new ComManager();
+    private static boolean enabled = false;
 
-    private DataSender dataSender;
-    private DataListener dataListener;
+    private static ComManager mComManager;
 
-    private boolean enabled = false;
+    @NotNull
+    private final DataSender dataSender;
+
+    @NotNull
+    private final DataListener dataListener;
 
     private ComManager() {
-    }
-
-    @Contract(pure = true)
-    public static ComManager get() {
-        return mComManager;
-    }
-
-    public synchronized void enable() {
         dataSender = new PCDataSender(getOutputStream(), this);
         dataListener = new DataListener(dataSender);
 
         dataListener.startListening();
+    }
 
+    public static void enable() {
         enabled = true;
+    }
+
+    @Contract(pure = true)
+    public static boolean isEnabled() {
+        return enabled;
+    }
+
+    @Nullable
+    @Contract(pure = true)
+    public static ComManager get() {
+        if (!enabled) return null;
+
+        if (mComManager == null) {
+            mComManager = new ComManager();
+        }
+
+        return mComManager;
     }
 
     @Override
@@ -54,36 +68,29 @@ public class ComManager implements LostConnectionListener {
     public void stop() {
         enabled = false;
 
-        if (dataSender != null) {
-            dataSender.close();
-        }
-
-        if (dataListener != null) {
-            dataListener.stopListening();
-        }
+        dataSender.close();
+        dataListener.stopListening();
     }
 
     public void sendTransmittable(Transmittable transmittable) {
-        if (enabled) {
-            TransmittableType type;
+        TransmittableType type;
 
-            if (transmittable instanceof MCLData) {
-                type = TransmittableType.MCL_DATA;
-            } else if (transmittable instanceof Path) {
-                type = TransmittableType.PATH;
-            } else if (transmittable instanceof Pose) {
-                type = TransmittableType.CURRENT_POSE;
-            } else {
-                Logger.error(LOG_TAG, "Not a registered transmittable");
-                return;
-            }
-
-            dataSender.sendTransmittable(type, transmittable);
+        if (transmittable instanceof MCLData) {
+            type = TransmittableType.MCL_DATA;
+        } else if (transmittable instanceof Path) {
+            type = TransmittableType.PATH;
+        } else if (transmittable instanceof Pose) {
+            type = TransmittableType.CURRENT_POSE;
+        } else {
+            Logger.error(LOG_TAG, "Not a registered transmittable");
+            return;
         }
+
+        dataSender.sendTransmittable(type, transmittable);
     }
 
     @Contract(pure = true)
-    @Nullable
+    @NotNull
     public DataListener getDataListener() {
         return dataListener;
     }
