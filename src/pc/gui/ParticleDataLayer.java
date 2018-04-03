@@ -19,7 +19,7 @@ class ParticleDataLayer extends UpdatableLayer {
 
     private final MCLData data = new MCLData(null, null);
 
-    public ParticleDataLayer(int width, int height) {
+    public ParticleDataLayer(double width, double height) {
         super(width, height);
     }
 

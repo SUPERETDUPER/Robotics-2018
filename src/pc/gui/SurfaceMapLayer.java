@@ -4,6 +4,8 @@
 
 package pc.gui;
 
+import common.Config;
+import common.mapping.SurfaceMap;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.GraphicsContext;
 import org.jetbrains.annotations.NotNull;
@@ -13,12 +15,10 @@ import java.awt.image.BufferedImage;
 
 class SurfaceMapLayer extends Layer {
 
-    private final BufferedImage surfaceMap;
+    private static final BufferedImage surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH).getImage();
 
-    public SurfaceMapLayer(BufferedImage surfaceMap) {
+    SurfaceMapLayer() {
         super(surfaceMap.getWidth(), surfaceMap.getHeight());
-
-        this.surfaceMap = surfaceMap;
     }
 
     @Override

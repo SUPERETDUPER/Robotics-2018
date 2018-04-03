@@ -14,7 +14,7 @@ import lejos.robotics.navigation.Pose;
 class CurrentPoseLayer extends UpdatableLayer {
     private Pose pose;
 
-    public CurrentPoseLayer(int width, int height) {
+    public CurrentPoseLayer(double width, double height) {
         super(width, height);
     }
 

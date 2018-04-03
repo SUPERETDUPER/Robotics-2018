@@ -15,7 +15,7 @@ import java.io.IOException;
 abstract class UpdatableLayer extends Layer {
     private boolean dataNew = true;
 
-    UpdatableLayer(int width, int height) {
+    UpdatableLayer(double width, double height) {
         super(width, height);
     }
 

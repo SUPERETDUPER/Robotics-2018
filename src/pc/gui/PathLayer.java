@@ -20,7 +20,7 @@ final class PathLayer extends UpdatableLayer {
     private Pose currentPose;
     private final Path path = new Path();
 
-    public PathLayer(int width, int height) {
+    public PathLayer(double width, double height) {
         super(width, height);
     }
 

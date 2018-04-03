@@ -4,9 +4,7 @@
 
 package pc.gui;
 
-import common.Config;
 import common.TransmittableType;
-import common.mapping.SurfaceMap;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -19,34 +17,36 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pc.communication.DataReceivedListener;
 
-import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Most of this class is static since there is no way to access the instance
+ */
 public final class GUI extends Application {
     private static final String LOG_TAG = GUI.class.getSimpleName();
 
-    private static final List<Layer> staticLayers = new ArrayList<>();
-
+    //Layers that are updated by the DataReceivedListener
+    @NotNull
     private static final Map<TransmittableType, UpdatableLayer> updatableLayers = new EnumMap<>(TransmittableType.class);
 
     @Nullable
     private static EventHandler<WindowEvent> onWindowCloseListener;
 
-    private static boolean isGUIReady = false;
+    private static boolean isLoaded = false;
 
+    @NotNull
     public static final DataReceivedListener listener = new DataReceivedListener() {
         @Override
-        public synchronized void dataReceived(@NotNull TransmittableType event, @NotNull DataInputStream dis) throws IOException {
-            while (!isGUIReady) Thread.yield(); //So that we don't try to update a layer that has not yet been created
+        public synchronized void dataReceived(@NotNull TransmittableType eventType, @NotNull DataInputStream dataInputStream) throws IOException {
+            while (!isLoaded) Thread.yield(); //So that we don't try to update a layer that has not yet been created
 
-            updatableLayers.get(event).update(dis);
+            updatableLayers.get(eventType).update(dataInputStream);
 
-            if (event == TransmittableType.CURRENT_POSE) {
+            //Special case to communicate current pose with path
+            if (eventType == TransmittableType.CURRENT_POSE) {
                 Pose currentPose = ((CurrentPoseLayer) updatableLayers.get(TransmittableType.CURRENT_POSE)).getPose();
 
                 ((PathLayer) updatableLayers.get(TransmittableType.PATH)).setCurrentPose(currentPose);
@@ -67,30 +67,38 @@ public final class GUI extends Application {
         }
     };
 
-    public GUI() {
-        super();
+    public static void launchGUI(@Nullable EventHandler<WindowEvent> onWindowCloseListener) {
+        GUI.onWindowCloseListener = onWindowCloseListener;
 
-        BufferedImage surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH).getImage();
-
-        staticLayers.add(new SurfaceMapLayer(surfaceMap));
-
-        updatableLayers.put(TransmittableType.PATH, new PathLayer(surfaceMap.getWidth(), surfaceMap.getHeight()));
-        updatableLayers.put(TransmittableType.CURRENT_POSE, new CurrentPoseLayer(surfaceMap.getWidth(), surfaceMap.getHeight()));
-        updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer(surfaceMap.getWidth(), surfaceMap.getHeight()));
-
-        isGUIReady = true;
+        //Starts the application
+        new Thread() {
+            @Override
+            public void run() {
+                Application.launch(GUI.class, (String[]) null);
+            }
+        }.start();
     }
 
-
+    /**
+     * Initializes GUI
+     */
     @Override
     public void start(@NotNull Stage primaryStage) {
+        primaryStage.setTitle("Robotics 2018");
+
         Pane root = new Pane();
 
-        for (Layer staticLayer : staticLayers) {
-            root.getChildren().add(staticLayer);
-            staticLayer.draw();
-        }
+        //Create the map layer
+        SurfaceMapLayer surfaceMapLayer = new SurfaceMapLayer();
+        surfaceMapLayer.draw();
+        root.getChildren().add(surfaceMapLayer);
 
+        //Create all the other updatable layers with the map layer width and height
+        updatableLayers.put(TransmittableType.PATH, new PathLayer(surfaceMapLayer.getWidth(), surfaceMapLayer.getHeight()));
+        updatableLayers.put(TransmittableType.CURRENT_POSE, new CurrentPoseLayer(surfaceMapLayer.getWidth(), surfaceMapLayer.getHeight()));
+        updatableLayers.put(TransmittableType.MCL_DATA, new ParticleDataLayer(surfaceMapLayer.getWidth(), surfaceMapLayer.getHeight()));
+
+        //Add the layers to the pane
         for (UpdatableLayer updatableLayer : updatableLayers.values()) {
             root.getChildren().add(updatableLayer);
         }
@@ -101,18 +109,8 @@ public final class GUI extends Application {
 
         primaryStage.show();
 
-        animationTimer.start();
-    }
+        animationTimer.start(); //Starts the animation timer to redraw the frames
 
-    public static void launchGUI(@Nullable EventHandler<WindowEvent> onWindowCloseListener) {
-        GUI.onWindowCloseListener = onWindowCloseListener;
-
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                Application.launch(GUI.class, (String[]) null);
-            }
-        }.start();
+        isLoaded = true;
     }
 }

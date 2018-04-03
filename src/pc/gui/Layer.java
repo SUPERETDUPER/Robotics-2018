@@ -15,7 +15,7 @@ abstract class Layer extends Canvas {
 
     private final GraphicsContext graphics = getGraphicsContext2D();
 
-    Layer(int width, int height) {
+    Layer(double width, double height) {
         super(width, height);
 
         applyTransformations();

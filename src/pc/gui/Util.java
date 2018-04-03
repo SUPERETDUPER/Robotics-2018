@@ -38,6 +38,7 @@ class Util {
     static Particle[] normalizeWeightTo255(@NotNull Particle[] unNormalizedParticles) {
         float maxWeight = 0;
 
+        //Find the max weight
         for (Particle particle : unNormalizedParticles) {
             if (particle.weight > maxWeight) {
                 maxWeight = particle.weight;
@@ -47,7 +48,7 @@ class Util {
         Particle[] normalizedParticles = new Particle[unNormalizedParticles.length];
 
         for (int i = 0; i < unNormalizedParticles.length; i++) {
-            normalizedParticles[i] = unNormalizedParticles[i].getParticleWithNewWeight(unNormalizedParticles[i].weight * 255 / maxWeight);
+            normalizedParticles[i] = unNormalizedParticles[i].getParticleWithNewWeight(unNormalizedParticles[i].weight / maxWeight * 255);
         }
 
         return normalizedParticles;
