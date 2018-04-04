@@ -258,10 +258,6 @@ public class MyMovePilot implements ArcRotateMoveController {
     public Move getMovement() {
         Move result = this._moveActive ? this.chassis.getDisplacement(this.move) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
 
-        if (result.getMoveType() == MoveType.ARC) {
-            throw new RuntimeException(result.toString() + "\n" + this.move.toString());
-        }
-
         return result;
     }
 

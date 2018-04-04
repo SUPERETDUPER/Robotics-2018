@@ -60,11 +60,6 @@ final class Util {
             return move1;
         }
 
-        //Catch to try to debug issue #1
-        if (move1.getMoveType() == Move.MoveType.ARC) {
-            throw new RuntimeException(move1.toString() + " " + move1.getDistanceTraveled() + " " + move1.getAngleTurned());
-        }
-
         return new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());
     }
 
