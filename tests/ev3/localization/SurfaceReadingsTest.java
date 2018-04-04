@@ -11,6 +11,7 @@ import common.particles.MCLData;
 import common.particles.Particle;
 import ev3.communication.ComManager;
 import ev3.communication.PCDataSender;
+import ev3.navigation.Offset;
 import lejos.robotics.Color;
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class SurfaceReadingsTest {
         ArrayList<Particle> particles = new ArrayList<>();
 
         SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
-        SurfaceReadings readings = new SurfaceReadings(surfaceMap, Color.WHITE);
+        SurfaceReadings readings = new SurfaceReadings(surfaceMap, Color.WHITE, new Offset(0,0));
 
         for (int x = 0; x < surfaceMap.getBoundingRectangle().getWidth(); x += 10) {
             for (int y = 0; y < surfaceMap.getBoundingRectangle().getHeight(); y += 10) {

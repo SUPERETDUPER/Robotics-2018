@@ -30,8 +30,8 @@ class SimColorSensors implements ColorSensors {
 
     @Override
     public int getColorSurfaceRight() {
-        Pose currentPose = poseProvider.getPose();
-        return surfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        Point currentPose = Offset.RIGHT_COLOR_SENSOR.offset(poseProvider.getPose());
+        return surfaceMap.getColorAtPoint((int) currentPose.x, (int) currentPose.y);
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public final class Offset {
     // (x,y) offsets when robot is facing to the right (heading = 0)
     public static final Offset LEFT_COLOR_SENSOR = new Offset(-171, 80);
+    public static final Offset RIGHT_COLOR_SENSOR = new Offset(-133, -79);
 
     private final float deltaX;
     private final float deltaY;
@@ -37,8 +38,10 @@ public final class Offset {
     private static Point offset(@NotNull Pose pose, float deltaX, float deltaY) {
         double originalTheta = Math.atan(deltaY / deltaX);
 
-        //To fix problem with CAST rule
-        if (deltaY >= 0) {
+        //To fix problem with CAST rule quad 2
+        if (deltaY >= 0 && originalTheta < 0) {
+            originalTheta += Math.PI;
+        } else if (deltaY < 0 && originalTheta >= 0){ //quad 3
             originalTheta += Math.PI;
         }
 

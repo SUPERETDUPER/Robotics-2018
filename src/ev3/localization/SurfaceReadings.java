@@ -20,14 +20,16 @@ public class SurfaceReadings implements Readings {
 
     private final SurfaceMap surfaceMap;
     private final int color;
+    private final Offset offset;
 
-    public SurfaceReadings(SurfaceMap surfaceMap, int color) {
+    SurfaceReadings(SurfaceMap surfaceMap, int color, Offset offset) {
         this.surfaceMap = surfaceMap;
         this.color = color;
+        this.offset = offset;
     }
 
     public float calculateWeight(@NotNull Pose pose) {
-        Point location = Offset.LEFT_COLOR_SENSOR.offset(pose);
+        Point location = offset.offset(pose);
 
         int totalPixels = 0;
         int matchingPixels = 0;

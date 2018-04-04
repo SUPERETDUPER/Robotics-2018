@@ -14,7 +14,7 @@ import lejos.robotics.navigation.Pose;
 class CurrentPoseLayer extends UpdatableLayer {
     private Pose pose;
 
-    public CurrentPoseLayer(double width, double height) {
+    CurrentPoseLayer(double width, double height) {
         super(width, height);
     }
 
@@ -23,9 +23,12 @@ class CurrentPoseLayer extends UpdatableLayer {
         if (pose != null) {
             g.setFill(Color.BLACK);
             Util.displayPoseOnGui(g, pose);
+
             g.setFill(Color.PURPLE);
             Point leftColorSensorPoint = Offset.LEFT_COLOR_SENSOR.offset(pose);
             Util.displayPoseOnGui(g, new Pose(leftColorSensorPoint.x, leftColorSensorPoint.y, pose.getHeading()));
+            Point rightColorSensorPoint = Offset.RIGHT_COLOR_SENSOR.offset(pose);
+            Util.displayPoseOnGui(g, new Pose(rightColorSensorPoint.x, rightColorSensorPoint.y, pose.getHeading()));
         }
     }
 

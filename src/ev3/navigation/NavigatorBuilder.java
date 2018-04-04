@@ -4,13 +4,10 @@
 
 package ev3.navigation;
 
-import common.Config;
 import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
-import ev3.robot.ColorSensors;
 import lejos.robotics.chassis.Chassis;
-import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.MoveController;
 import lejos.robotics.navigation.Pose;
 

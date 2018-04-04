@@ -7,6 +7,7 @@ package ev3.localization;
 import common.logger.Logger;
 import common.mapping.SurfaceMap;
 import common.particles.MCLData;
+import ev3.navigation.Offset;
 import ev3.navigation.Readings;
 import ev3.robot.ColorSensors;
 import lejos.robotics.localization.PoseProvider;
@@ -174,7 +175,11 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
             //noinspection InfiniteLoopStatement
             while (true) {
                 RobotPoseProvider.this.update(
-                        new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft())
+                        new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft(), Offset.LEFT_COLOR_SENSOR)
+                );
+
+                RobotPoseProvider.this.update(
+                        new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceRight(), Offset.RIGHT_COLOR_SENSOR)
                 );
 
                 Thread.yield();
