@@ -9,7 +9,7 @@ import ev3.robot.*;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.localization.PoseProvider;
 
-public class SimRobot extends Robot {
+public class SimRobot implements Robot {
     private static final String LOG_TAG = SimRobot.class.getSimpleName();
 
     private PoseProvider poseProvider;

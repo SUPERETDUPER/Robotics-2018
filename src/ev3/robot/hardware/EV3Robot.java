@@ -8,7 +8,7 @@ import ev3.robot.*;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 
-public class EV3Robot extends Robot {
+public class EV3Robot implements Robot {
 
     private EV3Arm arm;
     private EV3Paddle paddle;

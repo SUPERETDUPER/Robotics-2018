@@ -22,7 +22,7 @@ class Brain {
     }
 
     void start() {
-        Controller controller = robot.getController();
+        Controller controller = new Controller(robot);
 
         controller.followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
