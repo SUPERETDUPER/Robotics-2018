@@ -24,21 +24,19 @@ final class PCMain {
             return;
         }
 
-        InputStream inputStream = Connection.getInputStream(Connection.getIPAddress());
+        final DataReceiver dataReceiver = new DataReceiver(
+                Connection.getInputStream(Connection.getIPAddress()),
+                GUI.listener
+        );
 
-        if (inputStream == null) {
-            Logger.error(LOG_TAG, "Could not getOutputStream to ev3");
-            return;
-        }
-
-        final DataReceiver dataReceiver = new DataReceiver(inputStream, GUI.listener);
-
-        GUI.launchGUI(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                dataReceiver.stop();
-            }
-        });
+        GUI.launchGUI(
+                new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        dataReceiver.stop();
+                    }
+                }
+        );
 
         dataReceiver.read();
     }

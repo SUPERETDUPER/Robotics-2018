@@ -24,6 +24,7 @@ public class Connection {
      * @return the input stream of the connection
      * @param ipAddress ip address of where to connect
      */
+    @NotNull
     public static InputStream getInputStream(String ipAddress) {
         Logger.info(LOG_TAG, "Attempting to getOutputStream to EV3 ...");
         for (int attempt = 0; attempt < 6; attempt++) {
@@ -39,9 +40,9 @@ public class Connection {
             }
         }
 
-        Logger.warning(LOG_TAG, "Failed to getOutputStream");
+        Logger.error(LOG_TAG, "Failed to getOutputStream");
 
-        return null;
+        throw new RuntimeException("Failed to getOutputStream");
     }
 
     @Contract(pure = true)
