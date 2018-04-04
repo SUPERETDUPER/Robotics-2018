@@ -4,15 +4,8 @@
 
 package ev3.navigation;
 
-import common.Config;
 import common.logger.Logger;
-import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
-import ev3.communication.DataListener;
-import ev3.localization.RobotPoseProvider;
-import ev3.robot.Robot;
-import ev3.robot.sim.SimRobot;
-import lejos.robotics.chassis.Chassis;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
@@ -21,49 +14,13 @@ import org.jetbrains.annotations.NotNull;
 public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
-    private static final double ANGULAR_ACCELERATION = 200;
-    private static final double LINEAR_ACCELERATION = 400;
-    private static final double ANGULAR_SPEED_PERCENT = 0.5;
-    private static final double LINEAR_SPEED_PERCENT = 0.5;
-
-    private static final Pose STARTING_POSE = new Pose(2152, 573, 180);
-
     private final Navigator navigator;
-    private final RobotPoseProvider poseProvider;
 
-    public Controller(@NotNull Robot robot) {
-        Chassis chassis = robot.getChassis();
+    public Controller(@NotNull Navigator navigator) {
+        this.navigator = navigator;
 
-        MyMovePilot pilot = new MyMovePilot(chassis);
-
-        pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
-        pilot.setLinearAcceleration(LINEAR_ACCELERATION);
-        pilot.setLinearSpeed(pilot.getMaxLinearSpeed() * LINEAR_SPEED_PERCENT);
-        pilot.setAngularSpeed(pilot.getMaxAngularSpeed() * ANGULAR_SPEED_PERCENT);
-
-        pilot.addMoveListener(this);
-
-        SurfaceMap surfaceMap = new SurfaceMap(Config.currentMode == Config.Mode.SIM ? Config.PC_IMAGE_PATH : Config.EV3_IMAGE_PATH);
-
-        poseProvider = new RobotPoseProvider(surfaceMap, pilot, STARTING_POSE);
-//        poseProvider.setPose(STARTING_POSE);
-
-        if (robot instanceof SimRobot) {
-            ((SimRobot) robot).setPoseProvider(poseProvider);
-            ((SimRobot) robot).setSurfaceMap(surfaceMap);
-        }
-
-        ComManager comManager = ComManager.get();
-
-        if (comManager != null) {
-            DataListener dataListener = comManager.getDataListener();
-            dataListener.attachToRobotPoseProvider(poseProvider);
-        }
-
-        poseProvider.startUpdater(robot.getColorSensors());
-
-        navigator = new Navigator(pilot, poseProvider);
-        navigator.addNavigationListener(this);
+        this.navigator.addNavigationListener(this);
+        this.navigator.getMoveController().addMoveListener(this);
     }
 
     public void followPath(@NotNull Path path) {
@@ -89,7 +46,7 @@ public final class Controller implements MoveListener, NavigationListener {
         while (navigator.isMoving()) {
             ComManager comManager = ComManager.get();
             if (comManager != null) {
-                comManager.sendTransmittable(poseProvider.getPose());
+                comManager.sendTransmittable(navigator.getPoseProvider().getPose());
             }
 
             Thread.yield();
@@ -107,7 +64,7 @@ public final class Controller implements MoveListener, NavigationListener {
     @Contract(pure = true)
     @NotNull
     public Pose getPose() {
-        return poseProvider.getPose();
+        return navigator.getPoseProvider().getPose();
     }
 
     @Override

@@ -43,7 +43,7 @@ public class SurfaceReadings implements Readings {
             }
         }
 
-        return (float) matchingPixels / totalPixels; //Float cast required to get decimal percentage
+        return (float) matchingPixels / totalPixels; //Float cast required to getNavigator decimal percentage
     }
 
     @NotNull

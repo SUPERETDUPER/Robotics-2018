@@ -15,14 +15,16 @@ class Brain {
 
     private final int[] listFoodColor = {Color.NONE, Color.NONE, Color.NONE};
     private int index = 0;
-    private final Robot robot;
 
-    Brain(Robot robot) {
+    private final Robot robot;
+    private final Controller controller;
+
+    Brain(Robot robot, Controller controller) {
         this.robot = robot;
+        this.controller = controller;
     }
 
     void start() {
-        Controller controller = new Controller(robot);
 
         controller.followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());

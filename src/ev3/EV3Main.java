@@ -5,15 +5,24 @@
 package ev3;
 
 import common.Config;
+import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
+import ev3.localization.RobotPoseProvider;
+import ev3.navigation.Controller;
+import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import ev3.robot.hardware.EV3Robot;
 import ev3.robot.sim.SimRobot;
+import lejos.robotics.localization.PoseProvider;
+import lejos.robotics.navigation.MoveController;
+import lejos.robotics.navigation.MoveProvider;
+import lejos.robotics.navigation.Navigator;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
 
     private static Robot robot;
+    private static Controller controller;
 
     public static void main(String[] args) {
         initialize();
@@ -32,11 +41,30 @@ final class EV3Main {
         }
 
         //Builds either a sim or an ev3 robot depending on config
-        robot = (Config.currentMode == Config.Mode.SIM ? new SimRobot() : new EV3Robot());
+        SurfaceMap surfaceMap;
+        if (Config.currentMode == Config.Mode.SIM) {
+            surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
+            robot = new SimRobot();
+            ((SimRobot) robot).setSurfaceMap(surfaceMap);
+        } else {
+            robot = new EV3Robot();
+            surfaceMap = new SurfaceMap(Config.EV3_IMAGE_PATH);
+        }
+
+        MoveController pilot = NavigatorBuilder.getMoveProvider(robot.getChassis());
+        RobotPoseProvider poseProvider = NavigatorBuilder.getPoseProvider(surfaceMap, pilot);
+
+        if (Config.currentMode == Config.Mode.SIM){
+            ((SimRobot) robot).setPoseProvider(poseProvider);
+        }
+
+        poseProvider.startUpdater(robot.getColorSensors());
+
+        controller = new Controller(new Navigator(pilot, poseProvider));
     }
 
     private static void runMain() {
-        new Brain(robot).start();
+        new Brain(robot, controller).start();
     }
 
     private static void cleanUp() {
