@@ -21,7 +21,7 @@ class CurrentPoseLayer extends UpdatableLayer {
     @Override
     void displayOnGui(GraphicsContext g) {
         if (pose != null) {
-            g.setFill(Color.BLACK);
+            g.setFill(Color.HOTPINK);
             Util.displayPoseOnGui(g, pose);
 
             g.setFill(Color.PURPLE);
