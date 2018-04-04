@@ -33,7 +33,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private final MoveProvider mp;
     private final SurfaceMap surfaceMap;
     @NotNull
-    private final MCLData data = new MCLData(null, null);
+    private final MCLData data;
 
     @NotNull
     private final ArrayList<MCLDataListener> listeners = new ArrayList<>();
@@ -45,13 +45,16 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Nullable
     private Move completedMove;
 
-    public RobotPoseProvider(SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider) {
+    public RobotPoseProvider(SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider, Pose startingPose) {
         this.surfaceMap = surfaceMap;
         this.mp = moveProvider;
+        this.data = new MCLData(Util.getNewParticleSet(surfaceMap.getBoundingRectangle(), startingPose, NUM_PARTICLES), startingPose);
+
+        mp.addMoveListener(this);
 
         completedMove = getCurrentCompletedMove(mp);
 
-        mp.addMoveListener(this);
+        notifyListeners();
     }
 
     public synchronized void addListener(MCLDataListener listener) {
@@ -84,14 +87,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
      *
      * @return the current pose
      */
-    @Nullable
+    @NotNull
     @Override
     @Contract(pure = true)
     public synchronized Pose getPose() {
-        if (data.getCurrentPose() == null) {
-            return null;
-        }
-
         Move missingMove = Util.subtractMove(getCurrentCompletedMove(mp), completedMove);
 
         return Util.movePose(data.getCurrentPose(), missingMove);
@@ -122,12 +121,11 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
         Logger.info(LOG_TAG, "Stopped move " + move.toString());
 
-        if (data.getCurrentPose() != null && data.getParticles() != null) {
-            Move missingMove = Util.subtractMove(Util.deepCopyMove(move), completedMove);
+        data.getParticles();
+        Move missingMove = Util.subtractMove(Util.deepCopyMove(move), completedMove);
 
-            data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
-            data.setParticles(Util.moveParticleSet(data.getParticles(), missingMove));
-        }
+        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
+        data.setParticles(Util.moveParticleSet(data.getParticles(), missingMove));
 
         completedMove = null;
 
@@ -139,11 +137,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         Move missingMove = Util.subtractMove(move, completedMove);
 
-        if (data.getParticles() != null && data.getCurrentPose() != null) {
-            data.setParticles(Util.update(data.getParticles(), missingMove, readings));
-            data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
+        data.getParticles();
+        data.setParticles(Util.update(data.getParticles(), missingMove, readings));
+        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
 //        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
-        }
 
         completedMove = move;
 

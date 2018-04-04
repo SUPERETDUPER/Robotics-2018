@@ -9,6 +9,7 @@ import common.particles.Particle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
+import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,24 +18,23 @@ import org.jetbrains.annotations.NotNull;
 class ParticleDataLayer extends UpdatableLayer {
     private static final String LOG_TAG = ParticleDataLayer.class.getSimpleName();
 
-    private final MCLData data = new MCLData(null, null);
+    private MCLData data;
 
-    public ParticleDataLayer(double width, double height) {
+    ParticleDataLayer(double width, double height) {
         super(width, height);
     }
 
     @Override
     synchronized void displayOnGui(@NotNull GraphicsContext g) {
-        if (data.getParticles() != null) {
+        if (data != null) {
             Particle[] normalizedParticles = Util.normalizeWeightTo255(data.getParticles());
 
             for (Particle particle : normalizedParticles) {
                 g.setFill(Color.rgb((int) particle.weight, (int) (255 - particle.weight), 0));
                 Util.displayPoseOnGui(g, particle.getPose());
             }
-        }
 
-        if (data.getCurrentPose() != null) {
+
             g.setFill(Color.BLUE);
             Util.displayPoseOnGui(g, data.getCurrentPose());
         }
@@ -47,6 +47,10 @@ class ParticleDataLayer extends UpdatableLayer {
 
     @Override
     Transmittable getContent() {
+        if (data == null){
+            data = new MCLData(new Particle[0], new Pose());
+        }
+
         return data;
     }
 }

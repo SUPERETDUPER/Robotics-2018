@@ -12,8 +12,6 @@ import pc.communication.Connection;
 import pc.communication.DataReceiver;
 import pc.gui.GUI;
 
-import java.io.InputStream;
-
 final class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();

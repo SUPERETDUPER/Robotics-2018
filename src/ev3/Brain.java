@@ -17,7 +17,7 @@ class Brain {
     private int index = 0;
     private final Robot robot;
 
-    public Brain(Robot robot) {
+    Brain(Robot robot) {
         this.robot = robot;
     }
 

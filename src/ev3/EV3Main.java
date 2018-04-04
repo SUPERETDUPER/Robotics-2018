@@ -32,7 +32,7 @@ final class EV3Main {
         }
 
         //Builds either a sim or an ev3 robot depending on config
-        robot = Config.currentMode == Config.Mode.SIM ? new SimRobot() : new EV3Robot();
+        robot = (Config.currentMode == Config.Mode.SIM ? new SimRobot() : new EV3Robot());
     }
 
     private static void runMain() {

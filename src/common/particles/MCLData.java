@@ -7,7 +7,6 @@ package common.particles;
 import lejos.robotics.Transmittable;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -19,70 +18,56 @@ import java.io.IOException;
 public class MCLData implements Transmittable {
     private static final String LOG_TAG = MCLData.class.getSimpleName();
 
-    @Nullable
+    @NotNull
     private Particle[] particles;
-    @Nullable
+    @NotNull
     private Pose currentPose;
 
-    public MCLData(@Nullable Particle[] particles, @Nullable Pose currentPose) {
+    public MCLData(@NotNull Particle[] particles, @NotNull Pose currentPose) {
         this.particles = particles;
         this.currentPose = currentPose;
     }
 
-    @Nullable
+    @NotNull
     public Pose getCurrentPose() {
         return currentPose;
     }
 
-    @Nullable
+    @NotNull
     public Particle[] getParticles() {
         return particles;
     }
 
-    public void setCurrentPose(@Nullable Pose currentPose) {
+    public void setCurrentPose(@NotNull Pose currentPose) {
         this.currentPose = currentPose;
     }
 
-    public void setParticles(@Nullable Particle[] particles) {
+    public void setParticles(@NotNull Particle[] particles) {
         this.particles = particles;
     }
 
     public synchronized void dumpObject(@NotNull DataOutputStream dos) throws IOException {
-        boolean hasCurrentPose = currentPose != null;
+        currentPose.dumpObject(dos);
 
-        dos.writeBoolean(hasCurrentPose);
-        if (hasCurrentPose) {
-            currentPose.dumpObject(dos);
-        }
 
-        if (particles == null) {
-            dos.writeInt(0);
-        } else {
-            dos.writeInt(particles.length);
-            for (Particle particle : particles) {
-                particle.getPose().dumpObject(dos);
-                dos.writeFloat(particle.weight);
-            }
+        dos.writeInt(particles.length);
+        for (Particle particle : particles) {
+            particle.getPose().dumpObject(dos);
+            dos.writeFloat(particle.weight);
         }
     }
 
     public synchronized void loadObject(@NotNull DataInputStream dis) throws IOException {
-        if (dis.readBoolean()) {
-            this.currentPose = new Pose();
-            this.currentPose.loadObject(dis);
-        }
+        this.currentPose = new Pose();
+        this.currentPose.loadObject(dis);
 
-        int numOfParticles = dis.readInt();
+        particles = new Particle[dis.readInt()];
 
-        if (numOfParticles != 0) {
-            particles = new Particle[numOfParticles];
+        for (int i = 0; i < particles.length; i++) {
+            Pose particlePose = new Pose();
+            particlePose.loadObject(dis);
 
-            for (int i = 0; i < numOfParticles; i++) {
-                Pose particlePose = new Pose();
-                particlePose.loadObject(dis);
-
-                particles[i] = new Particle(particlePose, dis.readFloat());
-            }
+            particles[i] = new Particle(particlePose, dis.readFloat());
         }
     }
 }

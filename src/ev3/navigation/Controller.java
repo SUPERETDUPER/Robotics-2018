@@ -17,7 +17,6 @@ import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
@@ -46,8 +45,8 @@ public final class Controller implements MoveListener, NavigationListener {
 
         SurfaceMap surfaceMap = new SurfaceMap(Config.currentMode == Config.Mode.SIM ? Config.PC_IMAGE_PATH : Config.EV3_IMAGE_PATH);
 
-        poseProvider = new RobotPoseProvider(surfaceMap, pilot);
-        poseProvider.setPose(STARTING_POSE);
+        poseProvider = new RobotPoseProvider(surfaceMap, pilot, STARTING_POSE);
+//        poseProvider.setPose(STARTING_POSE);
 
         if (robot instanceof SimRobot) {
             ((SimRobot) robot).setPoseProvider(poseProvider);
@@ -106,7 +105,7 @@ public final class Controller implements MoveListener, NavigationListener {
     }
 
     @Contract(pure = true)
-    @Nullable
+    @NotNull
     public Pose getPose() {
         return poseProvider.getPose();
     }
