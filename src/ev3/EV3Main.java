@@ -13,9 +13,7 @@ import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import ev3.robot.hardware.EV3Robot;
 import ev3.robot.sim.SimRobot;
-import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.MoveController;
-import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Navigator;
 
 final class EV3Main {
@@ -42,9 +40,10 @@ final class EV3Main {
 
         //Builds either a sim or an ev3 robot depending on config
         SurfaceMap surfaceMap;
+
         if (Config.currentMode == Config.Mode.SIM) {
-            surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
             robot = new SimRobot();
+            surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
             ((SimRobot) robot).setSurfaceMap(surfaceMap);
         } else {
             robot = new EV3Robot();
