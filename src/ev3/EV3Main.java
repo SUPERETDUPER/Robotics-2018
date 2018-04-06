@@ -34,8 +34,9 @@ final class EV3Main {
 
     private static void initialize() {
         //Connect to PC unless in SOLO
+
         if (Config.currentMode != Config.Mode.SOLO) {
-            ComManager.enable();
+            //ComManager.enable();
         }
 
         //Builds either a sim or an ev3 robot depending on config

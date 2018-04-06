@@ -11,7 +11,7 @@ class SimPaddle implements Paddle {
     private static final String LOG_TAG = SimPaddle.class.getSimpleName();
 
     @Override
-    public void moveBlockOffConveyor(boolean immediateReturn) {
+    public void move(boolean immediateReturn) {
         Logger.info(LOG_TAG, "Moving block of conveyor");
     }
 
