@@ -4,6 +4,7 @@
 
 package ev3.robot.hardware;
 
+import ev3.navigation.NavigatorBuilder;
 import ev3.robot.*;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.chassis.Chassis;
@@ -28,7 +29,7 @@ public class EV3Robot implements Robot {
     @Override
     public Chassis getChassis() {
         if (chassis == null) {
-            chassis = Util.buildChassis(
+            chassis = NavigatorBuilder.buildChassis(
                     new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT),
                     new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT)
             );

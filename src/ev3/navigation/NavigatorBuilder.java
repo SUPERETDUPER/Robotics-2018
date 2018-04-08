@@ -7,10 +7,14 @@ package ev3.navigation;
 import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
+import lejos.robotics.chassis.Wheel;
+import lejos.robotics.chassis.WheeledChassis;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.MoveController;
 import lejos.robotics.navigation.Pose;
+import org.jetbrains.annotations.NotNull;
 
 public class NavigatorBuilder {
 
@@ -21,7 +25,10 @@ public class NavigatorBuilder {
 
     private static final Pose STARTING_POSE = new Pose(2152, 573, 180);
 
-    public static ArcRotateMoveController getMoveProvider(Chassis chassis){
+    private static final double WHEEL_OFFSET = 63; //Real value is around 56 but testing shows higher is better
+    private static final double WHEEL_DIAMETER = 80.5;
+
+    public static ArcRotateMoveController buildMoveProvider(Chassis chassis) {
         MyMovePilot pilot = new MyMovePilot(chassis);
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
@@ -32,7 +39,7 @@ public class NavigatorBuilder {
         return pilot;
     }
 
-    public static RobotPoseProvider getPoseProvider(SurfaceMap surfaceMap, MoveController pilot){
+    public static RobotPoseProvider buildPoseProvider(SurfaceMap surfaceMap, MoveController pilot) {
         RobotPoseProvider poseProvider = new RobotPoseProvider(surfaceMap, pilot, STARTING_POSE);
 
         ComManager comManager = ComManager.get();
@@ -42,5 +49,15 @@ public class NavigatorBuilder {
         }
 
         return poseProvider;
+    }
+
+    @NotNull
+    public static Chassis buildChassis(RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
+        Wheel[] wheels = new Wheel[]{
+                WheeledChassis.modelWheel(leftMotor, WHEEL_DIAMETER).offset(WHEEL_OFFSET),
+                WheeledChassis.modelWheel(rightMotor, WHEEL_DIAMETER).offset(-WHEEL_OFFSET)
+        };
+
+        return new WheeledChassis(wheels, WheeledChassis.TYPE_DIFFERENTIAL);
     }
 }

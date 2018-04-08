@@ -51,8 +51,8 @@ final class EV3Main {
             surfaceMap = new SurfaceMap(Config.EV3_IMAGE_PATH);
         }
 
-        MoveController pilot = NavigatorBuilder.getMoveProvider(robot.getChassis());
-        RobotPoseProvider poseProvider = NavigatorBuilder.getPoseProvider(surfaceMap, pilot);
+        MoveController pilot = NavigatorBuilder.buildMoveProvider(robot.getChassis());
+        RobotPoseProvider poseProvider = NavigatorBuilder.buildPoseProvider(surfaceMap, pilot);
 
         if (Config.currentMode == Config.Mode.SIM){
             ((SimRobot) robot).setPoseProvider(poseProvider);

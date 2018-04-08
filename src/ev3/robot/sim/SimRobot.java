@@ -5,6 +5,7 @@
 package ev3.robot.sim;
 
 import common.mapping.SurfaceMap;
+import ev3.navigation.NavigatorBuilder;
 import ev3.robot.*;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.localization.PoseProvider;
@@ -44,7 +45,7 @@ public class SimRobot implements Robot {
     @Override
     public Chassis getChassis() {
         if (chassis == null) {
-            chassis = Util.buildChassis(
+            chassis = NavigatorBuilder.buildChassis(
                     new SimMotor("leftMotor"),
                     new SimMotor("rightMotor")
             );
