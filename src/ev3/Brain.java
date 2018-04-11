@@ -27,7 +27,6 @@ class Brain {
     void start() {
 
         //robot.getPaddle().move(true);8
-        robot.getChassis().travel(1000);
 
         controller.followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
