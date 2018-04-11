@@ -27,7 +27,7 @@ public class Connection {
     @NotNull
     public static InputStream getInputStream(String ipAddress) {
         Logger.info(LOG_TAG, "Attempting to getOutputStream to EV3 ...");
-        for (int attempt = 0; attempt < 6; attempt++) {
+        for (int attempt = 0; attempt < 15; attempt++) {
             try {
                 InputStream inputStream = new Socket(ipAddress, Config.PORT_TO_CONNECT_ON_EV3).getInputStream();
 
@@ -36,7 +36,7 @@ public class Connection {
                 return inputStream;
 
             } catch (IOException e) {
-                Delay.msDelay(3000);
+                Delay.msDelay(2000);
             }
         }
 
