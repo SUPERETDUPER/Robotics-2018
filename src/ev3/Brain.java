@@ -26,7 +26,7 @@ class Brain {
 
     void start() {
 
-        //robot.getPaddle().move(true);8
+        //robot.getPaddle().move(true);
         robot.getChassis().travel(1000);
 
         controller.followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
@@ -38,8 +38,12 @@ class Brain {
         controller.followPath(MapOperations.getPathToContainerTopLeft(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
 
-        controller.followPath(MapOperations.getPathToContainerTopRight(controller.getPose()));
-        pickupFood(robot.getColorSensors().getColorContainer());
+        if(index!=3){
+            controller.followPath(MapOperations.getPathToContainerTopRight(controller.getPose()));
+            pickupFood(robot.getColorSensors().getColorContainer());
+        }
+
+
 
         for (int i = 0; i < 3; i++) {
             switch (listFoodColor[i]) {
@@ -59,6 +63,8 @@ class Brain {
                     Logger.warning(LOG_TAG, "Could not find temp reg of color : " + listFoodColor[i]);
             }
         }
+
+
 
         Logger.info(LOG_TAG, controller.getPose().toString());
     }
