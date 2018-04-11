@@ -19,14 +19,14 @@ import org.jetbrains.annotations.NotNull;
 public class NavigatorBuilder {
 
     private static final double ANGULAR_ACCELERATION = 150;
-    private static final double LINEAR_ACCELERATION = 400;
+    private static final double LINEAR_ACCELERATION = 200;
     private static final double ANGULAR_SPEED = 100;
-    private static final double LINEAR_SPEED = 200;
+    private static final double LINEAR_SPEED = 150;
 
     private static final Pose STARTING_POSE = new Pose(2152, 573, 180);
 
-    private static final double WHEEL_OFFSET = 63; //Real value is around 56 but testing shows higher is better
-    private static final double WHEEL_DIAMETER = 80.5;
+    private static final double WHEEL_OFFSET = 70; //Real value is around 56 but testing shows higher is better
+    private static final double WHEEL_DIAMETER = 81.6;
 
     public static ArcRotateMoveController buildMoveProvider(Chassis chassis) {
         MyMovePilot pilot = new MyMovePilot(chassis);
@@ -35,6 +35,7 @@ public class NavigatorBuilder {
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
         pilot.setLinearSpeed(LINEAR_SPEED);
         pilot.setAngularSpeed(ANGULAR_SPEED);
+//        pilot.setMinRadius(28);
 
         return pilot;
     }
