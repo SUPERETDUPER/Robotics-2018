@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-final class Util {
+public final class Util {
     private static final String LOG_TAG = Util.class.getSimpleName();
 
     private static final Random random = new Random();
@@ -189,8 +189,8 @@ final class Util {
         estimatedAngle /= totalWeights;
 
         // Normalize angle
-        while (estimatedAngle > 180) estimatedAngle -= 360;
-        while (estimatedAngle < -180) estimatedAngle += 360;
+        while (estimatedAngle > 360) estimatedAngle -= 360;
+        while (estimatedAngle <= 0) estimatedAngle += 360;
 
         return new Pose(estimatedX, estimatedY, estimatedAngle);
     }
