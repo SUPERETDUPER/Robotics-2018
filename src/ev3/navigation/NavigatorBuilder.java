@@ -35,7 +35,7 @@ public class NavigatorBuilder {
         pilot.setLinearAcceleration(LINEAR_ACCELERATION);
         pilot.setLinearSpeed(LINEAR_SPEED);
         pilot.setAngularSpeed(ANGULAR_SPEED);
-//        pilot.setMinRadius(28);
+        pilot.setMinRadius(70);
 
         return pilot;
     }
