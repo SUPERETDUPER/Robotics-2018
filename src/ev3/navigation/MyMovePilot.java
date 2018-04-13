@@ -10,7 +10,6 @@ package ev3.navigation;
 
 import java.util.ArrayList;
 
-import common.logger.Logger;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.chassis.Wheel;
@@ -312,6 +311,8 @@ public class MyMovePilot implements ArcRotateMoveController {
 
     @Override
     public void arc(double radius, double angle, boolean immediateReturn) {
+        angle = Math.abs(angle);
+
         if (Math.abs(radius) < minRadius) {
             throw new RuntimeException("Turn radius too small.");
         }
