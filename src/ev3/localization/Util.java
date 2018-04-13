@@ -20,8 +20,8 @@ public final class Util {
 
     private static final Random random = new Random();
 
-    private static final float DISTANCE_NOISE_FACTOR = 0.008F;
-    private static final float ANGLE_NOISE_FACTOR = 0.04F;
+    private static final float DISTANCE_NOISE_FACTOR = 0.08F;
+    private static final float ANGLE_NOISE_FACTOR = 0.4F;
 
     private static final float STARTING_RADIUS_NOISE = 100;
     private static final float STARTING_HEADING_NOISE = 30;

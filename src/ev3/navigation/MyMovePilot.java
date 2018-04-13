@@ -375,7 +375,7 @@ public class MyMovePilot implements ArcRotateMoveController {
         while (_moveActive) Thread.yield();
     }
 
-    private void movementStop() {
+    private synchronized void movementStop() {
         if (!_listeners.isEmpty()) {
             chassis.getDisplacement(move);
             for (MoveListener ml : _listeners)
@@ -385,7 +385,7 @@ public class MyMovePilot implements ArcRotateMoveController {
     }
 
     @Override
-    public Move getMovement() {
+    public synchronized Move getMovement() {
         if (_moveActive) {
             return chassis.getDisplacement(move);
         } else {

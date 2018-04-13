@@ -47,6 +47,10 @@ public final class Controller implements MoveListener, NavigationListener {
         waitForStop();
     }
 
+    public MyNavigator getNavigator() {
+        return navigator;
+    }
+
     public void followPath(@NotNull Path path) {
         followPath(path, new Offset(0, 0));
     }

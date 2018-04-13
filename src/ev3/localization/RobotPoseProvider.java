@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class RobotPoseProvider implements MoveListener, PoseProvider {
     private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
 
-    private static final int NUM_PARTICLES = 300;
+    private static final int NUM_PARTICLES = 50;
 
     @NotNull
     private final MoveProvider mp;
@@ -58,7 +58,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         notifyListeners();
     }
 
-    public synchronized void addListener(MCLDataListener listener) {
+    public void addListener(MCLDataListener listener) {
         listeners.add(listener);
     }
 
