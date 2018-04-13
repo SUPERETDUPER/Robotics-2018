@@ -40,8 +40,8 @@ public class SurfaceMap {
         try {
             return ColorJavaLejos.getLejosColor(new Color(image.getRGB(x, getInvertedY(y))));
         } catch (IndexOutOfBoundsException e) {
-            Logger.error(LOG_TAG, "x : " + x + ". y : " + y + " " + e);
-            throw new IndexOutOfBoundsException("x : " + x + ". y : " + y + " " + e);
+            Logger.warning(LOG_TAG, "Can't get color. Out of bounds : x : " + x + ". y : " + y + " " + e);
+            return lejos.robotics.Color.NONE;
         }
     }
 
