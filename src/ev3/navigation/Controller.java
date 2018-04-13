@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
-    private final Navigator navigator;
+    private final MyNavigator navigator;
 
-    public Controller(@NotNull Navigator navigator) {
+    public Controller(@NotNull MyNavigator navigator) {
         this.navigator = navigator;
 
         this.navigator.addNavigationListener(this);

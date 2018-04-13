@@ -28,7 +28,7 @@ public class NavigatorBuilder {
     private static final double WHEEL_OFFSET = 70; //Real value is around 56 but testing shows higher is better
     private static final double WHEEL_DIAMETER = 81.6;
 
-    public static ArcRotateMoveController buildMoveProvider(Chassis chassis) {
+    public static MyMovePilot buildMoveProvider(Chassis chassis) {
         MyMovePilot pilot = new MyMovePilot(chassis);
 
         pilot.setAngularAcceleration(ANGULAR_ACCELERATION);

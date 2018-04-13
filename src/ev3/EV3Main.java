@@ -9,6 +9,8 @@ import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
 import ev3.navigation.Controller;
+import ev3.navigation.MyMovePilot;
+import ev3.navigation.MyNavigator;
 import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import ev3.robot.hardware.EV3Robot;
@@ -51,7 +53,7 @@ final class EV3Main {
             surfaceMap = new SurfaceMap(Config.EV3_IMAGE_PATH);
         }
 
-        MoveController pilot = NavigatorBuilder.buildMoveProvider(robot.getChassis());
+        MyMovePilot pilot = NavigatorBuilder.buildMoveProvider(robot.getChassis());
         RobotPoseProvider poseProvider = NavigatorBuilder.buildPoseProvider(surfaceMap, pilot);
 
         if (Config.currentMode == Config.Mode.SIM){
@@ -60,7 +62,7 @@ final class EV3Main {
 
         poseProvider.startUpdater(robot.getColorSensors());
 
-        controller = new Controller(new Navigator(pilot, poseProvider));
+        controller = new Controller(new MyNavigator(pilot, poseProvider));
     }
 
     private static void runMain() {

@@ -7,6 +7,7 @@
  */
 
 package ev3.navigation;
+
 import java.util.ArrayList;
 
 import common.logger.Logger;
@@ -63,42 +64,36 @@ import lejos.robotics.navigation.MoveListener;
  * pilot.stop();
  * </pre></code>
  * </p>
- *
- *
  **/
 @SuppressWarnings("ALL")
 public class MyMovePilot implements ArcRotateMoveController {
-    private double                  minRadius   = 0;
-    final private Chassis           chassis;
-    private ArrayList<MoveListener> _listeners  = new ArrayList<MoveListener>();
-    private double                  linearSpeed;
-    private double                  linearAcceleration;
-    private double                  angularAcceleration;
-    private double                  angularSpeed;
-    private Monitor                 _monitor;
-    private boolean                 _moveActive = false;
-    private Move                    move = null;
-    private boolean                 _replaceMove = false;
+    private double minRadius = 0;
+    final private Chassis chassis;
+    private ArrayList<MoveListener> _listeners = new ArrayList<MoveListener>();
+    private double linearSpeed;
+    private double linearAcceleration;
+    private double angularAcceleration;
+    private double angularSpeed;
+    private Monitor _monitor;
+    private boolean _moveActive = false;
+    private Move move = null;
+    private boolean _replaceMove = false;
 
     /**
      * Allocates a Pilot object, and sets the physical parameters of
      * the robot.<br>
      * Assumes Motor.forward() causes the robot to move forward.
      *
-     * @param wheelDiameter
-     *          Diameter of the tire, in any convenient units (diameter in mm is
-     *          usually printed on the tire).
-     * @param trackWidth
-     *          Distance between center of right tire and center of left tire, in
-     *          same units as wheelDiameter.
-     * @param leftMotor
-     *          The left Motor (e.g., Motor.C).
-     * @param rightMotor
-     *          The right Motor (e.g., Motor.A).
+     * @param wheelDiameter Diameter of the tire, in any convenient units (diameter in mm is
+     *                      usually printed on the tire).
+     * @param trackWidth    Distance between center of right tire and center of left tire, in
+     *                      same units as wheelDiameter.
+     * @param leftMotor     The left Motor (e.g., Motor.C).
+     * @param rightMotor    The right Motor (e.g., Motor.A).
      */
     @Deprecated
     public MyMovePilot(final double wheelDiameter, final double trackWidth, final RegulatedMotor leftMotor,
-                     final RegulatedMotor rightMotor) {
+                       final RegulatedMotor rightMotor) {
         this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
     }
 
@@ -106,23 +101,18 @@ public class MyMovePilot implements ArcRotateMoveController {
      * Allocates a Pilot object, and sets the physical parameters of
      * the robot.<br>
      *
-     * @param wheelDiameter
-     *          Diameter of the tire, in any convenient units (diameter in mm is
-     *          usually printed on the tire).
-     * @param trackWidth
-     *          Distance between center of right tire and center of left tire, in
-     *          same units as wheelDiameter.
-     * @param leftMotor
-     *          The left Motor (e.g., Motor.C).
-     * @param rightMotor
-     *          The right Motor (e.g., Motor.A).
-     * @param reverse
-     *          If true, the NXT robot moves forward when the motors are running
-     *          backward.
+     * @param wheelDiameter Diameter of the tire, in any convenient units (diameter in mm is
+     *                      usually printed on the tire).
+     * @param trackWidth    Distance between center of right tire and center of left tire, in
+     *                      same units as wheelDiameter.
+     * @param leftMotor     The left Motor (e.g., Motor.C).
+     * @param rightMotor    The right Motor (e.g., Motor.A).
+     * @param reverse       If true, the NXT robot moves forward when the motors are running
+     *                      backward.
      */
     @Deprecated
     public MyMovePilot(final double wheelDiameter, final double trackWidth, final RegulatedMotor leftMotor,
-                     final RegulatedMotor rightMotor, final boolean reverse) {
+                       final RegulatedMotor rightMotor, final boolean reverse) {
         this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     }
 
@@ -130,47 +120,40 @@ public class MyMovePilot implements ArcRotateMoveController {
      * Allocates a Pilot object, and sets the physical parameters of
      * the robot.<br>
      *
-     * @param leftWheelDiameter
-     *          Diameter of the left wheel, in any convenient units (diameter in
-     *          mm is usually printed on the tire).
-     * @param rightWheelDiameter
-     *          Diameter of the right wheel. You can actually fit intentionally
-     *          wheels with different size to your robot. If you fitted wheels
-     *          with the same size, but your robot is not going straight, try
-     *          swapping the wheels and see if it deviates into the other
-     *          direction. That would indicate a small difference in wheel size.
-     *          Adjust wheel size accordingly. The minimum change in wheel size
-     *          which will actually have an effect is given by minChange =
-     *          A*wheelDiameter*wheelDiameter/(1-(A*wheelDiameter) where A =
-     *          PI/(moveSpeed*360). Thus for a moveSpeed of 25 cm/second and a
-     *          wheelDiameter of 5,5 cm the minChange is about 0,01058 cm. The
-     *          reason for this is, that different while sizes will result in
-     *          different motor speed. And that is given as an integer in degree
-     *          per second.
-     * @param trackWidth
-     *          Distance between center of right tire and center of left tire, in
-     *          same units as wheelDiameter.
-     * @param leftMotor
-     *          The left Motor (e.g., Motor.C).
-     * @param rightMotor
-     *          The right Motor (e.g., Motor.A).
-     * @param reverse
-     *          If true, the NXT robot moves forward when the motors are running
-     *          backward.
+     * @param leftWheelDiameter  Diameter of the left wheel, in any convenient units (diameter in
+     *                           mm is usually printed on the tire).
+     * @param rightWheelDiameter Diameter of the right wheel. You can actually fit intentionally
+     *                           wheels with different size to your robot. If you fitted wheels
+     *                           with the same size, but your robot is not going straight, try
+     *                           swapping the wheels and see if it deviates into the other
+     *                           direction. That would indicate a small difference in wheel size.
+     *                           Adjust wheel size accordingly. The minimum change in wheel size
+     *                           which will actually have an effect is given by minChange =
+     *                           A*wheelDiameter*wheelDiameter/(1-(A*wheelDiameter) where A =
+     *                           PI/(moveSpeed*360). Thus for a moveSpeed of 25 cm/second and a
+     *                           wheelDiameter of 5,5 cm the minChange is about 0,01058 cm. The
+     *                           reason for this is, that different while sizes will result in
+     *                           different motor speed. And that is given as an integer in degree
+     *                           per second.
+     * @param trackWidth         Distance between center of right tire and center of left tire, in
+     *                           same units as wheelDiameter.
+     * @param leftMotor          The left Motor (e.g., Motor.C).
+     * @param rightMotor         The right Motor (e.g., Motor.A).
+     * @param reverse            If true, the NXT robot moves forward when the motors are running
+     *                           backward.
      */
     @Deprecated
     public MyMovePilot(final double leftWheelDiameter, final double rightWheelDiameter, final double trackWidth,
-                     final RegulatedMotor leftMotor, final RegulatedMotor rightMotor, final boolean reverse) {
-        this(new WheeledChassis(new Wheel[] {
+                       final RegulatedMotor leftMotor, final RegulatedMotor rightMotor, final boolean reverse) {
+        this(new WheeledChassis(new Wheel[]{
                 WheeledChassis.modelWheel(leftMotor, leftWheelDiameter).offset(trackWidth / 2).invert(reverse),
-                WheeledChassis.modelWheel(rightMotor, rightWheelDiameter).offset(-trackWidth / 2).invert(reverse) }, WheeledChassis.TYPE_DIFFERENTIAL));
+                WheeledChassis.modelWheel(rightMotor, rightWheelDiameter).offset(-trackWidth / 2).invert(reverse)}, WheeledChassis.TYPE_DIFFERENTIAL));
     }
 
     /**
      * Allocates a Pilot object.<br>
      *
-     * @param chassis
-     *          A Chassis object describing the physical parameters of the robot.
+     * @param chassis A Chassis object describing the physical parameters of the robot.
      */
     public MyMovePilot(Chassis chassis) {
         this.chassis = chassis;
@@ -305,7 +288,7 @@ public class MyMovePilot implements ArcRotateMoveController {
 
     @Override
     public void travelArc(double radius, double distance, boolean immediateReturn) {
-        arc(radius,  distance / (2 * Math.PI), immediateReturn);
+        arc(radius, distance / (2 * Math.PI), immediateReturn);
     }
 
     @Override
@@ -346,6 +329,23 @@ public class MyMovePilot implements ArcRotateMoveController {
         movementStart(immediateReturn);
     }
 
+    public void move(Move move, boolean immediateReturn) {
+        switch (move.getMoveType()) {
+            case TRAVEL:
+                travel(move.getDistanceTraveled(), immediateReturn);
+                break;
+            case ROTATE:
+                rotate(move.getAngleTurned(), immediateReturn);
+                break;
+            case ARC:
+                arc(move.getArcRadius(), move.getAngleTurned(), immediateReturn);
+                break;
+            case STOP:
+                stop();
+                break;
+        }
+    }
+
     // Stops. Stops must be blocking!
 
     @Override
@@ -362,7 +362,6 @@ public class MyMovePilot implements ArcRotateMoveController {
     }
 
 
-
     // Methods dealing the start and end of a move
     private void movementStart(boolean immediateReturn) {
         for (MoveListener ml : _listeners)
@@ -376,7 +375,7 @@ public class MyMovePilot implements ArcRotateMoveController {
     }
 
     private void movementStop() {
-        if ( ! _listeners.isEmpty()) {
+        if (!_listeners.isEmpty()) {
             chassis.getDisplacement(move);
             for (MoveListener ml : _listeners)
                 ml.moveStopped(move, this);
@@ -388,8 +387,7 @@ public class MyMovePilot implements ArcRotateMoveController {
     public Move getMovement() {
         if (_moveActive) {
             return chassis.getDisplacement(move);
-        }
-        else {
+        } else {
             return new Move(Move.MoveType.STOP, 0, 0, false);
         }
     }
@@ -403,7 +401,6 @@ public class MyMovePilot implements ArcRotateMoveController {
     /**
      * The monitor class detects end-of-move situations when non blocking move
      * call were made and makes sure these are dealt with.
-     *
      */
     private class Monitor extends Thread {
         public boolean more = true;
