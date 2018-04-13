@@ -109,7 +109,6 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Started move " + move.toString());
     }
 
     /**
@@ -120,8 +119,6 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
      */
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Stopped move " + move.toString());
-
         data.getParticles();
         Move missingMove = Util.subtractMove(Util.deepCopyMove(move), completedMove);
 

@@ -7,6 +7,7 @@ package ev3;
 import common.logger.Logger;
 import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;
+import ev3.navigation.Offset;
 import ev3.robot.Robot;
 import lejos.robotics.Color;
 
@@ -28,7 +29,7 @@ class Brain {
 
         //robot.getPaddle().move(true);8
 
-        controller.followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
+        controller.followPath(MapOperations.goToContainerBottomRight(controller.getPose()), Offset.CENTER_OF_ROBOT);
         pickupFood(robot.getColorSensors().getColorContainer());
 
         controller.followPath(MapOperations.goToContainerBottomLeft(controller.getPose()));

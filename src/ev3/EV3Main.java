@@ -15,9 +15,6 @@ import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import ev3.robot.hardware.EV3Robot;
 import ev3.robot.sim.SimRobot;
-import lejos.robotics.navigation.MoveController;
-import lejos.robotics.navigation.Navigator;
-import lejos.robotics.navigation.RotateMoveController;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
