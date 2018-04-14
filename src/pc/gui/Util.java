@@ -48,7 +48,7 @@ class Util {
         Particle[] normalizedParticles = new Particle[unNormalizedParticles.length];
 
         for (int i = 0; i < unNormalizedParticles.length; i++) {
-            normalizedParticles[i] = unNormalizedParticles[i].getParticleWithNewWeight(unNormalizedParticles[i].weight / maxWeight * 255);
+            normalizedParticles[i] = new Particle(unNormalizedParticles[i], unNormalizedParticles[i].weight / maxWeight * 255);
         }
 
         return normalizedParticles;

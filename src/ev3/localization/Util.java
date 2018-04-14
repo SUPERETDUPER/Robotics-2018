@@ -15,14 +15,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public final class Util {
-    private static final String LOG_TAG = Util.class.getSimpleName();
-
+/**
+ * Util classes containing the core of the particle algorithm
+ * TODO Review for bugs
+ */
+final class Util {
     private static final Random random = new Random();
 
+    //How much the particles should spread
     private static final float DISTANCE_NOISE_FACTOR = 0.08F;
     private static final float ANGLE_NOISE_FACTOR = 0.4F;
 
+    //How much the particles should be spread out at start
     private static final float STARTING_RADIUS_NOISE = 100;
     private static final float STARTING_HEADING_NOISE = 30;
 
@@ -64,6 +68,8 @@ public final class Util {
     }
 
     /**
+     * THE ALGORITHM !!
+     *
      * The algorithm is as follows.
      * {@see https://classroom.udacity.com/courses/ud810/lessons/3353778638/concepts/33450785680923}
      * <p>
@@ -122,7 +128,7 @@ public final class Util {
     @SuppressWarnings("SameParameterValue")
     @Contract(pure = true)
     @NotNull
-    static Particle[] getNewParticleSet(Rectangle boundingRectangle, @NotNull Pose centerPose, int numParticles) {
+    static Particle[] createNewParticleSet(Rectangle boundingRectangle, @NotNull Pose centerPose, int numParticles) {
         Particle[] newParticles = new Particle[numParticles];
 
         float totalWeight = 0;
@@ -149,7 +155,7 @@ public final class Util {
             float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * randomFactorDistance;
 
             float totalError = Math.abs(randomFactorDistance) + Math.abs(randomFactorAngle);
-            float newWeight = bellCurve(totalError);
+            float newWeight = bellCurveFunction(totalError);
 
             totalWeight += newWeight;
 
@@ -208,31 +214,37 @@ public final class Util {
      * @return f(x)
      */
     @Contract(pure = true)
-    private static float bellCurve(float x) {
+    private static float bellCurveFunction(float x) {
         return (float) Math.pow(Math.E, -Math.pow(x, 2) / 2);
     }
 
+    /**
+     * Makes the sum of the weights of all the particles equal to one
+     */
     @Contract(pure = true)
     private static Particle[] normalize(@NotNull Particle[] particles, float totalWeight) {
         for (int i = 0; i < particles.length; i++) {
-            particles[i] = particles[i].getParticleWithNewWeight(particles[i].weight / totalWeight);
+            particles[i] = new Particle(particles[i], particles[i].weight / totalWeight);
         }
 
         return particles;
     }
 
+    /**
+     * Shifts a pose and applies noise
+     */
     @Contract(pure = true)
     @NotNull
-    private static Pose movePose(@NotNull Pose pose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
-        double angleInRad = Math.toRadians(pose.getHeading());
+    private static Pose movePose(@NotNull Pose originalPose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
+        double angleInRad = Math.toRadians(originalPose.getHeading());
 
         double ym = move.getDistanceTraveled() * Math.sin(angleInRad);
         double xm = move.getDistanceTraveled() * Math.cos(angleInRad);
 
         return new Pose(
-                (float) (pose.getX() + xm + distanceNoiseFactor * xm * random.nextGaussian()),
-                (float) (pose.getY() + ym + distanceNoiseFactor * ym * random.nextGaussian()),
-                (float) ((pose.getHeading() + move.getAngleTurned() + move.getAngleTurned() * angleNoiseFactor * random.nextGaussian()) % 360)
+                (float) (originalPose.getX() + xm + distanceNoiseFactor * xm * random.nextGaussian()),
+                (float) (originalPose.getY() + ym + distanceNoiseFactor * ym * random.nextGaussian()),
+                (float) ((originalPose.getHeading() + move.getAngleTurned() + move.getAngleTurned() * angleNoiseFactor * random.nextGaussian()) % 360)
         );
     }
 }

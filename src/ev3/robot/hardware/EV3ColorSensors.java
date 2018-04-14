@@ -4,13 +4,14 @@
 
 package ev3.robot.hardware;
 
-import ev3.robot.ColorSensors;
+import ev3.robot.Robot;
 import lejos.hardware.sensor.EV3ColorSensor;
 
 /**
- * Static class allowing access to color sensors
+ * class allowing access to ev3's color sensors
+ * TODO Create method that creates all the color sensors when called to save time while running (and uses threads)
  */
-public final class EV3ColorSensors implements ColorSensors {
+public final class EV3ColorSensors implements Robot.ColorSensors {
     private EV3ColorSensor sensorSurfaceLeft;
     private EV3ColorSensor sensorSurfaceRight;
     private EV3ColorSensor sensorContainer;

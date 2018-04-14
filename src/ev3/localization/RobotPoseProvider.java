@@ -4,12 +4,11 @@
 
 package ev3.localization;
 
-import common.logger.Logger;
 import common.mapping.SurfaceMap;
 import common.particles.MCLData;
 import ev3.navigation.Offset;
 import ev3.navigation.Readings;
-import ev3.robot.ColorSensors;
+import ev3.robot.Robot;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
@@ -19,16 +18,14 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-
 /**
- * Singleton pattern
- * Based on odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
+ * A pose provider that uses a particle algorithm
+ * TODO Look over again for bugs
  */
 public class RobotPoseProvider implements MoveListener, PoseProvider {
     private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
 
-    private static final int NUM_PARTICLES = 50;
+    private static final int NUM_PARTICLES = 50; //TODO Find optimal value
 
     @NotNull
     private final MoveProvider mp;
@@ -36,75 +33,72 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @NotNull
     private final MCLData data;
 
-    @NotNull
-    private final ArrayList<MCLDataListener> listeners = new ArrayList<>();
+    @Nullable
+    private RobotPoseProviderListener listener;
 
     /**
      * The amount the data has been shifted since the start of this move.
-     * completedMove is null when the move starts and each time the data is updated (with update()) the completedMove is updated
+     * completedMove is null after the move has ended.
+     * Each time the data is updated (with update()) the completedMove is updated
      */
     @Nullable
     private Move completedMove;
 
-    public RobotPoseProvider(SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider, Pose startingPose) {
+    public RobotPoseProvider(@NotNull SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider, Pose startingPose) {
         this.surfaceMap = surfaceMap;
         this.mp = moveProvider;
-        this.data = new MCLData(Util.getNewParticleSet(surfaceMap.getBoundingRectangle(), startingPose, NUM_PARTICLES), startingPose);
+        this.data = new MCLData(Util.createNewParticleSet(surfaceMap.getBoundingRectangle(), startingPose, NUM_PARTICLES), startingPose);
 
         mp.addMoveListener(this);
 
-        completedMove = getCurrentCompletedMove(mp);
+        completedMove = Util.deepCopyMove(mp.getMovement());
 
-        notifyListeners();
+        notifyListener();
     }
 
-    public void addListener(MCLDataListener listener) {
-        listeners.add(listener);
-    }
 
-    public synchronized void removeListener(MCLDataListener listener) {
-        for (int i = 0; i < listeners.size(); i++) {
-            if (listener == listeners.get(i)) {
-                listeners.remove(i);
-                return;
-            }
-        }
-    }
-
-    @SuppressWarnings("ForLoopReplaceableByForEach")
-    // No advanced for loop because caused concurrent modification exception
-    private synchronized void notifyListeners() {
-        for (int i = 0; i < listeners.size(); i++) {
-            listeners.get(i).notifyNewMCLData(data);
-        }
-    }
-
-    public void startUpdater(ColorSensors colorSensors) {
+    public void startUpdater(Robot.ColorSensors colorSensors) {
         new Updater(colorSensors).start();
     }
 
+    // LISTENER METHODS //
+    // The listener is passed the particle and current pose data when it gets updated
+    public void setListener(@Nullable RobotPoseProviderListener listener) {
+        this.listener = listener;
+    }
+
+    public void removeListener() {
+        this.listener = null;
+    }
+
+    private void notifyListener() {
+        if (listener != null) {
+            listener.notifyNewMCLData(data);
+        }
+    }
+
     /**
-     * Doesn't update the data object since we don't want to need to update the particles each time
+     * Doesn't update the data object since we don't want to need to update the particles each time getPose is called
      *
      * @return the current pose
      */
     @NotNull
     @Override
     @Contract(pure = true)
-    public synchronized Pose getPose() {
-        Move missingMove = Util.subtractMove(getCurrentCompletedMove(mp), completedMove);
+    public Pose getPose() {
+        Move missingMove = Util.subtractMove(Util.deepCopyMove(mp.getMovement()), completedMove);
 
         return Util.movePose(data.getCurrentPose(), missingMove);
     }
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data.setParticles(Util.getNewParticleSet(surfaceMap.getBoundingRectangle(), pose, NUM_PARTICLES));
+        data.setParticles(Util.createNewParticleSet(surfaceMap.getBoundingRectangle(), pose, NUM_PARTICLES));
         data.setCurrentPose(pose);
 
-        completedMove = getCurrentCompletedMove(mp);
+        completedMove = Util.deepCopyMove(mp.getMovement());
 
-        notifyListeners();
+        notifyListener();
     }
 
     @Override
@@ -119,7 +113,6 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
      */
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
-        data.getParticles();
         Move missingMove = Util.subtractMove(Util.deepCopyMove(move), completedMove);
 
         data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
@@ -127,11 +120,14 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
         completedMove = null;
 
-        notifyListeners();
+        notifyListener();
     }
 
+    /**
+     * Updates the particles and position using the algorithm
+     */
     private synchronized void update(@NotNull Readings readings) {
-        Move move = getCurrentCompletedMove(mp);
+        Move move = Util.deepCopyMove(mp.getMovement());
 
         Move missingMove = Util.subtractMove(move, completedMove);
 
@@ -140,25 +136,21 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
 //        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
 
-        completedMove = move;
+        completedMove = missingMove;
 
-        notifyListeners();
-    }
-
-    @NotNull
-    private static Move getCurrentCompletedMove(@NotNull MoveProvider mp) {
-        return Util.deepCopyMove(mp.getMovement());
+        notifyListener(); //TODO Consider removing for optimization
     }
 
     /**
-     * Check method checks if the color under the robot has changed. If so it calls the pose provider update method
+     * 1. Gets the readings for the left color sensor and apply to particles
+     * 2. Gets the readings for the right color sensor and apply to particles
+     * 3. Repeat forever
+     * TODO Optimize so that it only runs when necessary
      */
     final class Updater extends Thread {
-        private final String LOG_TAG = Updater.class.getSimpleName();
+        private final Robot.ColorSensors colorSensors;
 
-        private final ColorSensors colorSensors;
-
-        Updater(ColorSensors colorSensors) {
+        Updater(Robot.ColorSensors colorSensors) {
             super();
 
             this.colorSensors = colorSensors;
@@ -182,5 +174,9 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
                 Thread.yield();
             }
         }
+    }
+
+    public interface RobotPoseProviderListener {
+        void notifyNewMCLData(MCLData data);
     }
 }

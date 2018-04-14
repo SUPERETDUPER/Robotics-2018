@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Generates the surface map image
+ */
 class ImageGenerator {
     private static final String LOG_TAG = ImageGenerator.class.getSimpleName();
 
@@ -62,7 +65,7 @@ class ImageGenerator {
 
         //                corner of grey box 915.5 431 top left
         //                corner of grey box 1191.5 695 bot right
-        //                length of little black part = 10* sqrt(2) = 14.14
+        //                length of little black part = 10* square root (2) = 14.14
         regions.add(new IrregularPolygon(Color.BLACK, Arrays.asList(
                 new Point(916, 417),
                 new Point(901, 431),

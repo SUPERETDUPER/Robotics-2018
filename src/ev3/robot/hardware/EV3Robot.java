@@ -5,12 +5,15 @@
 package ev3.robot.hardware;
 
 import ev3.navigation.NavigatorBuilder;
-import ev3.robot.*;
+import ev3.robot.Robot;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 
+/**
+ * Meta class holding all the robot's functions together
+ * TODO Make a method that creates all the parts simultaneously, before starting, to save time (use threads)
+ */
 public class EV3Robot implements Robot {
-
     private EV3Arm arm;
     private EV3Paddle paddle;
     private EV3ColorSensors colorSensors;

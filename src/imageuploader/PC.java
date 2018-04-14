@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+/**
+ * Uploads an image to the EV3
+ * Not pretty but works
+ */
 class PC {
     private static final String LOG_TAG = PC.class.getSimpleName();
 
@@ -37,7 +41,7 @@ class PC {
     }
 
     private static OutputStream getOutputStream() {
-        Logger.info(LOG_TAG, "Attempting to getOutputStream to EV3 ...");
+        Logger.info(LOG_TAG, "Attempting to createOutputStream to EV3 ...");
         for (int attempt = 0; attempt < 6; attempt++) {
             try {
                 OutputStream outputStream = new Socket(Config.EV3_IP_ADDRESS, Config.PORT_TO_CONNECT_ON_EV3).getOutputStream();
@@ -51,7 +55,7 @@ class PC {
             }
         }
 
-        Logger.warning(LOG_TAG, "Failed to getOutputStream");
+        Logger.warning(LOG_TAG, "Failed to createOutputStream");
 
         return null;
     }

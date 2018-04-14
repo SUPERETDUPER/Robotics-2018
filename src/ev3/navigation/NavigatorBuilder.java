@@ -14,6 +14,9 @@ import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Static class that is used to build the different the objects leading up to the Navigator
+ */
 public class NavigatorBuilder {
 
     private static final double ANGULAR_ACCELERATION = 90;

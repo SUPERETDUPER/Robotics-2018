@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 
+/**
+ * Uploads an image to the EV3
+ * Not pretty but works
+ */
 class EV3 {
     private static final String LOG_TAG = EV3.class.getSimpleName();
 

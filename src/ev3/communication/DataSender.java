@@ -11,4 +11,8 @@ interface DataSender {
     void sendTransmittable(TransmittableType type, Transmittable data);
 
     void close();
+
+    interface LostConnectionListener {
+        void lostConnection();
+    }
 }

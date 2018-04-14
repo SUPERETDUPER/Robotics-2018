@@ -7,10 +7,12 @@ package ev3;
 import common.logger.Logger;
 import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;
-import ev3.navigation.Offset;
 import ev3.robot.Robot;
 import lejos.robotics.Color;
 
+/**
+ * Specifies the sequence of actions the robot should do to win the competition !
+ */
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
@@ -26,13 +28,13 @@ class Brain {
     }
 
     void start() {
+        robot.getPaddle().move(true); //To drop conveyor belt
 
-        //robot.getPaddle().move(true);
-
-        controller.followPath(MapOperations.goToContainerBottomRight(controller.getPose()));
+        //Go to each food container
+        controller.followPath(MapOperations.getPathToContainerBottomRight(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
 
-        controller.followPath(MapOperations.goToContainerBottomLeft(controller.getPose()));
+        controller.followPath(MapOperations.getPathToContainerBottomLeft(controller.getPose()));
         pickupFood(robot.getColorSensors().getColorContainer());
 
         controller.followPath(MapOperations.getPathToContainerTopLeft(controller.getPose()));
@@ -43,30 +45,29 @@ class Brain {
             pickupFood(robot.getColorSensors().getColorContainer());
         }
 
-
-
+        //Drop off food container at temp reg area
         for (int i = 0; i < 3; i++) {
             switch (listFoodColor[i]) {
                 case Color.BLUE:
-                    controller.followPath(MapOperations.goToTempRegBlue(controller.getPose()));
+                    controller.followPath(MapOperations.getPathToTempRegBlue(controller.getPose()));
                     break;
                 case Color.GREEN:
-                    controller.followPath(MapOperations.goToTempRegGreen(controller.getPose()));
+                    controller.followPath(MapOperations.getPathToTempRegGreen(controller.getPose()));
                     break;
                 case Color.YELLOW:
                     controller.followPath(MapOperations.goToTempRegYellow(controller.getPose()));
                     break;
                 case Color.RED:
-                    controller.followPath(MapOperations.goToTempRegRed(controller.getPose()));
+                    controller.followPath(MapOperations.getPathToTempRegRed(controller.getPose()));
                     break;
                 default:
                     Logger.warning(LOG_TAG, "Could not find temp reg of color : " + listFoodColor[i]);
             }
         }
 
+        //TODO finish brain
 
-
-        Logger.info(LOG_TAG, controller.getPose().toString());
+        //go to boats and drop of stuff
     }
 
     private void pickupFood(int color) {

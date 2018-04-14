@@ -45,7 +45,7 @@ class SurfaceReadingsTest {
             }
         }
 
-        new PCDataSender(ComManager.getOutputStream(), null).sendTransmittable(
+        new PCDataSender(ComManager.createOutputStream(Config.PORT_TO_CONNECT_ON_EV3)).sendTransmittable(
                 TransmittableType.MCL_DATA,
                 new MCLData(particles.toArray(new Particle[0]), new Pose())
         );

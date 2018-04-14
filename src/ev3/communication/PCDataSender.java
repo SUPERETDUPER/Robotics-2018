@@ -21,11 +21,10 @@ public final class PCDataSender implements DataSender {
     private final DataOutputStream dos;
 
     @Nullable
-    private final LostConnectionListener lostConnectionListener;
+    private LostConnectionListener lostConnectionListener;
 
-    public PCDataSender(@NotNull OutputStream outputStream, @Nullable LostConnectionListener lostConnectionListener) {
+    public PCDataSender(@NotNull OutputStream outputStream) {
         dos = new DataOutputStream(outputStream);
-        this.lostConnectionListener = lostConnectionListener;
     }
 
     public synchronized void sendTransmittable(@NotNull TransmittableType eventType, @NotNull Transmittable transmittable) {
@@ -38,10 +37,14 @@ public final class PCDataSender implements DataSender {
                 lostConnectionListener.lostConnection();
             }
 
-            //Not calling close because close will be called by the lostConnectionListener
+            close();
 
             Logger.error(LOG_TAG, "Lost connection");
         }
+    }
+
+    void setOnLostConnection(@Nullable LostConnectionListener lostConnectionListener) {
+        this.lostConnectionListener = lostConnectionListener;
     }
 
     @Override

@@ -5,11 +5,14 @@
 package ev3.robot.sim;
 
 import common.logger.Logger;
-import ev3.robot.Brick;
+import ev3.robot.Robot;
 
 import java.io.IOException;
 
-class SimBrick implements Brick {
+/**
+ * Simulates the brick methods
+ */
+class SimBrick implements Robot.Brick {
     private static final String LOG_TAG = SimBrick.class.getSimpleName();
 
     @Override
@@ -21,5 +24,15 @@ class SimBrick implements Brick {
         } catch (IOException e) {
             Logger.error(LOG_TAG, e.toString());
         }
+    }
+
+    @Override
+    public void beep() {
+        //TODO
+    }
+
+    @Override
+    public void buzz() {
+        //TODO
     }
 }

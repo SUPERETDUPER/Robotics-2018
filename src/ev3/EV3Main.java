@@ -28,7 +28,7 @@ final class EV3Main {
 
         runMain();
 
-        robot.getBrick().waitForUserConfirmation();  //When code is down this can be removed
+//        robot.getBrick().waitForUserConfirmation();  //Uncomment if you want the user to need to press enter before the program closes
 
         cleanUp();
     }
@@ -36,7 +36,7 @@ final class EV3Main {
     private static void initialize() {
         //Connect to PC unless in SOLO
         if (Config.currentMode != Config.Mode.SOLO) {
-            ComManager.enable();
+            ComManager.get().enable();
         }
 
         //Builds either a sim or an ev3 robot depending on config
@@ -70,10 +70,6 @@ final class EV3Main {
     }
 
     private static void cleanUp() {
-        ComManager comManager = ComManager.get();
-
-        if (comManager != null) {
-            comManager.stop();
-        }
+        ComManager.get().stop();
     }
 }

@@ -23,7 +23,7 @@ public final class PCMain {
         }
 
         final DataReceiver dataReceiver = new DataReceiver(
-                Connection.getInputStream(Connection.getIPAddress()),
+                Connection.getInputStream(Config.currentMode),
                 GUI.listener
         );
 

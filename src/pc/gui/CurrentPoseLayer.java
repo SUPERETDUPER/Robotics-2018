@@ -24,6 +24,7 @@ class CurrentPoseLayer extends UpdatableLayer {
             g.setFill(Color.HOTPINK);
             Util.displayPoseOnGui(g, pose);
 
+            //Displays the other robots important points like the color sensors
             g.setFill(Color.PURPLE);
             Point leftColorSensorPoint = Offset.LEFT_COLOR_SENSOR.offset(pose);
             Util.displayPoseOnGui(g, new Pose(leftColorSensorPoint.x, leftColorSensorPoint.y, pose.getHeading()));

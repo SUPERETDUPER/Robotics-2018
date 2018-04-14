@@ -12,7 +12,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+/**
+ * Stores a log message
+ * TODO : Refactor so that the log message stores the data separately allowing it to print without color codes (for the EV3 screen). Note : also store thread
+ */
 public class LogMessage implements Transmittable {
+    //Constants for making log messages colored
     private static final String ESCAPE_CHAR = "\u001B";
     private static final String ANSI_RESET = "[0m";
 
@@ -21,15 +26,15 @@ public class LogMessage implements Transmittable {
     public LogMessage() {
     }
 
-    LogMessage(@NotNull Logger.LogTypes type, @NotNull String color, @NotNull String tag, @NotNull String message) {
+    LogMessage(@NotNull Logger.LogTypes type, @NotNull String colorConstant, @NotNull String tag, @NotNull String message) {
         this.message = ESCAPE_CHAR +
-                color +
+                colorConstant +
                 type.name().toUpperCase() +
-                " : " +
+                ": " +
                 Thread.currentThread().getName() +
-                " : " +
+                ": " +
                 tag +
-                " : " +
+                ": " +
                 message +
                 ESCAPE_CHAR +
                 ANSI_RESET;

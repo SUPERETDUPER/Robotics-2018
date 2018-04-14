@@ -4,6 +4,7 @@
 
 package ev3.navigation;
 
+import common.TransmittableType;
 import common.logger.Logger;
 import ev3.communication.ComManager;
 import lejos.robotics.geometry.Point;
@@ -11,7 +12,11 @@ import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * Acts as a bridge to the navigator and provides helpful methods for the robot.
+ */
 public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
@@ -24,49 +29,45 @@ public final class Controller implements MoveListener, NavigationListener {
         this.navigator.getMoveController().addMoveListener(this);
     }
 
-    public void followPath(@NotNull Path path, Offset offset) {
-        for (int i = 0; i < path.size(); i++) {
-            Waypoint waypoint = path.get(i);
+    public void followPath(@NotNull Path path, @Nullable Offset offset) {
+        Path newPath = new Path();
 
-            Point newPoint = offset.reverseOffset(waypoint.getPose());
+        for (Waypoint waypoint : path) {
+            Point newPoint;
+
+            if (offset == null) {
+                newPoint = waypoint.getPose().getLocation();
+            } else {
+                newPoint = offset.reverseOffset(waypoint.getPose());
+            }
 
             if (waypoint.isHeadingRequired()) {
-                path.set(i, new Waypoint(newPoint.x, newPoint.y, normalize(waypoint.getHeading())));
+                newPath.add(new Waypoint(newPoint.x, newPoint.y, normalize(waypoint.getHeading())));
             } else {
-                path.set(i, new Waypoint(newPoint.x, newPoint.y));
+                newPath.add(new Waypoint(newPoint.x, newPoint.y));
             }
         }
 
-        navigator.followPath(path);
+        navigator.followPath(newPath);
 
-        ComManager comManager = ComManager.get();
-        if (comManager != null) {
-            comManager.sendTransmittable(navigator.getPath());
-        }
+        ComManager.get().sendTransmittable(TransmittableType.PATH, navigator.getPath());
 
         waitForStop();
     }
 
-    public MyNavigator getNavigator() {
-        return navigator;
-    }
-
     public void followPath(@NotNull Path path) {
-        followPath(path, new Offset(0, 0));
+        followPath(path, null);
     }
 
     private void waitForStop() {
         while (navigator.isMoving()) {
-            ComManager comManager = ComManager.get();
-            if (comManager != null) {
-                comManager.sendTransmittable(navigator.getPoseProvider().getPose());
-            }
+            ComManager.get().sendTransmittable(TransmittableType.CURRENT_POSE, navigator.getPoseProvider().getPose());
 
             Thread.yield();
         }
     }
 
-
+    //TODO Consider removing and instead working directly with the Navigator
     @Contract(pure = true)
     private static double normalize(double heading) {
         while (heading > 180) heading -= 360;
@@ -78,6 +79,11 @@ public final class Controller implements MoveListener, NavigationListener {
     @NotNull
     public Pose getPose() {
         return navigator.getPoseProvider().getPose();
+    }
+
+    @Contract(pure = true)
+    public MyNavigator getNavigator() {
+        return navigator;
     }
 
     @Override

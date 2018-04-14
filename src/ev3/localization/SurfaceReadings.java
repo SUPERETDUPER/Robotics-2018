@@ -14,17 +14,18 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The probability of getting this color reading from a certain pose is calculated as being :
  * The percentage of colors matching the reading in the poses region.
+ * TODO Optimize checking for all pixels in area is inefficient
  */
 public class SurfaceReadings implements Readings {
-    private static final int RADIUS = 10;
+    private static final int RADIUS = 10; //Area to check for
 
     private final SurfaceMap surfaceMap;
-    private final int color;
+    private final int colorToMatch;
     private final Offset offset;
 
     SurfaceReadings(SurfaceMap surfaceMap, int color, Offset offset) {
         this.surfaceMap = surfaceMap;
-        this.color = color;
+        this.colorToMatch = color;
         this.offset = offset;
     }
 
@@ -37,10 +38,10 @@ public class SurfaceReadings implements Readings {
         //Loop through every pixel in the circle
         for (int x = (int) location.x - RADIUS; x <= location.x + RADIUS; x++) {
             for (int y = (int) location.y - RADIUS; y <= location.y + RADIUS; y++) {
-                if (location.distance(x, y) < RADIUS && surfaceMap.contains(x, y)) { //If (x,y) within circle
+                if (location.distance(x, y) < RADIUS && surfaceMap.isPointIn(x, y)) { //If (x,y) within circle
                     totalPixels++;
 
-                    if (surfaceMap.getColorAtPoint(x, y) == color) matchingPixels++;
+                    if (surfaceMap.getColorAtPoint(x, y) == colorToMatch) matchingPixels++;
                 }
             }
         }
@@ -48,12 +49,12 @@ public class SurfaceReadings implements Readings {
         if (totalPixels == 0) return 0;
 
 
-        return (float) matchingPixels / totalPixels; //Float cast required to getNavigator decimal percentage
+        return (float) matchingPixels / totalPixels; //Float cast required to get a decimal and not 0 or 1
     }
 
     @NotNull
     @Override
     public String toString() {
-        return "Surface color is " + color;
+        return "Surface color is " + colorToMatch;
     }
 }

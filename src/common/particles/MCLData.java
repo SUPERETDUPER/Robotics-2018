@@ -13,11 +13,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * Object that gets sent from the ev3 to the computer common.gui containing the particles particles and the currentPosition
+ * Transmittable object that contains the current pose and a set of particles
+ * Used by the RobotPoseProvider (Particle algorithm)
  */
 public class MCLData implements Transmittable {
-    private static final String LOG_TAG = MCLData.class.getSimpleName();
-
     @NotNull
     private Particle[] particles;
     @NotNull

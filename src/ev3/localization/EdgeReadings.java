@@ -11,8 +11,6 @@ import lejos.robotics.navigation.Pose;
 
 @Deprecated
 public class EdgeReadings implements Readings {
-    private static final String LOG_TAG = EdgeReadings.class.getSimpleName();
-
     private static final int RADIUS = 20;
 
     private final int previousColor;

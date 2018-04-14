@@ -6,10 +6,53 @@ package ev3.robot;
 
 import lejos.robotics.chassis.Chassis;
 
+/**
+ * Interface defining everything a robot should do
+ */
 public interface Robot {
     Arm getArm();
+
     Chassis getChassis();
+
     Paddle getPaddle();
+
     ColorSensors getColorSensors();
+
     Brick getBrick();
+
+    interface Arm {
+        void goToBoat(boolean immediateReturn);
+
+        void goToFoodIn(boolean immediateReturn);
+
+        void goToFoodOut(boolean immediateReturn);
+
+        void goToFoodHanging(boolean immediateReturn);
+
+        void goToTempReg(boolean immediateReturn);
+    }
+
+    interface Brick {
+        void waitForUserConfirmation();
+
+        void beep();
+
+        void buzz();
+    }
+
+    interface ColorSensors {
+        int getColorSurfaceLeft();
+
+        int getColorSurfaceRight();
+
+        int getColorContainer();
+
+        int getColorBoat();
+    }
+
+    interface Paddle {
+        void move(boolean immediateReturn);
+
+        void hitBlock(boolean immediateReturn);
+    }
 }

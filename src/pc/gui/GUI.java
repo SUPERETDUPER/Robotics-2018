@@ -15,7 +15,7 @@ import javafx.stage.WindowEvent;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pc.communication.DataReceivedListener;
+import pc.communication.DataReceiver;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public final class GUI extends Application {
     private static boolean isLoaded = false;
 
     @NotNull
-    public static final DataReceivedListener listener = new DataReceivedListener() {
+    public static final DataReceiver.DataReceivedListener listener = new DataReceiver.DataReceivedListener() {
         @Override
         public synchronized void dataReceived(@NotNull TransmittableType eventType, @NotNull DataInputStream dataInputStream) throws IOException {
             while (!isLoaded) Thread.yield(); //So that we don't try to update a layer that has not yet been created

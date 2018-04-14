@@ -23,8 +23,10 @@ public class SurfaceMap {
 
     @NotNull
     private final BufferedImage image;
-    private final Rectangle boundingRectangle;
 
+    /**
+     * @param filePath file path of the map to read
+     */
     public SurfaceMap(String filePath) {
         try {
             image = ImageIO.read(new File(filePath));
@@ -32,8 +34,6 @@ public class SurfaceMap {
             Logger.error(LOG_TAG, "Unable to read picture");
             throw new RuntimeException(e.toString());
         }
-
-        boundingRectangle = new Rectangle(0, 0, image.getWidth(), image.getHeight());
     }
 
     public int getColorAtPoint(int x, int y) {
@@ -45,22 +45,31 @@ public class SurfaceMap {
         }
     }
 
+    /**
+     * @return A rectangle starting at (0,0) that bounds the image
+     */
     public Rectangle getBoundingRectangle() {
-        return boundingRectangle;
+        return new Rectangle(0, 0, image.getWidth(), image.getHeight());
     }
 
-    public boolean contains(int x, int y) {
-        return x >= 0 && y > 0 && x < image.getWidth() && y <= image.getHeight(); //Weird equals check because y is inverted
-    }
-
-    @Contract(pure = true)
-    private int getInvertedY(int y) {
-        return (image.getHeight() - y);
+    public boolean isPointIn(int x, int y) {
+        return 0 <= x && x < image.getWidth() && 0 < y && y <= image.getHeight(); //Weird equals check for y values because y is inverted
     }
 
     @Contract(pure = true)
     @NotNull
     public BufferedImage getImage() {
         return image;
+    }
+
+    /**
+     * Converts a y value from a lejos coordinate to a swing coordinate
+     *
+     * @param y y value from the lejos coordinates system (bottom = 0)
+     * @return y value from swing coordinates system (top = 0)
+     */
+    @Contract(pure = true)
+    private int getInvertedY(int y) {
+        return (image.getHeight() - y);
     }
 }

@@ -7,10 +7,7 @@ package ev3.communication;
 import common.Config;
 import common.TransmittableType;
 import common.logger.Logger;
-import common.particles.MCLData;
 import lejos.robotics.Transmittable;
-import lejos.robotics.navigation.Pose;
-import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,90 +16,99 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 
-public class ComManager implements LostConnectionListener {
+/**
+ * Singleton pattern
+ * Used by the EV3 to send data to the PC
+ * Manages all the data being sent away from the EV3
+ * <p>
+ * Used Singleton because should be accessible no matter what
+ * <p>
+ * TODO : Consider making static since no longer implements LostConnectionListener
+ */
+public class ComManager {
     private static final String LOG_TAG = ComManager.class.getSimpleName();
 
-    private static boolean enabled = false;
-
-    private static ComManager mComManager;
-
     @NotNull
-    private final DataSender dataSender;
+    private static final ComManager mComManager = new ComManager();
 
-    @NotNull
-    private final DataListener dataListener;
+    //Used to send the data
+    @Nullable
+    private DataSender dataSender;
+
+    //Monitors for data
+    @Nullable
+    private DataListener dataListener;
 
     private ComManager() {
-        dataSender = new PCDataSender(getOutputStream(), this);
-        dataListener = new DataListener(dataSender);
-
-        dataListener.startListening();
     }
 
-    public static void enable() {
-        enabled = true;
-    }
-
-    @Contract(pure = true)
-    public static boolean isEnabled() {
-        return enabled;
-    }
-
-    @Nullable
+    @NotNull
     @Contract(pure = true)
     public static ComManager get() {
-        if (!enabled) return null;
-
-        if (mComManager == null) {
-            mComManager = new ComManager();
-        }
-
         return mComManager;
     }
 
-    @Override
-    public void lostConnection() {
-        stop();
+    /**
+     * Setups the object. If not called ComManager does nothing.
+     */
+    public void enable() {
+        dataSender = new PCDataSender(createOutputStream(Config.PORT_TO_CONNECT_ON_EV3));
+
+        ((PCDataSender) dataSender).setOnLostConnection(new DataSender.LostConnectionListener() {
+            @Override
+            public void lostConnection() {
+                stop();
+            }
+        });
+
+
+        dataListener = new DataListener(dataSender);
+        dataListener.startListening();
     }
 
+    /**
+     * Stops/Disables the ComManager
+     */
     public void stop() {
-        enabled = false;
-
-        dataSender.close();
-        dataListener.stopListening();
-    }
-
-    public void sendTransmittable(Transmittable transmittable) {
-        TransmittableType type;
-
-        if (transmittable instanceof MCLData) {
-            type = TransmittableType.MCL_DATA;
-        } else if (transmittable instanceof Path) {
-            type = TransmittableType.PATH;
-        } else if (transmittable instanceof Pose) {
-            type = TransmittableType.CURRENT_POSE;
-        } else {
-            Logger.error(LOG_TAG, "Not a registered transmittable");
-            return;
+        if (dataSender != null) {
+            dataSender.close();
+            dataSender = null;
         }
 
-        dataSender.sendTransmittable(type, transmittable);
+        if (dataListener != null) {
+            dataListener.stopListening();
+            dataListener = null;
+        }
+    }
+
+    /**
+     * Called to send data
+     */
+    public void sendTransmittable(TransmittableType type, Transmittable transmittable) {
+        if (dataSender != null) {
+            dataSender.sendTransmittable(type, transmittable);
+        }
     }
 
     @Contract(pure = true)
-    @NotNull
+    @Nullable
     public DataListener getDataListener() {
         return dataListener;
     }
 
+    /**
+     * Creates a server socket and gets its output stream
+     *
+     * @param port the port to use
+     */
     @NotNull
-    public static OutputStream getOutputStream() {
+    public static OutputStream createOutputStream(int port) {
         Logger.info(LOG_TAG, "Waiting for PC to connect to EV3...");
 
         OutputStream outputStream;
 
         try {
-            outputStream = new ServerSocket(Config.PORT_TO_CONNECT_ON_EV3).accept().getOutputStream();
+            outputStream = new ServerSocket(port).accept().getOutputStream();
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Could not connect to PC");
             throw new RuntimeException("Could not connect to PC");

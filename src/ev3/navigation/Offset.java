@@ -9,7 +9,7 @@ import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Responsible of offsetting readings
+ * Offsets a pose to a different spot on the robot
  */
 public final class Offset {
     // (x,y) offsets when robot is facing to the right (heading = 0)

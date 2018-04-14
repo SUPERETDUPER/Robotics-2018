@@ -6,10 +6,13 @@ package ev3.robot.sim;
 
 import common.mapping.SurfaceMap;
 import ev3.navigation.NavigatorBuilder;
-import ev3.robot.*;
+import ev3.robot.Robot;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.localization.PoseProvider;
 
+/**
+ * A simulated EV3 robot holding all the EV3 parts
+ */
 public class SimRobot implements Robot {
     private static final String LOG_TAG = SimRobot.class.getSimpleName();
 

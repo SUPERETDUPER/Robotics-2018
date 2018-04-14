@@ -4,6 +4,7 @@
 
 
 
+
 package ev3.navigation;
 
 import lejos.robotics.RegulatedMotor;
@@ -293,6 +294,12 @@ public class MyMovePilot implements ArcRotateMoveController {
         rotate(angle, false);
     }
 
+    /**
+     * Created custom rotate to avoid the modified arc method
+     *
+     * @param angle
+     * @param immediateReturn
+     */
     @Override
     public void rotate(double angle, boolean immediateReturn) {
         if (minRadius > 0) {
@@ -321,7 +328,7 @@ public class MyMovePilot implements ArcRotateMoveController {
 
     @Override
     public void arc(double radius, double angle, boolean immediateReturn) {
-        angle = Math.abs(angle);
+        angle = Math.abs(angle); // ADDED ABSOLUTE VALUE TO FIX BUG WITH NAVIGATOR SENDING NEGATIVE ANGLE AND CHASSIS REACTING INCORRECTLY
 
         if (Math.abs(radius) < minRadius) {
             throw new RuntimeException("Turn radius too small.");
@@ -340,6 +347,12 @@ public class MyMovePilot implements ArcRotateMoveController {
         movementStart(immediateReturn);
     }
 
+    /**
+     * Added method to simplfy work for Navigator
+     *
+     * @param move
+     * @param immediateReturn
+     */
     public void move(Move move, boolean immediateReturn) {
         switch (move.getMoveType()) {
             case TRAVEL:

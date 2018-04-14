@@ -10,7 +10,9 @@ import java.awt.*;
 import java.util.HashMap;
 
 /**
- * Mapping of Javafx colors to lejos colors (int). For example Color.rgb(255,0,0) (javaFX) and Color.RED (lejos)
+ * Mapping of Java swing colors to lejos colors (int).
+ * For example new Color(255,0,0) (Swing) might map to Color.RED (lejos)
+ * Used by the SurfaceReadings algorithm to convert a pixel on the picture (Swing) to a sensor reading (Lejos)
  */
 public class ColorJavaLejos {
 

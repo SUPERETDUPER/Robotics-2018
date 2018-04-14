@@ -11,7 +11,7 @@ import lejos.robotics.RegulatedMotorListener;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Replicates the behaviour of an ev3 motor. Is used by the simulator
+ * Replicates the behaviour of an ev3 motor by actually taking time to execute movements
  */
 class SimMotor implements RegulatedMotor {
     private static final String LOG_TAG = SimMotor.class.getSimpleName();

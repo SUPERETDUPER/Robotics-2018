@@ -6,12 +6,15 @@ package ev3.robot.sim;
 
 import common.mapping.SurfaceMap;
 import ev3.navigation.Offset;
-import ev3.robot.ColorSensors;
+import ev3.robot.Robot;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.localization.PoseProvider;
 import org.jetbrains.annotations.NotNull;
 
-class SimColorSensors implements ColorSensors {
+/**
+ * Simulates the color sensors by return the color the map shows for the current location
+ */
+class SimColorSensors implements Robot.ColorSensors {
     @NotNull
     private final PoseProvider poseProvider;
     private final SurfaceMap surfaceMap;
