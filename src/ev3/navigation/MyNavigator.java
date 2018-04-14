@@ -1,15 +1,14 @@
 /*
-  Copyright above incorrect. Cannot delete because added automatically as a project default
-  Taken from the lejos source code and modified to fix bug with navigator when minRadius is not 0. Navigator always uses travelArc even for not arc movements.
+ * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 package ev3.navigation;
-
-import java.util.ArrayList;
 
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
+
+import java.util.ArrayList;
 
 /**
  * This class controls a robot to traverse a Path,  a sequence of  {@link  lejos.robotics.navigation.Waypoint}s.
@@ -335,6 +334,12 @@ public class MyNavigator implements WaypointListener {
         }
     }
 
+    public double normalizeRotationAmount(double amount) {
+        while (Math.abs(amount - 360) < Math.abs(amount)) amount -= 360;
+        while (Math.abs(amount + 360) < Math.abs(amount)) amount += 360;
+        return amount;
+    }
+
     /**
      * This inner class runs the thread that processes the waypoint queue
      */
@@ -390,8 +395,8 @@ public class MyNavigator implements WaypointListener {
                         if (_destination.isHeadingRequired()) {
                             _pose = poseProvider.getPose();
                             _destination.getHeading();
-                            ((RotateMoveController) _pilot).rotate(_destination.getHeading()
-                                    - _pose.getHeading(), false);
+                            ((RotateMoveController) _pilot).rotate(normalizeRotationAmount(_destination.getHeading()
+                                    - _pose.getHeading()), false);
                         }
                     }
 

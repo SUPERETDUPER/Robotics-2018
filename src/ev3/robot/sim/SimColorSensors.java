@@ -9,7 +9,6 @@ import ev3.navigation.Offset;
 import ev3.robot.ColorSensors;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.localization.PoseProvider;
-import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
 class SimColorSensors implements ColorSensors {

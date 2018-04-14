@@ -1,14 +1,10 @@
 /*
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
-/*
-  Copyright above incorrect. Cannot delete because added automatically as a project default
-  Taken from the lejos source code and modified to fix bug with move stopped not being called when using navigator
- */
+
+
 
 package ev3.navigation;
-
-import java.util.ArrayList;
 
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
@@ -17,6 +13,8 @@ import lejos.robotics.chassis.WheeledChassis;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
+
+import java.util.ArrayList;
 
 /**
  * The Pilot class is a software abstraction of the Pilot mechanism
@@ -297,7 +295,19 @@ public class MyMovePilot implements ArcRotateMoveController {
 
     @Override
     public void rotate(double angle, boolean immediateReturn) {
-        arc(0, angle, immediateReturn);
+        if (minRadius > 0) {
+            throw new RuntimeException("Turn radius too small.");
+        }
+
+        if (_moveActive) {
+            stop();
+        }
+
+        move = new Move(Move.MoveType.ROTATE, 0, (float) angle, (float) linearSpeed, (float) angularSpeed, chassis.isMoving());
+
+        chassis.moveStart();
+        chassis.rotate(angle);
+        movementStart(immediateReturn);
     }
 
     public void rotateLeft() {

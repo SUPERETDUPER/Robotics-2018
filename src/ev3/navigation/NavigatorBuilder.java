@@ -5,15 +5,12 @@
 package ev3.navigation;
 
 import common.mapping.SurfaceMap;
-import ev3.communication.ComManager;
-import ev3.localization.RobotPoseProvider;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
-import lejos.robotics.navigation.MoveController;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +38,7 @@ public class NavigatorBuilder {
         return pilot;
     }
 
-    public static PoseProvider buildPoseProvider(SurfaceMap surfaceMap, MoveController pilot) {
+    public static PoseProvider buildPoseProvider(SurfaceMap surfaceMap, MyMovePilot pilot) {
 //        RobotPoseProvider poseProvider = new RobotPoseProvider(surfaceMap, pilot, STARTING_POSE);
 //
 //        ComManager comManager = ComManager.get();

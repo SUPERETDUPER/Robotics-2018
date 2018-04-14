@@ -15,6 +15,7 @@ import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import ev3.robot.hardware.EV3Robot;
 import ev3.robot.sim.SimRobot;
+import lejos.robotics.localization.PoseProvider;
 
 final class EV3Main {
     private static final String LOG_TAG = EV3Main.class.getSimpleName();
@@ -51,13 +52,15 @@ final class EV3Main {
         }
 
         MyMovePilot pilot = NavigatorBuilder.buildMoveProvider(robot.getChassis());
-        RobotPoseProvider poseProvider = NavigatorBuilder.buildPoseProvider(surfaceMap, pilot);
+        PoseProvider poseProvider = NavigatorBuilder.buildPoseProvider(surfaceMap, pilot);
 
         if (Config.currentMode == Config.Mode.SIM){
             ((SimRobot) robot).setPoseProvider(poseProvider);
         }
 
-        poseProvider.startUpdater(robot.getColorSensors());
+        if (poseProvider instanceof RobotPoseProvider) {
+            ((RobotPoseProvider) poseProvider).startUpdater(robot.getColorSensors());
+        }
 
         controller = new Controller(new MyNavigator(pilot, poseProvider));
     }
