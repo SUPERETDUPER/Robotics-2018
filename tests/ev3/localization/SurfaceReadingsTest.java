@@ -15,6 +15,7 @@ import ev3.navigation.Offset;
 import lejos.robotics.Color;
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Test;
+import pc.PCMain;
 
 import java.util.ArrayList;
 
@@ -25,10 +26,17 @@ class SurfaceReadingsTest {
      */
     @Test
     void readingsAcrossTheMap() {
+        new Thread() {
+            @Override
+            public void run() {
+                PCMain.main(null);
+            }
+        }.start();
+
         ArrayList<Particle> particles = new ArrayList<>();
 
         SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
-        SurfaceReadings readings = new SurfaceReadings(surfaceMap, Color.WHITE, new Offset(0,0));
+        SurfaceReadings readings = new SurfaceReadings(surfaceMap, Color.GREEN, new Offset(0, 0));
 
         for (int x = 0; x < surfaceMap.getBoundingRectangle().getWidth(); x += 10) {
             for (int y = 0; y < surfaceMap.getBoundingRectangle().getHeight(); y += 10) {
