@@ -27,33 +27,19 @@ public final class Offset {
 
     @NotNull
     public Point offset(@NotNull Pose pose) {
-        return offset(pose, deltaX, deltaY);
+        return calculateOffset(pose, deltaX, deltaY);
     }
 
     @NotNull
     public Point reverseOffset(@NotNull Pose pose) {
-        return offset(pose, -deltaX, -deltaY);
+        return calculateOffset(pose, -deltaX, -deltaY);
     }
 
     @NotNull
-    private static Point offset(@NotNull Pose pose, float deltaX, float deltaY) {
-        double originalTheta;
-        if (deltaX == 0) {
-            originalTheta = Math.PI / 2;
-        } else {
-            originalTheta = Math.atan(deltaY / deltaX);
-        }
-
-        //To fix problem with CAST rule quad 2
-        if (deltaY >= 0 && originalTheta < 0) {
-            originalTheta += Math.PI;
-        } else if (deltaY < 0 && originalTheta >= 0) { //quad 3
-            originalTheta += Math.PI;
-        }
-
+    private static Point calculateOffset(@NotNull Pose pose, float deltaX, float deltaY) {
         double hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY); //Pythagorean theorem
 
-        double newTheta = originalTheta + Math.toRadians(pose.getHeading());
+        double newTheta = Math.atan2(deltaY, deltaX) + Math.toRadians(pose.getHeading()); //Find angle formed by offset and add pose's heading
 
         float newXOffset = (float) (Math.cos(newTheta) * hypotenuse);
         float newYOffset = (float) (Math.sin(newTheta) * hypotenuse);
