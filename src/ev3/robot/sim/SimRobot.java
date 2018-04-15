@@ -4,11 +4,14 @@
 
 package ev3.robot.sim;
 
+import common.logger.Logger;
 import common.mapping.SurfaceMap;
 import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.localization.PoseProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A simulated EV3 robot holding all the EV3 parts
@@ -16,56 +19,40 @@ import lejos.robotics.localization.PoseProvider;
 public class SimRobot implements Robot {
     private static final String LOG_TAG = SimRobot.class.getSimpleName();
 
-    private PoseProvider poseProvider;
+    private final Chassis chassis = NavigatorBuilder.buildChassis(
+            new SimMotor("leftMotor"),
+            new SimMotor("rightMotor")
+    );
 
-    private Chassis chassis;
-    private Paddle paddle;
-    private Arm arm;
+    private final Paddle paddle = new SimPaddle();
+    private final Arm arm = new SimArm();
+    private final Brick brick = new SimBrick();
+
     private ColorSensors colorSensors;
-    private Brick brick;
-    private SurfaceMap surfaceMap;
 
-    public SimRobot() {
+    private PoseProvider poseProvider;
+    @NotNull
+    private final SurfaceMap surfaceMap;
+
+    public SimRobot(@NotNull SurfaceMap surfaceMap) {
+        this.surfaceMap = surfaceMap;
+    }
+
+    @Override
+    public void setup() {
+        Logger.info(LOG_TAG, "Done setting up robot");
+    }
+
+    @Override
+    public boolean isSetup() {
+        return true;
     }
 
     public void setPoseProvider(PoseProvider poseProvider) {
         this.poseProvider = poseProvider;
     }
 
-    public void setSurfaceMap(SurfaceMap surfaceMap) {
-        this.surfaceMap = surfaceMap;
-    }
-
-    @Override
-    public Arm getArm() {
-        if (arm == null) {
-            arm = new SimArm();
-        }
-
-        return arm;
-    }
-
-    @Override
-    public Chassis getChassis() {
-        if (chassis == null) {
-            chassis = NavigatorBuilder.buildChassis(
-                    new SimMotor("leftMotor"),
-                    new SimMotor("rightMotor")
-            );
-        }
-
-        return chassis;
-    }
-
-    @Override
-    public Paddle getPaddle() {
-        if (paddle == null) {
-            paddle = new SimPaddle();
-        }
-
-        return paddle;
-    }
-
+    @Nullable
     @Override
     public ColorSensors getColorSensors() {
         if (colorSensors == null) {
@@ -80,11 +67,22 @@ public class SimRobot implements Robot {
     }
 
     @Override
-    public Brick getBrick() {
-        if (brick == null) {
-            brick = new SimBrick();
-        }
+    public Arm getArm() {
+        return arm;
+    }
 
+    @Override
+    public Chassis getChassis() {
+        return chassis;
+    }
+
+    @Override
+    public Paddle getPaddle() {
+        return paddle;
+    }
+
+    @Override
+    public Brick getBrick() {
         return brick;
     }
 }

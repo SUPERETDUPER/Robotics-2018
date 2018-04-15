@@ -44,12 +44,19 @@ final class EV3Main {
         SurfaceMap surfaceMap;
 
         if (Config.currentMode == Config.Mode.SIM) {
-            robot = new SimRobot();
             surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
-            ((SimRobot) robot).setSurfaceMap(surfaceMap);
+            robot = new SimRobot(surfaceMap);
         } else {
             robot = new EV3Robot();
             surfaceMap = new SurfaceMap(Config.EV3_IMAGE_PATH);
+        }
+
+        robot.setup();
+
+        //Waits for all the sensors to load
+        if (Config.WAIT_FOR_SENSORS) {
+            while (!robot.isSetup()) Thread.yield();
+            robot.getBrick().beep();
         }
 
         MyMovePilot pilot = NavigatorBuilder.buildMoveProvider(robot.getChassis());

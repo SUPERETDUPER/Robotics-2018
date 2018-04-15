@@ -22,7 +22,7 @@ public final class Config {
         SIM
     }
 
-    public static final Mode currentMode = Mode.SIM; //The current mode to run in
+    public static final Mode currentMode = Mode.DUAL; //The current mode to run in
 
     public static final float SIM_SPEED_FACTOR = 0.7F; //How much the sim is slowed down
 
@@ -37,4 +37,6 @@ public final class Config {
     public static final int PORT_TO_CONNECT_ON_EV3 = 8888; //Port to use for connection. Any open port works
 
     public static final LogTypes IMPORTANCE_TO_PRINT = LogTypes.DEBUG; //Sets the minimum priority the Logger should print
+
+    public static final boolean WAIT_FOR_SENSORS = false; //Determines whether the program should start immediately or first create all the sensors
 }

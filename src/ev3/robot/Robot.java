@@ -20,6 +20,16 @@ public interface Robot {
 
     Brick getBrick();
 
+    /**
+     * Sets up all the sensors in a background thread since this can take time
+     */
+    void setup();
+
+    /**
+     * @return whether all the sensors are loaded
+     */
+    boolean isSetup();
+
     interface Arm {
         void goToBoat(boolean immediateReturn);
 
@@ -48,6 +58,10 @@ public interface Robot {
         int getColorContainer();
 
         int getColorBoat();
+
+        void setup();
+
+        boolean isSetup();
     }
 
     interface Paddle {

@@ -17,11 +17,21 @@ import org.jetbrains.annotations.NotNull;
 class SimColorSensors implements Robot.ColorSensors {
     @NotNull
     private final PoseProvider poseProvider;
+    @NotNull
     private final SurfaceMap surfaceMap;
 
-    SimColorSensors(@NotNull PoseProvider poseProvider, SurfaceMap surfaceMap) {
+    SimColorSensors(@NotNull PoseProvider poseProvider, @NotNull SurfaceMap surfaceMap) {
         this.poseProvider = poseProvider;
         this.surfaceMap = surfaceMap;
+    }
+
+    @Override
+    public void setup() {
+    }
+
+    @Override
+    public boolean isSetup() {
+        return true;
     }
 
     @Override
