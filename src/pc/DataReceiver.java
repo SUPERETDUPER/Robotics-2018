@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package pc.communication;
+package pc;
 
 import common.TransmittableType;
 import common.logger.LogMessage;

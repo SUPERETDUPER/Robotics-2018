@@ -15,7 +15,7 @@ import javafx.stage.WindowEvent;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pc.communication.DataReceiver;
+import pc.DataReceiver;
 
 import java.io.DataInputStream;
 import java.io.IOException;

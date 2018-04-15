@@ -9,7 +9,6 @@ import common.ConnectionUtil;
 import common.logger.Logger;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
-import pc.communication.DataReceiver;
 import pc.gui.GUI;
 
 public final class PCMain {
