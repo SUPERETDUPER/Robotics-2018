@@ -5,6 +5,7 @@
 package ev3.navigation;
 
 import lejos.robotics.geometry.Point;
+import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
@@ -25,52 +26,58 @@ public final class MapOperations {
     private static final Waypoint CONTAINER_BOTTOM_LEFT = new Waypoint(797.5F, 333);
     private static final Waypoint CONTAINER_BOTTOM_RIGHT = new Waypoint(1235.5F, 404);
 
-    @Contract(pure = true)
-    @NotNull
-    public static Path getPathToContainerTopLeft(@NotNull Pose currentPose) {
-        return approachLeftRight(CONTAINER_TOP_LEFT, currentPose);
+    private final PoseProvider poseProvider;
+
+    public MapOperations(PoseProvider poseProvider) {
+        this.poseProvider = poseProvider;
     }
 
     @Contract(pure = true)
     @NotNull
-    public static Path getPathToContainerTopRight(@NotNull Pose currentPose) {
-        return approachLeftRight(CONTAINER_TOP_RIGHT, currentPose);
+    public Path getPathToContainerTopLeft() {
+        return approachLeftRight(CONTAINER_TOP_LEFT, poseProvider.getPose());
     }
 
     @Contract(pure = true)
     @NotNull
-    public static Path getPathToContainerBottomLeft(@NotNull Pose currentPose) {
-        return approachLeftRight(CONTAINER_BOTTOM_LEFT, currentPose);
+    public Path getPathToContainerTopRight() {
+        return approachLeftRight(CONTAINER_TOP_RIGHT, poseProvider.getPose());
     }
 
     @Contract(pure = true)
     @NotNull
-    public static Path getPathToContainerBottomRight(@NotNull Pose currentPose) {
-        return approachLeftRight(CONTAINER_BOTTOM_RIGHT, currentPose);
+    public Path getPathToContainerBottomLeft() {
+        return approachLeftRight(CONTAINER_BOTTOM_LEFT, poseProvider.getPose());
     }
 
     @Contract(pure = true)
     @NotNull
-    public static Path getPathToTempRegGreen(@NotNull Pose currentPose) {
-        return approachTopOrBottom(TEMP_REG_GREEN, currentPose);
+    public Path getPathToContainerBottomRight() {
+        return approachLeftRight(CONTAINER_BOTTOM_RIGHT, poseProvider.getPose());
     }
 
     @Contract(pure = true)
     @NotNull
-    public static Path getPathToTempRegBlue(@NotNull Pose currentPose) {
-        return approachTopOrBottom(TEMP_REG_BLUE, currentPose);
+    public Path getPathToTempRegGreen() {
+        return approachTopOrBottom(TEMP_REG_GREEN, poseProvider.getPose());
     }
 
     @Contract(pure = true)
     @NotNull
-    public static Path getPathToTempRegRed(@NotNull Pose currentPose) {
-        return approachTopOrBottom(TEMP_REG_RED, currentPose);
+    public Path getPathToTempRegBlue() {
+        return approachTopOrBottom(TEMP_REG_BLUE, poseProvider.getPose());
     }
 
     @Contract(pure = true)
     @NotNull
-    public static Path goToTempRegYellow(@NotNull Pose currentPose) {
-        return approachTopOrBottom(TEMP_REG_YELLOW, currentPose);
+    public Path getPathToTempRegRed() {
+        return approachTopOrBottom(TEMP_REG_RED, poseProvider.getPose());
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public Path goToTempRegYellow() {
+        return approachTopOrBottom(TEMP_REG_YELLOW, poseProvider.getPose());
     }
 
     /**

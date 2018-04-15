@@ -33,8 +33,12 @@ public final class Controller implements MoveListener, NavigationListener {
 
         for (Waypoint waypoint : path) {
             if (offset != null) {
-                //TODO Think about issue with no heading required and find solution
-                waypoint.setLocation(offset.reverseOffset(waypoint.getPose()));
+                if (waypoint.isHeadingRequired()) {
+                    //TODO Think about issue with no heading required and find solution
+                    waypoint.setLocation(offset.reverseOffset(waypoint.getPose()));
+                } else {
+                    Logger.warning(LOG_TAG, "Could not offset because no heading defined");
+                }
             }
 
             if (waypoint.isHeadingRequired()) {

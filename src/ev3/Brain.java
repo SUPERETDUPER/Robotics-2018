@@ -31,18 +31,20 @@ class Brain {
     void start() {
         robot.getPaddle().move(true); //To drop conveyor belt
 
+        MapOperations pathCalculator = new MapOperations(controller.getNavigator().getPoseProvider());
+
         //Go to each food container
-        controller.followPath(MapOperations.getPathToContainerBottomRight(controller.getPose()), Offset.CONTAINER_COLOR_SENSOR);
+        controller.followPath(pathCalculator.getPathToContainerBottomRight(), Offset.CONTAINER_COLOR_SENSOR);
         pickupFood(robot.getColorSensors().getColorContainer());
 
-        controller.followPath(MapOperations.getPathToContainerBottomLeft(controller.getPose()), Offset.CONTAINER_COLOR_SENSOR);
+        controller.followPath(pathCalculator.getPathToContainerBottomLeft(), Offset.CONTAINER_COLOR_SENSOR);
         pickupFood(robot.getColorSensors().getColorContainer());
 
-        controller.followPath(MapOperations.getPathToContainerTopLeft(controller.getPose()), Offset.CONTAINER_COLOR_SENSOR);
+        controller.followPath(pathCalculator.getPathToContainerTopLeft(), Offset.CONTAINER_COLOR_SENSOR);
         pickupFood(robot.getColorSensors().getColorContainer());
 
         if(index!=3){
-            controller.followPath(MapOperations.getPathToContainerTopRight(controller.getPose()), Offset.CONTAINER_COLOR_SENSOR);
+            controller.followPath(pathCalculator.getPathToContainerTopRight(), Offset.CONTAINER_COLOR_SENSOR);
             pickupFood(robot.getColorSensors().getColorContainer());
         }
 
@@ -50,16 +52,16 @@ class Brain {
         for (int i = 0; i < 3; i++) {
             switch (listFoodColor[i]) {
                 case Color.BLUE:
-                    controller.followPath(MapOperations.getPathToTempRegBlue(controller.getPose()));
+                    controller.followPath(pathCalculator.getPathToTempRegBlue());
                     break;
                 case Color.GREEN:
-                    controller.followPath(MapOperations.getPathToTempRegGreen(controller.getPose()));
+                    controller.followPath(pathCalculator.getPathToTempRegGreen());
                     break;
                 case Color.YELLOW:
-                    controller.followPath(MapOperations.goToTempRegYellow(controller.getPose()));
+                    controller.followPath(pathCalculator.goToTempRegYellow());
                     break;
                 case Color.RED:
-                    controller.followPath(MapOperations.getPathToTempRegRed(controller.getPose()));
+                    controller.followPath(pathCalculator.getPathToTempRegRed());
                     break;
                 default:
                     Logger.warning(LOG_TAG, "Could not find temp reg of color : " + listFoodColor[i]);
