@@ -7,7 +7,6 @@ package ev3.navigation;
 import common.TransmittableType;
 import common.logger.Logger;
 import ev3.communication.ComManager;
-import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
@@ -33,19 +32,16 @@ public final class Controller implements MoveListener, NavigationListener {
         Path newPath = new Path();
 
         for (Waypoint waypoint : path) {
-            Point newPoint;
-
-            if (offset == null) {
-                newPoint = waypoint.getPose().getLocation();
-            } else {
-                newPoint = offset.reverseOffset(waypoint.getPose());
+            if (offset != null) {
+                //TODO Think about issue with no heading required and find solution
+                waypoint.setLocation(offset.reverseOffset(waypoint.getPose()));
             }
 
             if (waypoint.isHeadingRequired()) {
-                newPath.add(new Waypoint(newPoint.x, newPoint.y, normalize(waypoint.getHeading())));
-            } else {
-                newPath.add(new Waypoint(newPoint.x, newPoint.y));
+                waypoint = new Waypoint(waypoint.x, waypoint.y, normalize(waypoint.getHeading()));
             }
+
+            newPath.add(waypoint);
         }
 
         navigator.followPath(newPath);

@@ -15,7 +15,7 @@ public final class Offset {
     // (x,y) offsets when robot is facing to the right (heading = 0)
     public static final Offset LEFT_COLOR_SENSOR = new Offset(-171, 80);
     public static final Offset RIGHT_COLOR_SENSOR = new Offset(-133, -79);
-    public static final Offset CENTER_OF_ROBOT = new Offset(-50, 0); //TODO Find actual values
+    public static final Offset CONTAINER_COLOR_SENSOR = new Offset(-57, 0); //TODO Find actual values
 
     private final float deltaX;
     private final float deltaY;
@@ -25,6 +25,10 @@ public final class Offset {
         this.deltaY = deltaY;
     }
 
+    /**
+     * Shifts the pose by the offset amount
+     * Ex. (1, 1, 0) --> (2, 2) with new Offset(1, 1)
+     */
     @NotNull
     public Point offset(@NotNull Pose pose) {
         return calculateOffset(pose, deltaX, deltaY);

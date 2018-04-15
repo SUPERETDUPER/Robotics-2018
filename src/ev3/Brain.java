@@ -7,6 +7,7 @@ package ev3;
 import common.logger.Logger;
 import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;
+import ev3.navigation.Offset;
 import ev3.robot.Robot;
 import lejos.robotics.Color;
 
@@ -31,17 +32,17 @@ class Brain {
         robot.getPaddle().move(true); //To drop conveyor belt
 
         //Go to each food container
-        controller.followPath(MapOperations.getPathToContainerBottomRight(controller.getPose()));
+        controller.followPath(MapOperations.getPathToContainerBottomRight(controller.getPose()), Offset.CONTAINER_COLOR_SENSOR);
         pickupFood(robot.getColorSensors().getColorContainer());
 
-        controller.followPath(MapOperations.getPathToContainerBottomLeft(controller.getPose()));
+        controller.followPath(MapOperations.getPathToContainerBottomLeft(controller.getPose()), Offset.CONTAINER_COLOR_SENSOR);
         pickupFood(robot.getColorSensors().getColorContainer());
 
-        controller.followPath(MapOperations.getPathToContainerTopLeft(controller.getPose()));
+        controller.followPath(MapOperations.getPathToContainerTopLeft(controller.getPose()), Offset.CONTAINER_COLOR_SENSOR);
         pickupFood(robot.getColorSensors().getColorContainer());
 
         if(index!=3){
-            controller.followPath(MapOperations.getPathToContainerTopRight(controller.getPose()));
+            controller.followPath(MapOperations.getPathToContainerTopRight(controller.getPose()), Offset.CONTAINER_COLOR_SENSOR);
             pickupFood(robot.getColorSensors().getColorContainer());
         }
 

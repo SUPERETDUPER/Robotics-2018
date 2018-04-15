@@ -22,7 +22,7 @@ public final class Config {
         SIM
     }
 
-    public static final Mode currentMode = Mode.DUAL; //The current mode to run in
+    public static final Mode currentMode = Mode.SIM; //The current mode to run in
 
     public static final float SIM_SPEED_FACTOR = 0.7F; //How much the sim is slowed down
 

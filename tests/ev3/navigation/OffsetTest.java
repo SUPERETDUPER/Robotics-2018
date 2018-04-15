@@ -38,6 +38,15 @@ class OffsetTest {
     }
 
     @Test
+    void offset4() {
+        TestUtils.assertPointEquals(
+                new Offset(1, 1).offset(new Pose(1, 1, 0)),
+                new Point(2, 2),
+                TOLERANCE
+        );
+    }
+
+    @Test
     void offsetWith0() {
         TestUtils.assertPointEquals(
                 new Offset(0, 0)
