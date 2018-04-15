@@ -32,7 +32,7 @@ public class ComManager {
     /**
      * Setups the object. If not called ComManager does nothing.
      */
-    public static void enable(OutputStream outputStream) {
+    public static void enable(OutputStream outputStream, boolean shouldListenForLogs) {
         dataSender = new PCDataSender(outputStream);
 
         dataSender.setOnLostConnection(new DataSender.LostConnectionListener() {
@@ -43,7 +43,7 @@ public class ComManager {
         });
 
         dataListener = new DataListener(dataSender);
-        dataListener.startListening();
+        dataListener.startListening(shouldListenForLogs);
     }
 
     /**

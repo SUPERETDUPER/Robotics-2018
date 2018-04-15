@@ -4,7 +4,6 @@
 
 package ev3.communication;
 
-import common.Config;
 import common.TransmittableType;
 import common.logger.LogMessage;
 import common.logger.LogMessageListener;
@@ -33,9 +32,9 @@ public class DataListener implements RobotPoseProvider.RobotPoseProviderListener
         this.robotPoseProvider.setListener(this);
     }
 
-    void startListening() {
+    void startListening(boolean shouldListenForLogs) {
         //Attach the listener if not using the simulator so that log messages are sent
-        if (Config.currentMode == Config.Mode.DUAL) {
+        if (shouldListenForLogs) {
             Logger.setListener(this);
         }
     }
