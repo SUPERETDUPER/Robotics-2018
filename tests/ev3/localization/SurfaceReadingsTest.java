@@ -5,11 +5,11 @@
 package ev3.localization;
 
 import common.Config;
+import common.ConnectionUtil;
 import common.TransmittableType;
 import common.mapping.SurfaceMap;
 import common.particles.MCLData;
 import common.particles.Particle;
-import ev3.communication.ComManager;
 import ev3.communication.PCDataSender;
 import ev3.navigation.Offset;
 import lejos.robotics.Color;
@@ -45,7 +45,7 @@ class SurfaceReadingsTest {
             }
         }
 
-        new PCDataSender(ComManager.createOutputStream(Config.PORT_TO_CONNECT_ON_EV3)).sendTransmittable(
+        new PCDataSender(ConnectionUtil.createOutputStream(ConnectionUtil.createServerSocket(Config.PORT_TO_CONNECT_ON_EV3))).sendTransmittable(
                 TransmittableType.MCL_DATA,
                 new MCLData(particles.toArray(new Particle[0]), new Pose())
         );

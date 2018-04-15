@@ -5,6 +5,7 @@
 package ev3;
 
 import common.Config;
+import common.ConnectionUtil;
 import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
@@ -36,7 +37,7 @@ final class EV3Main {
     private static void initialize() {
         //Connect to PC unless in SOLO
         if (Config.currentMode != Config.Mode.SOLO) {
-            ComManager.enable(ComManager.createOutputStream(Config.PORT_TO_CONNECT_ON_EV3));
+            ComManager.enable(ConnectionUtil.createOutputStream(ConnectionUtil.createServerSocket(Config.PORT_TO_CONNECT_ON_EV3)));
         }
 
         //Builds either a sim or an ev3 robot depending on config

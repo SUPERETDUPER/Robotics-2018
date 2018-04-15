@@ -5,15 +5,11 @@
 package ev3.communication;
 
 import common.TransmittableType;
-import common.logger.Logger;
 import lejos.robotics.Transmittable;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.net.ServerSocket;
 
 /**
  * Singleton pattern
@@ -80,26 +76,4 @@ public class ComManager {
         return dataListener;
     }
 
-    /**
-     * Creates a server socket and gets its output stream
-     *
-     * @param port the port to use
-     */
-    @NotNull
-    public static OutputStream createOutputStream(int port) {
-        Logger.info(LOG_TAG, "Waiting for PC to connect to EV3...");
-
-        OutputStream outputStream;
-
-        try {
-            outputStream = new ServerSocket(port).accept().getOutputStream();
-        } catch (IOException e) {
-            Logger.error(LOG_TAG, "Could not connect to PC");
-            throw new RuntimeException("Could not connect to PC");
-        }
-
-        Logger.info(LOG_TAG, "PC connected to EV3");
-
-        return outputStream;
-    }
 }

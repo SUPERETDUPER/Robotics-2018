@@ -5,10 +5,10 @@
 package pc;
 
 import common.Config;
+import common.ConnectionUtil;
 import common.logger.Logger;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
-import pc.communication.Connection;
 import pc.communication.DataReceiver;
 import pc.gui.GUI;
 
@@ -23,7 +23,12 @@ public final class PCMain {
         }
 
         final DataReceiver dataReceiver = new DataReceiver(
-                Connection.getInputStream(Config.currentMode),
+                ConnectionUtil.getInputStream(
+                        ConnectionUtil.createClientSocket(
+                                Config.PORT_TO_CONNECT_ON_EV3,
+                                Config.currentMode == Config.Mode.SIM ? "localhost" : Config.EV3_IP_ADDRESS
+                        )
+                ),
                 GUI.listener
         );
 
