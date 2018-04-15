@@ -6,6 +6,7 @@ package ev3;
 
 import common.Config;
 import common.ConnectionUtil;
+import common.RunModes;
 import common.mapping.SurfaceMap;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
@@ -36,18 +37,18 @@ final class EV3Main {
 
     private static void initialize() {
         //Connect to PC unless in SOLO
-        if (Config.currentMode != Config.Mode.SOLO) {
+        if (Config.currentMode != RunModes.SOLO) {
             ComManager.enable(
                     ConnectionUtil.createOutputStream(
                             ConnectionUtil.createServerSocket(Config.PORT_TO_CONNECT_ON_EV3)),
-                    Config.currentMode == Config.Mode.DUAL
+                    Config.currentMode == RunModes.DUAL
             );
         }
 
         //Builds either a sim or an ev3 robot depending on config
         SurfaceMap surfaceMap;
 
-        if (Config.currentMode == Config.Mode.SIM) {
+        if (Config.currentMode == RunModes.SIM) {
             surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
             robot = new SimRobot(surfaceMap);
         } else {
@@ -66,7 +67,7 @@ final class EV3Main {
         MyMovePilot pilot = NavigatorBuilder.buildMoveProvider(robot.getChassis());
         PoseProvider poseProvider = NavigatorBuilder.buildPoseProvider(surfaceMap, pilot);
 
-        if (Config.currentMode == Config.Mode.SIM){
+        if (Config.currentMode == RunModes.SIM) {
             ((SimRobot) robot).setPoseProvider(poseProvider);
         }
 
