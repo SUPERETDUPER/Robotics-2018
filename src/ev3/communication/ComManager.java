@@ -4,7 +4,6 @@
 
 package ev3.communication;
 
-import common.Config;
 import common.TransmittableType;
 import common.logger.Logger;
 import lejos.robotics.Transmittable;
@@ -22,45 +21,30 @@ import java.net.ServerSocket;
  * Manages all the data being sent away from the EV3
  * <p>
  * Used Singleton because should be accessible no matter what
- * <p>
- * TODO : Consider making static since no longer implements LostConnectionListener
  */
 public class ComManager {
     private static final String LOG_TAG = ComManager.class.getSimpleName();
 
-    @NotNull
-    private static final ComManager mComManager = new ComManager();
-
     //Used to send the data
     @Nullable
-    private DataSender dataSender;
+    private static DataSender dataSender;
 
     //Monitors for data
     @Nullable
-    private DataListener dataListener;
-
-    private ComManager() {
-    }
-
-    @NotNull
-    @Contract(pure = true)
-    public static ComManager get() {
-        return mComManager;
-    }
+    private static DataListener dataListener;
 
     /**
      * Setups the object. If not called ComManager does nothing.
      */
-    public void enable() {
-        dataSender = new PCDataSender(createOutputStream(Config.PORT_TO_CONNECT_ON_EV3));
+    public static void enable(OutputStream outputStream) {
+        dataSender = new PCDataSender(outputStream);
 
-        ((PCDataSender) dataSender).setOnLostConnection(new DataSender.LostConnectionListener() {
+        dataSender.setOnLostConnection(new DataSender.LostConnectionListener() {
             @Override
             public void lostConnection() {
                 stop();
             }
         });
-
 
         dataListener = new DataListener(dataSender);
         dataListener.startListening();
@@ -69,7 +53,7 @@ public class ComManager {
     /**
      * Stops/Disables the ComManager
      */
-    public void stop() {
+    public static void stop() {
         if (dataSender != null) {
             dataSender.close();
             dataSender = null;
@@ -84,7 +68,7 @@ public class ComManager {
     /**
      * Called to send data
      */
-    public void sendTransmittable(TransmittableType type, Transmittable transmittable) {
+    public static void sendTransmittable(TransmittableType type, Transmittable transmittable) {
         if (dataSender != null) {
             dataSender.sendTransmittable(type, transmittable);
         }
@@ -92,7 +76,7 @@ public class ComManager {
 
     @Contract(pure = true)
     @Nullable
-    public DataListener getDataListener() {
+    public static DataListener getDataListener() {
         return dataListener;
     }
 

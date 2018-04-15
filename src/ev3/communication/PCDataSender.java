@@ -43,7 +43,7 @@ public final class PCDataSender implements DataSender {
         }
     }
 
-    void setOnLostConnection(@Nullable LostConnectionListener lostConnectionListener) {
+    public void setOnLostConnection(@Nullable LostConnectionListener lostConnectionListener) {
         this.lostConnectionListener = lostConnectionListener;
     }
 

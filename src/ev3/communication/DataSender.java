@@ -12,6 +12,8 @@ interface DataSender {
 
     void close();
 
+    void setOnLostConnection(LostConnectionListener listener);
+
     interface LostConnectionListener {
         void lostConnection();
     }

@@ -50,7 +50,7 @@ public final class Controller implements MoveListener, NavigationListener {
 
         navigator.followPath(newPath);
 
-        ComManager.get().sendTransmittable(TransmittableType.PATH, navigator.getPath());
+        ComManager.sendTransmittable(TransmittableType.PATH, navigator.getPath());
 
         waitForStop();
     }
@@ -61,7 +61,7 @@ public final class Controller implements MoveListener, NavigationListener {
 
     private void waitForStop() {
         while (navigator.isMoving()) {
-            ComManager.get().sendTransmittable(TransmittableType.CURRENT_POSE, navigator.getPoseProvider().getPose());
+            ComManager.sendTransmittable(TransmittableType.CURRENT_POSE, navigator.getPoseProvider().getPose());
 
             Thread.yield();
         }
