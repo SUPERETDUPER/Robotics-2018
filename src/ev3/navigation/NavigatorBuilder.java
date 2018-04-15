@@ -44,10 +44,8 @@ public class NavigatorBuilder {
     public static PoseProvider buildPoseProvider(SurfaceMap surfaceMap, MyMovePilot pilot) {
 //        RobotPoseProvider poseProvider = new RobotPoseProvider(surfaceMap, pilot, STARTING_POSE);
 //
-//        ComManager comManager = ComManager.get();
-//
-//        if (comManager != null) {
-//            comManager.getDataListener().attachToRobotPoseProvider(poseProvider);
+//        if (ComManager.getDataListener() != null) {
+//            ComManager.getDataListener().attachToRobotPoseProvider(poseProvider);
 //        }
 
         PoseProvider poseProvider = new OdometryPoseProvider(pilot);
