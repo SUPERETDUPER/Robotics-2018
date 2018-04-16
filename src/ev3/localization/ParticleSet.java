@@ -4,6 +4,7 @@
 
 package ev3.localization;
 
+import common.mapping.SurfaceMap;
 import common.particles.MCLData;
 import common.particles.Particle;
 import ev3.navigation.Readings;
@@ -18,11 +19,8 @@ class ParticleSet extends MCLData {
     private static final float DISTANCE_NOISE_FACTOR = 0.08F;
     private static final float ANGLE_NOISE_FACTOR = 0.4F;
 
-    private final Rectangle boundingRectangle;
-
-    ParticleSet(int numberOfParticles, Rectangle boundingRectngle, @NotNull Pose currentPose) {
-        super(Util.createNewParticleSet(boundingRectngle, currentPose, numberOfParticles), currentPose);
-        this.boundingRectangle = boundingRectngle;
+    ParticleSet(int numberOfParticles, SurfaceMap surfaceMap, @NotNull Pose currentPose) {
+        super(Util.createNewParticleSet(surfaceMap, currentPose, numberOfParticles), currentPose);
     }
 
     void moveData(@NotNull Move move) {
@@ -30,7 +28,7 @@ class ParticleSet extends MCLData {
         moveCurrentPose(move);
     }
 
-    private void moveCurrentPose(Move move) {
+    void moveCurrentPose(Move move) {
         this.currentPose = Util.movePose(this.currentPose, move);
     }
 
@@ -89,7 +87,6 @@ class ParticleSet extends MCLData {
             while (index != particles.length - 1 && pastWeights + particles[index].weight < offset + spokeCounter * sizeOfSlice) {
                 pastWeights += particles[index++].weight; //Add weight of current particle to sum
             }
-
 
             //Now index points to correct sampled particle
             newParticles[spokeCounter] = particles[index];

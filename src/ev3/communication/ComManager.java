@@ -64,7 +64,7 @@ public class ComManager {
     /**
      * Called to send data
      */
-    public static void sendTransmittable(TransmittableType type, Transmittable transmittable) {
+    public static synchronized void sendTransmittable(TransmittableType type, Transmittable transmittable) {
         if (dataSender != null) {
             dataSender.sendTransmittable(type, transmittable);
         }

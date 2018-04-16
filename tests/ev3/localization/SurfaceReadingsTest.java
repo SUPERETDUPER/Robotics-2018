@@ -38,8 +38,8 @@ class SurfaceReadingsTest {
         SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
         SurfaceReadings readings = new SurfaceReadings(surfaceMap, Color.GREEN, new Offset(0, 0));
 
-        for (int x = 0; x < surfaceMap.getBoundingRectangle().getWidth(); x += 10) {
-            for (int y = 0; y < surfaceMap.getBoundingRectangle().getHeight(); y += 10) {
+        for (int x = 0; x < surfaceMap.getImage().getWidth(); x += 10) {
+            for (int y = 0; y < surfaceMap.getImage().getHeight(); y += 10) {
                 Pose pose = new Pose(x, y, 0);
                 particles.add(new Particle(x, y, 0, readings.calculateWeight(pose)));
             }

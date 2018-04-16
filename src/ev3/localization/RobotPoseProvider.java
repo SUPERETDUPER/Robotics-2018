@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public class RobotPoseProvider implements MoveListener, PoseProvider {
 //    private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
 
-    private static final int NUM_PARTICLES = 50; //TODO Find optimal value
+    private static final int NUM_PARTICLES = 500; //TODO Find optimal value
 
     @NotNull
     private final MoveProvider mp;
@@ -47,7 +47,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     public RobotPoseProvider(@NotNull SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider, Pose startingPose) {
         this.surfaceMap = surfaceMap;
         this.mp = moveProvider;
-        this.data = new ParticleSet(NUM_PARTICLES, surfaceMap.getBoundingRectangle(), startingPose);
+        this.data = new ParticleSet(NUM_PARTICLES, surfaceMap, startingPose);
 
         mp.addMoveListener(this);
 
@@ -58,7 +58,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
 
     public void startUpdater(Robot.ColorSensors colorSensors) {
-//        new Updater(colorSensors).start();
+        new Updater(colorSensors).start();
     }
 
     // LISTENER METHODS //
@@ -93,7 +93,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data = new ParticleSet(NUM_PARTICLES, surfaceMap.getBoundingRectangle(), pose);
+        data = new ParticleSet(NUM_PARTICLES, surfaceMap, pose);
 
         completedMove = mp.getMovement();
 
@@ -124,14 +124,20 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     /**
      * Updates the particles and position using the algorithm
      */
-    private synchronized void update(@NotNull Readings readings) {
-        Move missingMove = Util.subtractMove(mp.getMovement(), completedMove);
+    private void update(@NotNull Readings readings) {
+        synchronized (mp) {
+            synchronized (this) {
+                Move totalMove = mp.getMovement();
 
-        data.update(missingMove, readings);
+                Move missingMove = Util.subtractMove(totalMove, completedMove);
+
+                data.moveCurrentPose(missingMove);
+                data.update(missingMove, readings);
 //        data.refineCurrentPose(); //Updates current pose
 
-        completedMove = missingMove;
-
+                completedMove = totalMove;
+            }
+        }
         notifyListener(); //TODO Consider removing for optimization
     }
 
@@ -156,7 +162,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         @Override
         public void run() {
             //noinspection InfiniteLoopStatement
-            for (;; Thread.yield()) {
+            for (; ; Thread.yield()) {
                 RobotPoseProvider.this.update(
                         new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft(), Offset.LEFT_COLOR_SENSOR)
                 );

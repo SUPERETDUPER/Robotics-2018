@@ -5,7 +5,7 @@
 package common.mapping;
 
 import common.logger.Logger;
-import lejos.robotics.geometry.Rectangle;
+import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,19 +41,13 @@ public class SurfaceMap {
             return ColorJavaLejos.getLejosColor(new Color(image.getRGB(x, getInvertedY(y))));
         } catch (IndexOutOfBoundsException e) {
             Logger.warning(LOG_TAG, "Can't get color. Out of bounds : x : " + x + ". y : " + y + " " + e);
-            return lejos.robotics.Color.NONE;
+            throw new RuntimeException(e);
+//            return lejos.robotics.Color.NONE;
         }
     }
 
-    /**
-     * @return A rectangle starting at (0,0) that bounds the image
-     */
-    public Rectangle getBoundingRectangle() {
-        return new Rectangle(0, 0, image.getWidth(), image.getHeight());
-    }
-
-    public boolean isPointIn(int x, int y) {
-        return 0 < x && x < image.getWidth() && 0 < y && y < image.getHeight(); //Weird equals check for y values because y is inverted
+    public boolean contains(Point point) {
+        return 0 < point.x && point.x < image.getWidth() && 0 < point.y && point.y < image.getHeight();
     }
 
     @Contract(pure = true)

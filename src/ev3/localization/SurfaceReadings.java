@@ -30,11 +30,11 @@ public class SurfaceReadings implements Readings {
     }
 
     public float calculateWeight(@NotNull Pose pose) {
-        if (!surfaceMap.isPointIn((int) pose.getX(), (int) pose.getY())){
-            return 0;
-        }
+        if (!surfaceMap.contains(pose.getLocation())) return 0;
 
         Point location = offset.offset(pose);
+
+        if (!surfaceMap.contains(location)) return 0;
 
         int totalPixels = 0;
         int matchingPixels = 0;
@@ -42,7 +42,7 @@ public class SurfaceReadings implements Readings {
         //Loop through every pixel in the circle
         for (int x = (int) location.x - RADIUS; x <= location.x + RADIUS; x++) {
             for (int y = (int) location.y - RADIUS; y <= location.y + RADIUS; y++) {
-                if (location.distance(x, y) < RADIUS && surfaceMap.isPointIn(x, y)) { //If (x,y) within circle
+                if (location.distance(x, y) < RADIUS && surfaceMap.contains(new Point(x, y))) { //If (x,y) within circle
                     totalPixels++;
 
                     if (surfaceMap.getColorAtPoint(x, y) == colorToMatch) matchingPixels++;

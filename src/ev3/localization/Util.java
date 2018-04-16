@@ -4,8 +4,9 @@
 
 package ev3.localization;
 
+import common.mapping.SurfaceMap;
 import common.particles.Particle;
-import lejos.robotics.geometry.Rectangle;
+import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
@@ -56,7 +57,7 @@ final class Util {
     @SuppressWarnings("SameParameterValue")
     @Contract(pure = true)
     @NotNull
-    static Particle[] createNewParticleSet(Rectangle boundingRectangle, @NotNull Pose centerPose, int numParticles) {
+    static Particle[] createNewParticleSet(SurfaceMap surfaceMap, @NotNull Pose centerPose, int numParticles) {
         Particle[] newParticles = new Particle[numParticles];
 
         float totalWeight = 0;
@@ -76,7 +77,7 @@ final class Util {
 
                 x = centerPose.getX() + distanceFromCenter * (float) Math.cos(thetaInRad);
                 y = centerPose.getY() + distanceFromCenter * (float) Math.sin(thetaInRad);
-            } while (!boundingRectangle.contains((int) x, (int) y));
+            } while (!surfaceMap.contains(new Point(x,y)));
 
             float randomFactorAngle = (float) random.nextGaussian();
 
