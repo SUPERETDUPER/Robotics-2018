@@ -69,7 +69,7 @@ final class Util {
 
     /**
      * THE ALGORITHM !!
-     *
+     * <p>
      * The algorithm is as follows.
      * {@see https://classroom.udacity.com/courses/ud810/lessons/3353778638/concepts/33450785680923}
      * <p>
@@ -194,17 +194,7 @@ final class Util {
         estimatedY /= totalWeights;
         estimatedAngle /= totalWeights;
 
-        // Normalize angle
-        while (estimatedAngle > 360) estimatedAngle -= 360;
-        while (estimatedAngle <= 0) estimatedAngle += 360;
-
-        return new Pose(estimatedX, estimatedY, estimatedAngle);
-    }
-
-    @Contract(pure = true)
-    @NotNull
-    static Move deepCopyMove(@NotNull Move move) {
-        return new Move(move.getMoveType(), move.getDistanceTraveled(), move.getAngleTurned(), move.getTravelSpeed(), move.getRotateSpeed(), move.isMoving());
+        return new Pose(estimatedX, estimatedY, (float) normalizeHeading(estimatedAngle));
     }
 
     /**
@@ -232,19 +222,35 @@ final class Util {
 
     /**
      * Shifts a pose and applies noise
+     * Modified version of the Odometry Pose Provider algorithm from the source code
      */
     @Contract(pure = true)
     @NotNull
     private static Pose movePose(@NotNull Pose originalPose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
-        double angleInRad = Math.toRadians(originalPose.getHeading());
+        double dx = 0;
+        double dy = 0;
 
-        double ym = move.getDistanceTraveled() * Math.sin(angleInRad);
-        double xm = move.getDistanceTraveled() * Math.cos(angleInRad);
+        if (move.getMoveType() == Move.MoveType.TRAVEL) {
+            double headingRad = (Math.toRadians(originalPose.getHeading()));
+            dx = move.getDistanceTraveled() * Math.cos(headingRad);
+            dy = move.getDistanceTraveled() * Math.sin(headingRad);
+        } else if (move.getMoveType() == Move.MoveType.ARC) {
+            double headingRad = (Math.toRadians(originalPose.getHeading()));
+            double turnRad = Math.toRadians(move.getAngleTurned());
+            double radius = move.getDistanceTraveled() / turnRad;
+            dy = radius * (Math.cos(headingRad) - Math.cos(headingRad + turnRad));
+            dx = radius * (Math.sin(headingRad + turnRad) - Math.sin(headingRad));
+        }
 
         return new Pose(
-                (float) (originalPose.getX() + xm + distanceNoiseFactor * xm * random.nextGaussian()),
-                (float) (originalPose.getY() + ym + distanceNoiseFactor * ym * random.nextGaussian()),
-                (float) ((originalPose.getHeading() + move.getAngleTurned() + move.getAngleTurned() * angleNoiseFactor * random.nextGaussian()) % 360)
+                (float) (originalPose.getX() + dx + dx * random.nextGaussian() * distanceNoiseFactor),
+                (float) (originalPose.getY() + dy + dy * random.nextGaussian() * distanceNoiseFactor),
+                (float) normalizeHeading(originalPose.getHeading() + move.getAngleTurned() + move.getAngleTurned() * angleNoiseFactor * random.nextGaussian())
         );
+    }
+
+    @Contract(pure = true)
+    private static double normalizeHeading(double heading) {
+        return heading % 360;
     }
 }
