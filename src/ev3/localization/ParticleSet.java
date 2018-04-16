@@ -8,19 +8,76 @@ import common.mapping.SurfaceMap;
 import common.particles.MCLData;
 import common.particles.Particle;
 import ev3.navigation.Readings;
-import lejos.robotics.geometry.Rectangle;
+import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
 
 class ParticleSet extends MCLData {
     //How much the particles should spread
     private static final float DISTANCE_NOISE_FACTOR = 0.08F;
     private static final float ANGLE_NOISE_FACTOR = 0.4F;
 
+    //How much the particles should be spread out at start
+    private static final float STARTING_RADIUS_NOISE = 50;
+    private static final float STARTING_HEADING_NOISE = 15;
+
+    private final SurfaceMap surfaceMap;
+
     ParticleSet(int numberOfParticles, SurfaceMap surfaceMap, @NotNull Pose currentPose) {
-        super(Util.createNewParticleSet(surfaceMap, currentPose, numberOfParticles), currentPose);
+        super(new Particle[numberOfParticles], currentPose);
+        this.surfaceMap = surfaceMap;
+        setPose(currentPose);
+    }
+
+    void setPose(@NotNull Pose pose){
+        resetParticles(pose);
+        this.currentPose = pose;
+    }
+
+    /**
+     * Generates a new particle set around a specific point with weights 0.5
+     */
+    private void resetParticles(@NotNull Pose centerPose) {
+        Particle[] newParticles = new Particle[particles.length];
+
+        Random random = new Random();
+
+        float totalWeight = 0;
+
+        for (int i = 0; i < particles.length; i++) {
+            float randomFactorDistance;
+            float x;
+            float y;
+
+            //Create x,y values within bounds
+            do {
+                randomFactorDistance = (float) random.nextGaussian();
+
+                float distanceFromCenter = STARTING_RADIUS_NOISE * randomFactorDistance;
+
+                float thetaInRad = (float) (2 * Math.PI * Math.random());  //Random angle between 0 and 2pi
+
+                x = centerPose.getX() + distanceFromCenter * (float) Math.cos(thetaInRad);
+                y = centerPose.getY() + distanceFromCenter * (float) Math.sin(thetaInRad);
+            } while (!surfaceMap.contains(new Point(x,y)));
+
+            float randomFactorAngle = (float) random.nextGaussian();
+
+            float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * randomFactorAngle;
+
+            float averageError = (Math.abs(randomFactorDistance) + Math.abs(randomFactorAngle)) / 2;
+            float newWeight = Util.bellCurveFunction(averageError); //The closer the error to zero the closer the weight is to 1
+
+            totalWeight += newWeight;
+
+            newParticles[i] = new Particle(x, y, heading, newWeight);
+        }
+
+        particles = Util.normalizeSet(newParticles, totalWeight);
     }
 
     void moveData(@NotNull Move move) {

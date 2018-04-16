@@ -6,6 +6,7 @@ package ev3.localization;
 
 import common.mapping.SurfaceMap;
 import common.particles.MCLData;
+import ev3.navigation.MyMovePilot;
 import ev3.navigation.Offset;
 import ev3.navigation.Readings;
 import ev3.robot.Robot;
@@ -28,10 +29,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private static final int NUM_PARTICLES = 500; //TODO Find optimal value
 
     @NotNull
-    private final MoveProvider mp;
+    private final MyMovePilot mp;
     private final SurfaceMap surfaceMap;
     @NotNull
-    private ParticleSet data;
+    private final ParticleSet data;
 
     @Nullable
     private RobotPoseProviderListener listener;
@@ -44,9 +45,9 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Nullable
     private Move completedMove;
 
-    public RobotPoseProvider(@NotNull SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider, Pose startingPose) {
+    public RobotPoseProvider(@NotNull SurfaceMap surfaceMap, @NotNull MyMovePilot pilot, Pose startingPose) {
         this.surfaceMap = surfaceMap;
-        this.mp = moveProvider;
+        this.mp = pilot;
         this.data = new ParticleSet(NUM_PARTICLES, surfaceMap, startingPose);
 
         mp.addMoveListener(this);
@@ -93,7 +94,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data = new ParticleSet(NUM_PARTICLES, surfaceMap, pose);
+        data.setPose(pose);
 
         completedMove = mp.getMovement();
 
@@ -163,13 +164,15 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         public void run() {
             //noinspection InfiniteLoopStatement
             for (; ; Thread.yield()) {
-                RobotPoseProvider.this.update(
-                        new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft(), Offset.LEFT_COLOR_SENSOR)
-                );
+                if (mp.isMoving()) {
+                    RobotPoseProvider.this.update(
+                            new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft(), Offset.LEFT_COLOR_SENSOR)
+                    );
 
-                RobotPoseProvider.this.update(
-                        new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceRight(), Offset.RIGHT_COLOR_SENSOR)
-                );
+                    RobotPoseProvider.this.update(
+                            new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceRight(), Offset.RIGHT_COLOR_SENSOR)
+                    );
+                }
             }
         }
     }

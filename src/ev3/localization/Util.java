@@ -4,9 +4,7 @@
 
 package ev3.localization;
 
-import common.mapping.SurfaceMap;
 import common.particles.Particle;
-import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
@@ -21,10 +19,6 @@ import java.util.Random;
  */
 final class Util {
     private static final Random random = new Random();
-
-    //How much the particles should be spread out at start
-    private static final float STARTING_RADIUS_NOISE = 50;
-    private static final float STARTING_HEADING_NOISE = 15;
 
     @Contract(pure = true)
     @NotNull
@@ -52,58 +46,13 @@ final class Util {
     }
 
     /**
-     * Generates a new particle set around a specific point with weights 0.5
-     */
-    @SuppressWarnings("SameParameterValue")
-    @Contract(pure = true)
-    @NotNull
-    static Particle[] createNewParticleSet(SurfaceMap surfaceMap, @NotNull Pose centerPose, int numParticles) {
-        Particle[] newParticles = new Particle[numParticles];
-
-        float totalWeight = 0;
-
-        for (int i = 0; i < numParticles; i++) {
-            float randomFactorDistance;
-            float x;
-            float y;
-
-            //Create x,y values within bounds
-            do {
-                randomFactorDistance = (float) random.nextGaussian();
-
-                float distanceFromCenter = STARTING_RADIUS_NOISE * randomFactorDistance;
-
-                float thetaInRad = (float) (2 * Math.PI * Math.random());  //Random angle between 0 and 2pi
-
-                x = centerPose.getX() + distanceFromCenter * (float) Math.cos(thetaInRad);
-                y = centerPose.getY() + distanceFromCenter * (float) Math.sin(thetaInRad);
-            } while (!surfaceMap.contains(new Point(x,y)));
-
-            float randomFactorAngle = (float) random.nextGaussian();
-
-            float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * randomFactorAngle;
-
-            float averageError = (Math.abs(randomFactorDistance) + Math.abs(randomFactorAngle)) / 2;
-            float newWeight = bellCurveFunction(averageError); //The closer the error to zero the closer the weight is to 1
-
-            totalWeight += newWeight;
-
-            newParticles[i] = new Particle(x, y, heading, newWeight);
-        }
-
-        newParticles = normalizeSet(newParticles, totalWeight);
-
-        return newParticles;
-    }
-
-    /**
      * Returns f(x) for a standard bell curve with standard deviation 1, mean 0 and max 1
      *
      * @param x x
      * @return f(x)
      */
     @Contract(pure = true)
-    private static float bellCurveFunction(float x) {
+    static float bellCurveFunction(float x) {
         return (float) Math.pow(Math.E, -Math.pow(x, 2) / 2);
     }
 
