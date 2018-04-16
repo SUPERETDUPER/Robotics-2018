@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="EV3-SIM" type="Application" factoryName="Application" singleton="true">
+    <option name="MAIN_CLASS_NAME" value="ev3.EV3Main" />
+    <module name="Robotics" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <method />
+  </configuration>
+</component>
