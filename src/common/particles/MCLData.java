@@ -18,9 +18,9 @@ import java.io.IOException;
  */
 public class MCLData implements Transmittable {
     @NotNull
-    private Particle[] particles;
+    protected Particle[] particles;
     @NotNull
-    private Pose currentPose;
+    protected Pose currentPose;
 
     public MCLData(@NotNull Particle[] particles, @NotNull Pose currentPose) {
         this.particles = particles;

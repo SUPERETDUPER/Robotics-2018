@@ -5,7 +5,6 @@
 package ev3.localization;
 
 import common.particles.Particle;
-import ev3.navigation.Readings;
 import lejos.robotics.geometry.Rectangle;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
@@ -22,13 +21,9 @@ import java.util.Random;
 final class Util {
     private static final Random random = new Random();
 
-    //How much the particles should spread
-    private static final float DISTANCE_NOISE_FACTOR = 0.08F;
-    private static final float ANGLE_NOISE_FACTOR = 0.4F;
-
     //How much the particles should be spread out at start
-    private static final float STARTING_RADIUS_NOISE = 100;
-    private static final float STARTING_HEADING_NOISE = 30;
+    private static final float STARTING_RADIUS_NOISE = 50;
+    private static final float STARTING_HEADING_NOISE = 15;
 
     @Contract(pure = true)
     @NotNull
@@ -36,25 +31,13 @@ final class Util {
         return movePose(pose, move, 0, 0);
     }
 
-    @Contract(pure = true)
-    static Particle[] moveParticleSet(@NotNull Particle[] particles, @NotNull Move move) {
-        Particle[] newParticles = new Particle[particles.length];
-
-        for (int i = 0; i < particles.length; i++) {
-            Pose newPose = Util.movePose(particles[i].getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
-            newParticles[i] = new Particle(newPose, particles[i].weight);
-        }
-
-        return newParticles;
-    }
-
     /**
      * Subtracts move2 from move1
      * <p>
-     * If move2 is null simply returns move one.
+     * If move2 is null simply returns moveData one.
      *
-     * @param move1 larger move
-     * @param move2 smaller move
+     * @param move1 larger moveData
+     * @param move2 smaller moveData
      * @return result of subtraction
      */
     @Contract(pure = true)
@@ -65,61 +48,6 @@ final class Util {
         }
 
         return new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());
-    }
-
-    /**
-     * THE ALGORITHM !!
-     * <p>
-     * The algorithm is as follows.
-     * {@see https://classroom.udacity.com/courses/ud810/lessons/3353778638/concepts/33450785680923}
-     * <p>
-     * 1. Sample a random particle using a "spoke" algorithm.
-     * Imagine a pie chart where each particle is a slice and the size of the slice is proportional to the particle's weight.
-     * You then divide the pie chart into n equal sections with n "spokes". N is the number of particles
-     * Where ever the spokes land, this is the new particle that has been sampled.
-     * Particles with higher weights have higher changes of being chosen since they're bigger.
-     * Also a dense cluster of particles have a higher chance of having one of their members being chosen since they together form a large section of the pie chart.
-     * {@see https://classroom.udacity.com/courses/ud810/lessons/3353208568/concepts/33538586060923}
-     * <p>
-     * 2. For that sampled particle, shift it based on the move
-     * 3. Calculate the probability of getting that reading from the shifted pose. That's the new weight
-     * 4. Normalize weights (multiply all the weight by a constant so that the sum of the weights is one).
-     *
-     * @param particles particles to update
-     * @param move      amount particles have moved
-     * @param readings  readings the sensors took
-     * @return updated particles
-     */
-    @Contract(pure = true)
-    static Particle[] update(@NotNull Particle[] particles, Move move, Readings readings) {
-        Particle[] newParticles = new Particle[particles.length];
-
-        double sizeOfSlice = 1.0 / particles.length;
-        double offset = Math.random() * sizeOfSlice;
-        double pastWeights = 0;
-        float totalForNewWeights = 0;
-        int index = 0;
-
-        for (int spokeCounter = 0; spokeCounter < particles.length; spokeCounter++) {
-            //Keep increasing index until we have found the particle that matches the spoke
-            while (index != particles.length - 1 && pastWeights + particles[index].weight < offset + spokeCounter * sizeOfSlice) {
-                pastWeights += particles[index++].weight; //Add weight of current particle to sum
-            }
-
-
-            /*Now index points to correct sampled particle*/
-
-            Pose newPose = movePose(particles[index].getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
-
-            float newWeight = readings.calculateWeight(newPose);
-            totalForNewWeights += newWeight;
-
-            newParticles[spokeCounter] = new Particle(newPose, newWeight);
-        }
-
-        newParticles = normalize(newParticles, totalForNewWeights); //Normalize
-
-        return newParticles;
     }
 
     /**
@@ -138,63 +66,33 @@ final class Util {
             float x;
             float y;
 
+            //Create x,y values within bounds
             do {
-                randomFactorDistance = (float) random.nextGaussian() / 2;
+                randomFactorDistance = (float) random.nextGaussian();
 
-
-                float radiusFromCenter = STARTING_RADIUS_NOISE * randomFactorDistance;
+                float distanceFromCenter = STARTING_RADIUS_NOISE * randomFactorDistance;
 
                 float thetaInRad = (float) (2 * Math.PI * Math.random());  //Random angle between 0 and 2pi
 
-                x = centerPose.getX() + radiusFromCenter * (float) Math.cos(thetaInRad);
-                y = centerPose.getY() + radiusFromCenter * (float) Math.sin(thetaInRad);
+                x = centerPose.getX() + distanceFromCenter * (float) Math.cos(thetaInRad);
+                y = centerPose.getY() + distanceFromCenter * (float) Math.sin(thetaInRad);
             } while (!boundingRectangle.contains((int) x, (int) y));
 
-            float randomFactorAngle = (float) random.nextGaussian() / 2;
+            float randomFactorAngle = (float) random.nextGaussian();
 
-            float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * randomFactorDistance;
+            float heading = centerPose.getHeading() + STARTING_HEADING_NOISE * randomFactorAngle;
 
-            float totalError = Math.abs(randomFactorDistance) + Math.abs(randomFactorAngle);
-            float newWeight = bellCurveFunction(totalError);
+            float averageError = (Math.abs(randomFactorDistance) + Math.abs(randomFactorAngle)) / 2;
+            float newWeight = bellCurveFunction(averageError); //The closer the error to zero the closer the weight is to 1
 
             totalWeight += newWeight;
 
             newParticles[i] = new Particle(x, y, heading, newWeight);
         }
 
-        newParticles = normalize(newParticles, totalWeight);
+        newParticles = normalizeSet(newParticles, totalWeight);
 
         return newParticles;
-    }
-
-    /**
-     * Estimate currentPose from weighted average of the particles
-     * Calculate statistics
-     *
-     * @param particles particles to use
-     */
-    @NotNull
-    @Contract(pure = true)
-    static synchronized Pose refineCurrentPose(@NotNull Particle[] particles) {
-        float totalWeights = 0;
-
-        float estimatedX = 0;
-        float estimatedY = 0;
-        float estimatedAngle = 0;
-
-        for (Particle particle : particles) {
-            estimatedX += particle.getPose().getX() * particle.weight;
-            estimatedY += particle.getPose().getY() * particle.weight;
-            estimatedAngle += particle.getPose().getHeading() * particle.weight;
-
-            totalWeights += particle.weight;
-        }
-
-        estimatedX /= totalWeights;
-        estimatedY /= totalWeights;
-        estimatedAngle /= totalWeights;
-
-        return new Pose(estimatedX, estimatedY, (float) normalizeHeading(estimatedAngle));
     }
 
     /**
@@ -212,7 +110,7 @@ final class Util {
      * Makes the sum of the weights of all the particles equal to one
      */
     @Contract(pure = true)
-    private static Particle[] normalize(@NotNull Particle[] particles, float totalWeight) {
+    static Particle[] normalizeSet(@NotNull Particle[] particles, float totalWeight) {
         for (int i = 0; i < particles.length; i++) {
             particles[i] = new Particle(particles[i], particles[i].weight / totalWeight);
         }
@@ -226,7 +124,7 @@ final class Util {
      */
     @Contract(pure = true)
     @NotNull
-    private static Pose movePose(@NotNull Pose originalPose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
+    static Pose movePose(@NotNull Pose originalPose, @NotNull Move move, float angleNoiseFactor, float distanceNoiseFactor) {
         double dx = 0;
         double dy = 0;
 
@@ -250,7 +148,7 @@ final class Util {
     }
 
     @Contract(pure = true)
-    private static double normalizeHeading(double heading) {
+    static double normalizeHeading(double heading) {
         return heading % 360;
     }
 }

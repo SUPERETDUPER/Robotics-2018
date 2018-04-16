@@ -104,7 +104,6 @@ public final class GUI extends Application {
         }
 
         primaryStage.setScene(new Scene(root));
-        primaryStage.setMaximized(true);
         primaryStage.setOnCloseRequest(onWindowCloseListener);
 
         primaryStage.show();

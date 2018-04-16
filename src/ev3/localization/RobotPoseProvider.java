@@ -31,14 +31,14 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private final MoveProvider mp;
     private final SurfaceMap surfaceMap;
     @NotNull
-    private final MCLData data;
+    private ParticleSet data;
 
     @Nullable
     private RobotPoseProviderListener listener;
 
     /**
-     * The amount the data has been shifted since the start of this move.
-     * completedMove is null after the move has ended.
+     * The amount the data has been shifted since the start of this moveData.
+     * completedMove is null after the moveData has ended.
      * Each time the data is updated (with update()) the completedMove is updated
      */
     @Nullable
@@ -47,7 +47,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     public RobotPoseProvider(@NotNull SurfaceMap surfaceMap, @NotNull MoveProvider moveProvider, Pose startingPose) {
         this.surfaceMap = surfaceMap;
         this.mp = moveProvider;
-        this.data = new MCLData(Util.createNewParticleSet(surfaceMap.getBoundingRectangle(), startingPose, NUM_PARTICLES), startingPose);
+        this.data = new ParticleSet(NUM_PARTICLES, surfaceMap.getBoundingRectangle(), startingPose);
 
         mp.addMoveListener(this);
 
@@ -93,8 +93,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data.setParticles(Util.createNewParticleSet(surfaceMap.getBoundingRectangle(), pose, NUM_PARTICLES));
-        data.setCurrentPose(pose);
+        data = new ParticleSet(NUM_PARTICLES, surfaceMap.getBoundingRectangle(), pose);
 
         completedMove = mp.getMovement();
 
@@ -108,15 +107,14 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     /**
      * Moves the particles and pose over by the amount remaining
      *
-     * @param move         the move that was completed
-     * @param moveProvider the move provider
+     * @param move         the moveData that was completed
+     * @param moveProvider the moveData provider
      */
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
         Move missingMove = Util.subtractMove(move, completedMove);
 
-        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
-        data.setParticles(Util.moveParticleSet(data.getParticles(), missingMove));
+        data.moveData(missingMove);
 
         completedMove = null;
 
@@ -127,13 +125,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
      * Updates the particles and position using the algorithm
      */
     private synchronized void update(@NotNull Readings readings) {
-        Move move = mp.getMovement();
+        Move missingMove = Util.subtractMove(mp.getMovement(), completedMove);
 
-        Move missingMove = Util.subtractMove(move, completedMove);
-
-        data.getParticles();
-        data.setParticles(Util.update(data.getParticles(), missingMove, readings));
-        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
+        data.moveData(missingMove);
+        data.update(readings);
 //        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
 
         completedMove = missingMove;
@@ -162,7 +157,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         @Override
         public void run() {
             //noinspection InfiniteLoopStatement
-            while (true) {
+            for (;; Thread.yield()) {
                 RobotPoseProvider.this.update(
                         new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft(), Offset.LEFT_COLOR_SENSOR)
                 );
@@ -170,8 +165,6 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
                 RobotPoseProvider.this.update(
                         new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceRight(), Offset.RIGHT_COLOR_SENSOR)
                 );
-
-                Thread.yield();
             }
         }
     }

@@ -39,14 +39,14 @@ public class NavigatorBuilder {
     }
 
     public static PoseProvider buildPoseProvider(SurfaceMap surfaceMap, MyMovePilot pilot) {
-//        RobotPoseProvider poseProvider = new RobotPoseProvider(surfaceMap, pilot, STARTING_POSE);
-//
-//        if (ComManager.getDataListener() != null) {
-//            ComManager.getDataListener().attachToRobotPoseProvider(poseProvider);
-//        }
+        RobotPoseProvider poseProvider = new RobotPoseProvider(surfaceMap, pilot, STARTING_POSE);
 
-        PoseProvider poseProvider = pilot.getChassis().getPoseProvider();
-        poseProvider.setPose(STARTING_POSE);
+        if (ComManager.getDataListener() != null) {
+            ComManager.getDataListener().attachToRobotPoseProvider(poseProvider);
+        }
+
+//        PoseProvider poseProvider = pilot.getChassis().getPoseProvider();
+//        poseProvider.setPose(STARTING_POSE);
 
         return poseProvider;
     }
