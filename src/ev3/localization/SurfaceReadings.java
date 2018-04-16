@@ -30,6 +30,10 @@ public class SurfaceReadings implements Readings {
     }
 
     public float calculateWeight(@NotNull Pose pose) {
+        if (!surfaceMap.isPointIn((int) pose.getX(), (int) pose.getY())){
+            return 0;
+        }
+
         Point location = offset.offset(pose);
 
         int totalPixels = 0;

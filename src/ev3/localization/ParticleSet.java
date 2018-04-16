@@ -37,25 +37,14 @@ class ParticleSet extends MCLData {
     private void moveParticleSet(@NotNull Move move) {
         Particle[] newParticles = new Particle[particles.length];
 
-        boolean needNormalizing = false;
-        float totalWeight = 1;
-
         for (int i = 0; i < particles.length; i++) {
-            Pose newPose = Util.movePose(particles[i].getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR);
-            if (!boundingRectangle.contains(newPose.getLocation())) {
-                newParticles[i] = new Particle(newPose, 0);
-                totalWeight -= particles[i].weight;
-                needNormalizing = true;
-            } else {
-                newParticles[i] = new Particle(newPose, particles[i].weight);
-            }
+            newParticles[i] = new Particle(
+                    Util.movePose(particles[i].getPose(), move, ANGLE_NOISE_FACTOR, DISTANCE_NOISE_FACTOR),
+                    particles[i].weight
+            );
         }
 
-        if (needNormalizing) {
-            this.particles = Util.normalizeSet(newParticles, totalWeight);
-        } else {
-            this.particles = newParticles;
-        }
+        this.particles = newParticles;
     }
 
     /**
@@ -64,28 +53,35 @@ class ParticleSet extends MCLData {
      * The algorithm is as follows.
      * {@see https://classroom.udacity.com/courses/ud810/lessons/3353778638/concepts/33450785680923}
      * <p>
-     * 1. Sample a random particle using a "spoke" algorithm.
-     * Imagine a pie chart where each particle is a slice and the size of the slice is proportional to the particle's weight.
-     * You then divide the pie chart into n equal sections with n "spokes". N is the number of particles
-     * Where ever the spokes land, this is the new particle that has been sampled.
-     * Particles with higher weights have higher changes of being chosen since they're bigger.
-     * Also a dense cluster of particles have a higher chance of having one of their members being chosen since they together form a large section of the pie chart.
-     * {@see https://classroom.udacity.com/courses/ud810/lessons/3353208568/concepts/33538586060923}
-     * <p>
-     * 2. For that sampled particle, shift it based on the moveData
+     * 1. Resample the particles using the "spoke" algorithm.
+     * 2. For that sampled particle, shift it based on the move
      * 3. Calculate the probability of getting that reading from the shifted pose. That's the new weight
      * 4. Normalize weights (multiply all the weight by a constant so that the sum of the weights is one).
      *
      * @param readings readings the sensors took
      */
     @Contract(pure = true)
-    void update(Readings readings) {
+    void update(Move move, Readings readings) {
+        resample();
+        moveParticleSet(move);
+        float totalWeight = reweight(readings);
+        normalize(totalWeight);
+    }
+
+    /**
+     * Imagine a pie chart where each particle is a slice and the size of the slice is proportional to the particle's weight.
+     * You then divide the pie chart into n equal sections with n "spokes". N is the number of particles
+     * Where ever the spokes land, this is the new particle that has been sampled.
+     * Particles with higher weights have higher changes of being chosen since they're bigger.
+     * Also a dense cluster of particles have a higher chance of having one of their members being chosen since they together form a large section of the pie chart.
+     * {@see https://classroom.udacity.com/courses/ud810/lessons/3353208568/concepts/33538586060923}
+     */
+    private void resample() {
         Particle[] newParticles = new Particle[particles.length];
 
         double sizeOfSlice = 1.0 / particles.length;
         double offset = Math.random() * sizeOfSlice;
         double pastWeights = 0;
-        float totalForNewWeights = 0;
         int index = 0;
 
         for (int spokeCounter = 0; spokeCounter < particles.length; spokeCounter++) {
@@ -95,15 +91,31 @@ class ParticleSet extends MCLData {
             }
 
 
-            /*Now index points to correct sampled particle*/
-
-            float newWeight = readings.calculateWeight(particles[index].getPose());
-            totalForNewWeights += newWeight;
-
-            newParticles[spokeCounter] = new Particle(particles[index].getPose(), newWeight);
+            //Now index points to correct sampled particle
+            newParticles[spokeCounter] = particles[index];
         }
 
-        this.particles = Util.normalizeSet(newParticles, totalForNewWeights); //Normalize
+        this.particles = newParticles; //Normalize
+    }
+
+    private float reweight(Readings readings) {
+        Particle[] newParticles = new Particle[particles.length];
+
+        float totalWeight = 0;
+
+        for (int i = 0; i < particles.length; i++) {
+            float newWeight = readings.calculateWeight(particles[i].getPose());
+            totalWeight += newWeight;
+            newParticles[i] = new Particle(particles[i].getPose(), newWeight);
+        }
+
+        this.particles = newParticles;
+
+        return totalWeight;
+    }
+
+    private void normalize(float totalWeight) {
+        this.particles = Util.normalizeSet(particles, totalWeight);
     }
 
     /**

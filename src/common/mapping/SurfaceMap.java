@@ -53,7 +53,7 @@ public class SurfaceMap {
     }
 
     public boolean isPointIn(int x, int y) {
-        return 0 <= x && x < image.getWidth() && 0 < y && y <= image.getHeight(); //Weird equals check for y values because y is inverted
+        return 0 < x && x < image.getWidth() && 0 < y && y < image.getHeight(); //Weird equals check for y values because y is inverted
     }
 
     @Contract(pure = true)

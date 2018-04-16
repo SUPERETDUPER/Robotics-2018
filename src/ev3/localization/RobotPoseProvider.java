@@ -127,9 +127,8 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     private synchronized void update(@NotNull Readings readings) {
         Move missingMove = Util.subtractMove(mp.getMovement(), completedMove);
 
-        data.moveData(missingMove);
-        data.update(readings);
-//        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
+        data.update(missingMove, readings);
+//        data.refineCurrentPose(); //Updates current pose
 
         completedMove = missingMove;
 
