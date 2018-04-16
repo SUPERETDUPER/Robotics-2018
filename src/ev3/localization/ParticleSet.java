@@ -22,8 +22,8 @@ class ParticleSet extends MCLData {
     private static final float ANGLE_NOISE_FACTOR = 0.4F;
 
     //How much the particles should be spread out at start
-    private static final float STARTING_RADIUS_NOISE = 50;
-    private static final float STARTING_HEADING_NOISE = 15;
+    private static final float STARTING_RADIUS_NOISE = 25;
+    private static final float STARTING_HEADING_NOISE = 5;
 
     private final SurfaceMap surfaceMap;
 
