@@ -5,6 +5,8 @@
 package ev3.navigation;
 
 import common.mapping.SurfaceMap;
+import ev3.communication.ComManager;
+import ev3.localization.RobotPoseProvider;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.chassis.Wheel;
@@ -31,7 +33,7 @@ public class NavigatorBuilder {
 
     public static MyMovePilot buildMoveProvider(Chassis chassis) {
         MyMovePilot pilot = new MyMovePilot(chassis);
-//        pilot.setMinRadius(WHEEL_OFFSET);
+        pilot.setMinRadius(WHEEL_OFFSET);
 
         return pilot;
     }

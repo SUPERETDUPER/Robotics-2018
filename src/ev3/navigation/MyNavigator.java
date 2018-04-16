@@ -7,34 +7,56 @@ package ev3.navigation;
 
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
-import lejos.robotics.navigation.*;
+import lejos.robotics.navigation.NavigationListener;
+import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.navigation.WaypointListener;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.ArcAlgorithms;
 import lejos.robotics.pathfinding.Path;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 /**
- * This class controls a robot to traverse a Path,  a sequence of  {@link  lejos.robotics.navigation.Waypoint}s.
- * It's default mode for a new path is continuous movement (no stopping at waypoints)  but see also {@link #singleStep(boolean)}.  To interrupt the path traversal,  call stop().
- * It uses  an inner class running its own thread to issue movement commands to its
- * {@link lejos.robotics.navigation.MoveController},
- * which can be either a  {@link lejos.robotics.navigation.DifferentialPilot}
- * or {@link lejos.robotics.navigation.SteeringPilot}.
- * It also uses a {@link lejos.robotics.localization.PoseProvider}
- * Calls its {@link lejos.robotics.navigation.NavigationListener}s
- * when  a Waypoint is reached or the robot stops.
- * This class has only one blocking method: {@link #waitForStop()} .
- *
- * @author Roger Glassey
+ * Taken from the lejos source code and modified to fix bugs
  */
-@SuppressWarnings("ALL")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class MyNavigator implements WaypointListener {
+    @NotNull
+    private Path _path = new Path();
+
+    /**
+     * frequently tested by Nav.run() to break out of primary control loop
+     * reset by stop(), and in Nav if _singleStep is set. or end of path is reached
+     * set by followPath(xx) and goTo(xx)
+     */
+    private boolean _keepGoing = false;
+
+    /**
+     * if true, causes Nav.run to break whenever  waypoint is reached.
+     */
+    private boolean _singleStep = false;
+
+    /**
+     * set by Stop,  reset by followPath() , goTo()
+     * used by  Nav.run(), callListeners
+     */
+    private boolean _interrupted = false;
+    @NotNull
+    private final MyMovePilot _pilot;
+    @NotNull
+    private PoseProvider poseProvider;
+    private Waypoint _destination;
+    private double _radius;
+    private int _sequenceNr;
+    @NotNull
+    private ArrayList<NavigationListener> _listeners = new ArrayList<>();
 
     /**
      * Allocates a Navigator object,  using pilot that implements the ArcMoveController interface.
-     *
-     * @param pilot
      */
-    public MyNavigator(MyMovePilot pilot) {
+    public MyNavigator(@NotNull MyMovePilot pilot) {
         this(pilot, null);
     }
 
@@ -45,25 +67,16 @@ public class MyNavigator implements WaypointListener {
      * @param pilot        the pilot
      * @param poseProvider the custom PoseProvider
      */
-    public MyNavigator(MyMovePilot pilot, PoseProvider poseProvider) {
+    public MyNavigator(@NotNull MyMovePilot pilot, @Nullable PoseProvider poseProvider) {
         _pilot = pilot;
         if (poseProvider == null)
             this.poseProvider = new OdometryPoseProvider(_pilot);
         else
             this.poseProvider = poseProvider;
-        _radius = (_pilot instanceof ArcRotateMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
-        _nav = new Nav();
+        _radius = pilot.getMinRadius();
+        Nav _nav = new Nav();
         _nav.setDaemon(true);
         _nav.start();
-    }
-
-    /**
-     * Sets  the PoseProvider after construction of the Navigator
-     *
-     * @param aProvider the PoseProvider
-     */
-    public void setPoseProvider(PoseProvider aProvider) {
-        poseProvider = aProvider;
     }
 
     /**
@@ -81,6 +94,7 @@ public class MyNavigator implements WaypointListener {
      *
      * @return the PoseProvider
      */
+    @NotNull
     public PoseProvider getPoseProvider() {
         return poseProvider;
     }
@@ -102,7 +116,7 @@ public class MyNavigator implements WaypointListener {
      *
      * @param path to be followed.
      */
-    public void setPath(Path path) {
+    public void setPath(@NotNull Path path) {
         if (_keepGoing)
             stop();
         _path = path;
@@ -125,6 +139,7 @@ public class MyNavigator implements WaypointListener {
      *
      * @return the path
      */
+    @NotNull
     public Path getPath() {
         return _path;
     }
@@ -134,7 +149,7 @@ public class MyNavigator implements WaypointListener {
      *
      * @param path to be followed.
      */
-    public void followPath(Path path) {
+    public void followPath(@NotNull Path path) {
         _path = path;
         followPath();
     }
@@ -221,8 +236,7 @@ public class MyNavigator implements WaypointListener {
         while (diff > 180) diff = diff - 360;
         while (diff < -180) diff = diff + 360;
         if (isMoving()) return false;
-        if (_pilot instanceof RotateMoveController)
-            ((RotateMoveController) _pilot).rotate(diff, false);
+        _pilot.rotate(diff, false);
         return true;
 
     }
@@ -322,18 +336,15 @@ public class MyNavigator implements WaypointListener {
     }
 
     private void callListeners() {
-        if (_listeners != null) {
-            _pose = poseProvider.getPose();
-//            RConsole.println("listener called interrupt"+_interrupted +" done "+_path.isEmpty()+" "+_pose);
-            for (NavigationListener l : _listeners)
-                if (_interrupted)
-                    l.pathInterrupted(_destination, _pose, _sequenceNr);
-                else {
-                    l.atWaypoint(_destination, _pose, _sequenceNr);
-                    if (_path.isEmpty())
-                        l.pathComplete(_destination, _pose, _sequenceNr);
-                }
-        }
+        for (NavigationListener l : _listeners)
+            if (_interrupted)
+                l.pathInterrupted(_destination,  poseProvider.getPose(), _sequenceNr);
+            else {
+                l.atWaypoint(_destination,  poseProvider.getPose(), _sequenceNr);
+                if (_path.isEmpty())
+                    l.pathComplete(_destination,  poseProvider.getPose(), _sequenceNr);
+            }
+
     }
 
     public double normalizeRotationAmount(double amount) {
@@ -346,109 +357,69 @@ public class MyNavigator implements WaypointListener {
      * This inner class runs the thread that processes the waypoint queue
      */
     private class Nav extends Thread {
-        boolean more = true;
-
         @Override
         public void run() {
-            while (more) {
-                while (_keepGoing && _path != null && !_path.isEmpty()) {
+            //noinspection InfiniteLoopStatement
+            for (;;Thread.yield()) {
+                if (_keepGoing && !_path.isEmpty()) {
                     _destination = _path.get(0);
-                    _pose = poseProvider.getPose();
-//          RConsole.println("NAV loop begin "+_destination);
-                    float destinationRelativeBearing = _pose.relativeBearing(_destination);
-                    if (!_keepGoing) break;
-                    if (_radius == 0)  // differential pilot used
-                    {
+
+                    if (_radius == 0) {
+                        //1. Rotate toward destination
+                        float destinationRelativeBearing = poseProvider.getPose().relativeBearing(_destination);
                         _pilot.rotate(destinationRelativeBearing, true);
+
                         while (_pilot.isMoving() && _keepGoing) Thread.yield();
                         if (!_keepGoing) break;
-                    } else // begin arc direction change
-                    {
-                        // 1. Get shortest path:
-                        Move[] moves;
-                        double minRadius = (_pilot instanceof ArcMoveController ?
-                                ((ArcMoveController) _pilot).getMinRadius() : 0);
 
+                        //2. Travel to destination
+                        float distance = poseProvider.getPose().distanceTo(_destination);
+                        _pilot.travel(distance, true);
+
+                        while (_pilot.isMoving() && _keepGoing) Thread.yield();
+                        if (!_keepGoing) break;
+
+                        //3. If required rotate toward final heading
                         if (_destination.isHeadingRequired()) {
-                            moves = ArcAlgorithms.getBestPath(poseProvider.getPose(),
-                                    (float) minRadius, _destination.getPose(), (float) minRadius);
-                        } else {
-                            moves = ArcAlgorithms.getBestPath(poseProvider.getPose(),
-                                    _destination, (float) minRadius);
-                        }
-                        // 2. Drive the path
-                        for (int i = 0; i < moves.length; i++) {
-                            _pilot.move(moves[i], false);
+                            _pilot.rotate(normalizeRotationAmount(_destination.getHeading()
+                                    - poseProvider.getPose().getHeading()), false);
+
+                            while (_pilot.isMoving() && _keepGoing) Thread.yield();
                             if (!_keepGoing) break;
                         }
-                        while (_pilot.isMoving() && _keepGoing) Thread.yield();
-                    }  // Arc direction change complete
-                    _pose = poseProvider.getPose();
-                    if (!_keepGoing) break;
-
-                    if (_radius == 0) //differential pilot is used
-                    {
-                        float distance = _pose.distanceTo(_destination);
-                        _pilot.travel(distance, true);
-                        while (_pilot.isMoving() && _keepGoing) Thread.yield();
-                        _pose = poseProvider.getPose();
-                        if (!_keepGoing) break;
+                    } else {
+                        // 1. Get shortest path:
+                        Move[] moves;
 
                         if (_destination.isHeadingRequired()) {
-                            _pose = poseProvider.getPose();
-                            _destination.getHeading();
-                            _pilot.rotate(normalizeRotationAmount(_destination.getHeading()
-                                    - _pose.getHeading()), false);
+                            moves = ArcAlgorithms.getBestPath(poseProvider.getPose(),
+                                    (float) _pilot.getMinRadius(), _destination.getPose(), (float) _pilot.getMinRadius());
+                        } else {
+                            moves = ArcAlgorithms.getBestPath(poseProvider.getPose(),
+                                    _destination, (float) _pilot.getMinRadius());
                         }
+
+                        // 2. Drive the path
+                        for (Move move : moves) {
+                            _pilot.move(move, false);
+                            if (!_keepGoing) break;
+                        }
+
+                        while (_pilot.isMoving() && _keepGoing) Thread.yield();
+                        if (!_keepGoing) break;
                     }
 
                     if (_keepGoing && !_path.isEmpty()) {
-//        	  RConsole.println("NAV keep going "+_keepGoing+" pathlength  "+_path.size());
-                        if (!_interrupted)  //presumably at waypoint
-                        {
-//            	 RConsole.println("NAV at waypoint??");
+                        if (!_interrupted) {
                             _path.remove(0);
                             _sequenceNr++;
                         }
                         callListeners();
                         _keepGoing = !_path.isEmpty();
                         if (_singleStep) _keepGoing = false;
-
-//             callListeners();  *** if called here,  sets _keepGoing = true - very strange
-
-
                     }
-
-                    Thread.yield();
                 } // end while keepGoing
-                Thread.yield();
-            }  // end while more
+            }  // end forever loop
         }  // end run
     } // end Nav class
-
-    private Nav _nav;
-    private Path _path = new Path();
-    /**
-     * frequently tested by Nav.run() to break out of primary control loop
-     * reset by stop(), and in Nav if _singleStep is set. or end of path is reached
-     * set by followPath(xx) and goTo(xx)
-     */
-    private boolean _keepGoing = false;
-    /**
-     * if true, causes Nav.run to break whenever  waypoint is reached.
-     */
-    private boolean _singleStep = false;
-    /**
-     * set by Stop,  reset by followPath() , goTo()
-     * used by  Nav.run(), callListeners
-     */
-    private boolean _interrupted = false;
-    private MyMovePilot _pilot;
-    private PoseProvider poseProvider;
-    private Pose _pose = new Pose();
-    private Waypoint _destination;
-    private double _radius;
-    private int _sequenceNr;
-    private ArrayList<NavigationListener> _listeners = new ArrayList<NavigationListener>();
-
 }
