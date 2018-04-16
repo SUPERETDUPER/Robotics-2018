@@ -45,7 +45,7 @@ public class NavigatorBuilder {
 //            ComManager.getDataListener().attachToRobotPoseProvider(poseProvider);
 //        }
 
-        PoseProvider poseProvider = new OdometryPoseProvider(pilot);
+        PoseProvider poseProvider = pilot.getChassis().getPoseProvider();
         poseProvider.setPose(STARTING_POSE);
 
         return poseProvider;

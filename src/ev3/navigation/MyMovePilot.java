@@ -22,8 +22,6 @@ public class MyMovePilot implements MoveProvider {
     private final Chassis chassis;
     @NotNull
     private final ArrayList<MoveListener> listeners = new ArrayList<>();
-    @NotNull
-    private final Monitor monitorThread = new Monitor();
     private double minRadius;
     private volatile boolean moveActive = false;
 
@@ -35,14 +33,17 @@ public class MyMovePilot implements MoveProvider {
     MyMovePilot(@NotNull Chassis chassis) {
         this.chassis = chassis;
         minRadius = chassis.getMinRadius();
-        monitorThread.start();
+        new Monitor().start();
     }
 
     public void addMoveListener(@NotNull MoveListener listener) {
         listeners.add(listener);
-
     }
-    // Getters and setters of dynamics
+
+    @NotNull
+    public Chassis getChassis() {
+        return chassis;
+    }
 
     public double getMinRadius() {
         return minRadius;
@@ -51,8 +52,6 @@ public class MyMovePilot implements MoveProvider {
     public void setMinRadius(double radius) {
         minRadius = radius;
     }
-
-    // Moves of the travel family
 
     /**
      * Added method to simplify work for Navigator
@@ -196,37 +195,34 @@ public class MyMovePilot implements MoveProvider {
         if (!immediateReturn) waitForStop();
     }
 
+    private void waitForStop() {
+        while (moveActive) Thread.yield();
+    }
+
     public void stop() {
         chassis.stop();
         waitForStop();
     }
 
-    public boolean isMoving() {
+    public synchronized boolean isMoving() {
         return moveActive;
     }
 
     // Methods dealing the start and end of a move
 
-    private void notifyMoveStart(Move move) {
+    private synchronized void notifyMoveStart(Move move) {
         moveActive = true;
 
         for (MoveListener ml : listeners) ml.moveStarted(move, this);
-
-        synchronized (monitorThread) {
-            monitorThread.notify();
-        }
     }
 
-    private void waitForStop() {
-        while (moveActive) Thread.yield();
-    }
+    private synchronized void notifyStop() {
+        moveActive = false;
 
-    private void notifyStop() {
         for (MoveListener ml : listeners) ml.moveStopped(chassis.getDisplacement(new Move(0, 0, false)), this);
     }
 
-
-    public Move getMovement() {
+    public synchronized Move getMovement() {
         if (moveActive) {
             return chassis.getDisplacement(new Move(0, 0, true));
         } else {
@@ -244,22 +240,12 @@ public class MyMovePilot implements MoveProvider {
             setDaemon(true);
         }
 
-        public synchronized void run() {
+        public void run() {
             //noinspection InfiniteLoopStatement
-            while (true) {
-                if (MyMovePilot.this.isMoving()) {
+            for (; ; Thread.yield()) {
+                if (isMoving()) {
                     if (chassis.isStalled()) MyMovePilot.this.stop();
-                    if (!chassis.isMoving()) {
-                        moveActive = false;
-                        notifyStop();
-                    }
-                }
-
-                // wait for an event
-                try {
-                    wait(MyMovePilot.this.isMoving() ? 1 : 100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    if (!chassis.isMoving()) notifyStop();
                 }
             }
         }
