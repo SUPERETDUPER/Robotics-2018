@@ -16,7 +16,7 @@ public final class Config {
      **/
     public static final RunModes currentMode = RunModes.SIM;
 
-    public static final float SIM_SPEED_FACTOR = 0.7F; //How much the sim is slowed down
+    public static final float SIM_SPEED_FACTOR = 1F; //How much the sim is slowed down
 
     //Paths to map file
     public static final String PC_IMAGE_PATH = "res/map.png";

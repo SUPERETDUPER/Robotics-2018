@@ -31,11 +31,6 @@ public class NavigatorBuilder {
 
     public static MyMovePilot buildMoveProvider(Chassis chassis) {
         MyMovePilot pilot = new MyMovePilot(chassis);
-
-        pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
-        pilot.setLinearAcceleration(LINEAR_ACCELERATION);
-        pilot.setLinearSpeed(LINEAR_SPEED);
-        pilot.setAngularSpeed(ANGULAR_SPEED);
 //        pilot.setMinRadius(WHEEL_OFFSET);
 
         return pilot;
@@ -61,6 +56,13 @@ public class NavigatorBuilder {
                 WheeledChassis.modelWheel(rightMotor, WHEEL_DIAMETER).offset(-WHEEL_OFFSET)
         };
 
-        return new WheeledChassis(wheels, WheeledChassis.TYPE_DIFFERENTIAL);
+        Chassis chassis = new WheeledChassis(wheels, WheeledChassis.TYPE_DIFFERENTIAL);
+
+        chassis.setAngularAcceleration(ANGULAR_ACCELERATION);
+        chassis.setLinearAcceleration(LINEAR_ACCELERATION);
+        chassis.setLinearSpeed(LINEAR_SPEED);
+        chassis.setAngularSpeed(ANGULAR_SPEED);
+
+        return chassis;
     }
 }

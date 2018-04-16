@@ -90,7 +90,7 @@ public class MyNavigator implements WaypointListener {
      *
      * @return the pilot
      */
-    public MoveController getMoveController() {
+    public MyMovePilot getMoveController() {
         return _pilot;
     }
 
@@ -359,7 +359,7 @@ public class MyNavigator implements WaypointListener {
                     if (!_keepGoing) break;
                     if (_radius == 0)  // differential pilot used
                     {
-                        ((RotateMoveController) _pilot).rotate(destinationRelativeBearing, true);
+                        _pilot.rotate(destinationRelativeBearing, true);
                         while (_pilot.isMoving() && _keepGoing) Thread.yield();
                         if (!_keepGoing) break;
                     } else // begin arc direction change
@@ -397,7 +397,7 @@ public class MyNavigator implements WaypointListener {
                         if (_destination.isHeadingRequired()) {
                             _pose = poseProvider.getPose();
                             _destination.getHeading();
-                            ((RotateMoveController) _pilot).rotate(normalizeRotationAmount(_destination.getHeading()
+                            _pilot.rotate(normalizeRotationAmount(_destination.getHeading()
                                     - _pose.getHeading()), false);
                         }
                     }
