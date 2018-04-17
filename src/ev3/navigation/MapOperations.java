@@ -26,6 +26,11 @@ public final class MapOperations {
     private static final Waypoint CONTAINER_BOTTOM_LEFT = new Waypoint(797.5F, 333);
     private static final Waypoint CONTAINER_BOTTOM_RIGHT = new Waypoint(1235.5F, 404);
 
+
+    private static final Waypoint BOAT_ONE = new Waypoint(450, 100);
+    private static final Waypoint BOAT_TWO = new Waypoint(450, 300);
+    private static final Waypoint BOAT_THREE = new Waypoint(450, 500);
+
     private final PoseProvider poseProvider;
 
     public MapOperations(PoseProvider poseProvider) {
@@ -80,6 +85,28 @@ public final class MapOperations {
         return approachTopOrBottom(TEMP_REG_YELLOW, poseProvider.getPose());
     }
 
+    @Contract(pure = true)
+    @NotNull
+    public Path getPathToBoatOne() {
+
+        Path path = new Path();
+        path.add(new Waypoint(BOAT_THREE.x,BOAT_THREE.y,90));
+        path.add(BOAT_ONE);
+        return path;
+
+    }
+
+
+    @Contract(pure = true)
+    @NotNull
+    public Path getPathToBoatThree() {
+        Path path = new Path();
+        path.add(new Waypoint(BOAT_THREE.x,BOAT_THREE.y,90));
+        return path;
+    }
+
+
+
     /**
      * Finds the best path knowing it has to approach from the left or the right
      */
@@ -101,6 +128,15 @@ public final class MapOperations {
     private static Path approachTopOrBottom(@NotNull Waypoint destination, @NotNull Pose currentPose) {
         Path path = new Path();
         path.add(getClosest(currentPose, getApproachTop(destination), getApproachBottom(destination)));
+        path.add(destination);
+
+        return path;
+    }
+    @NotNull
+    @Contract(pure = true)
+    private static Path approachBottom(@NotNull Waypoint destination) {
+        Path path = new Path();
+        path.add(getApproachBottom(destination));
         path.add(destination);
 
         return path;
