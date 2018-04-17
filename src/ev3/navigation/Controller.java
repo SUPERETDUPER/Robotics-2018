@@ -28,6 +28,10 @@ public final class Controller implements MoveListener, NavigationListener {
         this.navigator.getMoveController().addMoveListener(this);
     }
 
+    public void moveForward() {
+        navigator.getMoveController().travel(57, false);
+    }
+
     public void followPath(@NotNull Path path, @Nullable Offset offset) {
         Path newPath = new Path();
 

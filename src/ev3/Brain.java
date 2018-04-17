@@ -36,16 +36,20 @@ class Brain {
 
         //Go to each food container
         controller.followPath(pathCalculator.getPathToContainerBottomRight(), Offset.CONTAINER_COLOR_SENSOR);
+        controller.moveForward();
         pickupFood(robot.getColorSensors().getColorContainer());
 
         controller.followPath(pathCalculator.getPathToContainerBottomLeft(), Offset.CONTAINER_COLOR_SENSOR);
+        controller.moveForward();
         pickupFood(robot.getColorSensors().getColorContainer());
 
         controller.followPath(pathCalculator.getPathToContainerTopLeft(), Offset.CONTAINER_COLOR_SENSOR);
+        controller.moveForward();
         pickupFood(robot.getColorSensors().getColorContainer());
 
         if(index!=3){
             controller.followPath(pathCalculator.getPathToContainerTopRight(), Offset.CONTAINER_COLOR_SENSOR);
+            controller.moveForward();
             pickupFood(robot.getColorSensors().getColorContainer());
         }
 
