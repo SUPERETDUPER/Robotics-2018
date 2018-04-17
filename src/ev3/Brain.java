@@ -53,7 +53,10 @@ class Brain {
             pickupFood(robot.getColorSensors().getColorContainer());
         }
 
+        controller.followPath(pathCalculator.getPathToBoatThree(),Offset.CONTAINER_COLOR_SENSOR);
         controller.followPath(pathCalculator.getPathToBoatOne(),Offset.CONTAINER_COLOR_SENSOR);
+
+        controller.followPath(pathCalculator.getPathToBoatX(MapOperations.BOAT_ONE),Offset.CONTAINER_COLOR_SENSOR);
 
         //Drop off food container at temp reg area
         for (int i = 0; i < 3; i++) {

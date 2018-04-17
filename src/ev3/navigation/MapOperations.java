@@ -27,9 +27,9 @@ public final class MapOperations {
     private static final Waypoint CONTAINER_BOTTOM_RIGHT = new Waypoint(1235.5F, 404);
 
 
-    private static final Waypoint BOAT_ONE = new Waypoint(450, 100);
-    private static final Waypoint BOAT_TWO = new Waypoint(450, 300);
-    private static final Waypoint BOAT_THREE = new Waypoint(450, 500);
+    public static final Waypoint BOAT_ONE = new Waypoint(450, 100);
+    public static final Waypoint BOAT_TWO = new Waypoint(450, 300);
+    public static final Waypoint BOAT_THREE = new Waypoint(450, 500);
 
     private final PoseProvider poseProvider;
 
@@ -90,8 +90,17 @@ public final class MapOperations {
     public Path getPathToBoatOne() {
 
         Path path = new Path();
-        path.add(new Waypoint(BOAT_THREE.x,BOAT_THREE.y,90));
         path.add(BOAT_ONE);
+        return path;
+
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public Path getPathToBoatX(Waypoint waypoint) {
+
+        Path path = new Path();
+        path.add(waypoint);
         return path;
 
     }
