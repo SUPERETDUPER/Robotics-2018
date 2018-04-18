@@ -5,12 +5,12 @@
 package ev3.localization;
 
 import common.mapping.SurfaceMap;
+import ev3.navigation.Offset;
 import ev3.navigation.Readings;
 import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 
-@Deprecated
-public class EdgeReadings implements Readings {
+class EdgeReadings implements Readings {
     private static final int RADIUS = 20;
 
     private final int previousColor;
@@ -18,15 +18,21 @@ public class EdgeReadings implements Readings {
 
     private final SurfaceMap surfaceMap;
 
-    public EdgeReadings(int previousColor, int currentColor, SurfaceMap surfaceMap) {
+    private final Offset offset;
+
+    EdgeReadings(SurfaceMap surfaceMap, int previousColor, int currentColor, Offset offset) {
         this.previousColor = previousColor;
         this.currentColor = currentColor;
         this.surfaceMap = surfaceMap;
+        this.offset = offset;
     }
 
-    @Override
     public float calculateWeight(Pose pose) {
-        Point location = pose.getLocation();
+        if (!surfaceMap.contains(pose.getLocation())) return 0;
+
+        Point location = offset.offset(pose);
+
+        if (!surfaceMap.contains(location)) return 0;
 
         float totalPixels = 0;
         float previousColorPixels = 0;

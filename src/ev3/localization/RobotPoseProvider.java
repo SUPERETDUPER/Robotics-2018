@@ -24,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
  * TODO Look over again for bugs
  */
 public class RobotPoseProvider implements MoveListener, PoseProvider {
-//    private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
+    //    private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
 
-    private static final int NUM_PARTICLES = 500; //TODO Find optimal value
+    private static final int NUM_PARTICLES = 100; //TODO Find optimal value
 
     @NotNull
     private final MyMovePilot mp;
@@ -126,19 +126,18 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
      * Updates the particles and position using the algorithm
      */
     private void update(@NotNull Readings readings) {
-        synchronized (mp) {
-            synchronized (this) {
-                Move totalMove = mp.getMovement();
+        this.update(readings, mp.getMovement());
+    }
 
-                Move missingMove = Util.subtractMove(totalMove, completedMove);
+    private synchronized void update(@NotNull Readings readings, @NotNull Move totalMove) {
+        Move missingMove = Util.subtractMove(totalMove, completedMove);
 
-                data.moveCurrentPose(missingMove);
-                data.update(missingMove, readings);
+        data.moveCurrentPose(missingMove);
+        data.update(missingMove, readings);
 //        data.refineCurrentPose(); //Updates current pose
 
-                completedMove = totalMove;
-            }
-        }
+        completedMove = totalMove;
+
         notifyListener(); //TODO Consider removing for optimization
     }
 
@@ -151,10 +150,16 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     final class Updater extends Thread {
         private final Robot.ColorSensors colorSensors;
 
+        private int previousLeftColor;
+        private int previousRightColor;
+
         Updater(Robot.ColorSensors colorSensors) {
             super();
 
             this.colorSensors = colorSensors;
+
+            this.previousLeftColor = colorSensors.getColorSurfaceLeft();
+            this.previousRightColor = colorSensors.getColorSurfaceRight();
 
             this.setDaemon(true);
             this.setName(Updater.class.getSimpleName());
@@ -165,13 +170,25 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
             //noinspection InfiniteLoopStatement
             for (; ; Thread.yield()) {
                 if (mp.isMoving()) {
-                    RobotPoseProvider.this.update(
-                            new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft(), Offset.LEFT_COLOR_SENSOR)
-                    );
+                    int leftColor = colorSensors.getColorSurfaceLeft();
 
-                    RobotPoseProvider.this.update(
-                            new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceRight(), Offset.RIGHT_COLOR_SENSOR)
-                    );
+                    if (leftColor != previousLeftColor) {
+                        RobotPoseProvider.this.update(
+                                new EdgeReadings(surfaceMap, previousLeftColor, leftColor, Offset.LEFT_COLOR_SENSOR)
+                        );
+
+                        previousLeftColor = leftColor;
+                    }
+
+                    int rightColor = colorSensors.getColorSurfaceRight();
+
+                    if (previousRightColor != rightColor) {
+                        RobotPoseProvider.this.update(
+                                new EdgeReadings(surfaceMap, previousRightColor, rightColor, Offset.RIGHT_COLOR_SENSOR)
+                        );
+
+                        previousRightColor = rightColor;
+                    }
                 }
             }
         }

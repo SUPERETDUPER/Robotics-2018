@@ -27,7 +27,7 @@ public class NavigatorBuilder {
 
     private static final Pose STARTING_POSE = new Pose(2152, 573, 180);
 
-    private static final double WHEEL_OFFSET = 65; //Real value is around 56 but testing shows higher is better
+    private static final double WHEEL_OFFSET = 63; //Real value is around 56 but testing shows higher is better
     private static final double WHEEL_DIAMETER = 81.6;
 
     public static MyMovePilot buildMoveProvider(Chassis chassis) {
