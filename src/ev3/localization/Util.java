@@ -42,7 +42,14 @@ final class Util {
             return move1;
         }
 
-        return new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());
+        Move move = new Move(move1.getMoveType(), move1.getDistanceTraveled() - move2.getDistanceTraveled(), move1.getAngleTurned() - move2.getAngleTurned(), move1.isMoving());
+
+        //To fix bug with method returning ARC with infinite radius
+        if (Float.isInfinite(move.getArcRadius())){
+            return new Move(Move.MoveType.TRAVEL, move.getDistanceTraveled(),move.getAngleTurned(),false);
+        }
+
+        return move;
     }
 
     /**
