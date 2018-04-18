@@ -40,10 +40,10 @@ class EdgeReadings implements Readings {
 
         for (int x = (int) location.x - RADIUS; x <= location.x + RADIUS; x++) {
             for (int y = (int) location.y - RADIUS; y <= location.y + RADIUS; y++) {
-                if (location.distance(x, y) < RADIUS) { //If (x,y) within circle
+                if (location.distance(x, y) < RADIUS && surfaceMap.contains(new Point(x,y))) { //If (x,y) within circle
                     totalPixels++;
 
-                    int colorAtPoint = surfaceMap.getColorAtPoint(x, y);
+                    int colorAtPoint = surfaceMap.getColorAtPoint(new Point(x,y));
 
                     if (colorAtPoint == previousColor) {
                         previousColorPixels++;
@@ -53,6 +53,8 @@ class EdgeReadings implements Readings {
                 }
             }
         }
+
+        if (totalPixels == 0) return 0;
 
         float errorOfPrevious = Math.abs(0.5F - (previousColorPixels / totalPixels));
         float errorOfCurrent = Math.abs(0.5F - (currentColorPixels / totalPixels));

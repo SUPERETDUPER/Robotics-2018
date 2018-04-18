@@ -36,11 +36,11 @@ public class SurfaceMap {
         }
     }
 
-    public int getColorAtPoint(int x, int y) {
+    public int getColorAtPoint(Point point) {
         try {
-            return ColorJavaLejos.getLejosColor(new Color(image.getRGB(x, getInvertedY(y))));
+            return ColorJavaLejos.getLejosColor(new Color(image.getRGB((int) point.x, (int) getInvertedY(point.y))));
         } catch (IndexOutOfBoundsException e) {
-            Logger.warning(LOG_TAG, "Can't get color. Out of bounds : x : " + x + ". y : " + y + " " + e);
+            Logger.warning(LOG_TAG, "Can't get color. Out of bounds : x : " + point.x + ". y : " + point.y + " " + e);
             throw new RuntimeException(e);
 //            return lejos.robotics.Color.NONE;
         }
@@ -63,7 +63,7 @@ public class SurfaceMap {
      * @return y value from swing coordinates system (top = 0)
      */
     @Contract(pure = true)
-    private int getInvertedY(int y) {
+    private float getInvertedY(float y) {
         return (image.getHeight() - y);
     }
 }

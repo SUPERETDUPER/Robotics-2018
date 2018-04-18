@@ -45,7 +45,7 @@ public class SurfaceReadings implements Readings {
                 if (location.distance(x, y) < RADIUS && surfaceMap.contains(new Point(x, y))) { //If (x,y) within circle
                     totalPixels++;
 
-                    if (surfaceMap.getColorAtPoint(x, y) == colorToMatch) matchingPixels++;
+                    if (surfaceMap.getColorAtPoint(new Point(x,y)) == colorToMatch) matchingPixels++;
                 }
             }
         }
