@@ -34,7 +34,11 @@ class SimArm implements Robot.Arm {
     }
 
     @Override
-    public void goToTempReg(boolean immediateReturn) {
-        Logger.info(LOG_TAG, "Moving arm to temp reg");
-    }
+    public void goToTempReg(boolean immediateReturn) { Logger.info(LOG_TAG, "Moving arm to temp reg"); }
+
+    @Override
+    public void goToReset(boolean immediateReturn) {
+        Logger.info(LOG_TAG, "Reset arm to base");
+}
+
 }
