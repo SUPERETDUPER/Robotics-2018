@@ -20,6 +20,8 @@ public interface Robot {
 
     Brick getBrick();
 
+    DistanceSensor getDistanceSensor();
+
     /**
      * Sets up all the sensors in a background thread since this can take time
      */
@@ -68,5 +70,9 @@ public interface Robot {
         void move(boolean immediateReturn);
 
         void hitBlock(boolean immediateReturn);
+    }
+
+    interface DistanceSensor {
+        float getDistance();
     }
 }

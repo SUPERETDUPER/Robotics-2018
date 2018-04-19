@@ -28,16 +28,20 @@ public class EV3Robot implements Robot {
     private volatile EV3Paddle paddle;
     @Nullable
     private volatile Chassis chassis;
+    @Nullable
+    private volatile EV3DistanceSensor distance;
 
     //Used by the synchronised blocks
     private final Object armLock = new Object();
     private final Object chassisLock = new Object();
     private final Object paddleLock = new Object();
+    private final Object distanceLock = new Object();
 
     //Used by the setup() method and the isSetup() method
     private Thread armCreatorThread;
     private Thread paddleCreatorThread;
     private Thread chassisCreatorThread;
+    private Thread distanceCreatorThread;
 
     @Override
     public void setup() {
@@ -89,15 +93,35 @@ public class EV3Robot implements Robot {
             }
         };
 
+        distanceCreatorThread = new Thread() {
+            @Override
+            public void run() {
+                synchronized (distanceLock) {
+                    try {
+                        if (distance == null) {
+                            distance = new EV3DistanceSensor();
+                        }
+                    } catch (IllegalArgumentException e) {
+                        Logger.warning(LOG_TAG, "Could not create distance sensor");
+                    }
+                }
+            }
+        };
+
         armCreatorThread.start();
         paddleCreatorThread.start();
         chassisCreatorThread.start();
+        distanceCreatorThread.start();
         colorSensors.setup();
     }
 
     @Override
     public boolean isSetup() {
-        return !(paddleCreatorThread.isAlive() || chassisCreatorThread.isAlive() || armCreatorThread.isAlive() || !colorSensors.isSetup());
+        return !(paddleCreatorThread.isAlive() ||
+                chassisCreatorThread.isAlive() ||
+                armCreatorThread.isAlive() ||
+                distanceCreatorThread.isAlive() ||
+                !colorSensors.isSetup());
     }
 
     @Override
@@ -134,13 +158,25 @@ public class EV3Robot implements Robot {
         if (paddle == null) {
             synchronized (paddleLock) {
                 if (paddle == null) {
-
                     paddle = new EV3Paddle();
                 }
             }
         }
 
         return paddle;
+    }
+
+    @Override
+    @Nullable
+    public EV3DistanceSensor getDistanceSensor() {
+        if (distance == null) {
+            synchronized (distanceLock) {
+                if (distance == null) {
+                    distance = new EV3DistanceSensor();
+                }
+            }
+        }
+        return distance;
     }
 
     @Override

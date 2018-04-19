@@ -85,4 +85,14 @@ public class SimRobot implements Robot {
     public Brick getBrick() {
         return brick;
     }
+
+    @Override
+    public DistanceSensor getDistanceSensor() {
+        return new DistanceSensor() {
+            @Override
+            public float getDistance() {
+                return -1;
+            }
+        };
+    }
 }
