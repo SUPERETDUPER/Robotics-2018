@@ -7,6 +7,7 @@ package ev3.robot.hardware;
 import common.logger.Logger;
 import ev3.robot.Robot;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.robotics.SampleProvider;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -17,10 +18,10 @@ import org.jetbrains.annotations.Contract;
 public final class EV3ColorSensors implements Robot.ColorSensors {
     private static final String LOG_TAG = EV3ColorSensors.class.getSimpleName();
 
-    private volatile EV3ColorSensor sensorSurfaceLeft;
-    private volatile EV3ColorSensor sensorSurfaceRight;
-    private volatile EV3ColorSensor sensorContainer;
-    private volatile EV3ColorSensor sensorBoat;
+    private volatile SampleProvider sampleProviderSurfaceLeft;
+    private volatile SampleProvider sampleProviderSurfaceRight;
+    private volatile SampleProvider sampleProviderContainer;
+    private volatile SampleProvider sampleProviderBoat;
 
     private final Object surfaceLeftLock = new Object();
     private final Object surfaceRightLock = new Object();
@@ -32,6 +33,11 @@ public final class EV3ColorSensors implements Robot.ColorSensors {
     private Thread containerCreatorThread;
     private Thread boatCreatorThread;
 
+    private float[] sampleSurfaceLeft;
+    private float[] sampleSurfaceRight;
+    private float[] sampleContainer;
+    private float[] sampleBoat;
+
     /**
      * Starts 4 threads. One for each color sensor. The thread simply creates the sensor (which takes time).
      */
@@ -41,9 +47,10 @@ public final class EV3ColorSensors implements Robot.ColorSensors {
             @Override
             public void run() {
                 synchronized (surfaceLeftLock) {
-                    if (sensorSurfaceLeft == null) {
+                    if (sampleProviderSurfaceLeft == null) {
                         try {
-                            sensorSurfaceLeft = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_LEFT);
+                            sampleProviderSurfaceLeft = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_LEFT).getColorIDMode();
+                            sampleSurfaceLeft = new float[sampleProviderSurfaceLeft.sampleSize()];
                         } catch (IllegalArgumentException e) {
                             Logger.warning(LOG_TAG, "Could not create color sensor surface left");
                         }
@@ -56,9 +63,10 @@ public final class EV3ColorSensors implements Robot.ColorSensors {
             @Override
             public void run() {
                 synchronized (surfaceRightLock) {
-                    if (sensorSurfaceRight == null) {
+                    if (sampleProviderSurfaceRight == null) {
                         try {
-                            sensorSurfaceRight = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_RIGHT);
+                            sampleProviderSurfaceRight = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_RIGHT).getColorIDMode();
+                            sampleSurfaceRight = new float[sampleProviderSurfaceRight.sampleSize()];
                         } catch (IllegalArgumentException e) {
                             Logger.warning(LOG_TAG, "Could not create color sensor surface right");
                         }
@@ -71,9 +79,10 @@ public final class EV3ColorSensors implements Robot.ColorSensors {
             @Override
             public void run() {
                 synchronized (containerLock) {
-                    if (sensorContainer == null) {
+                    if (sampleProviderContainer == null) {
                         try {
-                            sensorContainer = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_BLOCKS);
+                            sampleProviderContainer = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_BLOCKS).getColorIDMode();
+                            sampleContainer = new float[sampleProviderContainer.sampleSize()];
                         } catch (IllegalArgumentException e) {
                             Logger.warning(LOG_TAG, "Could not create color sensor for containers");
                         }
@@ -86,9 +95,10 @@ public final class EV3ColorSensors implements Robot.ColorSensors {
             @Override
             public void run() {
                 synchronized (boatLock) {
-                    if (sensorBoat == null) {
+                    if (sampleProviderBoat == null) {
                         try {
-                            sensorBoat = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_BOAT);
+                            sampleProviderBoat = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_BOAT).getColorIDMode();
+                            sampleBoat = new float[sampleProviderBoat.sampleSize()];
                         } catch (IllegalArgumentException e) {
                             Logger.warning(LOG_TAG, "Could not create color sensor for boats");
                         }
@@ -111,53 +121,61 @@ public final class EV3ColorSensors implements Robot.ColorSensors {
 
     @Override
     public int getColorSurfaceLeft() {
-        if (sensorSurfaceLeft == null) {
+        if (sampleProviderSurfaceLeft == null) {
             synchronized (surfaceLeftLock) {
-                if (sensorSurfaceLeft == null) {
-                    sensorSurfaceLeft = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_LEFT);
+                if (sampleProviderSurfaceLeft == null) {
+                    sampleProviderSurfaceLeft = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_LEFT).getColorIDMode();
                 }
             }
         }
 
-        return sensorSurfaceLeft.getColorID();
+        sampleProviderSurfaceLeft.fetchSample(sampleSurfaceLeft, 0);
+
+        return (int) sampleSurfaceLeft[0];
     }
 
     @Override
     public int getColorSurfaceRight() {
-        if (sensorSurfaceRight == null) {
+        if (sampleProviderSurfaceRight == null) {
             synchronized (surfaceRightLock) {
-                if (sensorSurfaceRight == null) {
-                    sensorSurfaceRight = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_RIGHT);
+                if (sampleProviderSurfaceRight == null) {
+                    sampleProviderSurfaceRight = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_RIGHT).getColorIDMode();
                 }
             }
         }
 
-        return sensorSurfaceRight.getColorID();
+        sampleProviderSurfaceRight.fetchSample(sampleSurfaceRight, 0);
+
+        return (int) sampleSurfaceRight[0];
     }
 
     @Override
     public int getColorContainer() {
-        if (sensorContainer == null) {
+        if (sampleProviderContainer == null) {
             synchronized (containerLock) {
-                if (sensorContainer == null) {
-                    sensorContainer = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_BLOCKS);
+                if (sampleProviderContainer == null) {
+                    sampleProviderContainer = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_BLOCKS).getColorIDMode();
                 }
             }
         }
 
-        return sensorContainer.getColorID();
+        sampleProviderContainer.fetchSample(sampleContainer, 0);
+
+        return (int) sampleContainer[0];
     }
 
     @Override
     public int getColorBoat() {
-        if (sensorBoat == null) {
+        if (sampleProviderBoat == null) {
             synchronized (boatLock) {
-                if (sensorBoat == null) {
-                    sensorBoat = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_BOAT);
+                if (sampleProviderBoat == null) {
+                    sampleProviderBoat = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_BOAT).getColorIDMode();
                 }
             }
         }
 
-        return sensorBoat.getColorID();
+        sampleProviderBoat.fetchSample(sampleBoat, 0);
+
+        return (int) sampleBoat[0];
     }
 }
