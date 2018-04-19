@@ -5,10 +5,10 @@
 package imageGenerator;
 
 import com.snatik.polygon.Polygon;
-import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -18,6 +18,7 @@ class IrregularPolygon extends ColorRegion {
 
     private final Polygon polygon;
 
+    @SuppressWarnings("SameParameterValue")
     IrregularPolygon(Color color, @NotNull List<Point> vertexes) {
         super(color);
 

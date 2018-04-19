@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/lib/ev3classes.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file:///opt/leJOS_EV3_0.9.1-beta_source/ev3classes/src" />
+    </SOURCES>
   </library>
 </component>

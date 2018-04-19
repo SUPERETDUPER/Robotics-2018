@@ -7,19 +7,20 @@ package imageGenerator;
 import common.Config;
 import common.logger.Logger;
 import common.mapping.ColorJavaLejos;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import lejos.robotics.geometry.Point;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ImageGenerator {
+/**
+ * Generates the surface map image
+ */
+class ImageGenerator {
     private static final String LOG_TAG = ImageGenerator.class.getSimpleName();
 
     private static final Rectangle boundingRectangle = new Rectangle(Color.WHITE, 0, 0, 2362, 1143);
@@ -64,7 +65,7 @@ public class ImageGenerator {
 
         //                corner of grey box 915.5 431 top left
         //                corner of grey box 1191.5 695 bot right
-        //                length of little black part = 10* sqrt(2) = 14.14
+        //                length of little black part = 10* square root (2) = 14.14
         regions.add(new IrregularPolygon(Color.BLACK, Arrays.asList(
                 new Point(916, 417),
                 new Point(901, 431),
@@ -74,10 +75,10 @@ public class ImageGenerator {
         )));
 
         //Containers base
-        regions.add(new Rectangle(Color.LIGHTGRAY, 827.5F, 343, 88, 88)); //Top-left
-        regions.add(new Rectangle(Color.LIGHTGRAY, 1259.5F, 272, 88, 88)); //Top-right
-        regions.add(new Rectangle(Color.LIGHTGRAY, 753.5F, 766, 88, 88)); //Bottom-left
-        regions.add(new Rectangle(Color.LIGHTGRAY, 1191.5F, 695, 88, 88)); //Bottom-right
+        regions.add(new Rectangle(Color.LIGHT_GRAY, 827.5F, 343, 88, 88)); //Top-left
+        regions.add(new Rectangle(Color.LIGHT_GRAY, 1259.5F, 272, 88, 88)); //Top-right
+        regions.add(new Rectangle(Color.LIGHT_GRAY, 753.5F, 766, 88, 88)); //Bottom-left
+        regions.add(new Rectangle(Color.LIGHT_GRAY, 1191.5F, 695, 88, 88)); //Bottom-right
 
         //Containers base white small rectangle
         regions.add(new Rectangle(Color.WHITE, 847.5F, 363, 48, 48)); //Top-left
@@ -91,14 +92,14 @@ public class ImageGenerator {
 
         //Boats
         for (int i = 0; i < 6; i++) {
-            regions.add(new Rectangle(Color.LIGHTGRAY, 212.5F, 73 + 182.6F * i, 116, 84));
+            regions.add(new Rectangle(Color.LIGHT_GRAY, 212.5F, 73 + 182.6F * i, 116, 84));
             regions.add(new Rectangle(Color.WHITE, 222.5F, 83 + 182.6F * i, 96, 64));
             regions.add(new Rectangle(Color.BLACK, 328.5F, 105 + 182.6F * i, 84, 20));
         }
     }
 
-    private static javafx.scene.paint.Color getDisplayColor(float x, float y) {
-        javafx.scene.paint.Color colorUnderPoint = boundingRectangle.getDisplayColor();
+    private static Color getDisplayColor(float x, float y) {
+        Color colorUnderPoint = boundingRectangle.getDisplayColor();
 
         for (ColorRegion region : ImageGenerator.regions) {
             if (region.contains(x, y)) {
@@ -109,25 +110,36 @@ public class ImageGenerator {
         return colorUnderPoint;
     }
 
-    private static void generateImage() {
-        WritableImage image = new WritableImage((int) boundingRectangle.getWidth(), (int) boundingRectangle.getHeight());
-        PixelWriter pixelWriter = image.getPixelWriter();
+    /**
+     * Generates an image
+     *
+     * @param pathToSave where to save the image
+     */
+    @SuppressWarnings("SameParameterValue")
+    private static void generateImage(String pathToSave) {
+        BufferedImage image = new BufferedImage(
+                (int) boundingRectangle.getWidth(),
+                (int) boundingRectangle.getHeight(),
+                BufferedImage.TYPE_INT_RGB
+        );
 
-        for (int x = 0; x < boundingRectangle.getWidth(); x++) {
-            for (int y = 0; y < boundingRectangle.getHeight(); y++) {
-                pixelWriter.setColor(x, y, getDisplayColor(x, y));
+        //Loop through every pixel
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                image.setRGB(x, y, getDisplayColor(x, y).getRGB());
             }
         }
 
+        //Save Image
         try {
-            File file = new File(Config.IMAGE_PATH);
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+            File file = new File(pathToSave);
+            ImageIO.write(image, "png", file);
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Failed to write Image to file" + e);
         }
     }
 
     public static void main(String[] args) {
-        generateImage();
+        generateImage(Config.PC_IMAGE_PATH);
     }
 }

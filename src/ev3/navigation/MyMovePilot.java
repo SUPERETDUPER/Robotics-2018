@@ -2,301 +2,252 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
+
 package ev3.navigation;
 
-import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
-import lejos.robotics.chassis.Wheel;
-import lejos.robotics.chassis.WheeledChassis;
-import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.Move;
-import lejos.robotics.navigation.Move.MoveType;
 import lejos.robotics.navigation.MoveListener;
+import lejos.robotics.navigation.MoveProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
- * Taken from the Lejos Source code. Modified isMoving() to fix bug of listener not being called.
+ * Taken from the lejos source code and modified to fix several bugs and remove useless stuff
  */
-@SuppressWarnings("ALL")
-public class MyMovePilot implements ArcRotateMoveController {
-    private double minRadius;
+@SuppressWarnings({"WeakerAccess", "unused"})
+public class MyMovePilot implements MoveProvider {
+    @NotNull
     private final Chassis chassis;
-    private ArrayList<MoveListener> _listeners;
-    private double linearSpeed;
-    private double linearAcceleration;
-    private double angularAcceleration;
-    private double angularSpeed;
-    private MyMovePilot.Monitor _monitor;
-    private boolean _moveActive;
-    private Move move;
-    private boolean _replaceMove;
+    @NotNull
+    private final ArrayList<MoveListener> listeners = new ArrayList<>();
+    private double minRadius;
+    private volatile boolean moveActive = false;
 
     /**
-     * @deprecated
+     * Allocates a Pilot object.<br>
+     *
+     * @param chassis A Chassis object describing the physical parameters of the robot.
      */
-    @Deprecated
-    public MyMovePilot(double wheelDiameter, double trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
-        this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public MyMovePilot(double wheelDiameter, double trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor, boolean reverse) {
-        this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public MyMovePilot(double leftWheelDiameter, double rightWheelDiameter, double trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor, boolean reverse) {
-        this(new WheeledChassis(new Wheel[]{WheeledChassis.modelWheel(leftMotor, leftWheelDiameter).offset(trackWidth / 2.0D).invert(reverse), WheeledChassis.modelWheel(rightMotor, rightWheelDiameter).offset(-trackWidth / 2.0D).invert(reverse)}, 2));
-    }
-
-    public MyMovePilot(Chassis chassis) {
-        this.minRadius = 0.0D;
-        this._listeners = new ArrayList();
-        this._moveActive = false;
-        this.move = null;
-        this._replaceMove = false;
+    MyMovePilot(@NotNull Chassis chassis) {
         this.chassis = chassis;
-        this.linearSpeed = chassis.getMaxLinearSpeed() * 0.8D;
-        this.angularSpeed = chassis.getMaxAngularSpeed() * 0.8D;
-        chassis.setSpeed(this.linearSpeed, this.angularSpeed);
-        this.linearAcceleration = this.getLinearSpeed() * 4.0D;
-        this.angularAcceleration = this.getAngularSpeed() * 4.0D;
-        chassis.setAcceleration(this.linearAcceleration, this.angularAcceleration);
-        this.minRadius = chassis.getMinRadius();
-        this._monitor = new MyMovePilot.Monitor();
-        this._monitor.start();
+        minRadius = chassis.getMinRadius();
+        new Monitor().start();
     }
 
-    public void setLinearAcceleration(double acceleration) {
-        this.linearAcceleration = acceleration;
-        this.chassis.setAcceleration(this.linearAcceleration, this.angularAcceleration);
+    public void addMoveListener(@NotNull MoveListener listener) {
+        listeners.add(listener);
     }
 
-    public double getLinearAcceleration() {
-        return this.linearAcceleration;
-    }
-
-    public void setAngularAcceleration(double acceleration) {
-        this.angularAcceleration = acceleration;
-        this.chassis.setAcceleration(this.linearAcceleration, this.angularAcceleration);
-    }
-
-    public double getAngularAcceleration() {
-        return this.angularAcceleration;
-    }
-
-    public void setLinearSpeed(double speed) {
-        this.linearSpeed = speed;
-        this.chassis.setSpeed(this.linearSpeed, this.angularSpeed);
-    }
-
-    public double getLinearSpeed() {
-        return this.linearSpeed;
-    }
-
-    public double getMaxLinearSpeed() {
-        return this.chassis.getMaxLinearSpeed();
-    }
-
-    public void setAngularSpeed(double speed) {
-        this.angularSpeed = speed;
-        this.chassis.setSpeed(this.linearSpeed, this.angularSpeed);
-    }
-
-    public double getAngularSpeed() {
-        return this.angularSpeed;
-    }
-
-    public double getMaxAngularSpeed() {
-        return this.chassis.getMaxAngularSpeed();
+    @NotNull
+    public Chassis getChassis() {
+        return chassis;
     }
 
     public double getMinRadius() {
-        return this.minRadius;
+        return minRadius;
     }
 
     public void setMinRadius(double radius) {
-        this.minRadius = radius;
+        minRadius = radius;
+    }
+
+    /**
+     * Added method to simplify work for Navigator
+     */
+    public void move(Move move, boolean immediateReturn) {
+        switch (move.getMoveType()) {
+            case TRAVEL:
+                travel(move.getDistanceTraveled(), immediateReturn);
+                break;
+            case ROTATE:
+                rotate(move.getAngleTurned(), immediateReturn);
+                break;
+            case ARC:
+                arc(move.getArcRadius(), move.getAngleTurned(), immediateReturn);
+                break;
+            case STOP:
+                stop();
+                break;
+        }
     }
 
     public void forward() {
-        this.travel(1.0D / 0.0, true);
+        travel(Double.POSITIVE_INFINITY, true);
     }
+
 
     public void backward() {
-        this.travel(-1.0D / 0.0, true);
+        travel(Double.NEGATIVE_INFINITY, true);
     }
 
+
     public void travel(double distance) {
-        this.travel(distance, false);
+        travel(distance, false);
+
     }
 
     public void travel(double distance, boolean immediateReturn) {
-        if (this.chassis.isMoving()) {
-            this.stop();
-        }
+        if (isMoving()) stop();
 
-        this.move = new Move(MoveType.TRAVEL, (float) distance, 0.0F, (float) this.linearSpeed, (float) this.angularSpeed, this.chassis.isMoving());
-        this.chassis.moveStart();
-        this.chassis.travel(distance);
-        this.movementStart(immediateReturn);
+        Move move = new Move(
+                Move.MoveType.TRAVEL,
+                (float) distance, 0, (float) chassis.getLinearSpeed(), (float) chassis.getAngularSpeed(), chassis.isMoving()
+        );
+
+        chassis.moveStart();
+        chassis.travel(distance);
+        notifyMoveStart(move);
+        if (!immediateReturn) waitForStop();
     }
+
+    // Moves of the Arc family
 
     public void arcForward(double radius) {
-        this.arc(radius, 1.0D / 0.0, true);
+        arc(radius, Double.POSITIVE_INFINITY, true);
     }
+
 
     public void arcBackward(double radius) {
-        this.arc(radius, -1.0D / 0.0, true);
+        arc(radius, Double.NEGATIVE_INFINITY, true);
     }
+
 
     public void arc(double radius, double angle) {
-        this.arc(radius, angle, false);
+        arc(radius, angle, false);
     }
 
+    @Deprecated
     public void travelArc(double radius, double distance) {
-        this.travelArc(radius, distance, false);
+        travelArc(radius, distance, false);
     }
 
+    @Deprecated
     public void travelArc(double radius, double distance, boolean immediateReturn) {
-        this.arc(radius, distance / 6.283185307179586D, immediateReturn);
-    }
-
-    public void rotate(double angle) {
-        this.rotate(angle, false);
-    }
-
-    public void rotate(double angle, boolean immediateReturn) {
-        this.arc(0.0D, angle, immediateReturn);
-    }
-
-    public void rotateLeft() {
-        this.rotate(1.0D / 0.0, true);
-    }
-
-    public void rotateRight() {
-        this.rotate(-1.0D / 0.0, true);
+        arc(radius, distance / (2 * Math.PI), immediateReturn);
     }
 
     public void arc(double radius, double angle, boolean immediateReturn) {
-        if (Math.abs(radius) < this.minRadius) {
-            throw new RuntimeException("Turn radius too small.");
-        } else {
-            if (this._moveActive) {
-                this.stop();
-            }
+        angle = Math.abs(angle); // ADDED ABSOLUTE VALUE TO FIX BUG WITH NAVIGATOR SENDING NEGATIVE ANGLE AND CHASSIS REACTING INCORRECTLY
 
-            if (radius == 0.0D) {
-                this.move = new Move(MoveType.ROTATE, 0.0F, (float) angle, (float) this.linearSpeed, (float) this.angularSpeed, this.chassis.isMoving());
-            } else {
-                this.move = new Move(MoveType.ARC, (float) (Math.toRadians(angle) * radius), (float) angle, (float) this.linearSpeed, (float) this.angularSpeed, this.chassis.isMoving());
-            }
-
-            this.chassis.moveStart();
-            this.chassis.arc(radius, angle);
-            this.movementStart(immediateReturn);
+        if (radius == 0) {
+            rotate(angle, immediateReturn);
+            return;
         }
+
+        if (Math.abs(radius) < minRadius) {
+            throw new RuntimeException("Turn radius too small.");
+        }
+        if (isMoving()) {
+            stop();
+        }
+
+        chassis.moveStart();
+        chassis.arc(radius, angle);
+        notifyMoveStart(new Move(
+                Move.MoveType.ARC,
+                (float) (Math.toRadians(angle) * radius),
+                (float) angle,
+                (float) chassis.getLinearSpeed(),
+                (float) chassis.getAngularSpeed(),
+                chassis.isMoving()
+        ));
+
+        if (!immediateReturn) waitForStop();
+    }
+
+    public void rotate(double angle) {
+        rotate(angle, false);
+    }
+
+    public void rotateLeft() {
+        rotate(Double.POSITIVE_INFINITY, true);
+    }
+
+    public void rotateRight() {
+        rotate(Double.NEGATIVE_INFINITY, true);
+    }
+
+    /**
+     * Created custom rotate to avoid the modified arc method
+     */
+    public void rotate(double angle, boolean immediateReturn) {
+        if (minRadius != 0) {
+            throw new RuntimeException("Turn radius too small.");
+        }
+
+        if (isMoving()) stop();
+
+        chassis.moveStart();
+        chassis.rotate(angle);
+        notifyMoveStart(
+                new Move(
+                        Move.MoveType.ROTATE,
+                        0,
+                        (float) angle,
+                        (float) chassis.getLinearSpeed(),
+                        (float) chassis.getAngularSpeed(),
+                        chassis.isMoving()
+                )
+        );
+
+        if (!immediateReturn) waitForStop();
+    }
+
+    private void waitForStop() {
+        while (moveActive) Thread.yield();
     }
 
     public void stop() {
-        this.chassis.stop();
-
-        while (this._moveActive) {
-            Thread.yield();
-        }
-
+        chassis.stop();
+        waitForStop();
     }
 
-    public boolean isMoving() {
-        return this._moveActive;
+    public synchronized boolean isMoving() {
+        return moveActive;
     }
 
-    private void movementStart(boolean immediateReturn) {
-        Iterator var2 = this._listeners.iterator();
+    // Methods dealing the start and end of a move
 
-        while (var2.hasNext()) {
-            MoveListener ml = (MoveListener) var2.next();
-            ml.moveStarted(this.move, this);
-        }
+    private synchronized void notifyMoveStart(Move move) {
+        moveActive = true;
 
-        this._moveActive = true;
-        MyMovePilot.Monitor var6 = this._monitor;
-        synchronized (this._monitor) {
-            this._monitor.notifyAll();
-        }
+        for (MoveListener ml : listeners) ml.moveStarted(move, this);
+    }
 
-        if (!immediateReturn) {
-            while (this._moveActive) {
-                Thread.yield();
-            }
+    private synchronized void notifyStop() {
+        moveActive = false;
 
+        for (MoveListener ml : listeners) ml.moveStopped(chassis.getDisplacement(new Move(0, 0, false)), this);
+    }
+
+    public synchronized Move getMovement() {
+        if (moveActive) {
+            return chassis.getDisplacement(new Move(0, 0, true));
+        } else {
+            return new Move(Move.MoveType.STOP, 0, 0, false);
         }
     }
 
-    private void movementStop() {
-        if (!this._listeners.isEmpty()) {
-            this.chassis.getDisplacement(this.move);
-            Iterator var1 = this._listeners.iterator();
 
-            while (var1.hasNext()) {
-                MoveListener ml = (MoveListener) var1.next();
-                ml.moveStopped(this.move, this);
-            }
-        }
-
-        this._moveActive = false;
-    }
-
-    public Move getMovement() {
-        Move result = this._moveActive ? this.chassis.getDisplacement(this.move) : new Move(MoveType.STOP, 0.0F, 0.0F, false);
-
-        if (result.getMoveType() == MoveType.ARC) {
-            throw new RuntimeException(result.toString() + "\n" + this.move.toString());
-        }
-
-        return result;
-    }
-
-    public void addMoveListener(MoveListener listener) {
-        this._listeners.add(listener);
-    }
-
+    /**
+     * The monitor class detects end-of-move situations when non blocking move
+     * call were made and makes sure these are dealt with.
+     */
     private class Monitor extends Thread {
-        public boolean more = true;
-
-        public Monitor() {
-            this.setDaemon(true);
+        Monitor() {
+            setDaemon(true);
         }
 
-        public synchronized void run() {
-            while (this.more) {
-                if (MyMovePilot.this._moveActive) {
-                    if (MyMovePilot.this.chassis.isStalled()) {
-                        MyMovePilot.this.stop();
-                    }
-
-                    if (!MyMovePilot.this.chassis.isMoving() || MyMovePilot.this._replaceMove) {
-                        MyMovePilot.this.movementStop();
-                        MyMovePilot.this._moveActive = false;
-                        MyMovePilot.this._replaceMove = false;
-                    }
-                }
-
-                try {
-                    this.wait(MyMovePilot.this._moveActive ? 1L : 100L);
-                } catch (InterruptedException var2) {
-                    var2.printStackTrace();
+        public void run() {
+            //noinspection InfiniteLoopStatement
+            for (; ; Thread.yield()) {
+                if (isMoving()) {
+                    if (chassis.isStalled()) MyMovePilot.this.stop();
+                    if (!chassis.isMoving()) notifyStop();
                 }
             }
-
         }
     }
 }

@@ -4,15 +4,16 @@
 
 package common.mapping;
 
-import common.Config;
 import common.logger.Logger;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
+import lejos.robotics.geometry.Point;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.FileInputStream;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Reads the colors from the map image
@@ -20,58 +21,49 @@ import java.io.InputStream;
 public class SurfaceMap {
     private static final String LOG_TAG = SurfaceMap.class.getSimpleName();
 
-    private static final Image image;
-    private static final PixelReader pixelReader;
+    @NotNull
+    private final BufferedImage image;
 
-    static {
-        InputStream fileInputStream;
-
+    /**
+     * @param filePath file path of the map to read
+     */
+    public SurfaceMap(String filePath) {
         try {
-            fileInputStream = new FileInputStream(Config.IMAGE_PATH);
+            image = ImageIO.read(new File(filePath));
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Unable to read picture");
             throw new RuntimeException(e.toString());
         }
-
-        image = new Image(fileInputStream);
-        pixelReader = image.getPixelReader();
-
-        try {
-            fileInputStream.close();
-        } catch (IOException e) {
-            Logger.warning(LOG_TAG, "Could not close file input stream");
-        }
     }
 
-    public static int getColorAtPoint(int x, int y) {
+    public int getColorAtPoint(Point point) {
         try {
-            return ColorJavaLejos.getLejosColor(pixelReader.getColor(x, getInvertedY(y)));
+            return ColorJavaLejos.getLejosColor(new Color(image.getRGB((int) point.x, (int) getInvertedY(point.y))));
         } catch (IndexOutOfBoundsException e) {
-            throw new IndexOutOfBoundsException("x : " + x + ". y : " + y + " " + e);
+            Logger.warning(LOG_TAG, "Can't get color. Out of bounds : x : " + point.x + ". y : " + point.y + " " + e);
+            throw new RuntimeException(e);
+//            return lejos.robotics.Color.NONE;
         }
     }
 
-    public static boolean contains(int x, int y) {
-        return x >= 0 && y > 0 && x < image.getWidth() && y <= image.getHeight(); //Weird equals check because y is inverted
+    public boolean contains(Point point) {
+        return 0 < point.x && point.x < image.getWidth() && 0 < point.y && point.y < image.getHeight();
     }
 
     @Contract(pure = true)
-    public static double getHeight() {
-        return image.getHeight();
-    }
-
-    @Contract(pure = true)
-    private static int getInvertedY(int y) {
-        return (int) (image.getHeight() - y);
-    }
-
-    @Contract(pure = true)
-    public static double getWidth() {
-        return image.getWidth();
-    }
-
-    @Contract(pure = true)
-    public static Image getImage() {
+    @NotNull
+    public BufferedImage getImage() {
         return image;
+    }
+
+    /**
+     * Converts a y value from a lejos coordinate to a swing coordinate
+     *
+     * @param y y value from the lejos coordinates system (bottom = 0)
+     * @return y value from swing coordinates system (top = 0)
+     */
+    @Contract(pure = true)
+    private float getInvertedY(float y) {
+        return (image.getHeight() - y);
     }
 }

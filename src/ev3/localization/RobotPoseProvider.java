@@ -4,166 +4,162 @@
 
 package ev3.localization;
 
-import common.Config;
-import common.logger.Logger;
+import common.mapping.SurfaceMap;
 import common.particles.MCLData;
-import ev3.communication.ComManager;
+import ev3.navigation.MyMovePilot;
+import ev3.navigation.Offset;
 import ev3.navigation.Readings;
-import ev3.robot.ColorSensors;
+import ev3.robot.Robot;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
-import lejos.utility.Delay;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-
 /**
- * Singleton pattern
- * Based on odometry pose provider with the extra capability of storing a particle set and using it to refine it's location
+ * A pose provider that uses a particle algorithm
+ * TODO Look over again for bugs
  */
 public class RobotPoseProvider implements MoveListener, PoseProvider {
-    private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
+    //    private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
 
-    private static final int NUM_PARTICLES = 300;
-
-    @NotNull
-    private final MoveProvider mp;
-    @NotNull
-    private MCLData data;
+    private static final int NUM_PARTICLES = 100; //TODO Find optimal value
 
     @NotNull
-    private final ArrayList<MCLDataListener> listeners = new ArrayList<>();
+    private final MyMovePilot mp;
+    private final SurfaceMap surfaceMap;
+    @NotNull
+    private final ParticleSet data;
+
+    @Nullable
+    private RobotPoseProviderListener listener;
 
     /**
-     * The amount the data has been shifted since the start of this move.
-     * completedMove is null when the move starts and each time the data is updated (with update()) the completedMove is updated
+     * The amount the data has been shifted since the start of this moveData.
+     * completedMove is null after the moveData has ended.
+     * Each time the data is updated (with update()) the completedMove is updated
      */
     @Nullable
     private Move completedMove;
 
-    public RobotPoseProvider(@NotNull MoveProvider moveProvider, @NotNull Pose currentPose) {
-        this.mp = moveProvider;
-        this.data = new MCLData(Util.getNewParticleSet(currentPose, NUM_PARTICLES), currentPose);
+    public RobotPoseProvider(@NotNull SurfaceMap surfaceMap, @NotNull MyMovePilot pilot, Pose startingPose) {
+        this.surfaceMap = surfaceMap;
+        this.mp = pilot;
+        this.data = new ParticleSet(NUM_PARTICLES, surfaceMap, startingPose);
 
-        completedMove = getCurrentCompletedMove();
+        mp.addMoveListener(this);
 
-        notifyUpdate();
+        completedMove = mp.getMovement();
+
+        notifyListener();
     }
 
-    public synchronized void addListener(MCLDataListener listener) {
-        listeners.add(listener);
-    }
 
-    public synchronized void removeListener(MCLDataListener listener) {
-        for (int i = 0; i < listeners.size(); i++) {
-            if (listener == listeners.get(i)) {
-                listeners.remove(i);
-            }
-        }
-    }
-
-    public void startUpdater(ColorSensors colorSensors) {
+    public void startUpdater(Robot.ColorSensors colorSensors) {
         new Updater(colorSensors).start();
     }
 
-    @NotNull
-    public RobotPoseProvider get() {
-        return null;
+    // LISTENER METHODS //
+    // The listener is passed the particle and current pose data when it gets updated
+    public void setListener(@Nullable RobotPoseProviderListener listener) {
+        this.listener = listener;
+    }
+
+    public void removeListener() {
+        this.listener = null;
+    }
+
+    private void notifyListener() {
+        if (listener != null) {
+            listener.notifyNewMCLData(data);
+        }
     }
 
     /**
-     * Doesn't update the data object since we don't want to need to update the particles each time
+     * Doesn't update the data object since we don't want to need to update the particles each time getPose is called
      *
      * @return the current pose
      */
     @NotNull
     @Override
-    public synchronized Pose getPose() {
-        Move missingMove = Util.subtractMove(getCurrentCompletedMove(), completedMove);
+    @Contract(pure = true)
+    public Pose getPose() {
+        Move missingMove = Util.subtractMove(mp.getMovement(), completedMove);
 
         return Util.movePose(data.getCurrentPose(), missingMove);
     }
 
     @Override
     public synchronized void setPose(@NotNull Pose pose) {
-        data = new MCLData(Util.getNewParticleSet(pose, NUM_PARTICLES), pose);
-        completedMove = getCurrentCompletedMove();
+        data.setPose(pose);
 
-        notifyUpdate();
+        completedMove = mp.getMovement();
+
+        notifyListener();
     }
 
     @Override
     public synchronized void moveStarted(@NotNull Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Started move " + move.toString());
     }
 
     /**
      * Moves the particles and pose over by the amount remaining
      *
-     * @param move         the move that was completed
-     * @param moveProvider the move provider
+     * @param move         the moveData that was completed
+     * @param moveProvider the moveData provider
      */
     @Override
     public synchronized void moveStopped(@NotNull Move move, MoveProvider moveProvider) {
-        Logger.info(LOG_TAG, "Stopped move " + move.toString());
+        Move missingMove = Util.subtractMove(move, completedMove);
 
-        Move missingMove = Util.subtractMove(Util.deepCopyMove(move), completedMove);
-
-        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
-        data.setParticles(Util.moveParticleSet(data.getParticles(), missingMove));
+        data.moveData(missingMove);
 
         completedMove = null;
 
-        notifyUpdate();
-    }
-
-    public synchronized void update(@NotNull Readings readings) {
-        Move move = getCurrentCompletedMove();
-
-        Move missingMove = Util.subtractMove(move, completedMove);
-
-        data.setParticles(Util.update(data.getParticles(), missingMove, readings));
-        data.setCurrentPose(Util.movePose(data.getCurrentPose(), missingMove));
-        data.setCurrentPose(Util.refineCurrentPose(data.getParticles())); //Updates current pose
-
-        completedMove = move;
-
-        notifyUpdate();
-    }
-
-    private void notifyUpdate() {
-        for (MCLDataListener listener : listeners) {
-            listener.notifyNewMCLData(data);
-        }
-    }
-
-    public void sendCurrentPoseToPC() {
-        if (Config.currentMode == Config.Mode.DUAL || Config.currentMode == Config.Mode.SIM) {
-            ComManager.getDataSender().sendCurrentPose(getPose());
-        }
-    }
-
-    @NotNull
-    private Move getCurrentCompletedMove() {
-        return Util.deepCopyMove(mp.getMovement());
+        notifyListener();
     }
 
     /**
-     * Check method checks if the color under the robot has changed. If so it calls the pose provider update method
+     * Updates the particles and position using the algorithm
      */
-    public final class Updater extends Thread {
-        private final String LOG_TAG = Updater.class.getSimpleName();
+    private void update(@NotNull Readings readings) {
+        this.update(readings, mp.getMovement());
+    }
 
-        private final ColorSensors colorSensors;
+    private synchronized void update(@NotNull Readings readings, @NotNull Move totalMove) {
+        Move missingMove = Util.subtractMove(totalMove, completedMove);
 
-        Updater(ColorSensors colorSensors) {
+        data.moveCurrentPose(missingMove);
+        data.update(missingMove, readings);
+//        data.refineCurrentPose(); //Updates current pose
+
+        completedMove = totalMove;
+
+        notifyListener(); //TODO Consider removing for optimization
+    }
+
+    /**
+     * 1. Gets the readings for the left color sensor and apply to particles
+     * 2. Gets the readings for the right color sensor and apply to particles
+     * 3. Repeat forever
+     * TODO Optimize so that it only runs when necessary
+     */
+    final class Updater extends Thread {
+        private final Robot.ColorSensors colorSensors;
+
+        private int previousLeftColor;
+        private int previousRightColor;
+
+        Updater(Robot.ColorSensors colorSensors) {
             super();
 
             this.colorSensors = colorSensors;
+
+            this.previousLeftColor = colorSensors.getColorSurfaceLeft();
+            this.previousRightColor = colorSensors.getColorSurfaceRight();
 
             this.setDaemon(true);
             this.setName(Updater.class.getSimpleName());
@@ -172,11 +168,33 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
         @Override
         public void run() {
             //noinspection InfiniteLoopStatement
-            while (true) {
-                RobotPoseProvider.this.update(new SurfaceReadings(colorSensors.getColorSurfaceLeft()));
+            for (; ; Thread.yield()) {
+                if (mp.isMoving()) {
+                    int leftColor = colorSensors.getColorSurfaceLeft();
 
-                Delay.msDelay(100);
+                    if (leftColor != previousLeftColor) {
+                        RobotPoseProvider.this.update(
+                                new EdgeReadings(surfaceMap, previousLeftColor, leftColor, Offset.LEFT_COLOR_SENSOR)
+                        );
+
+                        previousLeftColor = leftColor;
+                    }
+
+                    int rightColor = colorSensors.getColorSurfaceRight();
+
+                    if (previousRightColor != rightColor) {
+                        RobotPoseProvider.this.update(
+                                new EdgeReadings(surfaceMap, previousRightColor, rightColor, Offset.RIGHT_COLOR_SENSOR)
+                        );
+
+                        previousRightColor = rightColor;
+                    }
+                }
             }
         }
+    }
+
+    public interface RobotPoseProviderListener {
+        void notifyNewMCLData(MCLData data);
     }
 }

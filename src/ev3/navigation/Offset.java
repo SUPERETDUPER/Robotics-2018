@@ -9,29 +9,41 @@ import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Responsible of offsetting readings
+ * Offsets a pose to a different spot on the robot
  */
 public final class Offset {
     // (x,y) offsets when robot is facing to the right (heading = 0)
-    private static final float[] RELATIVE_OFFSET_LEFT = {-1, -1};
-    private static final float[] RELATIVE_OFFSET_RIGHT = {1, -1};
+    public static final Offset LEFT_COLOR_SENSOR = new Offset(-171, 80);
+    public static final Offset RIGHT_COLOR_SENSOR = new Offset(-133, -79);
+    public static final Offset CONTAINER_COLOR_SENSOR = new Offset(-57, 0); //TODO Find actual values
 
+    private final float deltaX;
+    private final float deltaY;
+
+    public Offset(float deltaX, float deltaY) {
+        this.deltaX = deltaX;
+        this.deltaY = deltaY;
+    }
+
+    /**
+     * Shifts the pose by the offset amount
+     * Ex. (1, 1, 0) --> (2, 2) with new Offset(1, 1)
+     */
     @NotNull
-    public static Point leftColorSensor(@NotNull Pose pose) {
-        return offset(pose, RELATIVE_OFFSET_LEFT[0], RELATIVE_OFFSET_RIGHT[1]);
+    public Point offset(@NotNull Pose pose) {
+        return calculateOffset(pose, deltaX, deltaY);
     }
 
     @NotNull
-    public static Point rightColorSensor(@NotNull Pose pose) {
-        return offset(pose, RELATIVE_OFFSET_RIGHT[0], RELATIVE_OFFSET_RIGHT[1]);
+    public Point reverseOffset(@NotNull Pose pose) {
+        return calculateOffset(pose, -deltaX, -deltaY);
     }
 
     @NotNull
-    private static Point offset(@NotNull Pose pose, float xOffset, float yOffset) {
-        double originalTheta = Math.atan(yOffset / xOffset);
-        double hypotenuse = Math.sqrt(xOffset * xOffset + yOffset * yOffset); //Pythagorean theorem
+    private static Point calculateOffset(@NotNull Pose pose, float deltaX, float deltaY) {
+        double hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY); //Pythagorean theorem
 
-        double newTheta = originalTheta + Math.toRadians(pose.getHeading());
+        double newTheta = Math.atan2(deltaY, deltaX) + Math.toRadians(pose.getHeading()); //Find angle formed by offset and add pose's heading
 
         float newXOffset = (float) (Math.cos(newTheta) * hypotenuse);
         float newYOffset = (float) (Math.sin(newTheta) * hypotenuse);

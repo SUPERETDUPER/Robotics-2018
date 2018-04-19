@@ -5,37 +5,42 @@
 package pc;
 
 import common.Config;
+import common.ConnectionUtil;
+import common.RunModes;
 import common.logger.Logger;
-import lejos.utility.Delay;
-import pc.communication.DataReceiver;
-import pc.communication.EV3Connection;
+import javafx.event.EventHandler;
+import javafx.stage.WindowEvent;
 import pc.gui.GUI;
 
-import java.io.InputStream;
-
-final class PCMain {
+public final class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 
     public static void main(final String[] args) {
-        if (Config.currentMode == Config.Mode.SOLO) {
+        if (Config.currentMode == RunModes.SOLO) {
             Logger.error(LOG_TAG, "No PC required in mode solo");
             return;
         }
 
-        InputStream inputStream = EV3Connection.getConnection();
+        final DataReceiver dataReceiver = new DataReceiver(
+                ConnectionUtil.getInputStream(
+                        ConnectionUtil.createClientSocket(
+                                Config.PORT_TO_CONNECT_ON_EV3,
+                                Config.currentMode == RunModes.SIM ? "localhost" : Config.EV3_IP_ADDRESS
+                        )
+                ),
+                GUI.listener
+        );
 
-        if (inputStream == null) {
-            Logger.error(LOG_TAG, "Could not getConnection to ev3");
-            return;
-        }
+        GUI.launchGUI(
+                new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        dataReceiver.stop();
+                    }
+                }
+        );
 
-        DataReceiver.init(inputStream, GUI.listener);
-
-        GUI.launchGUI();
-
-        Delay.msDelay(1000);
-
-        DataReceiver.read();
+        dataReceiver.read();
     }
 }

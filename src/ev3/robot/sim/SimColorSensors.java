@@ -5,40 +5,63 @@
 package ev3.robot.sim;
 
 import common.mapping.SurfaceMap;
-import ev3.robot.ColorSensors;
+import ev3.navigation.Offset;
+import ev3.robot.Robot;
+import lejos.robotics.Color;
+import lejos.robotics.geometry.Point;
 import lejos.robotics.localization.PoseProvider;
-import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
-class SimColorSensors implements ColorSensors {
+/**
+ * Simulates the color sensors by return the color the map shows for the current location
+ */
+class SimColorSensors implements Robot.ColorSensors {
     @NotNull
     private final PoseProvider poseProvider;
+    @NotNull
+    private final SurfaceMap surfaceMap;
 
-    SimColorSensors(@NotNull PoseProvider poseProvider) {
+    SimColorSensors(@NotNull PoseProvider poseProvider, @NotNull SurfaceMap surfaceMap) {
         this.poseProvider = poseProvider;
+        this.surfaceMap = surfaceMap;
+    }
+
+    @Override
+    public void setup() {
+    }
+
+    @Override
+    public boolean isSetup() {
+        return true;
     }
 
     @Override
     public int getColorSurfaceLeft() {
-        Pose currentPose = poseProvider.getPose();
-        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        Point currentPoint = Offset.LEFT_COLOR_SENSOR.offset(poseProvider.getPose());
+        if (surfaceMap.contains(currentPoint)) {
+            return surfaceMap.getColorAtPoint(currentPoint);
+        } else {
+            return Color.NONE;
+        }
     }
 
     @Override
     public int getColorSurfaceRight() {
-        Pose currentPose = poseProvider.getPose();
-        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        Point currentPoint = Offset.RIGHT_COLOR_SENSOR.offset(poseProvider.getPose());
+        if (surfaceMap.contains(currentPoint)) {
+            return surfaceMap.getColorAtPoint(currentPoint);
+        } else {
+            return Color.NONE;
+        }
     }
 
     @Override
     public int getColorContainer() {
-        Pose currentPose = poseProvider.getPose();
-        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        return Color.NONE;
     }
 
     @Override
     public int getColorBoat() {
-        Pose currentPose = poseProvider.getPose();
-        return SurfaceMap.getColorAtPoint((int) currentPose.getX(), (int) currentPose.getY());
+        return Color.NONE;
     }
 }

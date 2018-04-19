@@ -4,9 +4,10 @@
 
 package common.mapping;
 
-import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.awt.*;
 
 class ColorJavaLejosTest {
 

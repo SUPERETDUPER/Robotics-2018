@@ -5,13 +5,21 @@
 package ev3.robot.sim;
 
 import common.logger.Logger;
-import ev3.robot.Paddle;
+import ev3.robot.Robot;
 
-class SimPaddle implements Paddle {
+/**
+ * Simulates the robots paddle by just printing a log message for each movement
+ */
+class SimPaddle implements Robot.Paddle {
     private static final String LOG_TAG = SimPaddle.class.getSimpleName();
 
     @Override
-    public void useMotor(boolean immediateReturn) {
+    public void move(boolean immediateReturn) {
+        Logger.info(LOG_TAG, "Moving block of conveyor");
+    }
+
+    @Override
+    public void hitBlock(boolean immediateReturn) {
         Logger.info(LOG_TAG, "Hitting block");
     }
 }

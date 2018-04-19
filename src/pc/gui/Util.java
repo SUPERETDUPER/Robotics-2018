@@ -5,8 +5,6 @@
 package pc.gui;
 
 import common.Config;
-import common.logger.Logger;
-import common.mapping.SurfaceMap;
 import common.particles.Particle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -21,12 +19,6 @@ class Util {
     private static final int RADIUS = 3;
 
     static void displayPoseOnGui(@NotNull GraphicsContext g, @NotNull Pose pose) {
-        if (!SurfaceMap.contains((int) pose.getX(), (int) pose.getY())) {
-            Logger.info(LOG_TAG, pose.toString());
-            throw new RuntimeException();
-        }
-
-
         g.fillOval(pose.getX() - RADIUS, pose.getY() - RADIUS, RADIUS * 2, RADIUS * 2);
 
         if (Config.SHOW_PARTICLE_TAILS) {
@@ -46,6 +38,7 @@ class Util {
     static Particle[] normalizeWeightTo255(@NotNull Particle[] unNormalizedParticles) {
         float maxWeight = 0;
 
+        //Find the max weight
         for (Particle particle : unNormalizedParticles) {
             if (particle.weight > maxWeight) {
                 maxWeight = particle.weight;
@@ -55,7 +48,7 @@ class Util {
         Particle[] normalizedParticles = new Particle[unNormalizedParticles.length];
 
         for (int i = 0; i < unNormalizedParticles.length; i++) {
-            normalizedParticles[i] = unNormalizedParticles[i].getParticleWithNewWeight(unNormalizedParticles[i].weight * 255 / maxWeight);
+            normalizedParticles[i] = new Particle(unNormalizedParticles[i], unNormalizedParticles[i].weight / maxWeight * 255);
         }
 
         return normalizedParticles;

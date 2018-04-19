@@ -4,9 +4,13 @@
 
 package imageGenerator;
 
-import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+
+/**
+ * A rectangle that has a color
+ */
 class Rectangle extends ColorRegion {
 
     @NotNull

@@ -5,6 +5,7 @@
 package common;
 
 import common.particles.Particle;
+import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +20,15 @@ public class TestUtils {
         Assertions.assertEquals(pose1.getHeading(), pose2.getHeading());
     }
 
+    @Test
+    public static void assertPointEquals(Point point1, Point point2, float tolerance) {
+        Assertions.assertTrue(point2.x - tolerance < point1.x && point1.x < point2.x + tolerance);
+        Assertions.assertTrue(point2.y - tolerance < point1.y && point1.y < point2.y + tolerance);
+    }
+
+
     @Contract(pure = true)
-    private static boolean sumOfWeightsIsOne(@NotNull Particle[] particles) {
+    static boolean sumOfWeightsIsOne(@NotNull Particle[] particles) {
         float totalWeight = 0;
 
         for (Particle particle : particles) {

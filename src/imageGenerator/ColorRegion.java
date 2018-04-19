@@ -4,11 +4,12 @@
 
 package imageGenerator;
 
-import javafx.scene.paint.Color;
+import java.awt.*;
 
+/**
+ * Defines what a region should do (aka. know if a point is contained, have a color)
+ */
 abstract class ColorRegion {
-    private static final String LOG_TAG = ColorRegion.class.getSimpleName();
-
     private final Color mColor;
 
     ColorRegion(Color color) {

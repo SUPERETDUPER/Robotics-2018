@@ -5,35 +5,92 @@
 package ev3;
 
 import common.logger.Logger;
+import ev3.localization.RobotPoseProvider;
 import ev3.navigation.Controller;
 import ev3.navigation.MapOperations;
+import ev3.navigation.Offset;
 import ev3.robot.Robot;
+import lejos.robotics.Color;
 
-import java.util.List;
-
+/**
+ * Specifies the sequence of actions the robot should do to win the competition !
+ */
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
-    static void start(Robot robot) {
+    private final int[] listFoodColor = {Color.NONE, Color.NONE, Color.NONE};
+    private int index = 0;
 
-        int [] listFoodColor = new int [3];
+    private final Robot robot;
+    private final Controller controller;
 
-        Controller.get().init(robot);
-        Controller.get().getPose();
+    Brain(Robot robot, Controller controller) {
+        this.robot = robot;
+        this.controller = controller;
+    }
 
+    void start() {
+        robot.getPaddle().move(true); //To drop conveyor belt
 
-        MapOperations.goToContainerBottomLeft(Controller.get().getPose());
-        MapOperations.goToContainerBottomRight(Controller.get().getPose());
-        MapOperations.goToContainerTopLeft(Controller.get().getPose());
-        MapOperations.goToContainerTopRight(Controller.get().getPose());
+        MapOperations pathCalculator = new MapOperations(controller.getNavigator().getPoseProvider());
 
-        MapOperations.goToTempRegBlue(Controller.get().getPose());
-        MapOperations.goToTempRegGreen(Controller.get().getPose());
-        MapOperations.goToTempRegYellow(Controller.get().getPose());
-        MapOperations.goToTempRegRed(Controller.get().getPose());
+        //Go to each food container
+        controller.followPath(pathCalculator.getPathToContainerBottomRight(), Offset.CONTAINER_COLOR_SENSOR);
+        controller.moveForward();
+        pickupFood(robot.getColorSensors().getColorContainer());
 
-        Controller.get().waitForStop();
+        controller.followPath(pathCalculator.getPathToContainerBottomLeft(), Offset.CONTAINER_COLOR_SENSOR);
+        controller.moveForward();
+        pickupFood(robot.getColorSensors().getColorContainer());
 
-        Logger.info(LOG_TAG, Controller.get().getPose().toString());
+        controller.followPath(pathCalculator.getPathToContainerTopLeft(), Offset.CONTAINER_COLOR_SENSOR);
+        controller.moveForward();
+        pickupFood(robot.getColorSensors().getColorContainer());
+
+        if(index!=3){
+            controller.followPath(pathCalculator.getPathToContainerTopRight(), Offset.CONTAINER_COLOR_SENSOR);
+            controller.moveForward();
+            pickupFood(robot.getColorSensors().getColorContainer());
+        }
+
+        controller.followPath(pathCalculator.getPathToBoatThree(),Offset.CONTAINER_COLOR_SENSOR);
+        controller.followPath(pathCalculator.getPathToBoatOne(),Offset.CONTAINER_COLOR_SENSOR);
+
+        controller.followPath(pathCalculator.getPathToBoatX(MapOperations.BOAT_ONE),Offset.CONTAINER_COLOR_SENSOR);
+
+        //Drop off food container at temp reg area
+        for (int i = 0; i < 3; i++) {
+            switch (listFoodColor[i]) {
+                case Color.BLUE:
+                    controller.followPath(pathCalculator.getPathToTempRegBlue());
+                    break;
+                case Color.GREEN:
+                    controller.followPath(pathCalculator.getPathToTempRegGreen());
+                    break;
+                case Color.YELLOW:
+                    controller.followPath(pathCalculator.goToTempRegYellow());
+                    break;
+                case Color.RED:
+                    controller.followPath(pathCalculator.getPathToTempRegRed());
+                    break;
+                default:
+                    Logger.warning(LOG_TAG, "Could not find temp reg of color : " + listFoodColor[i]);
+            }
+        }
+
+        //TODO finish brain
+
+        //go to boats and drop of stuff
+    }
+
+    private void pickupFood(int color) {
+        if (color != Color.NONE) {
+            listFoodColor[index++] = color;
+            robot.getPaddle().hitBlock(true);
+
+            if (index == 1) {
+                robot.getArm().goToFoodHanging(true);
+            }
+        }
     }
 }

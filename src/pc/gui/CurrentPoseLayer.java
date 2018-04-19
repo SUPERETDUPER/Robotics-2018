@@ -4,19 +4,32 @@
 
 package pc.gui;
 
+import ev3.navigation.Offset;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lejos.robotics.Transmittable;
+import lejos.robotics.geometry.Point;
 import lejos.robotics.navigation.Pose;
 
-public class CurrentPoseLayer extends UpdatableLayer {
+class CurrentPoseLayer extends UpdatableLayer {
     private Pose pose;
+
+    CurrentPoseLayer(double width, double height) {
+        super(width, height);
+    }
 
     @Override
     void displayOnGui(GraphicsContext g) {
         if (pose != null) {
-            g.setFill(Color.BLACK);
+            g.setFill(Color.HOTPINK);
             Util.displayPoseOnGui(g, pose);
+
+            //Displays the other robots important points like the color sensors
+            g.setFill(Color.PURPLE);
+            Point leftColorSensorPoint = Offset.LEFT_COLOR_SENSOR.offset(pose);
+            Util.displayPoseOnGui(g, new Pose(leftColorSensorPoint.x, leftColorSensorPoint.y, pose.getHeading()));
+            Point rightColorSensorPoint = Offset.RIGHT_COLOR_SENSOR.offset(pose);
+            Util.displayPoseOnGui(g, new Pose(rightColorSensorPoint.x, rightColorSensorPoint.y, pose.getHeading()));
         }
     }
 
@@ -31,6 +44,10 @@ public class CurrentPoseLayer extends UpdatableLayer {
             pose = new Pose();
         }
 
+        return pose;
+    }
+
+    public Pose getPose() {
         return pose;
     }
 }

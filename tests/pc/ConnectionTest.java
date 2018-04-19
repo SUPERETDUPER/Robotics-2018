@@ -10,8 +10,6 @@ import ev3.communication.PCDataSender;
 import lejos.robotics.navigation.Pose;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import pc.communication.DataReceivedListener;
-import pc.communication.DataReceiver;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,11 +25,11 @@ class ConnectionTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         PCDataSender dataSender = new PCDataSender(out);
-        dataSender.sendCurrentPose(poseToSend);
+        dataSender.sendTransmittable(TransmittableType.CURRENT_POSE, poseToSend);
 
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
 
-        DataReceiver.init(input, new DataReceivedListener() {
+        DataReceiver dataReceiver = new DataReceiver(input, new DataReceiver.DataReceivedListener() {
             @Override
             public void dataReceived(TransmittableType event, DataInputStream dis) throws IOException {
                 Assertions.assertEquals(event, TransmittableType.CURRENT_POSE);
@@ -43,6 +41,6 @@ class ConnectionTest {
             }
         });
 
-        DataReceiver.read();
+        dataReceiver.read();
     }
 }

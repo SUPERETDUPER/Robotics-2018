@@ -7,10 +7,14 @@ package ev3.communication;
 import common.TransmittableType;
 import lejos.robotics.Transmittable;
 
-public interface DataSender {
+interface DataSender {
     void sendTransmittable(TransmittableType type, Transmittable data);
 
-    void sendLogMessage(String message);
-
     void close();
+
+    void setOnLostConnection(LostConnectionListener listener);
+
+    interface LostConnectionListener {
+        void lostConnection();
+    }
 }

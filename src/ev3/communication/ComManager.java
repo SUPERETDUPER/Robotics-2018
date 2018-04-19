@@ -4,43 +4,76 @@
 
 package ev3.communication;
 
-import common.logger.Logger;
+import common.TransmittableType;
+import lejos.robotics.Transmittable;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 
+/**
+ * Singleton pattern
+ * Used by the EV3 to send data to the PC
+ * Manages all the data being sent away from the EV3
+ * <p>
+ * Used Singleton because should be accessible no matter what
+ */
 public class ComManager {
     private static final String LOG_TAG = ComManager.class.getSimpleName();
 
-    private static PCDataSender dataSender;
+    //Used to send the data
+    @Nullable
+    private static DataSender dataSender;
+
+    //Monitors for data
+    @Nullable
     private static DataListener dataListener;
 
-    public static boolean running(){
-        return dataListener != null && dataSender != null;
+    /**
+     * Setups the object. If not called ComManager does nothing.
+     */
+    public static void enable(OutputStream outputStream, boolean shouldListenForLogs) {
+        dataSender = new PCDataSender(outputStream);
+
+        dataSender.setOnLostConnection(new DataSender.LostConnectionListener() {
+            @Override
+            public void lostConnection() {
+                stop();
+            }
+        });
+
+        dataListener = new DataListener(dataSender);
+        dataListener.startListening(shouldListenForLogs);
     }
 
-    public static boolean build() {
-        OutputStream connection = PCConnection.getConnection();
-
-        if (connection == null) {
-            Logger.error(LOG_TAG, "Failed to connect to PC. Stopping program");
-            return false;
+    /**
+     * Stops/Disables the ComManager
+     */
+    public static void stop() {
+        if (dataSender != null) {
+            dataSender.close();
+            dataSender = null;
         }
 
-        dataSender = new PCDataSender(connection);
-        dataListener = new DataListener(dataSender);
-        dataListener.startListening();
-
-        return true;
+        if (dataListener != null) {
+            dataListener.stopListening();
+            dataListener = null;
+        }
     }
 
-    public static void stop() {
-        dataSender.close();
-        dataListener.stopListening();
+    /**
+     * Called to send data
+     */
+    public static synchronized void sendTransmittable(TransmittableType type, Transmittable transmittable) {
+        if (dataSender != null) {
+            dataSender.sendTransmittable(type, transmittable);
+        }
     }
 
     @Contract(pure = true)
-    public static PCDataSender getDataSender() {
-        return dataSender;
+    @Nullable
+    public static DataListener getDataListener() {
+        return dataListener;
     }
+
 }

@@ -5,7 +5,6 @@
 package pc.gui;
 
 import common.Config;
-import common.mapping.SurfaceMap;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -16,17 +15,16 @@ abstract class Layer extends Canvas {
 
     private final GraphicsContext graphics = getGraphicsContext2D();
 
-    Layer() {
-        super(SurfaceMap.getWidth(), SurfaceMap.getHeight());
+    Layer(double width, double height) {
+        super(width, height);
 
         applyTransformations();
-        draw();
     }
 
     private void applyTransformations() {
         if (shouldInvert()) {
             graphics.scale(Config.GUI_DISPLAY_RATIO, -Config.GUI_DISPLAY_RATIO);
-            graphics.translate(0, -SurfaceMap.getHeight());
+            graphics.translate(0, -this.getHeight());
         } else {
             graphics.scale(Config.GUI_DISPLAY_RATIO, Config.GUI_DISPLAY_RATIO);
         }

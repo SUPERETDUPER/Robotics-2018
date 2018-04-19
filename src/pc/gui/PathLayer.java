@@ -14,11 +14,15 @@ import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public final class PathLayer extends UpdatableLayer {
+final class PathLayer extends UpdatableLayer {
     private static final String LOG_TAG = PathLayer.class.getSimpleName();
 
     private Pose currentPose;
-    private Path path = new Path();
+    private final Path path = new Path();
+
+    public PathLayer(double width, double height) {
+        super(width, height);
+    }
 
     public void setCurrentPose(Pose currentPose) {
         this.currentPose = currentPose;

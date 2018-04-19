@@ -4,90 +4,114 @@
 
 package ev3.navigation;
 
+import common.TransmittableType;
+import common.logger.Logger;
 import ev3.communication.ComManager;
-import ev3.localization.RobotPoseProvider;
-import ev3.robot.Robot;
-import ev3.robot.sim.SimRobot;
-import lejos.robotics.geometry.Point;
-import lejos.robotics.navigation.Navigator;
-import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.*;
+import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class Controller {
+/**
+ * Acts as a bridge to the navigator and provides helpful methods for the robot.
+ */
+public final class Controller implements MoveListener, NavigationListener {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
-    private static final double ANGULAR_ACCELERATION = 120;
-    private static final double LINEAR_ACCELERATION = 400;
-    private static final Pose STARTING_POSE = new Pose(2242, 573, 180);
+    private final MyNavigator navigator;
 
-    private static final Controller controller = new Controller();
+    public Controller(@NotNull MyNavigator navigator) {
+        this.navigator = navigator;
 
-    private Navigator navigator;
-    private RobotPoseProvider robotPoseProvider;
-
-    private Controller() {
-
+        this.navigator.addNavigationListener(this);
+        this.navigator.getMoveController().addMoveListener(this);
     }
 
-    @NotNull
-    @Contract(pure = true)
-    public static Controller get() {
-        return controller;
+    public void moveForward() {
+        navigator.getMoveController().travel(57, false);
     }
 
-    public void waitForStop() {
+    public void followPath(@NotNull Path path, @Nullable Offset offset) {
+        Path newPath = new Path();
+
+        for (Waypoint waypoint : path) {
+            if (offset != null) {
+                if (waypoint.isHeadingRequired()) {
+                    //TODO Think about issue with no heading required and find solution
+                    waypoint.setLocation(offset.reverseOffset(waypoint.getPose()));
+                } else {
+                    Logger.warning(LOG_TAG, "Could not offset because no heading defined");
+                }
+            }
+
+            if (waypoint.isHeadingRequired()) {
+                waypoint = new Waypoint(waypoint.x, waypoint.y, normalize(waypoint.getHeading()));
+            }
+
+            newPath.add(waypoint);
+        }
+
+        navigator.followPath(newPath);
+
+        ComManager.sendTransmittable(TransmittableType.PATH, navigator.getPath());
+
+        waitForStop();
+    }
+
+    public void followPath(@NotNull Path path) {
+        followPath(path, null);
+    }
+
+    private void waitForStop() {
         while (navigator.isMoving()) {
-            robotPoseProvider.sendCurrentPoseToPC();
+            ComManager.sendTransmittable(TransmittableType.CURRENT_POSE, navigator.getPoseProvider().getPose());
+
             Thread.yield();
         }
     }
 
-    void goTo(Pose pose) {
-        goTo(pose.getX(), pose.getY(), pose.getHeading());
-    }
-
-    private void goTo(float x, float y, float heading) {
-        navigator.goTo(x, y, normalize(heading));
-        ComManager.getDataSender().sendPath(navigator.getPath());
-        waitForStop();
-    }
-
-    void goTo(Point point) {
-        goTo(point.x, point.y);
-    }
-
-    private void goTo(float x, float y) {
-        navigator.goTo(x, y);
-        ComManager.getDataSender().sendPath(navigator.getPath());
-        waitForStop();
-    }
-
-    public void init(Robot robot) {
-        MyMovePilot pilot = new MyMovePilot(robot.getChassis());
-
-        pilot.setAngularAcceleration(ANGULAR_ACCELERATION);
-        pilot.setLinearAcceleration(LINEAR_ACCELERATION);
-
-        robotPoseProvider = new RobotPoseProvider(pilot, STARTING_POSE);
-
-        if (robot instanceof SimRobot) {
-            ((SimRobot) robot).setPoseProvider(robotPoseProvider);
-        }
-
-        robotPoseProvider.startUpdater(robot.getColorSensors());
-
-        navigator = new Navigator(pilot, robotPoseProvider);
-    }
-
+    //TODO Consider removing and instead working directly with the Navigator
     @Contract(pure = true)
-    private static float normalize(float heading) {
-        while (heading >= 360) heading -= 360;
-        while (heading < 0) heading += 360;
+    private static double normalize(double heading) {
+        while (heading > 180) heading -= 360;
+        while (heading <= -180) heading += 360;
         return heading;
     }
 
+    @Contract(pure = true)
+    @NotNull
     public Pose getPose() {
-        return robotPoseProvider.getPose();
+        return navigator.getPoseProvider().getPose();
+    }
+
+    @Contract(pure = true)
+    public MyNavigator getNavigator() {
+        return navigator;
+    }
+
+    @Override
+    public void moveStarted(Move move, MoveProvider moveProvider) {
+        Logger.info(LOG_TAG, "Started : " + move.toString());
+    }
+
+    @Override
+    public void moveStopped(Move move, MoveProvider moveProvider) {
+        Logger.info(LOG_TAG, "Stopped : " + move.toString());
+    }
+
+    @Override
+    public void atWaypoint(Waypoint waypoint, Pose pose, int i) {
+        Logger.info(LOG_TAG, "At waypoint : " + waypoint + " pose : " + pose.toString());
+    }
+
+    @Override
+    public void pathComplete(Waypoint waypoint, Pose pose, int i) {
+//        Logger.info(LOG_TAG, "Path complete : " + waypoint + " pose : " + pose.toString());
+    }
+
+    @Override
+    public void pathInterrupted(Waypoint waypoint, Pose pose, int i) {
+        Logger.info(LOG_TAG, "Path interrupted : " + waypoint + " pose : " + pose.toString());
     }
 }

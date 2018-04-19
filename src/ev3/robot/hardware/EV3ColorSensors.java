@@ -4,32 +4,49 @@
 
 package ev3.robot.hardware;
 
-import ev3.robot.ColorSensors;
-import lejos.hardware.sensor.EV3ColorSensor;
+import ev3.robot.Robot;
+import org.jetbrains.annotations.Contract;
 
 /**
- * Static class allowing access to color sensors
+ * class allowing access to ev3's color sensors
  */
-public final class EV3ColorSensors implements ColorSensors {
-    private static final EV3ColorSensor surfaceColorSensorLeft = new EV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE);
+public final class EV3ColorSensors implements Robot.ColorSensors {
+    private final CustomEV3ColorSensor surfaceLeft = new CustomEV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_LEFT);
+    private final CustomEV3ColorSensor surfaceRight = new CustomEV3ColorSensor(Ports.PORT_SENSOR_COLOR_SURFACE_RIGHT);
+    private final CustomEV3ColorSensor container = new CustomEV3ColorSensor(Ports.PORT_SENSOR_COLOR_BLOCKS);
+    private final CustomEV3ColorSensor boat = new CustomEV3ColorSensor(Ports.PORT_SENSOR_COLOR_BOAT);
+
+    @Override
+    public void setup() {
+        surfaceLeft.setup();
+        surfaceRight.setup();
+        container.setup();
+        boat.setup();
+    }
+
+    @Contract(pure = true)
+    @Override
+    public boolean isSetup() {
+        return surfaceLeft.isSetup() && surfaceRight.isSetup() && container.isSetup() && boat.isSetup();
+    }
 
     @Override
     public int getColorSurfaceLeft() {
-        return surfaceColorSensorLeft.getColorID();
+        return surfaceLeft.getColor();
     }
 
     @Override
     public int getColorSurfaceRight() {
-        return 0;
+        return surfaceRight.getColor();
     }
 
     @Override
     public int getColorContainer() {
-        return 0;
+        return container.getColor();
     }
 
     @Override
     public int getColorBoat() {
-        return 0;
+        return boat.getColor();
     }
 }

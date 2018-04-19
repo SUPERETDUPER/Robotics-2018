@@ -4,18 +4,21 @@
 
 package common.mapping;
 
+import common.Config;
+import lejos.robotics.geometry.Rectangle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class SurfaceMapTest {
+    private final SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
 
     @Test
     void getHeight() {
-        Assertions.assertEquals(SurfaceMap.getHeight(), 1143);
+        Assertions.assertEquals(surfaceMap.getImage().getHeight(), 1143);
     }
 
     @Test
     void getWidth() {
-        Assertions.assertEquals(SurfaceMap.getWidth(), 2362);
+        Assertions.assertEquals(surfaceMap.getImage().getWidth(), 2362);
     }
 }
