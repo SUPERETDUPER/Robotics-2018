@@ -7,6 +7,7 @@ package ev3.robot.hardware;
 import common.logger.Logger;
 import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
+import lejos.hardware.DeviceException;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +54,7 @@ public class EV3Robot implements Robot {
                         if (arm == null) {
                             arm = new EV3Arm();
                         }
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException| DeviceException  e) {
                         Logger.warning(LOG_TAG, "Could not create arm");
                     }
                 }
@@ -68,7 +69,7 @@ public class EV3Robot implements Robot {
                         if (paddle == null) {
                             paddle = new EV3Paddle();
                         }
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException| DeviceException  e) {
                         Logger.warning(LOG_TAG, "Could not create paddle");
                     }
                 }
@@ -85,7 +86,7 @@ public class EV3Robot implements Robot {
                                     new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT),
                                     new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT)
                             );
-                        } catch (IllegalArgumentException e) {
+                        } catch (IllegalArgumentException| DeviceException  e) {
                             Logger.warning(LOG_TAG, "Could not create chassis");
                         }
                     }
@@ -101,7 +102,7 @@ public class EV3Robot implements Robot {
                         if (distance == null) {
                             distance = new EV3DistanceSensor();
                         }
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException | DeviceException e) {
                         Logger.warning(LOG_TAG, "Could not create distance sensor");
                     }
                 }

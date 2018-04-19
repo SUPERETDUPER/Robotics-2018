@@ -5,6 +5,7 @@
 package ev3.robot.hardware;
 
 import common.logger.Logger;
+import lejos.hardware.DeviceException;
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
@@ -31,7 +32,7 @@ class CustomEV3ColorSensor {
                         try {
                             sampleProvider = new EV3ColorSensor(port).getColorIDMode();
                             sample = new float[sampleProvider.sampleSize()];
-                        } catch (IllegalArgumentException e) {
+                        } catch (IllegalArgumentException | DeviceException e) {
                             Logger.warning(LOG_TAG, "Could not create color sensor at port " + port.toString());
                         }
                     }
