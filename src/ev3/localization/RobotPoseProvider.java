@@ -4,8 +4,7 @@
 
 package ev3.localization;
 
-import common.mapping.SurfaceMapReading;
-import datagenerator.SurfaceMapReading;
+import common.mapping.MapDataReader;
 import common.particles.MCLData;
 import ev3.navigation.MyMovePilot;
 import ev3.navigation.Offset;
@@ -31,7 +30,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
 
     @NotNull
     private final MyMovePilot mp;
-    private final SurfaceMapReading surfaceMap;
+    private final MapDataReader surfaceMap;
     @NotNull
     private final ParticleSet data;
 
@@ -46,7 +45,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     @Nullable
     private Move completedMove;
 
-    public RobotPoseProvider(@NotNull SurfaceMapReading surfaceMap, @NotNull MyMovePilot pilot, Pose startingPose) {
+    public RobotPoseProvider(@NotNull MapDataReader surfaceMap, @NotNull MyMovePilot pilot, Pose startingPose) {
         this.surfaceMap = surfaceMap;
         this.mp = pilot;
         this.data = new ParticleSet(NUM_PARTICLES, surfaceMap, startingPose);

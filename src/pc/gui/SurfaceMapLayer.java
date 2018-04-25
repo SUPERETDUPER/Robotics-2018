@@ -4,7 +4,6 @@
 
 package pc.gui;
 
-import common.Config;
 import common.mapping.SurfaceMap;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,7 +14,7 @@ import java.awt.image.BufferedImage;
 
 class SurfaceMapLayer extends Layer {
 
-    private static final BufferedImage surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH).getImage();
+    private static final BufferedImage surfaceMap = new SurfaceMap().getImage();
 
     SurfaceMapLayer() {
         super(surfaceMap.getWidth(), surfaceMap.getHeight());

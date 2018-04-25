@@ -5,15 +5,12 @@
 package imageuploader;
 
 import common.Config;
-import common.logger.Logger;
 import lejos.hardware.Button;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Uploads an image to the EV3
@@ -23,13 +20,18 @@ class EV3 {
     private static final String LOG_TAG = EV3.class.getSimpleName();
 
     public static void main(String[] args) {
-        BufferedImage image = getBufferedImage();
+        List<String> data = null;
+        try {
+            data = getBufferedImage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        if (image == null) {
+        if (data == null) {
             return;
         }
 
-        File file = new File(Config.EV3_IMAGE_PATH);
+        File file = new File(Config.DATA_EV3_PATH);
         System.out.println("Create file");
 
         try {
@@ -40,7 +42,13 @@ class EV3 {
         }
 
         try {
-            ImageIO.write(image, "png", file);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            for (String line : data) {
+                writer.write(line);
+                writer.newLine();
+            }
+            writer.flush();
+            writer.close();
             System.out.println("Done");
         } catch (IOException e) {
             System.out.println("Failed to createImageOutputStream");
@@ -49,20 +57,24 @@ class EV3 {
         Button.ENTER.waitForPress();
     }
 
-    private static BufferedImage getBufferedImage() {
-        BufferedImage image;
+    private static List<String> getBufferedImage() throws IOException {
+        List<String> data = new ArrayList<>();
+
+
+        System.out.println("Waiting connection");
+        InputStream inputStream = new ServerSocket(Config.PORT_TO_CONNECT_ON_EV3).accept().getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        System.out.println("Connected. Reading Img");
 
         try {
-            System.out.println("Waiting connection");
-            InputStream inputStream = new ServerSocket(Config.PORT_TO_CONNECT_ON_EV3).accept().getInputStream();
-            System.out.println("Connected. Reading Img");
-            image = ImageIO.read(inputStream);
-            System.out.println("Got Image");
+            while (true) {
+                data.add(reader.readLine());
+            }
         } catch (IOException e) {
-            Logger.error(LOG_TAG, "Failed" + e);
-            return null;
+            System.out.println("Got Image");
         }
 
-        return image;
+
+        return data;
     }
 }

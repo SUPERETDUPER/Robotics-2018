@@ -4,8 +4,7 @@
 
 package ev3.localization;
 
-import common.mapping.SurfaceMapReading;
-import datagenerator.SurfaceMapReading;
+import common.mapping.MapDataReader;
 import ev3.navigation.Offset;
 import ev3.navigation.Readings;
 import lejos.robotics.geometry.Point;
@@ -18,11 +17,11 @@ import org.jetbrains.annotations.NotNull;
  * TODO Optimize checking for all pixels in area is inefficient
  */
 public class SurfaceReadings implements Readings {
-    private final SurfaceMapReading surfaceMap;
+    private final MapDataReader surfaceMap;
     private final float colorToMatch;
     private final Offset offset;
 
-    SurfaceReadings(SurfaceMapReading surfaceMap, float color, Offset offset) {
+    SurfaceReadings(MapDataReader surfaceMap, float color, Offset offset) {
         this.surfaceMap = surfaceMap;
         this.colorToMatch = color;
         this.offset = offset;

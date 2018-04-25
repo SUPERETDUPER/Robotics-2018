@@ -8,11 +8,7 @@ import common.Config;
 import common.logger.Logger;
 import lejos.utility.Delay;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -32,9 +28,12 @@ class PC {
         }
 
         try {
-            BufferedImage image = ImageIO.read(new File(Config.PC_IMAGE_PATH));
-            ImageIO.write(image, "png", outputStream);
-
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(Config.DATA_PC_PATH)));
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+            while (true) {
+                bufferedWriter.write(bufferedReader.readLine());
+                bufferedWriter.newLine();
+            }
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Failed");
         }

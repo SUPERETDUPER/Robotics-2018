@@ -4,15 +4,16 @@
 
 package common.mapping;
 
-import java.awt.*;
+import lejos.robotics.geometry.Point;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SurfaceMapReading {
+public class MapDataReader {
     private final float[][] values;
 
-    public SurfaceMapReading(String fileName) {
+    public MapDataReader(String fileName) {
         BufferedReader reader;
 
         try {
@@ -42,8 +43,8 @@ public class SurfaceMapReading {
         }
     }
 
-    public float getValue(Point point) {
-        return values[point.x][point.y];
+    public float getColorAtPoint(Point point) {
+        return values[(int) point.x][(int) point.y];
     }
 
     public boolean contains(Point point){

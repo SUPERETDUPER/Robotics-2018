@@ -4,7 +4,6 @@
 
 package datagenerator;
 
-import common.logger.Logger;
 import common.mapping.ColorJavaLejos;
 import common.mapping.SurfaceMap;
 import lejos.robotics.geometry.Point;
@@ -25,24 +24,34 @@ public class DataGenerator {
 
     private static final int SCAN_RADIUS = 10;
 
+    private static int width;
+    private static int height;
+
     public static void main(String[] args) {
         SurfaceMap surfaceMap = new SurfaceMap();
 
-        float[][] pixels = new float[surfaceMap.getImage().getWidth()][surfaceMap.getImage().getHeight()];
-        averageRed = new float[surfaceMap.getImage().getWidth()][surfaceMap.getImage().getHeight()];
+        width = surfaceMap.getImage().getWidth();
+        height = surfaceMap.getImage().getHeight();
 
-        for (int x = 1; x < pixels.length; x++) {
-            for (int y = 1; y < pixels[0].length; y++) {
-                pixels[x][y] = ColorJavaLejos.getLejosColor(new Color(surfaceMap.getImage().getRGB(x, (int) getInvertedY(y))));
+        //Save each pixel to a 2D array
+        float[][] pixels = new float[width][height];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                pixels[x][y] = ColorJavaLejos.getLejosColor(new Color(surfaceMap.getImage().getRGB(x, (int) getInvertedY(y)))); //Convert RGB to red value
             }
         }
 
-        for (int x = 1; x < pixels.length; x++) {
-            for (int y = 1; y < pixels[0].length; y++) {
+        //Calculate average value
+        averageRed = new float[width][height];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < pixels[0].length; y++) {
                 averageRed[x][y] = calculateAverageRed(pixels, x, y);
             }
         }
 
+        //Create a string with the data
         StringBuilder writeData = new StringBuilder();
 
         for (float[] row : averageRed) {
@@ -52,10 +61,16 @@ public class DataGenerator {
             writeData.append("\n");
         }
 
+        //Write the data to a file
         FileOutputStream outputStream;
 
         try {
-            outputStream = new FileOutputStream(new File("/data.txt"));
+            File file = new File("/data.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            outputStream = new FileOutputStream(file);
             outputStream.write(writeData.toString().getBytes());
         } catch (IOException e) {
             throw new RuntimeException("Unable to write to file");
@@ -70,16 +85,14 @@ public class DataGenerator {
 
     private static float calculateAverageRed(float[][] pixels, int centerX, int centerY) {
         float sum = 0;
-
         int counter = 0;
 
         //Loop through every pixel in the circle
         for (int x = centerX - SCAN_RADIUS; x <= centerX + SCAN_RADIUS; x++) {
             for (int y = centerY - SCAN_RADIUS; y <= centerY + SCAN_RADIUS; y++) {
-                if (new Point(centerX, centerY).distance(x, y) < SCAN_RADIUS && contains(new Point(x, y))) { //If (x,y) within circle
-                    counter++;
-
+                if (new Point(centerX, centerY).distance(x, y) < SCAN_RADIUS && contains(x, y)) { //If (x,y) within circle
                     sum += pixels[x][y];
+                    counter++;
                 }
             }
         }
@@ -87,12 +100,8 @@ public class DataGenerator {
         return sum / counter;
     }
 
-    private static boolean contains(Point point) {
-        return contains(point.x, point.y);
-    }
-
     private static boolean contains(float x, float y) {
-        return 0 < x && x < averageRed.length && 0 < y && y < averageRed[0].length;
+        return 0 <= x && x < width && 0 <= y && y < height;
     }
 
     /**
@@ -103,6 +112,6 @@ public class DataGenerator {
      */
     @Contract(pure = true)
     private static float getInvertedY(float y) {
-        return (averageRed[0].length - y);
+        return (height - 1 - y);
     }
 }

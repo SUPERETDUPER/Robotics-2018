@@ -4,7 +4,7 @@
 
 package ev3.robot.sim;
 
-import datagenerator.SurfaceMapReading;
+import common.mapping.MapDataReader;
 import ev3.navigation.Offset;
 import ev3.robot.Robot;
 import lejos.robotics.Color;
@@ -19,9 +19,9 @@ class SimColorSensors implements Robot.ColorSensors {
     @NotNull
     private final PoseProvider poseProvider;
     @NotNull
-    private final SurfaceMapReading surfaceMap;
+    private final MapDataReader surfaceMap;
 
-    SimColorSensors(@NotNull PoseProvider poseProvider, @NotNull SurfaceMapReading surfaceMap) {
+    SimColorSensors(@NotNull PoseProvider poseProvider, @NotNull MapDataReader surfaceMap) {
         this.poseProvider = poseProvider;
         this.surfaceMap = surfaceMap;
     }
