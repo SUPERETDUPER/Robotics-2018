@@ -8,7 +8,7 @@ import common.Config;
 import common.ConnectionUtil;
 import common.RunModes;
 import common.mapping.SurfaceMap;
-import common.mapping.SurfaceMapReading;
+import datagenerator.SurfaceMapReading;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
 import ev3.navigation.Controller;

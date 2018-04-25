@@ -4,7 +4,7 @@
 
 package ev3.navigation;
 
-import common.mapping.SurfaceMapReading;
+import datagenerator.SurfaceMapReading;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
 import lejos.robotics.RegulatedMotor;

@@ -4,7 +4,7 @@
 
 package ev3.robot.sim;
 
-import common.mapping.SurfaceMapReading;
+import datagenerator.SurfaceMapReading;
 import ev3.navigation.Offset;
 import ev3.robot.Robot;
 import lejos.robotics.Color;

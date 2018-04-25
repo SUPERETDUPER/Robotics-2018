@@ -18,10 +18,6 @@ public final class Config {
 
     public static final float SIM_SPEED_FACTOR = 1F; //How much the sim is slowed down
 
-    //Paths to map file
-    public static final String PC_IMAGE_PATH = "res/map.png";
-    public static final String EV3_IMAGE_PATH = "/map.png";
-
     public static final boolean SHOW_PARTICLE_TAILS = true; //Whether the GUI should show the particles heading with a "tail"
 
     public static final float GUI_DISPLAY_RATIO = 0.8F; //How much to zoom or shrink the display. To adjust based on screen size.
@@ -31,4 +27,5 @@ public final class Config {
     public static final LogTypes IMPORTANCE_TO_PRINT = LogTypes.DEBUG; //Sets the minimum priority the Logger should print
 
     public static final boolean WAIT_FOR_SENSORS = false; //Determines whether the program should start immediately or first create all the sensors
+    public static final String MAP_PATH = "/map.png";
 }

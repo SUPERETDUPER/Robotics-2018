@@ -5,6 +5,7 @@
 package ev3.localization;
 
 import common.mapping.SurfaceMapReading;
+import datagenerator.SurfaceMapReading;
 import ev3.navigation.Offset;
 import ev3.navigation.Readings;
 import lejos.robotics.geometry.Point;

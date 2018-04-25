@@ -2,7 +2,7 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package imageGenerator;
+package imagegenerator;
 
 import common.Config;
 import common.logger.Logger;
@@ -140,6 +140,6 @@ class ImageGenerator {
     }
 
     public static void main(String[] args) {
-        generateImage(Config.PC_IMAGE_PATH);
+        generateImage(Config.MAP_PATH);
     }
 }

@@ -8,7 +8,7 @@ import common.Config;
 import common.ConnectionUtil;
 import common.TransmittableType;
 import common.mapping.SurfaceMap;
-import common.mapping.SurfaceMapReading;
+import datagenerator.SurfaceMapReading;
 import common.particles.MCLData;
 import common.particles.Particle;
 import ev3.communication.PCDataSender;

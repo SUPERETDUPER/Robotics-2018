@@ -5,6 +5,7 @@
 package ev3.localization;
 
 import common.mapping.SurfaceMapReading;
+import datagenerator.SurfaceMapReading;
 import common.particles.MCLData;
 import ev3.navigation.MyMovePilot;
 import ev3.navigation.Offset;

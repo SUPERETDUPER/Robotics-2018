@@ -34,7 +34,7 @@ public class ColorJavaLejos {
         javaToLejosMap.put(Color.LIGHT_GRAY, 0.4F);
     }
 
-    static float getLejosColor(Color color) {
+    public static float getLejosColor(Color color) {
         return javaToLejosMap.get(color);
     }
 }

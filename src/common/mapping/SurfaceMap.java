@@ -4,6 +4,7 @@
 
 package common.mapping;
 
+import common.Config;
 import common.logger.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,9 +19,9 @@ public class SurfaceMap {
     @NotNull
     private final BufferedImage image;
 
-    public SurfaceMap(String filePath) {
+    public SurfaceMap() {
         try {
-            image = ImageIO.read(new File(filePath));
+            image = ImageIO.read(new File(Config.MAP_PATH));
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Unable to read picture");
             throw new RuntimeException(e.toString());

@@ -5,7 +5,7 @@
 package ev3.robot.sim;
 
 import common.logger.Logger;
-import common.mapping.SurfaceMapReading;
+import datagenerator.SurfaceMapReading;
 import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import lejos.robotics.chassis.Chassis;

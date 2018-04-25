@@ -5,6 +5,7 @@
 package ev3.localization;
 
 import common.mapping.SurfaceMapReading;
+import datagenerator.SurfaceMapReading;
 import common.particles.MCLData;
 import common.particles.Particle;
 import ev3.navigation.Readings;
