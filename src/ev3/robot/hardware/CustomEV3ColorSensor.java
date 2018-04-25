@@ -18,6 +18,7 @@ class CustomEV3ColorSensor {
     private Thread setupThread;
 
     private final Port port;
+    private EV3ColorSensor colorSensor;
 
     CustomEV3ColorSensor(Port port) {
         this.port = port;
@@ -28,10 +29,9 @@ class CustomEV3ColorSensor {
             @Override
             public synchronized void run() {
                 synchronized (CustomEV3ColorSensor.this) {
-                    if (sampleProvider == null) {
+                    if (colorSensor == null) {
                         try {
-                            sampleProvider = new EV3ColorSensor(port).getColorIDMode();
-                            sample = new float[sampleProvider.sampleSize()];
+                            colorSensor = new EV3ColorSensor(port);
                         } catch (IllegalArgumentException | DeviceException e) {
                             Logger.warning(LOG_TAG, "Could not create color sensor at port " + port.toString());
                         }
@@ -48,16 +48,36 @@ class CustomEV3ColorSensor {
     }
 
     int getColor() {
+        if (colorSensor == null) {
+            createSensor();
+        }
+
         if (sampleProvider == null) {
-            synchronized (this) {
-                if (sampleProvider == null) {
-                    sampleProvider = new EV3ColorSensor(port).getColorIDMode();
-                    sample = new float[sampleProvider.sampleSize()];
-                }
-            }
+            sampleProvider = colorSensor.getColorIDMode();
+            sample = new float[sampleProvider.sampleSize()];
         }
 
         sampleProvider.fetchSample(sample, 0);
         return (int) sample[0];
+    }
+
+    float getRed() {
+        if (colorSensor == null) {
+            createSensor();
+        }
+
+        if (sampleProvider == null) {
+            sampleProvider = colorSensor.getRedMode();
+            sample = new float[sampleProvider.sampleSize()];
+        }
+
+        sampleProvider.fetchSample(sample, 0);
+        return sample[0];
+    }
+
+    private synchronized void createSensor() {
+        if (colorSensor == null) {
+            colorSensor = new EV3ColorSensor(port);
+        }
     }
 }

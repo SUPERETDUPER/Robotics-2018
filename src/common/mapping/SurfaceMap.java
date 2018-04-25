@@ -24,6 +24,10 @@ public class SurfaceMap {
     @NotNull
     private final BufferedImage image;
 
+    private final float[][] averageRed;
+
+    private static final int SCAN_RADIUS = 10;
+
     /**
      * @param filePath file path of the map to read
      */
@@ -34,20 +38,57 @@ public class SurfaceMap {
             Logger.error(LOG_TAG, "Unable to read picture");
             throw new RuntimeException(e.toString());
         }
+
+        float[][] pixels = new float[image.getWidth()][image.getHeight()];
+        averageRed = new float[image.getWidth()][image.getHeight()];
+
+        for (int x = 1; x < pixels.length; x++) {
+            for (int y = 1; y < pixels[0].length; y++) {
+                pixels[x][y] = ColorJavaLejos.getLejosColor(new Color(image.getRGB(x, (int) getInvertedY(y))));
+            }
+        }
+
+        for (int x = 1; x < pixels.length; x++) {
+            for (int y = 1; y < pixels[0].length; y++) {
+                averageRed[x][y] = calculateAverageRed(pixels, x, y);
+            }
+        }
     }
 
-    public int getColorAtPoint(Point point) {
+    private float calculateAverageRed(float[][] pixels, int centerX, int centerY) {
+        float sum = 0;
+
+        int counter = 0;
+
+        //Loop through every pixel in the circle
+        for (int x = centerX - SCAN_RADIUS; x <= centerX + SCAN_RADIUS; x++) {
+            for (int y = centerY - SCAN_RADIUS; y <= centerY + SCAN_RADIUS; y++) {
+                if (new Point(centerX, centerY).distance(x, y) < SCAN_RADIUS && contains(new Point(x, y))) { //If (x,y) within circle
+                    counter++;
+
+                    sum += pixels[x][y];
+                }
+            }
+        }
+
+        return sum / counter;
+    }
+
+    public float getColorAtPoint(Point point) {
         try {
-            return ColorJavaLejos.getLejosColor(new Color(image.getRGB((int) point.x, (int) getInvertedY(point.y))));
+            return averageRed[(int) point.x][(int) point.y];
         } catch (IndexOutOfBoundsException e) {
             Logger.warning(LOG_TAG, "Can't get color. Out of bounds : x : " + point.x + ". y : " + point.y + " " + e);
             throw new RuntimeException(e);
-//            return lejos.robotics.Color.NONE;
         }
     }
 
     public boolean contains(Point point) {
-        return 0 < point.x && point.x < image.getWidth() && 0 < point.y && point.y < image.getHeight();
+        return contains(point.x, point.y);
+    }
+
+    private boolean contains(float x, float y) {
+        return 0 < x && x < averageRed.length && 0 < y && y < averageRed[0].length;
     }
 
     @Contract(pure = true)
@@ -64,6 +105,6 @@ public class SurfaceMap {
      */
     @Contract(pure = true)
     private float getInvertedY(float y) {
-        return (image.getHeight() - y);
+        return (averageRed[0].length - y);
     }
 }

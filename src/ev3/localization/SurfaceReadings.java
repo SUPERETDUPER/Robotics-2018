@@ -17,13 +17,11 @@ import org.jetbrains.annotations.NotNull;
  * TODO Optimize checking for all pixels in area is inefficient
  */
 public class SurfaceReadings implements Readings {
-    private static final int RADIUS = 10; //Area to check for
-
     private final SurfaceMap surfaceMap;
-    private final int colorToMatch;
+    private final float colorToMatch;
     private final Offset offset;
 
-    SurfaceReadings(SurfaceMap surfaceMap, int color, Offset offset) {
+    SurfaceReadings(SurfaceMap surfaceMap, float color, Offset offset) {
         this.surfaceMap = surfaceMap;
         this.colorToMatch = color;
         this.offset = offset;
@@ -36,24 +34,9 @@ public class SurfaceReadings implements Readings {
 
         if (!surfaceMap.contains(location)) return 0;
 
-        int totalPixels = 0;
-        int matchingPixels = 0;
+        if (colorToMatch == -1) return 0;
 
-        //Loop through every pixel in the circle
-        for (int x = (int) location.x - RADIUS; x <= location.x + RADIUS; x++) {
-            for (int y = (int) location.y - RADIUS; y <= location.y + RADIUS; y++) {
-                if (location.distance(x, y) < RADIUS && surfaceMap.contains(new Point(x, y))) { //If (x,y) within circle
-                    totalPixels++;
-
-                    if (surfaceMap.getColorAtPoint(new Point(x,y)) == colorToMatch) matchingPixels++;
-                }
-            }
-        }
-
-        if (totalPixels == 0) return 0;
-
-
-        return (float) matchingPixels / totalPixels; //Float cast required to get a decimal and not 0 or 1
+        return Util.bellCurveFunction(colorToMatch - surfaceMap.getColorAtPoint(location));
     }
 
     @NotNull

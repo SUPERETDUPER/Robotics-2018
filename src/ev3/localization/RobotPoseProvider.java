@@ -150,8 +150,8 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     final class Updater extends Thread {
         private final Robot.ColorSensors colorSensors;
 
-        private int previousLeftColor;
-        private int previousRightColor;
+        private float previousLeftColor;
+        private float previousRightColor;
 
         Updater(Robot.ColorSensors colorSensors) {
             super();
@@ -170,25 +170,8 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
             //noinspection InfiniteLoopStatement
             for (; ; Thread.yield()) {
                 if (mp.isMoving()) {
-                    int leftColor = colorSensors.getColorSurfaceLeft();
-
-                    if (leftColor != previousLeftColor) {
-                        RobotPoseProvider.this.update(
-                                new EdgeReadings(surfaceMap, previousLeftColor, leftColor, Offset.LEFT_COLOR_SENSOR)
-                        );
-
-                        previousLeftColor = leftColor;
-                    }
-
-                    int rightColor = colorSensors.getColorSurfaceRight();
-
-                    if (previousRightColor != rightColor) {
-                        RobotPoseProvider.this.update(
-                                new EdgeReadings(surfaceMap, previousRightColor, rightColor, Offset.RIGHT_COLOR_SENSOR)
-                        );
-
-                        previousRightColor = rightColor;
-                    }
+                    update(new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceLeft(), Offset.LEFT_COLOR_SENSOR));
+                    update(new SurfaceReadings(surfaceMap, colorSensors.getColorSurfaceRight(), Offset.RIGHT_COLOR_SENSOR));
                 }
             }
         }

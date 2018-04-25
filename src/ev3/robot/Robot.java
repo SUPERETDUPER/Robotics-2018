@@ -53,9 +53,9 @@ public interface Robot {
     }
 
     interface ColorSensors {
-        int getColorSurfaceLeft();
+        float getColorSurfaceLeft();
 
-        int getColorSurfaceRight();
+        float getColorSurfaceRight();
 
         int getColorContainer();
 

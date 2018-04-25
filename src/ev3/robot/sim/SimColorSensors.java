@@ -36,22 +36,22 @@ class SimColorSensors implements Robot.ColorSensors {
     }
 
     @Override
-    public int getColorSurfaceLeft() {
+    public float getColorSurfaceLeft() {
         Point currentPoint = Offset.LEFT_COLOR_SENSOR.offset(poseProvider.getPose());
         if (surfaceMap.contains(currentPoint)) {
             return surfaceMap.getColorAtPoint(currentPoint);
         } else {
-            return Color.NONE;
+            return -1;
         }
     }
 
     @Override
-    public int getColorSurfaceRight() {
+    public float getColorSurfaceRight() {
         Point currentPoint = Offset.RIGHT_COLOR_SENSOR.offset(poseProvider.getPose());
         if (surfaceMap.contains(currentPoint)) {
             return surfaceMap.getColorAtPoint(currentPoint);
         } else {
-            return Color.NONE;
+            return -1;
         }
     }
 

@@ -31,13 +31,13 @@ public final class EV3ColorSensors implements Robot.ColorSensors {
     }
 
     @Override
-    public int getColorSurfaceLeft() {
-        return surfaceLeft.getColor();
+    public float getColorSurfaceLeft() {
+        return surfaceLeft.getRed();
     }
 
     @Override
-    public int getColorSurfaceRight() {
-        return surfaceRight.getColor();
+    public float getColorSurfaceRight() {
+        return surfaceRight.getRed();
     }
 
     @Override
