@@ -8,6 +8,7 @@ import common.Config;
 import common.ConnectionUtil;
 import common.RunModes;
 import common.mapping.SurfaceMap;
+import common.mapping.SurfaceMapReading;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
 import ev3.navigation.Controller;
@@ -46,14 +47,14 @@ final class EV3Main {
         }
 
         //Builds either a sim or an ev3 robot depending on config
-        SurfaceMap surfaceMap;
+        SurfaceMapReading surfaceMap;
 
         if (Config.currentMode == RunModes.SIM) {
-            surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
+            surfaceMap = new SurfaceMapReading(new SurfaceMap(Config.PC_IMAGE_PATH));
             robot = new SimRobot(surfaceMap);
         } else {
             robot = new EV3Robot();
-            surfaceMap = new SurfaceMap(Config.EV3_IMAGE_PATH);
+            surfaceMap = new SurfaceMapReading(new SurfaceMap(Config.EV3_IMAGE_PATH));
         }
 
         robot.setup();

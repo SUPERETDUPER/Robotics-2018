@@ -8,6 +8,7 @@ import common.Config;
 import common.ConnectionUtil;
 import common.TransmittableType;
 import common.mapping.SurfaceMap;
+import common.mapping.SurfaceMapReading;
 import common.particles.MCLData;
 import common.particles.Particle;
 import ev3.communication.PCDataSender;
@@ -36,7 +37,8 @@ class SurfaceReadingsTest {
         ArrayList<Particle> particles = new ArrayList<>();
 
         SurfaceMap surfaceMap = new SurfaceMap(Config.PC_IMAGE_PATH);
-        SurfaceReadings readings = new SurfaceReadings(surfaceMap, Color.GREEN, new Offset(0, 0));
+        SurfaceMapReading surfaceMapReading = new SurfaceMapReading(surfaceMap);
+        SurfaceReadings readings = new SurfaceReadings(surfaceMapReading, Color.GREEN, new Offset(0, 0));
 
         for (int x = 0; x < surfaceMap.getImage().getWidth(); x += 10) {
             for (int y = 0; y < surfaceMap.getImage().getHeight(); y += 10) {

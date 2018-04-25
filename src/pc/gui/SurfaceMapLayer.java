@@ -6,6 +6,7 @@ package pc.gui;
 
 import common.Config;
 import common.mapping.SurfaceMap;
+import common.mapping.SurfaceMapReading;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.GraphicsContext;
 import org.jetbrains.annotations.NotNull;

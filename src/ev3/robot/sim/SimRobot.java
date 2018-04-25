@@ -5,7 +5,7 @@
 package ev3.robot.sim;
 
 import common.logger.Logger;
-import common.mapping.SurfaceMap;
+import common.mapping.SurfaceMapReading;
 import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import lejos.robotics.chassis.Chassis;
@@ -32,9 +32,9 @@ public class SimRobot implements Robot {
 
     private PoseProvider poseProvider;
     @NotNull
-    private final SurfaceMap surfaceMap;
+    private final SurfaceMapReading surfaceMap;
 
-    public SimRobot(@NotNull SurfaceMap surfaceMap) {
+    public SimRobot(@NotNull SurfaceMapReading surfaceMap) {
         this.surfaceMap = surfaceMap;
     }
 

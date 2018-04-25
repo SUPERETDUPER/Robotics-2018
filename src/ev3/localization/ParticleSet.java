@@ -4,7 +4,7 @@
 
 package ev3.localization;
 
-import common.mapping.SurfaceMap;
+import common.mapping.SurfaceMapReading;
 import common.particles.MCLData;
 import common.particles.Particle;
 import ev3.navigation.Readings;
@@ -25,9 +25,9 @@ class ParticleSet extends MCLData {
     private static final float STARTING_RADIUS_NOISE = 25;
     private static final float STARTING_HEADING_NOISE = 5;
 
-    private final SurfaceMap surfaceMap;
+    private final SurfaceMapReading surfaceMap;
 
-    ParticleSet(int numberOfParticles, SurfaceMap surfaceMap, @NotNull Pose currentPose) {
+    ParticleSet(int numberOfParticles, SurfaceMapReading surfaceMap, @NotNull Pose currentPose) {
         super(new Particle[numberOfParticles], currentPose);
         this.surfaceMap = surfaceMap;
         setPose(currentPose);

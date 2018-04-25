@@ -5,7 +5,6 @@
 package common.mapping;
 
 import common.Config;
-import lejos.robotics.geometry.Rectangle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

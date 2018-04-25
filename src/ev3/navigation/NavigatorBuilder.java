@@ -4,7 +4,7 @@
 
 package ev3.navigation;
 
-import common.mapping.SurfaceMap;
+import common.mapping.SurfaceMapReading;
 import ev3.communication.ComManager;
 import ev3.localization.RobotPoseProvider;
 import lejos.robotics.RegulatedMotor;
@@ -37,7 +37,7 @@ public class NavigatorBuilder {
         return pilot;
     }
 
-    public static PoseProvider buildPoseProvider(SurfaceMap surfaceMap, MyMovePilot pilot) {
+    public static PoseProvider buildPoseProvider(SurfaceMapReading surfaceMap, MyMovePilot pilot) {
         RobotPoseProvider poseProvider = new RobotPoseProvider(surfaceMap, pilot, STARTING_POSE);
 
         if (ComManager.getDataListener() != null) {
