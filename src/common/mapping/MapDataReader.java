@@ -5,6 +5,7 @@
 package common.mapping;
 
 import lejos.robotics.geometry.Point;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,6 +15,21 @@ public class MapDataReader {
     private final float[][] values;
 
     public MapDataReader(String fileName) {
+        BufferedReader reader = getReader(fileName);
+        List<String[]> stringValues = readFromReader(reader);
+        values = convertToValues(stringValues);
+    }
+
+    public float getColorAtPoint(Point point) {
+        return values[(int) point.y][(int) point.x];
+    }
+
+    public boolean contains(Point point) {
+        return 0 <= point.x && point.x < values[0].length && 0 <= point.y && point.y < values.length;
+    }
+
+    @NotNull
+    private static BufferedReader getReader(String fileName) {
         BufferedReader reader;
 
         try {
@@ -21,33 +37,37 @@ public class MapDataReader {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e.toString());
         }
+        return reader;
+    }
 
+    @NotNull
+    private static List<String[]> readFromReader(BufferedReader reader) {
         List<String[]> stringValues = new ArrayList<>();
 
         try {
-            while (true) {
-                String[] line = reader.readLine().split(",");
+            String line = reader.readLine();
 
-                stringValues.add(line);
+            while (line != null) {
+                String[] splitLine = line.split(",");
+                stringValues.add(splitLine);
+
+                line = reader.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return stringValues;
+    }
 
-        values = new float[stringValues.size()][stringValues.get(0).length];
+    private static float[][] convertToValues(@NotNull List<String[]> stringValues) {
+        float[][] values = new float[stringValues.size()][stringValues.get(0).length];
 
-        for (int x = 1; x < stringValues.size(); x++) {
-            for (int y = 0; y < stringValues.get(0).length; y++) {
-                values[x][y] = Float.valueOf(stringValues.get(x)[y]);
+        for (int y = 0; y < stringValues.size(); y++) {
+            for (int x = 0; x < stringValues.get(0).length; x++) {
+                values[y][x] = Float.valueOf(stringValues.get(y)[x]);
             }
         }
-    }
 
-    public float getColorAtPoint(Point point) {
-        return values[(int) point.x][(int) point.y];
-    }
-
-    public boolean contains(Point point){
-        return point.x >= 0 && point.x < values.length && point.y >=0 && point.y < values[0].length;
+        return values;
     }
 }

@@ -28,7 +28,8 @@ public final class Config {
 
     public static final boolean WAIT_FOR_SENSORS = false; //Determines whether the program should start immediately or first create all the sensors
 
+    //Paths to the map.png file and the mapData.txt file
     public static final String MAP_PATH = "res/map.png";
-    public static final String DATA_EV3_PATH = "res/data.txt";
-    public static final String DATA_PC_PATH = "/data.txt";
+    public static final String DATA_PC_PATH = "res/mapData.txt";
+    public static final String DATA_EV3_PATH = "/mapData.txt";
 }
