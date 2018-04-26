@@ -7,11 +7,7 @@ package ev3.navigation;
 
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
-import lejos.robotics.navigation.NavigationListener;
-import lejos.robotics.navigation.Waypoint;
-import lejos.robotics.navigation.WaypointListener;
-import lejos.robotics.navigation.Move;
-import lejos.robotics.navigation.ArcAlgorithms;
+import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,12 +42,12 @@ public class MyNavigator implements WaypointListener {
     @NotNull
     private final MyMovePilot _pilot;
     @NotNull
-    private PoseProvider poseProvider;
+    private final PoseProvider poseProvider;
     private Waypoint _destination;
-    private double _radius;
+    private final double _radius;
     private int _sequenceNr;
     @NotNull
-    private ArrayList<NavigationListener> _listeners = new ArrayList<>();
+    private final ArrayList<NavigationListener> _listeners = new ArrayList<>();
 
     /**
      * Allocates a Navigator object,  using pilot that implements the ArcMoveController interface.
@@ -83,7 +79,7 @@ public class MyNavigator implements WaypointListener {
      * Adds a NavigationListener that is informed when a the robot stops or
      * reaches a WayPoint.
      *
-     * @param listener the NavitationListener
+     * @param listener the NavigationListener
      */
     public void addNavigationListener(NavigationListener listener) {
         _listeners.add(listener);

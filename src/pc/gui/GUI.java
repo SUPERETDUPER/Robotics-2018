@@ -26,7 +26,7 @@ import java.util.Map;
  * Most of this class is static since there is no way to access the instance
  */
 public final class GUI extends Application {
-    private static final String LOG_TAG = GUI.class.getSimpleName();
+    // --Commented out by Inspection (25/04/18 8:37 PM):private static final String LOG_TAG = GUI.class.getSimpleName();
 
     //Layers that are updated by the DataReceivedListener
     @NotNull

@@ -13,7 +13,7 @@ import lejos.robotics.navigation.Pose;
 import org.jetbrains.annotations.NotNull;
 
 class Util {
-    private static final String LOG_TAG = Util.class.getSimpleName();
+    // --Commented out by Inspection (25/04/18 8:39 PM):private static final String LOG_TAG = Util.class.getSimpleName();
 
     private static final int LENGTH_OF_TAIL = 5;
     private static final int RADIUS = 3;

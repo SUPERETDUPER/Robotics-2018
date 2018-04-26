@@ -25,10 +25,12 @@ class ParticleSet extends MCLData {
     private static final float STARTING_RADIUS_NOISE = 25;
     private static final float STARTING_HEADING_NOISE = 5;
 
+    private static final int NUM_PARTICLES = 100; //TODO Find optimal value
+
     private final MapDataReader surfaceMap;
 
-    ParticleSet(int numberOfParticles, MapDataReader surfaceMap, @NotNull Pose currentPose) {
-        super(new Particle[numberOfParticles], currentPose);
+    ParticleSet(MapDataReader surfaceMap, @NotNull Pose currentPose) {
+        super(new Particle[NUM_PARTICLES], currentPose);
         this.surfaceMap = surfaceMap;
         setPose(currentPose);
     }

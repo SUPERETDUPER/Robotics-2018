@@ -19,8 +19,8 @@ import java.io.IOException;
 /**
  * Reads the colors from the map image
  */
-public class DataGenerator {
-    private static final String LOG_TAG = DataGenerator.class.getSimpleName();
+class DataGenerator {
+    // --Commented out by Inspection (25/04/18 8:37 PM):private static final String LOG_TAG = DataGenerator.class.getSimpleName();
 
     private static final int SCAN_RADIUS = 10;
 

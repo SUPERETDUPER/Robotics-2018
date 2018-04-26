@@ -16,7 +16,7 @@ import java.nio.file.Files;
  * Not pretty but works
  */
 class PC {
-    private static final String LOG_TAG = PC.class.getSimpleName();
+    // --Commented out by Inspection (25/04/18 8:38 PM):private static final String LOG_TAG = PC.class.getSimpleName();
 
     public static void main(String[] args) {
         try {

@@ -19,7 +19,7 @@ import java.io.OutputStream;
  * Used Singleton because should be accessible no matter what
  */
 public class ComManager {
-    private static final String LOG_TAG = ComManager.class.getSimpleName();
+    // --Commented out by Inspection (25/04/18 8:37 PM):private static final String LOG_TAG = ComManager.class.getSimpleName();
 
     //Used to send the data
     @Nullable

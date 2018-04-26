@@ -26,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 public class RobotPoseProvider implements MoveListener, PoseProvider {
     //    private static final String LOG_TAG = RobotPoseProvider.class.getSimpleName();
 
-    private static final int NUM_PARTICLES = 100; //TODO Find optimal value
-
     @NotNull
     private final MyMovePilot mp;
     private final MapDataReader surfaceMap;
@@ -48,7 +46,7 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     public RobotPoseProvider(@NotNull MapDataReader surfaceMap, @NotNull MyMovePilot pilot, Pose startingPose) {
         this.surfaceMap = surfaceMap;
         this.mp = pilot;
-        this.data = new ParticleSet(NUM_PARTICLES, surfaceMap, startingPose);
+        this.data = new ParticleSet(surfaceMap, startingPose);
 
         mp.addMoveListener(this);
 
@@ -150,16 +148,10 @@ public class RobotPoseProvider implements MoveListener, PoseProvider {
     final class Updater extends Thread {
         private final Robot.ColorSensors colorSensors;
 
-        private float previousLeftColor;
-        private float previousRightColor;
-
         Updater(Robot.ColorSensors colorSensors) {
             super();
 
             this.colorSensors = colorSensors;
-
-            this.previousLeftColor = colorSensors.getColorSurfaceLeft();
-            this.previousRightColor = colorSensors.getColorSurfaceRight();
 
             this.setDaemon(true);
             this.setName(Updater.class.getSimpleName());

@@ -20,7 +20,7 @@ import ev3.robot.sim.SimRobot;
 import lejos.robotics.localization.PoseProvider;
 
 final class EV3Main {
-    private static final String LOG_TAG = EV3Main.class.getSimpleName();
+    // --Commented out by Inspection (25/04/18 8:37 PM):private static final String LOG_TAG = EV3Main.class.getSimpleName();
 
     private static Robot robot;
     private static Controller controller;

@@ -29,7 +29,7 @@ public final class MapOperations {
 
     public static final Waypoint BOAT_ONE = new Waypoint(450, 100);
     public static final Waypoint BOAT_TWO = new Waypoint(450, 300);
-    public static final Waypoint BOAT_THREE = new Waypoint(450, 500);
+    private static final Waypoint BOAT_THREE = new Waypoint(450, 500);
 
     private final PoseProvider poseProvider;
 
