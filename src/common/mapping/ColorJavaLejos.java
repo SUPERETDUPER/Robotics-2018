@@ -24,6 +24,7 @@ public class ColorJavaLejos {
     public static final Color MAP_BLUE = new Color(0, 117, 191);
     public static final Color MAP_YELLOW = new Color(255, 205, 3);
 
+    //TODO Put in real values
     static {
         javaToLejosMap.put(MAP_RED, 0.85F);
         javaToLejosMap.put(MAP_GREEN, 0.6F);

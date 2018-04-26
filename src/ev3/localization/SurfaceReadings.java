@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The probability of getting this color reading from a certain pose is calculated as being :
  * The percentage of colors matching the reading in the poses region.
- * TODO Optimize checking for all pixels in area is inefficient
  */
 public class SurfaceReadings implements Readings {
     private final MapDataReader surfaceMap;

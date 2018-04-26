@@ -28,11 +28,11 @@ class SimBrick implements Robot.Brick {
 
     @Override
     public void beep() {
-        //TODO
+        Logger.info(LOG_TAG, "Beeping");
     }
 
     @Override
     public void buzz() {
-        //TODO
+        Logger.info(LOG_TAG, "Buzzing");
     }
 }
