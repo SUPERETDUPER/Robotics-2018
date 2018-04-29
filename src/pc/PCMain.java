@@ -6,7 +6,6 @@ package pc;
 
 import common.Config;
 import common.ConnectionUtil;
-import common.RunModes;
 import common.logger.Logger;
 
 public final class PCMain {
@@ -14,7 +13,7 @@ public final class PCMain {
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 
     public static void main(final String[] args) {
-        if (Config.currentMode == RunModes.SOLO) {
+        if (!Config.sendLogToPC) {
             Logger.error(LOG_TAG, "No PC required in mode solo");
             return;
         }

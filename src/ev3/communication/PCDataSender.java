@@ -14,48 +14,30 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-final class PCDataSender {
-    interface LostConnectionListener {
-        void lostConnection();
-    }
-
-
+public final class PCDataSender {
     private static final String LOG_TAG = PCDataSender.class.getSimpleName();
 
     @NotNull
     private final DataOutputStream dos;
 
-    @Nullable
-    private LostConnectionListener lostConnectionListener;
-
-    PCDataSender(@NotNull OutputStream outputStream) {
+    public PCDataSender(@NotNull OutputStream outputStream) {
         dos = new DataOutputStream(outputStream);
     }
 
-    void sendLogMessage(LogMessage message) {
+    public void sendLogMessage(LogMessage message) {
         try {
             message.dumpObject(dos);
             dos.flush();
         } catch (IOException e) {
-            if (lostConnectionListener != null) {
-                lostConnectionListener.lostConnection();
+            message.printToSysOut("");
+
+            try {
+                dos.close();
+            } catch (IOException ioe) {
+                Logger.error(LOG_TAG, "Could not close data output stream : " + ioe);
             }
 
-            close();
-
-            Logger.error(LOG_TAG, "Lost connection");
-        }
-    }
-
-    void setOnLostConnection(@Nullable LostConnectionListener lostConnectionListener) {
-        this.lostConnectionListener = lostConnectionListener;
-    }
-
-    void close() {
-        try {
-            dos.close();
-        } catch (IOException e) {
-            Logger.error(LOG_TAG, "Could not close data output stream");
+            Logger.error(LOG_TAG, "Lost connection: " + e);
         }
     }
 }

@@ -6,8 +6,10 @@ package ev3;
 
 import common.Config;
 import common.ConnectionUtil;
-import common.RunModes;
-import ev3.communication.ComManager;
+import common.logger.LogMessage;
+import common.logger.LogMessageListener;
+import common.logger.Logger;
+import ev3.communication.PCDataSender;
 import ev3.robot.EV3Robot;
 
 final class EV3Main {
@@ -27,25 +29,33 @@ final class EV3Main {
     }
 
     private static void initialize() {
-        //Connect to PC unless in SOLO
-        if (Config.currentMode == RunModes.DEBUG) {
-            ComManager.enable(
-                    ConnectionUtil.createOutputStream(
-                            ConnectionUtil.createServerSocket(Config.PORT_TO_CONNECT_ON_EV3))
-            );
+        //Connect to PC and send log messages
+        if (Config.sendLogToPC) {
+            final PCDataSender dataSender = new PCDataSender(ConnectionUtil.createOutputStream(
+                    ConnectionUtil.createServerSocket(Config.PORT_TO_CONNECT_ON_EV3)
+            ));
+
+            Logger.setListener(new LogMessageListener() {
+                @Override
+                public void notifyLogMessage(LogMessage logMessage) {
+                    dataSender.sendLogMessage(logMessage);
+                }
+            });
         }
 
 
         robot = new EV3Robot();
+
         robot.setup();
 
         //Waits for all the sensors to load
         if (Config.WAIT_FOR_SENSORS) {
             while (!robot.isSetup()) Thread.yield();
-            robot.getBrick().beep();
         }
 
         controller = new Controller(robot);
+
+        robot.getBrick().beep();
     }
 
     private static void runMain() {
@@ -53,6 +63,5 @@ final class EV3Main {
     }
 
     private static void cleanUp() {
-        ComManager.stop();
     }
 }
