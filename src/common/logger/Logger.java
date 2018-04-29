@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
  * Called throughout the program to print log message
  * Prints the log message to System.out unless a listener is set in which case log messages get sent to the listener
  */
-public final class Logger {
+public final class
+Logger {
     //Constants to make messages colorful
     private static final String ANSI_BLACK = "[30m";
     private static final String ANSI_BRIGHT_RED = "[1;31m";

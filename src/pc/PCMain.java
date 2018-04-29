@@ -8,9 +8,6 @@ import common.Config;
 import common.ConnectionUtil;
 import common.RunModes;
 import common.logger.Logger;
-import javafx.event.EventHandler;
-import javafx.stage.WindowEvent;
-import pc.gui.GUI;
 
 public final class PCMain {
 
@@ -26,19 +23,9 @@ public final class PCMain {
                 ConnectionUtil.getInputStream(
                         ConnectionUtil.createClientSocket(
                                 Config.PORT_TO_CONNECT_ON_EV3,
-                                Config.currentMode == RunModes.SIM ? "localhost" : Config.EV3_IP_ADDRESS
+                                Config.EV3_IP_ADDRESS
                         )
-                ),
-                GUI.listener
-        );
-
-        GUI.launchGUI(
-                new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent event) {
-                        dataReceiver.stop();
-                    }
-                }
+                )
         );
 
         dataReceiver.read();

@@ -5,11 +5,10 @@
 package ev3.robot.hardware;
 
 import common.logger.Logger;
-import ev3.navigation.NavigatorBuilder;
 import ev3.robot.Robot;
 import lejos.hardware.DeviceException;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.robotics.chassis.Chassis;
+import lejos.robotics.RegulatedMotor;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -23,26 +22,21 @@ public class EV3Robot implements Robot {
     private final EV3ColorSensors colorSensors = new EV3ColorSensors();
     private final EV3Brick brick = new EV3Brick();
 
+    private volatile EV3LargeRegulatedMotor leftMotor;
+    private volatile EV3LargeRegulatedMotor rightMotor;
+
     @Nullable
     private volatile EV3Arm arm;
-    @Nullable
-    private volatile EV3Paddle paddle;
-    @Nullable
-    private volatile Chassis chassis;
-    @Nullable
-    private volatile EV3DistanceSensor distance;
 
     //Used by the synchronised blocks
     private final Object armLock = new Object();
-    private final Object chassisLock = new Object();
-    private final Object paddleLock = new Object();
-    private final Object distanceLock = new Object();
+    private final Object leftMotorLock = new Object();
+    private final Object rightMotorLock = new Object();
 
     //Used by the setup() method and the isSetup() method
     private Thread armCreatorThread;
-    private Thread paddleCreatorThread;
-    private Thread chassisCreatorThread;
-    private Thread distanceCreatorThread;
+    private Thread leftMotorCreatorThread;
+    private Thread rightMotorCreatorThread;
 
     @Override
     public void setup() {
@@ -54,74 +48,55 @@ public class EV3Robot implements Robot {
                         if (arm == null) {
                             arm = new EV3Arm();
                         }
-                    } catch (IllegalArgumentException| DeviceException  e) {
+                    } catch (IllegalArgumentException | DeviceException e) {
                         Logger.warning(LOG_TAG, "Could not create arm");
                     }
                 }
             }
         };
 
-        paddleCreatorThread = new Thread() {
+        leftMotorCreatorThread = new Thread() {
             @Override
             public void run() {
-                synchronized (paddleLock) {
+                synchronized (leftMotorLock) {
                     try {
-                        if (paddle == null) {
-                            paddle = new EV3Paddle();
-                        }
-                    } catch (IllegalArgumentException| DeviceException  e) {
-                        Logger.warning(LOG_TAG, "Could not create paddle");
-                    }
-                }
-            }
-        };
-
-        chassisCreatorThread = new Thread() {
-            @Override
-            public void run() {
-                synchronized (chassisLock) {
-                    if (chassis == null) {
-                        try {
-                            chassis = NavigatorBuilder.buildChassis(
-                                    new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT),
-                                    new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT)
-                            );
-                        } catch (IllegalArgumentException| DeviceException  e) {
-                            Logger.warning(LOG_TAG, "Could not create chassis");
-                        }
-                    }
-                }
-            }
-        };
-
-        distanceCreatorThread = new Thread() {
-            @Override
-            public void run() {
-                synchronized (distanceLock) {
-                    try {
-                        if (distance == null) {
-                            distance = new EV3DistanceSensor();
+                        if (leftMotor == null) {
+                            leftMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT);
                         }
                     } catch (IllegalArgumentException | DeviceException e) {
-                        Logger.warning(LOG_TAG, "Could not create distance sensor");
+                        Logger.warning(LOG_TAG, "Could not create arm");
                     }
                 }
             }
         };
 
+        rightMotorCreatorThread = new Thread() {
+            @Override
+            public void run() {
+                synchronized (rightMotorLock) {
+                    try {
+                        if (rightMotor == null) {
+                            rightMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT);
+                        }
+                    } catch (IllegalArgumentException | DeviceException e) {
+                        Logger.warning(LOG_TAG, "Could not create arm");
+                    }
+                }
+            }
+        };
+
+
         armCreatorThread.start();
-        paddleCreatorThread.start();
-        chassisCreatorThread.start();
-        distanceCreatorThread.start();
+        leftMotorCreatorThread.start();
+        rightMotorCreatorThread.start();
         colorSensors.setup();
     }
 
     @Override
     public boolean isSetup() {
-        return !(paddleCreatorThread.isAlive() ||
-                chassisCreatorThread.isAlive() ||
-                armCreatorThread.isAlive() ||
-                distanceCreatorThread.isAlive() ||
+        return !(armCreatorThread.isAlive() ||
+                leftMotorCreatorThread.isAlive() ||
+                rightMotorCreatorThread.isAlive() ||
                 !colorSensors.isSetup());
     }
 
@@ -139,48 +114,6 @@ public class EV3Robot implements Robot {
     }
 
     @Override
-    public Chassis getChassis() {
-        if (chassis == null) {
-            synchronized (chassisLock) {
-                if (chassis == null) {
-                    chassis = NavigatorBuilder.buildChassis(
-                            new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT),
-                            new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT)
-                    );
-                }
-            }
-        }
-
-        return chassis;
-    }
-
-    @Override
-    public Paddle getPaddle() {
-        if (paddle == null) {
-            synchronized (paddleLock) {
-                if (paddle == null) {
-                    paddle = new EV3Paddle();
-                }
-            }
-        }
-
-        return paddle;
-    }
-
-    @Override
-    @Nullable
-    public EV3DistanceSensor getDistanceSensor() {
-        if (distance == null) {
-            synchronized (distanceLock) {
-                if (distance == null) {
-                    distance = new EV3DistanceSensor();
-                }
-            }
-        }
-        return distance;
-    }
-
-    @Override
     public ColorSensors getColorSensors() {
         return colorSensors;
     }
@@ -188,5 +121,31 @@ public class EV3Robot implements Robot {
     @Override
     public Brick getBrick() {
         return brick;
+    }
+
+    @Override
+    public RegulatedMotor getLeftMotor() {
+        if (leftMotor == null) {
+            synchronized (leftMotorLock) {
+                if (leftMotor == null) {
+                    leftMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT);
+                }
+            }
+        }
+
+        return leftMotor;
+    }
+
+    @Override
+    public RegulatedMotor getRightMotor() {
+        if (rightMotor == null) {
+            synchronized (rightMotorLock) {
+                if (rightMotor == null) {
+                    rightMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT);
+                }
+            }
+        }
+
+        return rightMotor;
     }
 }

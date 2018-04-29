@@ -4,7 +4,6 @@
 
 package pc;
 
-import common.TransmittableType;
 import common.logger.LogMessage;
 import common.logger.Logger;
 
@@ -15,46 +14,31 @@ import java.io.InputStream;
 /**
  * Takes data from an input stream, parses it and then notifies the listener
  */
-public class DataReceiver {
+class DataReceiver {
     private static final String LOG_TAG = DataReceiver.class.getSimpleName();
 
     private final DataInputStream dis;
-    private final DataReceivedListener listenerToNotify;
 
-    private boolean shouldRun = true;
-
-    public DataReceiver(InputStream inputStream, DataReceivedListener listenerToNotify) {
+    DataReceiver(InputStream inputStream) {
         this.dis = new DataInputStream(inputStream);
-        this.listenerToNotify = listenerToNotify;
     }
 
     /**
      * Listen for data
      */
-    public synchronized void read() {
+    synchronized void read() {
         try {
             //noinspection InfiniteLoopStatement
-            while (shouldRun) {
-                TransmittableType dataType = TransmittableType.values()[dis.readByte()];
-
-                if (dataType == TransmittableType.LOG) {
-                    LogMessage logMessage = new LogMessage();
-                    logMessage.loadObject(dis);
-                    logMessage.printToSysOut("From EV3 : ");
-                    continue;
-                }
-
-                listenerToNotify.dataReceived(dataType, dis);
+            while (true) {
+                LogMessage logMessage = new LogMessage();
+                logMessage.loadObject(dis);
+                logMessage.printToSysOut("From EV3 : ");
             }
         } catch (IOException e) {
             Logger.warning(LOG_TAG, "Connection lost. Could not read input stream");
         } finally {
             close();
         }
-    }
-
-    public void stop() {
-        shouldRun = false;
     }
 
     /**
@@ -66,16 +50,5 @@ public class DataReceiver {
         } catch (IOException e) {
             Logger.error(LOG_TAG, "Failed closing socket or dis " + e);
         }
-    }
-
-    public interface DataReceivedListener {
-        /**
-         * Called when the data has changed
-         *
-         * @param event the type of new data
-         * @param dis   the data input stream to read from
-         * @throws IOException thrown when reading from dataInputStream
-         */
-        void dataReceived(TransmittableType event, DataInputStream dis) throws IOException;
     }
 }

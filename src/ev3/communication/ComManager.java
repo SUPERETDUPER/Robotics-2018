@@ -4,7 +4,9 @@
 
 package ev3.communication;
 
-import common.TransmittableType;
+import common.logger.LogMessage;
+import common.logger.LogMessageListener;
+import common.logger.Logger;
 import lejos.robotics.Transmittable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -23,27 +25,27 @@ public class ComManager {
 
     //Used to send the data
     @Nullable
-    private static DataSender dataSender;
-
-    //Monitors for data
-    @Nullable
-    private static DataListener dataListener;
+    private static PCDataSender dataSender;
 
     /**
      * Setups the object. If not called ComManager does nothing.
      */
-    public static void enable(OutputStream outputStream, boolean shouldListenForLogs) {
+    public static void enable(OutputStream outputStream) {
         dataSender = new PCDataSender(outputStream);
 
-        dataSender.setOnLostConnection(new DataSender.LostConnectionListener() {
+        dataSender.setOnLostConnection(new PCDataSender.LostConnectionListener() {
             @Override
             public void lostConnection() {
                 stop();
             }
         });
 
-        dataListener = new DataListener(dataSender);
-        dataListener.startListening(shouldListenForLogs);
+        Logger.setListener(new LogMessageListener() {
+            @Override
+            public void notifyLogMessage(LogMessage logMessage) {
+                dataSender.sendLogMessage(logMessage);
+            }
+        });
     }
 
     /**
@@ -51,29 +53,9 @@ public class ComManager {
      */
     public static void stop() {
         if (dataSender != null) {
+            Logger.removeListener();
             dataSender.close();
             dataSender = null;
         }
-
-        if (dataListener != null) {
-            dataListener.stopListening();
-            dataListener = null;
-        }
     }
-
-    /**
-     * Called to send data
-     */
-    public static synchronized void sendTransmittable(TransmittableType type, Transmittable transmittable) {
-        if (dataSender != null) {
-            dataSender.sendTransmittable(type, transmittable);
-        }
-    }
-
-    @Contract(pure = true)
-    @Nullable
-    public static DataListener getDataListener() {
-        return dataListener;
-    }
-
 }

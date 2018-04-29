@@ -4,6 +4,7 @@
 
 package ev3.robot;
 
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.chassis.Chassis;
 
 /**
@@ -12,15 +13,12 @@ import lejos.robotics.chassis.Chassis;
 public interface Robot {
     Arm getArm();
 
-    Chassis getChassis();
-
-    Paddle getPaddle();
+    RegulatedMotor getLeftMotor();
+    RegulatedMotor getRightMotor();
 
     ColorSensors getColorSensors();
 
     Brick getBrick();
-
-    DistanceSensor getDistanceSensor();
 
     /**
      * Sets up all the sensors in a background thread since this can take time
@@ -33,15 +31,8 @@ public interface Robot {
     boolean isSetup();
 
     interface Arm {
-        void goToBoat(boolean immediateReturn);
-
-        void goToFoodIn(boolean immediateReturn);
-
-        void goToFoodOut(boolean immediateReturn);
-
-        void goToFoodHanging(boolean immediateReturn);
-
-        void goToTempReg(boolean immediateReturn);
+        void drop();
+        void raise();
     }
 
     interface Brick {
@@ -64,15 +55,5 @@ public interface Robot {
         void setup();
 
         boolean isSetup();
-    }
-
-    interface Paddle {
-        void move(boolean immediateReturn);
-
-        void hitBlock(boolean immediateReturn);
-    }
-
-    interface DistanceSensor {
-        float getDistance();
     }
 }

@@ -4,7 +4,7 @@
 
 package ev3.communication;
 
-import common.TransmittableType;
+import common.logger.LogMessage;
 import common.logger.Logger;
 import lejos.robotics.Transmittable;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public final class PCDataSender implements DataSender {
+final class PCDataSender {
+    interface LostConnectionListener {
+        void lostConnection();
+    }
+
+
     private static final String LOG_TAG = PCDataSender.class.getSimpleName();
 
     @NotNull
@@ -23,14 +28,13 @@ public final class PCDataSender implements DataSender {
     @Nullable
     private LostConnectionListener lostConnectionListener;
 
-    public PCDataSender(@NotNull OutputStream outputStream) {
+    PCDataSender(@NotNull OutputStream outputStream) {
         dos = new DataOutputStream(outputStream);
     }
 
-    public synchronized void sendTransmittable(@NotNull TransmittableType eventType, @NotNull Transmittable transmittable) {
+    void sendLogMessage(LogMessage message) {
         try {
-            dos.writeByte(eventType.ordinal());
-            transmittable.dumpObject(dos);
+            message.dumpObject(dos);
             dos.flush();
         } catch (IOException e) {
             if (lostConnectionListener != null) {
@@ -43,12 +47,11 @@ public final class PCDataSender implements DataSender {
         }
     }
 
-    public void setOnLostConnection(@Nullable LostConnectionListener lostConnectionListener) {
+    void setOnLostConnection(@Nullable LostConnectionListener lostConnectionListener) {
         this.lostConnectionListener = lostConnectionListener;
     }
 
-    @Override
-    public void close() {
+    void close() {
         try {
             dos.close();
         } catch (IOException e) {

@@ -14,7 +14,7 @@ public final class Config {
     /**
      * The current mode to run in. (See {@link RunModes})
      **/
-    public static final RunModes currentMode = RunModes.SIM;
+    public static final RunModes currentMode = RunModes.DEBUG;
 
     public static final float SIM_SPEED_FACTOR = 1F; //How much the sim is slowed down
 

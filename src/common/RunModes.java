@@ -12,6 +12,5 @@ package common;
  */
 public enum RunModes {
     SOLO,
-    DUAL,
-    SIM
+    DEBUG
 }
