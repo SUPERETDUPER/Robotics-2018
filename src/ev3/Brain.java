@@ -21,6 +21,6 @@ class Brain {
     }
 
     void start() {
-        controller.followLineLeft();
+        controller.followLine(true, 3);
     }
 }
