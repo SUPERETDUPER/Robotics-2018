@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Sim" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
-    <toRun type="Application" name="EV3-SIM" />
-    <toRun type="Application" name="PC" />
-    <method />
-  </configuration>
-</component>
