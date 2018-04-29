@@ -4,9 +4,7 @@
 
 package ev3;
 
-import common.logger.Logger;
-import ev3.robot.Robot;
-import lejos.robotics.Color;
+import ev3.robot.EV3Robot;
 
 /**
  * Specifies the sequence of actions the robot should do to win the competition !
@@ -14,9 +12,9 @@ import lejos.robotics.Color;
 class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
-    private final Robot robot;
+    private final EV3Robot robot;
 
-    Brain(Robot robot) {
+    Brain(EV3Robot robot) {
         this.robot = robot;
     }
 

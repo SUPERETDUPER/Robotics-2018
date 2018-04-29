@@ -8,13 +8,12 @@ import common.Config;
 import common.ConnectionUtil;
 import common.RunModes;
 import ev3.communication.ComManager;
-import ev3.robot.Robot;
-import ev3.robot.hardware.EV3Robot;
+import ev3.robot.EV3Robot;
 
 final class EV3Main {
     // --Commented out by Inspection (25/04/18 8:37 PM):private static final String LOG_TAG = EV3Main.class.getSimpleName();
 
-    private static Robot robot;
+    private static EV3Robot robot;
 
     public static void main(String[] args) {
         initialize();

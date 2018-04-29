@@ -4,13 +4,12 @@
 
 package ev3;
 
-import ev3.robot.Robot;
-import lejos.robotics.RegulatedMotor;
+import ev3.robot.EV3Robot;
 
 public class Controller {
-    private final Robot robot;
+    private final EV3Robot robot;
 
-    public Controller(Robot robot) {
+    public Controller(EV3Robot robot) {
         this.robot = robot;
     }
 
