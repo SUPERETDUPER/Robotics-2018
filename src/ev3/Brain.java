@@ -13,12 +13,14 @@ class Brain {
     private static final String LOG_TAG = Brain.class.getSimpleName();
 
     private final EV3Robot robot;
+    private final Controller controller;
 
-    Brain(EV3Robot robot) {
+    Brain(EV3Robot robot, Controller controller) {
         this.robot = robot;
+        this.controller = controller;
     }
 
     void start() {
-
+        controller.followLineLeft();
     }
 }

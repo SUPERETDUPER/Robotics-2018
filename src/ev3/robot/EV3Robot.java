@@ -60,7 +60,7 @@ public class EV3Robot  {
                 synchronized (leftMotorLock) {
                     try {
                         if (leftMotor == null) {
-                            leftMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT);
+                            leftMotor = new EV3LargeRegulatedMotor(Ports.MOTOR_LEFT);
                         }
                     } catch (IllegalArgumentException | DeviceException e) {
                         Logger.warning(LOG_TAG, "Could not create arm");
@@ -75,7 +75,7 @@ public class EV3Robot  {
                 synchronized (rightMotorLock) {
                     try {
                         if (rightMotor == null) {
-                            rightMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT);
+                            rightMotor = new EV3LargeRegulatedMotor(Ports.MOTOR_RIGHT);
                         }
                     } catch (IllegalArgumentException | DeviceException e) {
                         Logger.warning(LOG_TAG, "Could not create arm");
@@ -124,7 +124,7 @@ public class EV3Robot  {
         if (leftMotor == null) {
             synchronized (leftMotorLock) {
                 if (leftMotor == null) {
-                    leftMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_LEFT);
+                    leftMotor = new EV3LargeRegulatedMotor(Ports.MOTOR_LEFT);
                 }
             }
         }
@@ -136,7 +136,7 @@ public class EV3Robot  {
         if (rightMotor == null) {
             synchronized (rightMotorLock) {
                 if (rightMotor == null) {
-                    rightMotor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_RIGHT);
+                    rightMotor = new EV3LargeRegulatedMotor(Ports.MOTOR_RIGHT);
                 }
             }
         }

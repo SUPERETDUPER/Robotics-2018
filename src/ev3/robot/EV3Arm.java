@@ -10,7 +10,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
  * Class responsible for moving the robots arm to different positions
  */
 public class EV3Arm {
-    private static final EV3LargeRegulatedMotor motor = new EV3LargeRegulatedMotor(Ports.PORT_MOTOR_ARM);
+    private static final EV3LargeRegulatedMotor motor = new EV3LargeRegulatedMotor(Ports.MOTOR_ARM);
 
     private static final int ANGLE = 10;
     private static final int SPEED = 200;

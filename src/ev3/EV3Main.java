@@ -14,6 +14,7 @@ final class EV3Main {
     // --Commented out by Inspection (25/04/18 8:37 PM):private static final String LOG_TAG = EV3Main.class.getSimpleName();
 
     private static EV3Robot robot;
+    private static Controller controller;
 
     public static void main(String[] args) {
         initialize();
@@ -43,10 +44,12 @@ final class EV3Main {
             while (!robot.isSetup()) Thread.yield();
             robot.getBrick().beep();
         }
+
+        controller = new Controller(robot);
     }
 
     private static void runMain() {
-        new Brain(robot).start();
+        new Brain(robot, controller).start();
     }
 
     private static void cleanUp() {
