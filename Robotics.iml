@@ -9,9 +9,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="ev3classes" level="project" />
     <orderEntry type="library" exported="" name="JUnit5.0" level="project" />
     <orderEntry type="library" exported="" name="annotations-java5" level="project" />
     <orderEntry type="library" exported="" name="polygon-1.0.2" level="project" />
+    <orderEntry type="library" exported="" name="ev3classes" level="project" />
   </component>
 </module>

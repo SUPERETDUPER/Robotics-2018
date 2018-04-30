@@ -17,5 +17,5 @@ public final class Config {
 
     public static final LogTypes IMPORTANCE_TO_PRINT = LogTypes.DEBUG; //Sets the minimum priority the Logger should print
 
-    public static final boolean WAIT_FOR_SENSORS = true; //Determines whether the program should start immediately or first create all the sensors
+    public static final boolean WAIT_FOR_SENSORS = false; //Determines whether the program should start immediately or first create all the sensors
 }

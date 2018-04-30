@@ -21,6 +21,11 @@ class Brain {
     }
 
     void start() {
+        controller.jumpStart();
+        controller.waitForComplete();
+        controller.followLine(true, 1);
+        controller.turn90(true);
+        controller.waitForComplete();
         controller.followLine(true, 3);
     }
 }
