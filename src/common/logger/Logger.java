@@ -38,10 +38,6 @@ Logger {
         Logger.listener = listener;
     }
 
-    public static void removeListener() {
-        listener = null;
-    }
-
     // LOGGING METHODS //
     @SuppressWarnings("unused")
     public static void error(@NotNull String tag, @NotNull String message) {
@@ -72,7 +68,7 @@ Logger {
             LogMessage logMessage = new LogMessage(type, color, tag, message);
 
             if (listener == null) {
-                logMessage.printToSysOut(null);
+                logMessage.printToSysOut();
             } else {
                 listener.notifyLogMessage(logMessage);
             }

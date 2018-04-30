@@ -50,6 +50,10 @@ public class LogMessage implements Transmittable {
         message = dataInputStream.readUTF();
     }
 
+    public void printToSysOut(){
+        printToSysOut("");
+    }
+
     public void printToSysOut(@Nullable String prefix) {
         if (prefix == null) {
             System.out.println(message);
