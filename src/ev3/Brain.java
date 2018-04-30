@@ -24,6 +24,8 @@ class Brain {
         controller.jumpStart(false);
         controller.followLine(true, 1);
         controller.turn90(true, false);
-        controller.followLine(true, 3);
+        controller.followLine(true, 1);
+
+        controller.pickUpTempReg(true, false);
     }
 }

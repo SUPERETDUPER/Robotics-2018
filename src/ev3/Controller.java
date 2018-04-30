@@ -19,6 +19,8 @@ class Controller {
     private static final int JUMP_START_ANGLE = 250;
     private static final int ANGLE_TO_CROSS_LINE = 90;
     private static final int DELAY_FOR_MOTOR = 100;
+    private static final int LINE_TEMP_ANGLE = 270;
+    private static final int CLEAR_TEMP_ANGLE = -120;
 
     private final EV3Robot robot;
 
@@ -83,9 +85,38 @@ class Controller {
         checkWaitForComplete(immediateReturn);
     }
 
+    void move(int amount, boolean immediateReturn) {
+        move(amount);
+
+        checkWaitForComplete(immediateReturn);
+    }
+
     void jumpStart(boolean immediateReturn) {
         move(JUMP_START_ANGLE);
         checkWaitForComplete(immediateReturn);
+    }
+
+    void pickUpTempReg(boolean isOnRightSide, boolean isInFront) {
+        int moveDirection;
+
+        if (isInFront) {
+            moveDirection = 1;
+        } else {
+            moveDirection = -1;
+        }
+
+        move(LINE_TEMP_ANGLE * moveDirection);
+        checkWaitForComplete(false);
+
+        turn90(isOnRightSide, false);
+
+        move(CLEAR_TEMP_ANGLE);
+        checkWaitForComplete(false);
+
+        robot.getArm().drop();
+        checkWaitForComplete(true);
+
+
     }
 
     //MOTOR HELPER METHODS
