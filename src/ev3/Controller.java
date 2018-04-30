@@ -28,12 +28,7 @@ class Controller {
     }
 
     void followLine(boolean waitForRight, int times) {
-        robot.getLeftMotor().startSynchronization();
-        robot.getLeftMotor().setSpeed(LINE_SPEED);
-        robot.getRightMotor().setSpeed(LINE_SPEED);
-        robot.getLeftMotor().forward();
-        robot.getRightMotor().forward();
-        robot.getLeftMotor().startSynchronization();
+        forward();
 
         Delay.msDelay(DELAY_FOR_MOTOR);
 
@@ -44,7 +39,8 @@ class Controller {
                 followLineWaitLeft();
             }
 
-            if (i + 1 != times) {
+            //If not on last time travel for a bit further to cross line
+            if (i < times - 1) {
                 int tachoCount = robot.getLeftMotor().getTachoCount();
 
                 //Forces the robot to cross the line
@@ -54,20 +50,14 @@ class Controller {
             Logger.debug(LOG_TAG, "Crossed");
         }
 
-        robot.getLeftMotor().startSynchronization();
-        robot.getLeftMotor().stop();
-        robot.getRightMotor().stop();
-        robot.getLeftMotor().startSynchronization();
+        stop();
     }
 
     private void followLineWaitRight() {
         while (robot.getColorSensors().getColorSurfaceRight() > BLACK_LINE_THRESHOLD) {
             int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (0.5F - robot.getColorSensors().getColorSurfaceLeft()));
 
-            robot.getLeftMotor().startSynchronization();
-            robot.getLeftMotor().setSpeed(LINE_SPEED + error);
-            robot.getRightMotor().setSpeed(LINE_SPEED - error);
-            robot.getLeftMotor().endSynchronization();
+            setSpeed(LINE_SPEED + error, LINE_SPEED - error);
 
             Delay.msDelay(DELAY_FOR_MOTOR);
         }
@@ -77,40 +67,68 @@ class Controller {
         while (robot.getColorSensors().getColorSurfaceLeft() > BLACK_LINE_THRESHOLD) {
             int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (0.5F - robot.getColorSensors().getColorSurfaceRight()));
 
-            robot.getLeftMotor().startSynchronization();
-            robot.getLeftMotor().setSpeed(LINE_SPEED - error);
-            robot.getRightMotor().setSpeed(LINE_SPEED + error);
-            robot.getLeftMotor().endSynchronization();
+            setSpeed(LINE_SPEED - error, LINE_SPEED + error);
 
             Delay.msDelay(DELAY_FOR_MOTOR);
         }
     }
 
-    void turn90(boolean turnRight){
-        robot.getLeftMotor().startSynchronization();
-        robot.getLeftMotor().setSpeed(LINE_SPEED);
-        robot.getRightMotor().setSpeed(LINE_SPEED);
+    void turn90(boolean turnRight, boolean immediateReturn) {
         if (turnRight) {
-            robot.getLeftMotor().rotate(ANGLE_90_TURN);
-            robot.getRightMotor().rotate(-ANGLE_90_TURN);
+            rotate(ANGLE_90_TURN, -ANGLE_90_TURN);
         } else {
-            robot.getLeftMotor().rotate(-ANGLE_90_TURN);
-            robot.getRightMotor().rotate(ANGLE_90_TURN);
+            rotate(-ANGLE_90_TURN, ANGLE_90_TURN);
         }
-        robot.getLeftMotor().endSynchronization();
+
+        checkWaitForComplete(immediateReturn);
     }
 
-    void jumpStart(){
-        robot.getLeftMotor().startSynchronization();
-        robot.getLeftMotor().setSpeed(LINE_SPEED);
-        robot.getRightMotor().setSpeed(LINE_SPEED);
-        robot.getLeftMotor().rotate(JUMP_START_ANGLE);
-        robot.getRightMotor().rotate(JUMP_START_ANGLE);
-        robot.getLeftMotor().endSynchronization();
+    void jumpStart(boolean immediateReturn) {
+        move(JUMP_START_ANGLE);
+        checkWaitForComplete(immediateReturn);
     }
 
-    void waitForComplete(){
+    //MOTOR HELPER METHODS
+
+    private void checkWaitForComplete(boolean immediateReturn) {
+        if (immediateReturn) return;
         robot.getLeftMotor().waitComplete();
         robot.getRightMotor().waitComplete();
+    }
+
+    private void move(int amount) {
+        rotate(amount, amount);
+    }
+
+    private void rotate(int left, int right) {
+        robot.getLeftMotor().startSynchronization();
+        robot.getLeftMotor().setSpeed(LINE_SPEED);
+        robot.getRightMotor().setSpeed(LINE_SPEED);
+        robot.getLeftMotor().rotate(left);
+        robot.getRightMotor().rotate(right);
+        robot.getLeftMotor().endSynchronization();
+    }
+
+    private void setSpeed(int leftSpeed, int rightSpeed) {
+        robot.getLeftMotor().startSynchronization();
+        robot.getLeftMotor().setSpeed(leftSpeed);
+        robot.getRightMotor().setSpeed(rightSpeed);
+        robot.getLeftMotor().endSynchronization();
+    }
+
+    private void forward() {
+        robot.getLeftMotor().startSynchronization();
+        robot.getLeftMotor().setSpeed(LINE_SPEED);
+        robot.getRightMotor().setSpeed(LINE_SPEED);
+        robot.getLeftMotor().forward();
+        robot.getRightMotor().forward();
+        robot.getLeftMotor().startSynchronization();
+    }
+
+    private void stop() {
+        robot.getLeftMotor().startSynchronization();
+        robot.getLeftMotor().stop();
+        robot.getRightMotor().stop();
+        robot.getLeftMotor().startSynchronization();
     }
 }

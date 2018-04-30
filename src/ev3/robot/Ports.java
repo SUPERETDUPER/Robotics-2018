@@ -19,5 +19,5 @@ final class Ports {
     static final Port SENSOR_COLOR_SURFACE_LEFT = SensorPort.S1;
     static final Port SENSOR_COLOR_SURFACE_RIGHT = SensorPort.S2;
     static final Port SENSOR_COLOR_BOAT = SensorPort.S3;
-    static final Port TOUCH = SensorPort.S4;
+    static final Port SENSOR_TOUCH = SensorPort.S4;
 }

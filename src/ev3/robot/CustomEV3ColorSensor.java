@@ -57,8 +57,8 @@ class CustomEV3ColorSensor {
             sample = new float[sampleProvider.sampleSize()];
         }
 
-        sampleProvider.fetchSample(sample, 0);
-        return (int) sample[0];
+        sampleProvider.fetchSample(sample, 0); //Sample provider puts reading inside sample array
+        return (int) sample[0]; //Returns the value in the sample array
     }
 
     float getRed() {

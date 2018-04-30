@@ -2,13 +2,11 @@
  * Copyright (c) [2018] [Jonathan McIntosh, Martin Staadecker, Ryan Zazo]
  */
 
-package ev3.communication;
+package ev3;
 
 import common.logger.LogMessage;
 import common.logger.Logger;
-import lejos.robotics.Transmittable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
