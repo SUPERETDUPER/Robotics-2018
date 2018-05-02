@@ -9,7 +9,7 @@ package ev3.robot;
  */
 public class EV3Arm {
     //TODO Test angle to be correct
-    private static final int ANGLE = 10;
+    private static final int ANGLE = 90;
     private static final int SPEED = 200;
 
     private final CustomEV3MediumMotor motor = new CustomEV3MediumMotor(Ports.MOTOR_ARM);

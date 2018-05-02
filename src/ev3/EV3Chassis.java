@@ -35,10 +35,14 @@ class EV3Chassis {
         rotate(left, right, false);
     }
 
-    void rotate(int left, int right, boolean immediateReturn) {
+    void rotate(int left, int right, boolean immediateReturn){
+        rotate(left, right, speed, speed, immediateReturn);
+    }
+
+    void rotate(int left, int right, int speedLeft, int speedRight, boolean immediateReturn) {
         leftMotor.startSynchronization();
-        leftMotor.setSpeed(speed);
-        rightMotor.setSpeed(speed);
+        leftMotor.setSpeed(speedLeft);
+        rightMotor.setSpeed(speedRight);
         leftMotor.rotate(left);
         rightMotor.rotate(right);
         leftMotor.endSynchronization();

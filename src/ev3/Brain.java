@@ -23,7 +23,7 @@ class Brain {
     void start() {
         controller.jumpStart(); //Leave starting area
         controller.followLine(true, 1, false); //Go to line
-        controller.turn90(true); //Turn right
+        controller.arcCorner(); //Turn right
         controller.followLine(true, 1, true); // Go to next line
         robot.getClaw().drop(true); //Lower claw
         controller.goToTempReg(true, false); //Go to temp reg
