@@ -8,7 +8,7 @@ import common.Config;
 import common.ConnectionUtil;
 import common.logger.Logger;
 
-public final class PCMain {
+final class PCMain {
 
     private static final String LOG_TAG = PCMain.class.getSimpleName();
 
