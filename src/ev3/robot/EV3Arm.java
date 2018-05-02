@@ -22,9 +22,17 @@ public class EV3Arm {
         return motor.stillSettingUp();
     }
 
+    public void drop(){
+        drop(false);
+    }
+
     public void drop(boolean immediateReturn) {
         motor.get().setSpeed(SPEED);
         motor.get().rotate(ANGLE, immediateReturn);
+    }
+
+    public void raise(){
+        raise(false);
     }
 
     public void raise(boolean immediateReturn) {
