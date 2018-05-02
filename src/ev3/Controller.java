@@ -56,8 +56,8 @@ class Controller {
     }
 
     private void followLineWaitRight() {
-        while (robot.getColorSensors().getColorSurfaceRight() > BLACK_LINE_THRESHOLD) {
-            int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (0.5F - robot.getColorSensors().getColorSurfaceLeft()));
+        while (robot.getColorSurfaceRight() > BLACK_LINE_THRESHOLD) {
+            int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (0.5F - robot.getColorSurfaceLeft()));
 
             setSpeed(LINE_SPEED + error, LINE_SPEED - error);
 
@@ -66,8 +66,8 @@ class Controller {
     }
 
     private void followLineWaitLeft() {
-        while (robot.getColorSensors().getColorSurfaceLeft() > BLACK_LINE_THRESHOLD) {
-            int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (0.5F - robot.getColorSensors().getColorSurfaceRight()));
+        while (robot.getColorSurfaceLeft() > BLACK_LINE_THRESHOLD) {
+            int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (0.5F - robot.getColorSurfaceRight()));
 
             setSpeed(LINE_SPEED - error, LINE_SPEED + error);
 
