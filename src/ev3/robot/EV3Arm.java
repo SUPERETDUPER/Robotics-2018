@@ -4,9 +4,6 @@
 
 package ev3.robot;
 
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.motor.EV3MediumRegulatedMotor;
-
 /**
  * Class responsible for moving the robots arm to different positions
  */
@@ -15,17 +12,23 @@ public class EV3Arm {
     private static final int ANGLE = 10;
     private static final int SPEED = 200;
 
-    private final EV3MediumRegulatedMotor motor = new EV3MediumRegulatedMotor(Ports.MOTOR_ARM);
+    private final CustomEV3MediumMotor motor = new CustomEV3MediumMotor(Ports.MOTOR_ARM);
 
-    EV3Arm() {
-        motor.setSpeed(SPEED);
+    void setup(){
+        motor.setup();
+    }
+
+    boolean stillSettingUp(){
+        return motor.stillSettingUp();
     }
 
     public void drop() {
-        motor.rotate(ANGLE);
+        motor.get().setSpeed(SPEED);
+        motor.get().rotate(ANGLE);
     }
 
     public void raise() {
-        motor.rotate(-ANGLE);
+        motor.get().setSpeed(SPEED);
+        motor.get().rotate(-ANGLE);
     }
 }

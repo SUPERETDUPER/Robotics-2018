@@ -54,7 +54,7 @@ final class EV3Main {
 
         //Waits for all the sensors to load
         if (Config.WAIT_FOR_SENSORS) {
-            while (!robot.isSetup()) Thread.yield();
+            while (!robot.stillSettingUp()) Thread.yield();
         }
     }
 

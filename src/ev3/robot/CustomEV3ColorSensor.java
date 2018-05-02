@@ -43,8 +43,8 @@ class CustomEV3ColorSensor {
         setupThread.start();
     }
 
-    boolean isSetup() {
-        return !setupThread.isAlive();
+    boolean stillSettingUp() {
+        return setupThread.isAlive();
     }
 
     int getColor() {
