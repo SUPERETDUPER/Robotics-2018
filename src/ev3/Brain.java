@@ -26,6 +26,9 @@ class Brain {
         controller.turn90(true, false);
         controller.followLine(true, 1);
 
-        controller.pickUpTempReg(true, false);
+        controller.goToTempReg(true, false);
+
+        robot.getArm().drop();
+        robot.getArm().raise();
     }
 }

@@ -20,7 +20,7 @@ class Controller {
     private static final int ANGLE_TO_CROSS_LINE = 90;
     private static final int DELAY_FOR_MOTOR = 100;
     private static final int LINE_TEMP_ANGLE = 270;
-    private static final int CLEAR_TEMP_ANGLE = -120;
+    private static final int CLEAR_TEMP_ANGLE = 120;
 
     private final EV3Robot robot;
 
@@ -85,18 +85,11 @@ class Controller {
         checkWaitForComplete(immediateReturn);
     }
 
-    void move(int amount, boolean immediateReturn) {
-        move(amount);
-
-        checkWaitForComplete(immediateReturn);
-    }
-
     void jumpStart(boolean immediateReturn) {
         move(JUMP_START_ANGLE);
-        checkWaitForComplete(immediateReturn);
     }
 
-    void pickUpTempReg(boolean isOnRightSide, boolean isInFront) {
+    void goToTempReg(boolean isOnRightSide, boolean isInFront) {
         int moveDirection;
 
         if (isInFront) {
@@ -106,17 +99,29 @@ class Controller {
         }
 
         move(LINE_TEMP_ANGLE * moveDirection);
-        checkWaitForComplete(false);
 
         turn90(isOnRightSide, false);
+    }
 
-        move(CLEAR_TEMP_ANGLE);
-        checkWaitForComplete(false);
+    void returnFromTempReg(boolean isOnRightSide, boolean isInFront) {
+        int moveDirection;
 
-        robot.getArm().drop();
-        checkWaitForComplete(true);
+        if (isInFront) {
+            moveDirection = -1;
+        } else {
+            moveDirection = 1;
+        }
 
+        turn90(!isOnRightSide, false);
 
+        move(LINE_TEMP_ANGLE * moveDirection);
+    }
+
+    void moveTempReg(boolean isForward) {
+        int moveDirection = 1;
+        if (!isForward) moveDirection = -1;
+
+        move(CLEAR_TEMP_ANGLE * moveDirection);
     }
 
     //MOTOR HELPER METHODS
@@ -127,8 +132,14 @@ class Controller {
         robot.getRightMotor().waitComplete();
     }
 
+    private void move(int amount, boolean immediateReturn) {
+        rotate(amount, amount);
+        checkWaitForComplete(immediateReturn);
+    }
+
     private void move(int amount) {
         rotate(amount, amount);
+        checkWaitForComplete(false);
     }
 
     private void rotate(int left, int right) {
