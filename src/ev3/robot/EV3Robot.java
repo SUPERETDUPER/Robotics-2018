@@ -19,6 +19,7 @@ public class EV3Robot {
     private final CustomEV3LargeMotor leftMotor = new CustomEV3LargeMotor(Ports.MOTOR_LEFT);
     private final CustomEV3LargeMotor rightMotor = new CustomEV3LargeMotor(Ports.MOTOR_RIGHT);
     private final EV3Arm arm = new EV3Arm();
+    private final EV3Claw claw = new EV3Claw();
     private final CustomEV3ColorSensor surfaceLeft = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_LEFT);
     private final CustomEV3ColorSensor surfaceRight = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_RIGHT);
     private final CustomEV3ColorSensor boat = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_BOAT);
@@ -31,6 +32,7 @@ public class EV3Robot {
         surfaceLeft.setup();
         surfaceRight.setup();
         boat.setup();
+        claw.setup();
     }
 
 
@@ -40,11 +42,16 @@ public class EV3Robot {
                 rightMotor.stillSettingUp() ||
                 surfaceLeft.stillSettingUp() ||
                 surfaceRight.stillSettingUp() ||
-                boat.stillSettingUp();
+                boat.stillSettingUp() ||
+                claw.stillSettingUp();
     }
 
     public EV3Arm getArm() {
         return arm;
+    }
+
+    public EV3Claw getClaw() {
+        return claw;
     }
 
     public EV3Brick getBrick() {
