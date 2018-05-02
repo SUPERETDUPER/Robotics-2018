@@ -82,10 +82,15 @@ class Controller {
                 while (robot.getLeftMotor().getTachoCount() - tachoCount < DISTANCE_TO_CROSS_LINE) Thread.yield();
             }
 
-            Logger.debug(LOG_TAG, "Line crossed");
+            Logger.debug(LOG_TAG, "Line crossed : " + i);
         }
 
         stop();
+    }
+
+    public void waitComplete() {
+        robot.getLeftMotor().waitComplete();
+        robot.getRightMotor().waitComplete();
     }
 
     //MOTOR HELPER METHODS
@@ -110,11 +115,6 @@ class Controller {
         }
     }
 
-    public void waitComplete() {
-        robot.getLeftMotor().waitComplete();
-        robot.getRightMotor().waitComplete();
-    }
-
     private void move(int amount) {
         rotate(amount, amount);
     }
@@ -131,9 +131,14 @@ class Controller {
         robot.getLeftMotor().startSynchronization();
         robot.getLeftMotor().setSpeed(SPEED);
         robot.getRightMotor().setSpeed(SPEED);
-        robot.getLeftMotor().rotate(left, immediateReturn);
-        robot.getRightMotor().rotate(right, immediateReturn);
+        robot.getLeftMotor().rotate(left);
+        robot.getRightMotor().rotate(right);
         robot.getLeftMotor().endSynchronization();
+        Logger.debug(LOG_TAG, "Turning left: " + left + " right: " + right + " immediateReturn " + immediateReturn);
+
+        if (immediateReturn) return;
+        robot.getLeftMotor().waitComplete();
+        robot.getRightMotor().waitComplete();
     }
 
     private void setSpeed(int leftSpeed, int rightSpeed) {

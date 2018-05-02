@@ -30,4 +30,8 @@ class Brain {
         robot.getClaw().raise();
         controller.goBackTempReg(true, false); //Go back to line
     }
+
+    void test(){
+        controller.turn90(true);
+    }
 }
