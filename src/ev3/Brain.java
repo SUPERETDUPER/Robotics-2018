@@ -21,14 +21,13 @@ class Brain {
     }
 
     void start() {
-        controller.jumpStart(false);
-        controller.followLine(true, 1);
-        controller.turn90(true, false);
-        controller.followLine(true, 1);
-
-        controller.goToTempReg(true, false);
-
-        robot.getArm().drop();
-        robot.getArm().raise();
+        controller.jumpStart(); //Leave starting area
+        controller.followLine(true, 1); //Go to line
+        controller.turn90(true); //Turn right
+        controller.followLine(true, 1); // Go to next line
+        robot.getClaw().drop(true); //Lower claw
+        controller.goToTempReg(true, false); //Go to temp reg
+        robot.getClaw().raise();
+        controller.goBackTempReg(true, false); //Go back to line
     }
 }
