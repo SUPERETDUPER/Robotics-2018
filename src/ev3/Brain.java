@@ -21,17 +21,10 @@ class Brain {
     }
 
     void start() {
-        controller.jumpStart(); //Leave starting area
-        controller.followLine(true, 1, false); //Go to line
-        controller.arcCorner(); //Turn right
-        controller.followLine(true, 1, true); // Go to next line
+        controller.goToStartIntersection(); //Leave starting area
         robot.getClaw().drop(true); //Lower claw
-        controller.goToTempReg(true, false); //Go to temp reg
+        controller.goToTempRegGreen();
         robot.getClaw().raise();
         controller.goBackTempReg(true, false); //Go back to line
-    }
-
-    void test(){
-        controller.turn90(true);
     }
 }

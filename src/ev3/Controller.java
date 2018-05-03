@@ -4,16 +4,16 @@
 
 package ev3;
 
-import common.logger.Logger;
 import ev3.navigation.Chassis;
+import ev3.navigation.LineFollower;
 import ev3.navigation.MotorController;
+import ev3.navigation.Move;
 import ev3.robot.EV3Robot;
-import lejos.utility.Delay;
+
+import java.util.Arrays;
 
 class Controller {
-    private static final int TIME_TO_CROSS_LINE = 1000;
     private static final String LOG_TAG = Controller.class.getSimpleName();
-
 
     private static final int ANGLE_TO_TURN_90 = 265;
     private static final int DISTANCE_TO_CLEAR_STARTING_AREA = 250;
@@ -23,65 +23,43 @@ class Controller {
     private static final int GO_TO_TEMP_ARC_CONSTANT = 600;
 
     private final Chassis chassis;
+    private final LineFollower lineFollower;
     private final EV3Robot robot;
 
     Controller(EV3Robot robot) {
         this.robot = robot;
-        this.chassis = new Chassis(new MotorController(robot.getLeftMotor(), robot.getRightMotor()));
+        MotorController motorController = new MotorController(robot.getLeftMotor(), robot.getRightMotor());
+        this.chassis = new Chassis(motorController);
+        this.lineFollower = new LineFollower(motorController, robot);
     }
 
-//    void arcCorner() {
-//        arc(false,true, ARC_CORNER, false);
-//    }
+    void goToStartIntersection() {
+        chassis.startMoves(Arrays.asList(
+                Move.travel(DISTANCE_TO_CLEAR_STARTING_AREA)
+        ), false);
 
-//    void arc(boolean backward, boolean toTheRight, int constant){
-//        arc(backward,toTheRight,constant, false);
-//    }
-//
-//    void arc(boolean backward, boolean toTheRight, int constant, boolean immediateReturn) {
-//        int distanceLeft = ANGLE_TO_TURN_90 + constant;
-//        int distanceRight = -ANGLE_TO_TURN_90 + constant;
-//        int speedLeft = distanceLeft * 2 * SPEED / (distanceLeft + distanceRight);
-//        int speedRight = 2 * SPEED - speedLeft;
-//        int backwardSign = backward ? -1 : 1;
-//
-//        if (toTheRight) {
-//            chassis.rotate(distanceLeft * backwardSign, distanceRight * backwardSign, speedLeft, speedRight, immediateReturn);
-//        } else {
-//            chassis.rotate(backwardSign * distanceRight, backwardSign * distanceLeft, speedRight, speedLeft, immediateReturn);
-//        }
-//    }
+        lineFollower.startLineFollower(true, false, 1, 0, false);
 
-    void turn90(boolean turnRight) {
-        turn90(turnRight, false);
+        chassis.startMoves(Arrays.asList(
+                Move.rotate(90)
+        ), false);
+
+        lineFollower.startLineFollower(true, true, 1, 0, false);
     }
 
-    void turn90(boolean turnRight, boolean immediateReturn) {
-        if (turnRight) {
-            chassis.rotate(ANGLE_TO_TURN_90, immediateReturn);
-        } else {
-            chassis.rotate(-ANGLE_TO_TURN_90, immediateReturn);
-        }
+    void goToTempRegGreen(){
+        chassis.startMoves(Arrays.asList(
+                Move.travel(-10),
+                Move.arc(-90, -10),
+                Move.travel(10)
+        ), false);
     }
 
-    void jumpStart() {
-        chassis.travel(DISTANCE_TO_CLEAR_STARTING_AREA, false);
+    void goToBoatsWithGreen(){
+        chassis.startMoves(Arrays.asList(
+                Move.arc(-90, 10)
+        ), false);
+
+        lineFollower.startLineFollower(true, false, 3,0, false);
     }
-
-    void goToTempReg(boolean isOnRightSide, boolean isInFront) {
-        chassis.arc(90, 100);
-
-        chassis.travel(DISTANCE_TEMP_REG_FROM_LINE);
-    }
-
-    void goBackTempReg(boolean isOnRightSide, boolean isInFront) {
-        arc(isInFront, isOnRightSide, GO_TO_TEMP_ARC_CONSTANT);
-
-        chassis.travel(isInFront ? -BACKUP_DISTANCE_TO_TEMP_REG_FROM_CORNER : BACKUP_DISTANCE_TO_TEMP_REG_FROM_CORNER);
-    }
-
-
-    //MOTOR HELPER METHODS
-
-
 }

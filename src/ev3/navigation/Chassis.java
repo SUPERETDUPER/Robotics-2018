@@ -4,6 +4,9 @@
 
 package ev3.navigation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Chassis {
     /**
      * Math for chassis class :
@@ -35,66 +38,71 @@ public class Chassis {
      */
 
     //Everything in millimeters
-    private static final float WHEEL_RADIUS = 10;
+    private static final float WHEEL_RADIUS = 100;
     private static final float AXIS_RADIUS = 20;
 
     private static final int SPEED = 400;
 
     private final MotorController motorController;
+    private List<Move> moves = new ArrayList<>();
 
     public Chassis(MotorController motorController) {
         this.motorController = motorController;
+        new ChassisThread().start();
     }
 
-    public void travel(int distance, boolean immediateReturn) {
-        int angleToRotate = (int) Math.toDegrees(distance / WHEEL_RADIUS);
-        motorController.rotate(angleToRotate, angleToRotate, SPEED, SPEED, immediateReturn);
+    public void startMoves(List<Move> moves, boolean immediateReturn){
+        this.moves = moves;
+
+        if (!immediateReturn) waitForComplete();
     }
 
-    public void rotate(int angle, boolean immediateReturn) {
-        int angleToTurn = (int) Math.toDegrees(Math.toRadians(angle) * AXIS_RADIUS / WHEEL_RADIUS);
-        motorController.rotate(angleToTurn, -angleToTurn, SPEED, SPEED, immediateReturn);
+    public void waitForComplete(){
+        while (!moves.isEmpty()) Thread.yield();
     }
 
-    /**
-     * @param angle           if the angle is neg
-     * @param radius
-     * @param immediateReturn
-     */
-    public void arc(int angle, int radius, boolean immediateReturn) {
-        int angleToTurnLeft = (int) Math.toDegrees((radius + AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
-        int angleToTurnRight = (int) Math.toDegrees((radius - AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
-        int speedLeft = Math.abs(angleToTurnLeft * 2 * SPEED / (angleToTurnLeft + angleToTurnRight));
-        int speedRight = 2 * SPEED - speedLeft;
+    private class ChassisThread extends Thread {
+        @Override
+        public void run() {
+            while (true){
+                if (!moves.isEmpty()){
+                    Move move = moves.get(0);
+                    moves.remove(0);
 
-        motorController.rotate(angleToTurnLeft, angleToTurnRight, speedLeft, speedRight, immediateReturn);
-    }
+                    switch (move.getType()){
+                        case ARC:
+                            arc(move.getAngle(), move.getRadius(), false);
+                            break;
+                        case ROTATE:
+                            rotate(move.getAngle(), false);
+                            break;
+                        case TRAVEL:
+                            travel(move.getDistance(), false);
+                            break;
+                    }
+                }
+            }
+        }
 
-    public void startVelocityMode() {
-        motorController.forward(SPEED);
-    }
+        private void travel(int distance, boolean immediateReturn) {
+            int angleToRotate = (int) Math.toDegrees(distance / WHEEL_RADIUS);
+            motorController.setSpeed(SPEED, SPEED);
+            motorController.rotate(angleToRotate, angleToRotate, immediateReturn);
+        }
 
-    /**
-     * Correction of zero means the robot goes straight.
-     * Negative correction turns left and positive turns right.
-     */
-    public void setVelocity(int correction) {
-        motorController.setSpeed(SPEED + correction, SPEED - correction);
-    }
+        private void rotate(int angle, boolean immediateReturn) {
+            int angleToTurn = (int) Math.toDegrees(Math.toRadians(angle) * AXIS_RADIUS / WHEEL_RADIUS);
+            motorController.rotate(angleToTurn, -angleToTurn, immediateReturn);
+        }
 
-    public void stopVelocityMode() {
-        motorController.stop();
-    }
+        private void arc(int angle, int radius, boolean immediateReturn) {
+            int angleToTurnLeft = (int) Math.toDegrees((radius + AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
+            int angleToTurnRight = (int) Math.toDegrees((radius - AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
+            int speedLeft = Math.abs(angleToTurnLeft * 2 * SPEED / (angleToTurnLeft + angleToTurnRight));
+            int speedRight = 2 * SPEED - speedLeft;
 
-    public void travel(int distance) {
-        travel(distance, false);
-    }
-
-    public void arc(int angle, int radius) {
-        arc(angle, radius, false);
-    }
-
-    public void rotate(int angle) {
-        rotate(angle, false);
+            motorController.setSpeed(speedLeft, speedRight);
+            motorController.rotate(angleToTurnLeft, angleToTurnRight, immediateReturn);
+        }
     }
 }
