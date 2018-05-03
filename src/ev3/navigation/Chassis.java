@@ -111,9 +111,10 @@ public class Chassis {
         }
 
         private void arc(int angle, int radius, boolean immediateReturn) {
+            if (radius < 0) angle *= -1;
             int angleToTurnLeft = (int) Math.toDegrees((radius + AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
             int angleToTurnRight = (int) Math.toDegrees((radius - AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
-            int speedLeft = Math.abs(angleToTurnLeft * 2 * SPEED / (angleToTurnLeft + angleToTurnRight));
+            int speedLeft = Math.abs(angleToTurnLeft) * 2 * SPEED / (Math.abs(angleToTurnLeft) + Math.abs(angleToTurnRight));
             int speedRight = 2 * SPEED - speedLeft;
 
             motorController.setSpeed(speedLeft, speedRight);
