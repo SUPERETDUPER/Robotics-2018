@@ -26,6 +26,14 @@ class Controller {
         this.lineFollower = new LineFollower(motorController, robot);
     }
 
+    public LineFollower getLineFollower() {
+        return lineFollower;
+    }
+
+    public Chassis getChassis() {
+        return chassis;
+    }
+
     void goToStartIntersection() {
         chassis.startMoves(Arrays.asList(
                 Move.travel(DISTANCE_TO_CLEAR_STARTING_AREA)

@@ -4,10 +4,12 @@
 
 package ev3.navigation;
 
+import common.logger.Logger;
 import ev3.robot.EV3Robot;
 import lejos.utility.Delay;
 
 public class LineFollower {
+    private static final String LOG_TAG = LineFollower.class.getSimpleName();
 
     private final MotorController motorController;
     private final EV3Robot robot;
@@ -29,7 +31,7 @@ public class LineFollower {
         new LineFollowerThread().start();
     }
 
-    public void startLineFollower(boolean followWithLeft, boolean followMiddle, int linesToCross, int timeAfterLastLine, boolean immediateReturn){
+    public void startLineFollower(boolean followWithLeft, boolean followMiddle, int linesToCross, int timeAfterLastLine, boolean immediateReturn) {
         this.followMiddle = followMiddle;
         this.followWithLeft = followWithLeft;
         this.linesLeftToCross = linesToCross;
@@ -39,7 +41,7 @@ public class LineFollower {
         if (!immediateReturn) waitForComplete();
     }
 
-    public void stopFollowing(){
+    public void stopFollowing() {
         isActive = false;
     }
 
@@ -47,7 +49,7 @@ public class LineFollower {
         return isActive;
     }
 
-    public void waitForComplete(){
+    public void waitForComplete() {
         while (isActive) Thread.yield();
     }
 
@@ -63,40 +65,48 @@ public class LineFollower {
 
         @Override
         public void run() {
-            //noinspection InfiniteLoopStatement
-            while (true) {
-                if (isActive) {
-                    motorController.forward();
-
-                    Delay.msDelay(DELAY_FOR_MOTOR_LINE_FOLLOWER);
-
-                    while (isActive) {
-                        // Error is negative when on white and positive on black
-                        int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (CENTER - getLineColor()));
-
-                        if (shouldInverseError()) error *= -1;
-
-                        motorController.setSpeed(SPEED + error, SPEED - error);
-
-                        if (getCheckerColor() < BLACK_LINE_THRESHOLD && System.currentTimeMillis() > timeToWaitBeforeCheckingCross) {
-                            linesLeftToCross--;
-                            timeToWaitBeforeCheckingCross = System.currentTimeMillis() + DELAY_FOR_MOTOR_LINE_FOLLOWER;
-
-                            if (linesLeftToCross == 0) {
-                                timeToWait = System.currentTimeMillis() + timeAfterLastLine;
-                            }
-                        }
-
-                        if (linesLeftToCross == 0 && System.currentTimeMillis() > timeToWait) {
-                            isActive = false;
-                        }
-
+            try {
+                //noinspection InfiniteLoopStatement
+                while (true) {
+                    if (isActive) {
+                        motorController.forward();
 
                         Delay.msDelay(DELAY_FOR_MOTOR_LINE_FOLLOWER);
-                    }
 
-                    motorController.stop();
+                        while (isActive) {
+                            // Error is negative when on white and positive on black
+                            int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (CENTER - getLineColor()));
+
+                            if (shouldInverseError()) error *= -1;
+
+                            motorController.setSpeed(SPEED + error, SPEED - error);
+
+                            if (getCheckerColor() < BLACK_LINE_THRESHOLD && System.currentTimeMillis() > timeToWaitBeforeCheckingCross) {
+                                linesLeftToCross--;
+                                timeToWaitBeforeCheckingCross = System.currentTimeMillis() + DELAY_FOR_MOTOR_LINE_FOLLOWER;
+
+                                if (linesLeftToCross == 0) {
+                                    timeToWait = System.currentTimeMillis() + timeAfterLastLine;
+                                }
+                            }
+
+                            if (linesLeftToCross == 0 && System.currentTimeMillis() > timeToWait) {
+                                isActive = false;
+                            }
+
+
+                            Delay.msDelay(DELAY_FOR_MOTOR_LINE_FOLLOWER);
+                        }
+
+                        motorController.stop();
+                    }
                 }
+            } catch (Exception e) {
+                Logger.error(LOG_TAG, e.toString());
+                for (StackTraceElement element : e.getStackTrace()) {
+                    Logger.error(LOG_TAG, element.toString());
+                }
+                throw e;
             }
         }
 

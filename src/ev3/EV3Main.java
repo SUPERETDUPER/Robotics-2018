@@ -12,21 +12,29 @@ import common.logger.Logger;
 import ev3.robot.EV3Robot;
 
 final class EV3Main {
-    // --Commented out by Inspection (25/04/18 8:37 PM):private static final String LOG_TAG = EV3Main.class.getSimpleName();
+    private static final String LOG_TAG = EV3Main.class.getSimpleName();
 
     private static EV3Robot robot;
     private static Controller controller;
 
     public static void main(String[] args) {
-        initialize();
+        try {
+            initialize();
 
-        robot.getBrick().beep();
+            robot.getBrick().beep();
 
 //        robot.getBrick().waitForUserConfirmation();
 
-        runMain();
+            runMain();
 
 //        robot.getBrick().waitForUserConfirmation();  //Uncomment if you want the user to need to press enter before the program closes
+        } catch (Exception e){
+            Logger.error(LOG_TAG, e.toString());
+            for (StackTraceElement element : e.getStackTrace()) {
+                Logger.error(LOG_TAG, element.toString());
+            }
+            throw e;
+        }
     }
 
     private static void initialize() {
@@ -59,6 +67,6 @@ final class EV3Main {
     }
 
     private static void runMain() {
-        new Brain(robot, controller).start();
+        new Brain(robot, controller).test();
     }
 }
