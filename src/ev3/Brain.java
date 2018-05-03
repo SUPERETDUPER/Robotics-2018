@@ -29,6 +29,40 @@ class Brain {
         controller.goToTempReg(true, false); //Go to temp reg
         robot.getClaw().raise();
         controller.goBackTempReg(true, false); //Go back to line
+        /*
+         *
+         * controller.goToMiddleBoat
+         * controller.turn(90)
+         * controller.doHalfBoatRun(immediateReturn = true)
+         *
+         * controller.turn(180)
+         * controller.goToLastBoat
+         *
+         */
+
+        /*
+        * start
+        * go to first tempreg
+        * scan the temp reg while in motion
+        * pick up tempreg if scanned
+        * if not go to next temp reg
+        *
+        * go to boats
+        * scan boat colors
+        * if boat = current color
+        * drop tempreg on boat
+        * return to center
+        * Loop twice {
+        *   go to next temp reg
+        *   pickup temp reg
+        *   go to boats
+        *   scan boats for current color
+        *   drop off temp reg
+        *   return to center
+        * }
+        * go to start
+        */
+
     }
 
     void test(){
