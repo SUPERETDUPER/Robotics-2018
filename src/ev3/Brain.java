@@ -25,17 +25,7 @@ class Brain {
         robot.getClaw().drop(true); //Lower claw
         controller.goToTempRegGreen();
         robot.getClaw().raise();
-        controller.goBackTempReg(true, false); //Go back to line
-        /*
-         *
-         * controller.goToMiddleBoat
-         * controller.turn(90)
-         * controller.doHalfBoatRun(immediateReturn = true)
-         *
-         * controller.turn(180)
-         * controller.goToLastBoat
-         *
-         */
+        controller.goToBoatsWithGreen(); //Go back to line
 
         /*
         * start
@@ -59,6 +49,5 @@ class Brain {
         * }
         * go to start
         */
-
     }
 }
