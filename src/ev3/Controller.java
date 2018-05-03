@@ -5,6 +5,7 @@
 package ev3;
 
 import common.logger.Logger;
+import ev3.navigation.EV3Chassis;
 import ev3.robot.EV3Robot;
 import lejos.utility.Delay;
 
