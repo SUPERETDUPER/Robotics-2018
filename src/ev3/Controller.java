@@ -15,19 +15,12 @@ import java.util.Arrays;
 class Controller {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
-    private static final int ANGLE_TO_TURN_90 = 265;
     private static final int DISTANCE_TO_CLEAR_STARTING_AREA = 250;
-
-    private static final int BACKUP_DISTANCE_TO_TEMP_REG_FROM_CORNER = 270;
-    private static final int DISTANCE_TEMP_REG_FROM_LINE = 120;
-    private static final int GO_TO_TEMP_ARC_CONSTANT = 600;
 
     private final Chassis chassis;
     private final LineFollower lineFollower;
-    private final EV3Robot robot;
 
     Controller(EV3Robot robot) {
-        this.robot = robot;
         MotorController motorController = new MotorController(robot.getLeftMotor(), robot.getRightMotor());
         this.chassis = new Chassis(motorController);
         this.lineFollower = new LineFollower(motorController, robot);

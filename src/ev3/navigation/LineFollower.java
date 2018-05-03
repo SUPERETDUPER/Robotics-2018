@@ -63,6 +63,7 @@ public class LineFollower {
 
         @Override
         public void run() {
+            //noinspection InfiniteLoopStatement
             while (true) {
                 if (isActive) {
                     motorController.forward();

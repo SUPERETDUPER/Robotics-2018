@@ -64,6 +64,7 @@ public class Chassis {
     private class ChassisThread extends Thread {
         @Override
         public void run() {
+            //noinspection InfiniteLoopStatement
             while (true){
                 if (!moves.isEmpty()){
                     Move move = moves.get(0);
