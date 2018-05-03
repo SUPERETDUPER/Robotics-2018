@@ -7,37 +7,40 @@ package ev3.navigation;
 import common.logger.Logger;
 import lejos.robotics.RegulatedMotor;
 
-class MotorController {
+public class MotorController {
     private static final String LOG_TAG = MotorController.class.getSimpleName();
 
     private final RegulatedMotor leftMotor;
     private final RegulatedMotor rightMotor;
 
-    MotorController(RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
+    public MotorController(RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
         this.leftMotor = leftMotor;
         this.rightMotor = rightMotor;
 
         leftMotor.synchronizeWith(new RegulatedMotor[]{rightMotor});
     }
 
-    void rotate(int leftDegrees, int rightDegrees, Integer speedLeft, Integer speedRight, boolean immediateReturn) {
+    int tachoLeft() {
+        return leftMotor.getTachoCount();
+    }
+
+    int tachoRight() {
+        return rightMotor.getTachoCount();
+    }
+
+    void rotate(int leftDegrees, int rightDegrees, boolean immediateReturn) {
         leftMotor.startSynchronization();
-        if (speedLeft != null) leftMotor.setSpeed(speedLeft);
-        if (speedRight != null) rightMotor.setSpeed(speedRight);
         leftMotor.rotate(leftDegrees);
         rightMotor.rotate(rightDegrees);
         leftMotor.endSynchronization();
+
         Logger.debug(LOG_TAG, "Turning left: " + leftDegrees + " right: " + rightDegrees + " immediateReturn " + immediateReturn);
 
-        if (immediateReturn) return;
-        leftMotor.waitComplete();
-        rightMotor.waitComplete();
+        if (!immediateReturn) waitComplete();
     }
 
-    void forward(int speed) {
+    void forward() {
         leftMotor.startSynchronization();
-        leftMotor.setSpeed(speed);
-        rightMotor.setSpeed(speed);
         leftMotor.forward();
         rightMotor.forward();
         leftMotor.startSynchronization();

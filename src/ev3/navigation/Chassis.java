@@ -56,10 +56,15 @@ public class Chassis {
         motorController.rotate(angleToTurn, -angleToTurn, SPEED, SPEED, immediateReturn);
     }
 
+    /**
+     * @param angle           if the angle is neg
+     * @param radius
+     * @param immediateReturn
+     */
     public void arc(int angle, int radius, boolean immediateReturn) {
         int angleToTurnLeft = (int) Math.toDegrees((radius + AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
         int angleToTurnRight = (int) Math.toDegrees((radius - AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
-        int speedLeft = angleToTurnLeft * 2 * SPEED / (angleToTurnLeft + angleToTurnRight);
+        int speedLeft = Math.abs(angleToTurnLeft * 2 * SPEED / (angleToTurnLeft + angleToTurnRight));
         int speedRight = 2 * SPEED - speedLeft;
 
         motorController.rotate(angleToTurnLeft, angleToTurnRight, speedLeft, speedRight, immediateReturn);
@@ -79,5 +84,17 @@ public class Chassis {
 
     public void stopVelocityMode() {
         motorController.stop();
+    }
+
+    public void travel(int distance) {
+        travel(distance, false);
+    }
+
+    public void arc(int angle, int radius) {
+        arc(angle, radius, false);
+    }
+
+    public void rotate(int angle) {
+        rotate(angle, false);
     }
 }
