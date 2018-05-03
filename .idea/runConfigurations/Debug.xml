@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Debug" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
     <toRun type="Application" name="PC" />
+    <toRun type="LejosRunConfigurationType" name="EV3" />
     <method />
   </configuration>
 </component>
