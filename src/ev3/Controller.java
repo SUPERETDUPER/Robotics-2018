@@ -35,15 +35,11 @@ class Controller {
     }
 
     void goToStartIntersection() {
-        chassis.startMoves(Arrays.asList(
-                Move.travel(DISTANCE_TO_CLEAR_STARTING_AREA)
-        ), false);
+        chassis.startMove(Move.travel(DISTANCE_TO_CLEAR_STARTING_AREA), false);
 
         lineFollower.startLineFollower(true, false, 1, 0, false);
 
-        chassis.startMoves(Arrays.asList(
-                Move.rotate(90)
-        ), false);
+        chassis.startMove(Move.rotate(90), false);
 
         lineFollower.startLineFollower(true, true, 1, 0, false);
     }
@@ -57,10 +53,19 @@ class Controller {
     }
 
     void goToBoatsWithGreen() {
-        chassis.startMoves(Arrays.asList(
-                Move.arc(-90, 10)
-        ), false);
+        chassis.startMove(Move.arc(-90, 10), false);
 
         lineFollower.startLineFollower(true, false, 3, 0, false);
+
+        chassis.startMoves(Arrays.asList(
+                Move.travel(10),
+                Move.rotate(90)
+        ), false);
+
+        lineFollower.startLineFollower(true, false, 0, 1000, false);
+    }
+
+    void moveAlongBotBoatsWithGreen() {
+        lineFollower.startLineFollower(true, false, 0, 1000, true);
     }
 }
