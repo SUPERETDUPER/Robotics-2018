@@ -16,13 +16,13 @@ public class EV3Robot {
 
     private final EV3Brick brick = new EV3Brick();
 
-    private final ThreadWrapper leftMotor = new ThreadWrapper(new EV3LargeMotor(Ports.MOTOR_LEFT));
-    private final ThreadWrapper rightMotor = new ThreadWrapper(new EV3LargeMotor(Ports.MOTOR_RIGHT));
-    private final ThreadWrapper arm = new ThreadWrapper(new EV3Arm());
-    private final ThreadWrapper claw = new ThreadWrapper(new EV3Claw());
-    private final ThreadWrapper surfaceLeft = new ThreadWrapper(new EV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_LEFT));
-    private final ThreadWrapper surfaceRight = new ThreadWrapper(new EV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_RIGHT));
-    private final ThreadWrapper boat = new ThreadWrapper(new EV3ColorSensor(Ports.SENSOR_COLOR_BOAT));
+    private final ThreadWrapper<EV3LargeMotor> leftMotor = new ThreadWrapper<>(new EV3LargeMotor(Ports.MOTOR_LEFT));
+    private final ThreadWrapper<EV3LargeMotor> rightMotor = new ThreadWrapper<>(new EV3LargeMotor(Ports.MOTOR_RIGHT));
+    private final ThreadWrapper<EV3Arm> arm = new ThreadWrapper<>(new EV3Arm());
+    private final ThreadWrapper<EV3Claw> claw = new ThreadWrapper<>(new EV3Claw());
+    private final ThreadWrapper<EV3ColorSensor> surfaceLeft = new ThreadWrapper<>(new EV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_LEFT));
+    private final ThreadWrapper<EV3ColorSensor> surfaceRight = new ThreadWrapper<>(new EV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_RIGHT));
+    private final ThreadWrapper<EV3ColorSensor> boat = new ThreadWrapper<>(new EV3ColorSensor(Ports.SENSOR_COLOR_BOAT));
 
     public void setup() {
         arm.setup();
@@ -46,11 +46,11 @@ public class EV3Robot {
     }
 
     public EV3Arm getArm() {
-        return (EV3Arm) arm.get();
+        return arm.get();
     }
 
     public EV3Claw getClaw() {
-        return (EV3Claw) claw.get();
+        return claw.get();
     }
 
     public EV3Brick getBrick() {
@@ -58,22 +58,22 @@ public class EV3Robot {
     }
 
     public RegulatedMotor getLeftMotor() {
-        return ((EV3LargeMotor) leftMotor.get()).get();
+        return leftMotor.get().get();
     }
 
     public RegulatedMotor getRightMotor() {
-        return ((EV3LargeMotor) rightMotor.get()).get();
+        return rightMotor.get().get();
     }
 
     public float getColorSurfaceLeft() {
-        return ((EV3ColorSensor) surfaceLeft.get()).getRed();
+        return surfaceLeft.get().getRed();
     }
 
     public float getColorSurfaceRight() {
-        return ((EV3ColorSensor) surfaceRight.get()).getRed();
+        return surfaceRight.get().getRed();
     }
 
     public int getColorBoat() {
-        return ((EV3ColorSensor) boat.get()).getColor();
+        return boat.get().getColor();
     }
 }

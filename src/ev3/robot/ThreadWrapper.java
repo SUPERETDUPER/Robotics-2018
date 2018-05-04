@@ -7,14 +7,14 @@ package ev3.robot;
 import common.logger.Logger;
 import lejos.hardware.DeviceException;
 
-class ThreadWrapper {
+class ThreadWrapper<T extends MotorSensor> {
     private static final String LOG_TAG = ThreadWrapper.class.getSimpleName();
 
-    private final MotorSensor motorSensor;
+    private final T motorSensor;
 
     private Thread creatorThread;
 
-    ThreadWrapper(MotorSensor motorSensor) {
+    ThreadWrapper(T motorSensor) {
         this.motorSensor = motorSensor;
     }
 
@@ -39,7 +39,7 @@ class ThreadWrapper {
         return creatorThread.isAlive();
     }
 
-    MotorSensor get() {
+    T get() {
         if (!motorSensor.isCreated()) {
             synchronized (this) {
                 if (!motorSensor.isCreated()) {
