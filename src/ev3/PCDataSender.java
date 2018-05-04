@@ -27,7 +27,7 @@ final class PCDataSender {
             message.dumpObject(dos);
             dos.flush();
         } catch (IOException e) {
-            message.printToSysOut("");
+            message.printToSysOut();
 
             try {
                 dos.close();
