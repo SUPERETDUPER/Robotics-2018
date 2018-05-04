@@ -26,8 +26,8 @@ class EV3ColorSensor implements MotorSensor {
     }
 
     @Override
-    public boolean isCreated() {
-        return colorSensor != null;
+    public boolean isNotCreated() {
+        return colorSensor == null;
     }
 
     int getColor() {

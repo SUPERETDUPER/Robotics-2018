@@ -20,8 +20,8 @@ class EV3LargeMotor implements MotorSensor {
     }
 
     @Override
-    public boolean isCreated() {
-        return regulatedMotor != null;
+    public boolean isNotCreated() {
+        return regulatedMotor == null;
     }
 
     EV3LargeMotor(Port port) {

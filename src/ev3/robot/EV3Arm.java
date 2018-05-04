@@ -23,20 +23,12 @@ public class EV3Arm implements MotorSensor {
     }
 
     @Override
-    public boolean isCreated() {
-        return motor != null;
-    }
-
-    public void drop(){
-        drop(false);
+    public boolean isNotCreated() {
+        return motor == null;
     }
 
     public void drop(boolean immediateReturn) {
         motor.rotate(ANGLE, immediateReturn);
-    }
-
-    public void raise(){
-        raise(false);
     }
 
     public void raise(boolean immediateReturn) {

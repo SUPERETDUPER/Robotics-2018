@@ -22,7 +22,7 @@ class ThreadWrapper<T extends MotorSensor> {
         creatorThread = new Thread() {
             @Override
             public synchronized void run() {
-                if (!motorSensor.isCreated()) {
+                if (motorSensor.isNotCreated()) {
                     try {
                         motorSensor.create();
                     } catch (IllegalArgumentException | DeviceException e) {
@@ -40,9 +40,9 @@ class ThreadWrapper<T extends MotorSensor> {
     }
 
     T get() {
-        if (!motorSensor.isCreated()) {
+        if (motorSensor.isNotCreated()) {
             synchronized (this) {
-                if (!motorSensor.isCreated()) {
+                if (motorSensor.isNotCreated()) {
                     motorSensor.create();
                 }
             }

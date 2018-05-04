@@ -7,5 +7,5 @@ package ev3.robot;
 public interface MotorSensor {
     void create();
 
-    boolean isCreated();
+    boolean isNotCreated();
 }

@@ -21,8 +21,8 @@ public class EV3Claw implements MotorSensor {
     }
 
     @Override
-    public boolean isCreated() {
-        return motor != null;
+    public boolean isNotCreated() {
+        return motor == null;
     }
 
     public void drop(boolean immediateReturn) {
