@@ -12,11 +12,18 @@ public class LineFollower {
     private static final String LOG_TAG = LineFollower.class.getSimpleName();
 
     private static final int CORRECTION_CONSTANT_LINE_FOLLOWER = 300;
-    private static final float BLACK_LINE_THRESHOLD = 0.5F;
+    private static final int CORRECTION_CONSTANT_MIDDLE = 300;
+    private static final float BLACK_LINE_THRESHOLD = 0.6F;
     private static final int DELAY_FOR_MOTOR_LINE_FOLLOWER = 10;
     private static final int DELAY_TO_CROSS_LINE = 1000;
     private static final int SPEED = 400;
     private static final float CENTER = 0.5F;
+
+    public enum Mode {
+        LEFT,
+        MIDDLE,
+        RIGHT
+    }
 
     private final MotorController motorController;
     private final EV3Robot robot;
@@ -26,8 +33,7 @@ public class LineFollower {
      */
     private boolean isActive = false;
 
-    private boolean followMiddle;
-    private boolean followWithLeft;
+    private Mode mode;
     private int linesLeftToCross;
     private int timeAfterLastLine;
 
@@ -38,9 +44,8 @@ public class LineFollower {
         new LineFollowerThread().start();
     }
 
-    public void startLineFollower(boolean followWithLeft, boolean followMiddle, int linesToCross, int timeAfterLastLine, boolean immediateReturn) {
-        this.followMiddle = followMiddle;
-        this.followWithLeft = followWithLeft;
+    public void startLineFollower(Mode mode, int linesToCross, int timeAfterLastLine, boolean immediateReturn) {
+        this.mode = mode;
         this.linesLeftToCross = linesToCross;
         this.timeAfterLastLine = timeAfterLastLine;
         isActive = true;
@@ -61,12 +66,10 @@ public class LineFollower {
     }
 
     private class LineFollowerThread extends Thread {
-
-
         long timeToWaitBeforeCheckingCross = 0;
         long timeToWait = 0;
 
-        public LineFollowerThread() {
+        LineFollowerThread() {
             this.setDaemon(true);
         }
 
@@ -81,26 +84,40 @@ public class LineFollower {
                         Delay.msDelay(DELAY_FOR_MOTOR_LINE_FOLLOWER);
 
                         while (isActive) {
-                            // Error is negative when on white and positive on black
-                            int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (CENTER - getLineColor()));
+                            switch (mode) {
+                                case RIGHT:
+                                case LEFT:
+                                    // Error is negative when on white and positive on black
+                                    int error = (int) (CORRECTION_CONSTANT_LINE_FOLLOWER * (CENTER - getLineColor()));
 
-                            if (shouldInverseError()) error *= -1;
+                                    if (shouldInverseError()) error *= -1;
 
-                            motorController.setSpeed(SPEED + error, SPEED - error);
+                                    motorController.setSpeed(SPEED + error, SPEED - error);
 
-                            if (getCheckerColor() < BLACK_LINE_THRESHOLD && System.currentTimeMillis() > timeToWaitBeforeCheckingCross) {
-                                linesLeftToCross--;
-                                timeToWaitBeforeCheckingCross = System.currentTimeMillis() + DELAY_TO_CROSS_LINE;
+                                    if (getCheckerColor() < BLACK_LINE_THRESHOLD && System.currentTimeMillis() > timeToWaitBeforeCheckingCross) {
+                                        linesLeftToCross--;
+                                        timeToWaitBeforeCheckingCross = System.currentTimeMillis() + DELAY_TO_CROSS_LINE;
 
-                                if (linesLeftToCross == 0) {
-                                    timeToWait = System.currentTimeMillis() + timeAfterLastLine;
-                                }
+                                        if (linesLeftToCross == 0) {
+                                            timeToWait = System.currentTimeMillis() + timeAfterLastLine;
+                                        }
+                                    }
+
+                                    if (linesLeftToCross == 0 && System.currentTimeMillis() >= timeToWait) {
+                                        isActive = false;
+                                    }
+                                    break;
+                                case MIDDLE:
+                                    float left = robot.getColorSurfaceLeft();
+                                    float right = robot.getColorSurfaceRight();
+                                    int middleError = (int) (CORRECTION_CONSTANT_MIDDLE * (left - right));
+                                    motorController.setSpeed(SPEED + middleError, SPEED - middleError);
+
+                                    if (left < BLACK_LINE_THRESHOLD && right < BLACK_LINE_THRESHOLD) {
+                                        isActive = false;
+                                    }
+                                    break;
                             }
-
-                            if (linesLeftToCross == 0 && System.currentTimeMillis() >= timeToWait) {
-                                isActive = false;
-                            }
-
 
                             Delay.msDelay(DELAY_FOR_MOTOR_LINE_FOLLOWER);
                         }
@@ -117,24 +134,16 @@ public class LineFollower {
             }
         }
 
-        /**
-         * Middle and Left = true
-         * Middle and !left = false
-         * !middle and left = false
-         * !middle and !left = true
-         *
-         * @return if false black turns right white turns left. If true black turns left white turns right
-         */
         private boolean shouldInverseError() {
-            return followMiddle == followWithLeft;
+            return mode == Mode.LEFT;
         }
 
         private float getLineColor() {
-            return followWithLeft ? robot.getColorSurfaceLeft() : robot.getColorSurfaceRight();
+            return mode == Mode.LEFT ? robot.getColorSurfaceRight() : robot.getColorSurfaceLeft();
         }
 
         private float getCheckerColor() {
-            return followWithLeft ? robot.getColorSurfaceRight() : robot.getColorSurfaceLeft();
+            return mode == Mode.LEFT ? robot.getColorSurfaceLeft() : robot.getColorSurfaceRight();
         }
     }
 }

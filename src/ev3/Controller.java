@@ -15,8 +15,6 @@ import java.util.Arrays;
 class Controller {
     private static final String LOG_TAG = Controller.class.getSimpleName();
 
-    private static final int DISTANCE_TO_CLEAR_STARTING_AREA = 250;
-
     private final Chassis chassis;
     private final LineFollower lineFollower;
 
@@ -35,37 +33,38 @@ class Controller {
     }
 
     void goToStartIntersection() {
-        chassis.startMove(Move.travel(DISTANCE_TO_CLEAR_STARTING_AREA), false);
+        chassis.startMove(Move.travel(120), false);
 
-        lineFollower.startLineFollower(true, false, 1, 0, false);
+        lineFollower.startLineFollower(LineFollower.Mode.RIGHT, 1, 0, false);
 
         chassis.startMove(Move.rotate(90), false);
 
-        lineFollower.startLineFollower(true, true, 1, 0, false);
+        lineFollower.startLineFollower(LineFollower.Mode.MIDDLE, 1, 0, false);
     }
 
     void goToTempRegGreen() {
         chassis.startMoves(Arrays.asList(
-                Move.travel(-10),
+                Move.travel(-130),
                 Move.arc(-90, -10),
-                Move.travel(10)
+                Move.travel(40)
         ), false);
     }
 
     void goToBoatsWithGreen() {
         chassis.startMove(Move.arc(-90, 10), false);
 
-        lineFollower.startLineFollower(true, false, 3, 0, false);
+        lineFollower.startLineFollower(LineFollower.Mode.RIGHT, 3, 0, false);
 
         chassis.startMoves(Arrays.asList(
-                Move.travel(10),
-                Move.rotate(90)
+                Move.travel(100),
+                Move.rotate(90),
+                Move.travel(-50)
         ), false);
 
-        lineFollower.startLineFollower(true, false, 0, 1000, false);
+        lineFollower.startLineFollower(LineFollower.Mode.RIGHT, 0, 1000, false);
     }
 
     void moveAlongBotBoatsWithGreen() {
-        lineFollower.startLineFollower(true, false, 0, 1000, true);
+        lineFollower.startLineFollower(LineFollower.Mode.RIGHT, 0, 1000, true);
     }
 }

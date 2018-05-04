@@ -52,7 +52,7 @@ public class MotorController {
         rightMotor.setSpeed(rightSpeed);
         leftMotor.endSynchronization();
 
-        Logger.debug(LOG_TAG, "Set speed. Left: " + leftSpeed + " right: " + rightSpeed);
+//        Logger.debug(LOG_TAG, "Set speed. Left: " + leftSpeed + " right: " + rightSpeed);
     }
 
     void stop() {

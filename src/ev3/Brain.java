@@ -4,10 +4,7 @@
 
 package ev3;
 
-import ev3.navigation.Move;
 import ev3.robot.EV3Robot;
-
-import java.util.Arrays;
 
 /**
  * Specifies the sequence of actions the robot should do to win the competition !
@@ -55,8 +52,6 @@ class Brain {
     }
 
     void test() {
-        controller.getChassis().startMoves(Arrays.asList(
-                Move.rotate(360)
-        ), false);
+//        controller.getLineFollower().startLineFollower(true, false, 1, 0, false);
     }
 }

@@ -67,6 +67,6 @@ final class EV3Main {
     }
 
     private static void runMain() {
-        new Brain(robot, controller).test();
+        new Brain(robot, controller).start();
     }
 }
