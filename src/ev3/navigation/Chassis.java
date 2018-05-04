@@ -6,6 +6,7 @@ package ev3.navigation;
 
 import common.logger.Logger;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class Chassis {
     //Everything in millimeters
     //TODO Fine tune values
     private static final float WHEEL_RADIUS = 28;
-    private static final float AXIS_RADIUS = 84;
+    private static final float AXIS_RADIUS = 78;
 
     private static final int SPEED = 500;
 
@@ -53,6 +54,10 @@ public class Chassis {
     public Chassis(MotorController motorController) {
         this.motorController = motorController;
         new ChassisThread().start();
+    }
+
+    public void startMove(Move move, boolean immediateReturn) {
+        startMoves(Collections.singletonList(move), immediateReturn);
     }
 
     public void startMoves(List<Move> moves, boolean immediateReturn) {
@@ -66,7 +71,7 @@ public class Chassis {
     }
 
     private class ChassisThread extends Thread {
-        public ChassisThread() {
+        private ChassisThread() {
             this.setDaemon(true);
         }
 

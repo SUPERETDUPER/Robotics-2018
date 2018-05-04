@@ -56,7 +56,7 @@ class Brain {
 
     void test() {
         controller.getChassis().startMoves(Arrays.asList(
-                Move.travel(300)
+                Move.rotate(360)
         ), false);
     }
 }
