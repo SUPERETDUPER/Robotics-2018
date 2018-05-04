@@ -20,9 +20,9 @@ public class EV3Robot {
     private final ThreadWrapper rightMotor = new ThreadWrapper(new EV3LargeMotor(Ports.MOTOR_RIGHT));
     private final ThreadWrapper arm = new ThreadWrapper(new EV3Arm());
     private final ThreadWrapper claw = new ThreadWrapper(new EV3Claw());
-    private final CustomEV3ColorSensor surfaceLeft = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_LEFT);
-    private final CustomEV3ColorSensor surfaceRight = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_RIGHT);
-    private final CustomEV3ColorSensor boat = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_BOAT);
+    private final ThreadWrapper surfaceLeft = new ThreadWrapper(new EV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_LEFT));
+    private final ThreadWrapper surfaceRight = new ThreadWrapper(new EV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_RIGHT));
+    private final ThreadWrapper boat = new ThreadWrapper(new EV3ColorSensor(Ports.SENSOR_COLOR_BOAT));
 
     public void setup() {
         arm.setup();
@@ -39,9 +39,9 @@ public class EV3Robot {
         return arm.isSetupAlive() ||
                 leftMotor.isSetupAlive() ||
                 rightMotor.isSetupAlive() ||
-                surfaceLeft.stillSettingUp() ||
-                surfaceRight.stillSettingUp() ||
-                boat.stillSettingUp() ||
+                surfaceLeft.isSetupAlive() ||
+                surfaceRight.isSetupAlive() ||
+                boat.isSetupAlive() ||
                 claw.isSetupAlive();
     }
 
@@ -66,14 +66,14 @@ public class EV3Robot {
     }
 
     public float getColorSurfaceLeft() {
-        return surfaceLeft.getRed();
+        return ((EV3ColorSensor) surfaceLeft.get()).getRed();
     }
 
     public float getColorSurfaceRight() {
-        return surfaceRight.getRed();
+        return ((EV3ColorSensor) surfaceRight.get()).getRed();
     }
 
     public int getColorBoat() {
-        return boat.getColor();
+        return ((EV3ColorSensor) boat.get()).getColor();
     }
 }
