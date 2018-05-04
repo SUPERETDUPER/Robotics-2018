@@ -8,9 +8,7 @@ package ev3.robot;
  * Class responsible for moving the robots arm to different positions
  */
 public class EV3Claw {
-    //TODO Test angle to be correct
-    private static final int ANGLE = 3600;
-    private static final int SPEED = 200;
+    private static final int ANGLE = 750;
 
     private final CustomEV3MediumMotor motor = new CustomEV3MediumMotor(Ports.MOTOR_CLAW);
 
@@ -22,22 +20,14 @@ public class EV3Claw {
         return motor.stillSettingUp();
     }
 
-    public void drop(){
-        drop(false);
-    }
-
     public void drop(boolean immediateReturn) {
-        motor.get().setSpeed(SPEED);
-        motor.get().rotate(ANGLE, immediateReturn);
-    }
-
-    public void raise(){
-        raise(false);
+        motor.get().setSpeed((int) motor.get().getMaxSpeed());
+        motor.get().rotate(-ANGLE, immediateReturn);
     }
 
     public void raise(boolean immediateReturn) {
-        motor.get().setSpeed(SPEED);
-        motor.get().rotate(-ANGLE, immediateReturn);
+        motor.get().setSpeed((int) motor.get().getMaxSpeed());
+        motor.get().rotate(ANGLE, immediateReturn);
     }
 
     public void waitComplete(){
