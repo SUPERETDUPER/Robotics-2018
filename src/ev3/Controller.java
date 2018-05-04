@@ -17,11 +17,13 @@ class Controller {
 
     private final Chassis chassis;
     private final LineFollower lineFollower;
+    private final static int SPEED = 500;
 
     Controller(EV3Robot robot) {
         MotorController motorController = new MotorController(robot.getLeftMotor(), robot.getRightMotor());
         this.chassis = new Chassis(motorController);
         this.lineFollower = new LineFollower(motorController, robot);
+        this.chassis.setSpeed(SPEED);
     }
 
     public LineFollower getLineFollower() {
@@ -45,9 +47,12 @@ class Controller {
     void goToTempRegGreen() {
         chassis.startMoves(Arrays.asList(
                 Move.travel(-130),
-                Move.arc(-90, -10),
-                Move.travel(40)
+                Move.arc(-90, -10)
         ), false);
+
+        chassis.setSpeed(200);
+        chassis.startMove(Move.travel(40), false);
+        chassis.setSpeed(SPEED);
     }
 
     void goToBoatsWithGreen() {
@@ -56,7 +61,7 @@ class Controller {
         lineFollower.startLineFollower(LineFollower.Mode.RIGHT, 3, 0, false);
 
         chassis.startMoves(Arrays.asList(
-                Move.travel(100),
+                Move.travel(250),
                 Move.rotate(90),
                 Move.travel(-50)
         ), false);

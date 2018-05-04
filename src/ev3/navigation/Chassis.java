@@ -46,7 +46,7 @@ public class Chassis {
     private static final float WHEEL_RADIUS = 28;
     private static final float AXIS_RADIUS = 78;
 
-    private static final int SPEED = 500;
+    private int speed;
 
     private final MotorController motorController;
     private LinkedList<Move> moves = new LinkedList<>();
@@ -54,6 +54,10 @@ public class Chassis {
     public Chassis(MotorController motorController) {
         this.motorController = motorController;
         new ChassisThread().start();
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public void startMove(Move move, boolean immediateReturn) {
@@ -110,7 +114,7 @@ public class Chassis {
 
         private void travel(int distance, boolean immediateReturn) {
             int angleToRotate = (int) Math.toDegrees(distance / WHEEL_RADIUS);
-            motorController.setSpeed(SPEED, SPEED);
+            motorController.setSpeed(speed, speed);
             motorController.rotate(angleToRotate, angleToRotate, immediateReturn);
         }
 
@@ -123,8 +127,8 @@ public class Chassis {
             if (radius < 0) angle *= -1;
             int angleToTurnLeft = (int) Math.toDegrees((radius + AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
             int angleToTurnRight = (int) Math.toDegrees((radius - AXIS_RADIUS) * Math.toRadians(angle) / WHEEL_RADIUS);
-            int speedLeft = Math.abs(angleToTurnLeft) * 2 * SPEED / (Math.abs(angleToTurnLeft) + Math.abs(angleToTurnRight));
-            int speedRight = 2 * SPEED - speedLeft;
+            int speedLeft = Math.abs(angleToTurnLeft) * 2 * speed / (Math.abs(angleToTurnLeft) + Math.abs(angleToTurnRight));
+            int speedRight = 2 * speed - speedLeft;
 
             motorController.setSpeed(speedLeft, speedRight);
             motorController.rotate(angleToTurnLeft, angleToTurnRight, immediateReturn);

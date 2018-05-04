@@ -4,7 +4,10 @@
 
 package ev3;
 
+import common.logger.Logger;
+import ev3.navigation.LineFollower;
 import ev3.robot.EV3Robot;
+import lejos.robotics.Color;
 
 /**
  * Specifies the sequence of actions the robot should do to win the competition !
@@ -14,6 +17,8 @@ class Brain {
 
     private final EV3Robot robot;
     private final Controller controller;
+
+    private int[] boatOrder = new int[3];
 
     Brain(EV3Robot robot, Controller controller) {
         this.robot = robot;
@@ -26,6 +31,14 @@ class Brain {
         controller.goToTempRegGreen();
         robot.getClaw().raise(false);
         controller.goToBoatsWithGreen(); //Go back to line
+        controller.getLineFollower().startLineFollower(LineFollower.Mode.RIGHT, 1, 3000, true);
+        while (true) {
+            int color = robot.getColorBoat();
+            if (color == Color.RED || color == Color.GREEN || color == Color.YELLOW || color == Color.BLUE) {
+                Logger.info(LOG_TAG, "Found boat: " + color);
+                robot.getBrick().beep();
+            }
+        }
 
         /*
          * start
