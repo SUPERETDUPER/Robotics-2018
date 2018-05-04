@@ -11,6 +11,13 @@ import lejos.utility.Delay;
 public class LineFollower {
     private static final String LOG_TAG = LineFollower.class.getSimpleName();
 
+    private static final int CORRECTION_CONSTANT_LINE_FOLLOWER = 300;
+    private static final float BLACK_LINE_THRESHOLD = 0.5F;
+    private static final int DELAY_FOR_MOTOR_LINE_FOLLOWER = 10;
+    private static final int DELAY_TO_CROSS_LINE = 1000;
+    private static final int SPEED = 400;
+    private static final float CENTER = 0.5F;
+
     private final MotorController motorController;
     private final EV3Robot robot;
 
@@ -54,11 +61,7 @@ public class LineFollower {
     }
 
     private class LineFollowerThread extends Thread {
-        private static final int CORRECTION_CONSTANT_LINE_FOLLOWER = 300;
-        private static final float BLACK_LINE_THRESHOLD = 0.4F;
-        private static final int DELAY_FOR_MOTOR_LINE_FOLLOWER = 100;
-        private static final int SPEED = 400;
-        private static final float CENTER = 0.5F;
+
 
         long timeToWaitBeforeCheckingCross = 0;
         long timeToWait = 0;
@@ -87,14 +90,14 @@ public class LineFollower {
 
                             if (getCheckerColor() < BLACK_LINE_THRESHOLD && System.currentTimeMillis() > timeToWaitBeforeCheckingCross) {
                                 linesLeftToCross--;
-                                timeToWaitBeforeCheckingCross = System.currentTimeMillis() + DELAY_FOR_MOTOR_LINE_FOLLOWER;
+                                timeToWaitBeforeCheckingCross = System.currentTimeMillis() + DELAY_TO_CROSS_LINE;
 
                                 if (linesLeftToCross == 0) {
                                     timeToWait = System.currentTimeMillis() + timeAfterLastLine;
                                 }
                             }
 
-                            if (linesLeftToCross == 0 && System.currentTimeMillis() > timeToWait) {
+                            if (linesLeftToCross == 0 && System.currentTimeMillis() >= timeToWait) {
                                 isActive = false;
                             }
 
