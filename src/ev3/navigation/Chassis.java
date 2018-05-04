@@ -6,7 +6,6 @@ package ev3.navigation;
 
 import common.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

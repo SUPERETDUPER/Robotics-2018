@@ -4,8 +4,10 @@
 
 package ev3;
 
+import ev3.navigation.Move;
 import ev3.robot.EV3Robot;
-import lejos.utility.Delay;
+
+import java.util.Arrays;
 
 /**
  * Specifies the sequence of actions the robot should do to win the competition !
@@ -29,32 +31,32 @@ class Brain {
         controller.goToBoatsWithGreen(); //Go back to line
 
         /*
-        * start
-        * go to first tempreg
-        * scan the temp reg while in motion
-        * pick up tempreg if scanned
-        * if not go to next temp reg
-        *
-        * go to boats
-        * scan boat colors
-        * if boat = current color
-        * drop tempreg on boat
-        * return to center
-        * Loop twice {
-        *   go to next temp reg
-        *   pickup temp reg
-        *   go to boats
-        *   scan boats for current color
-        *   drop off temp reg
-        *   return to center
-        * }
-        * go to start
-        */
+         * start
+         * go to first tempreg
+         * scan the temp reg while in motion
+         * pick up tempreg if scanned
+         * if not go to next temp reg
+         *
+         * go to boats
+         * scan boat colors
+         * if boat = current color
+         * drop tempreg on boat
+         * return to center
+         * Loop twice {
+         *   go to next temp reg
+         *   pickup temp reg
+         *   go to boats
+         *   scan boats for current color
+         *   drop off temp reg
+         *   return to center
+         * }
+         * go to start
+         */
     }
 
-    void test(){
-        robot.getClaw().drop(false);
-        Delay.msDelay(1000);
-        robot.getClaw().raise(false);
+    void test() {
+        controller.getChassis().startMoves(Arrays.asList(
+                Move.travel(300)
+        ), false);
     }
 }

@@ -39,15 +39,15 @@ public class Move {
         return type;
     }
 
-    public static Move rotate(int angle){
+    public static Move rotate(int angle) {
         return new Move(Type.ROTATE, angle, null, null);
     }
 
-    public static Move travel(int distance){
+    public static Move travel(int distance) {
         return new Move(Type.TRAVEL, null, distance, null);
     }
 
-    public static Move arc(int angle, int radius){
+    public static Move arc(int angle, int radius) {
         return new Move(Type.ARC, angle, null, radius);
     }
 }

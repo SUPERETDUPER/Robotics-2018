@@ -50,7 +50,7 @@ public class LogMessage implements Transmittable {
         message = dataInputStream.readUTF();
     }
 
-    public void printToSysOut(){
+    public void printToSysOut() {
         printToSysOut("");
     }
 

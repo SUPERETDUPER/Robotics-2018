@@ -48,7 +48,7 @@ class Controller {
         lineFollower.startLineFollower(true, true, 1, 0, false);
     }
 
-    void goToTempRegGreen(){
+    void goToTempRegGreen() {
         chassis.startMoves(Arrays.asList(
                 Move.travel(-10),
                 Move.arc(-90, -10),
@@ -56,11 +56,11 @@ class Controller {
         ), false);
     }
 
-    void goToBoatsWithGreen(){
+    void goToBoatsWithGreen() {
         chassis.startMoves(Arrays.asList(
                 Move.arc(-90, 10)
         ), false);
 
-        lineFollower.startLineFollower(true, false, 3,0, false);
+        lineFollower.startLineFollower(true, false, 3, 0, false);
     }
 }

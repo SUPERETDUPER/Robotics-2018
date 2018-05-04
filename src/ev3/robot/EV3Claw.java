@@ -33,7 +33,7 @@ public class EV3Claw implements MotorSensor {
         motor.rotate(ANGLE, immediateReturn);
     }
 
-    public void waitComplete(){
+    public void waitComplete() {
         motor.waitComplete();
     }
 }

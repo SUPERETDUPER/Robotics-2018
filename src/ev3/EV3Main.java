@@ -28,7 +28,7 @@ final class EV3Main {
             runMain();
 
 //        robot.getBrick().waitForUserConfirmation();  //Uncomment if you want the user to need to press enter before the program closes
-        } catch (Exception e){
+        } catch (Exception e) {
             Logger.error(LOG_TAG, e.toString());
             for (StackTraceElement element : e.getStackTrace()) {
                 Logger.error(LOG_TAG, element.toString());
