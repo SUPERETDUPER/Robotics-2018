@@ -63,6 +63,10 @@ public class LineFollower {
         long timeToWaitBeforeCheckingCross = 0;
         long timeToWait = 0;
 
+        public LineFollowerThread() {
+            this.setDaemon(true);
+        }
+
         @Override
         public void run() {
             try {

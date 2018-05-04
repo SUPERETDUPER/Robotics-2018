@@ -67,6 +67,10 @@ public class Chassis {
     }
 
     private class ChassisThread extends Thread {
+        public ChassisThread() {
+            this.setDaemon(true);
+        }
+
         @Override
         public void run() {
             try {
@@ -74,7 +78,6 @@ public class Chassis {
                 while (true) {
                     if (!moves.isEmpty()) {
                         Move move = moves.get(0);
-                        moves.remove(0);
 
                         switch (move.getType()) {
                             case ARC:
@@ -87,6 +90,8 @@ public class Chassis {
                                 travel(move.getDistance(), false);
                                 break;
                         }
+
+                        moves.remove(0);
                     }
                 }
             } catch (Exception e) {
