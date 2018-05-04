@@ -4,31 +4,42 @@
 
 package ev3.robot;
 
-public class ThreadWrapper {
+import common.logger.Logger;
+import lejos.hardware.DeviceException;
+
+class ThreadWrapper {
+    private static final String LOG_TAG = ThreadWrapper.class.getSimpleName();
+
     private final MotorSensor motorSensor;
 
-    private final Thread creatorThread = new Thread() {
-        @Override
-        public synchronized void run() {
-            if (!motorSensor.isCreated()) {
-                motorSensor.create();
-            }
-        }
-    };
+    private Thread creatorThread;
 
-    public ThreadWrapper(MotorSensor motorSensor) {
+    ThreadWrapper(MotorSensor motorSensor) {
         this.motorSensor = motorSensor;
     }
 
-    public void setup() {
+    void setup() {
+        creatorThread = new Thread() {
+            @Override
+            public synchronized void run() {
+                if (!motorSensor.isCreated()) {
+                    try {
+                        motorSensor.create();
+                    } catch (IllegalArgumentException | DeviceException e) {
+                        Logger.warning(LOG_TAG, "Could not create sensor/motor");
+                    }
+                }
+            }
+        };
+
         creatorThread.start();
     }
 
-    public boolean isSetupAlive() {
+    boolean isSetupAlive() {
         return creatorThread.isAlive();
     }
 
-    public MotorSensor get() {
+    MotorSensor get() {
         if (!motorSensor.isCreated()) {
             synchronized (this) {
                 if (!motorSensor.isCreated()) {
