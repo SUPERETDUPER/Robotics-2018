@@ -18,12 +18,11 @@ public class EV3Robot {
 
     private final CustomEV3LargeMotor leftMotor = new CustomEV3LargeMotor(Ports.MOTOR_LEFT);
     private final CustomEV3LargeMotor rightMotor = new CustomEV3LargeMotor(Ports.MOTOR_RIGHT);
-    private final EV3Arm arm = new EV3Arm();
-    private final EV3Claw claw = new EV3Claw();
+    private final ThreadWrapper arm = new ThreadWrapper(new EV3Arm());
+    private final ThreadWrapper claw = new ThreadWrapper(new EV3Claw());
     private final CustomEV3ColorSensor surfaceLeft = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_LEFT);
     private final CustomEV3ColorSensor surfaceRight = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_SURFACE_RIGHT);
     private final CustomEV3ColorSensor boat = new CustomEV3ColorSensor(Ports.SENSOR_COLOR_BOAT);
-
 
     public void setup() {
         arm.setup();
@@ -37,21 +36,21 @@ public class EV3Robot {
 
 
     public boolean stillSettingUp() {
-        return arm.stillSettingUp() ||
+        return arm.isSetupAlive() ||
                 leftMotor.stillSettingUp() ||
                 rightMotor.stillSettingUp() ||
                 surfaceLeft.stillSettingUp() ||
                 surfaceRight.stillSettingUp() ||
                 boat.stillSettingUp() ||
-                claw.stillSettingUp();
+                claw.isSetupAlive();
     }
 
     public EV3Arm getArm() {
-        return arm;
+        return (EV3Arm) arm.get();
     }
 
     public EV3Claw getClaw() {
-        return claw;
+        return (EV3Claw) claw.get();
     }
 
     public EV3Brick getBrick() {

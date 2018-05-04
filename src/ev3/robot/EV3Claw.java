@@ -4,33 +4,36 @@
 
 package ev3.robot;
 
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
+
 /**
  * Class responsible for moving the robots arm to different positions
  */
-public class EV3Claw {
+public class EV3Claw implements MotorSensor {
     private static final int ANGLE = 750;
 
-    private final CustomEV3MediumMotor motor = new CustomEV3MediumMotor(Ports.MOTOR_CLAW);
+    private EV3MediumRegulatedMotor motor;
 
-    void setup(){
-        motor.setup();
+    @Override
+    public void create() {
+        motor = new EV3MediumRegulatedMotor(Ports.MOTOR_CLAW);
+        motor.setSpeed((int) motor.getMaxSpeed());
     }
 
-    boolean stillSettingUp(){
-        return motor.stillSettingUp();
+    @Override
+    public boolean isCreated() {
+        return motor != null;
     }
 
     public void drop(boolean immediateReturn) {
-        motor.get().setSpeed((int) motor.get().getMaxSpeed());
-        motor.get().rotate(-ANGLE, immediateReturn);
+        motor.rotate(-ANGLE, immediateReturn);
     }
 
     public void raise(boolean immediateReturn) {
-        motor.get().setSpeed((int) motor.get().getMaxSpeed());
-        motor.get().rotate(ANGLE, immediateReturn);
+        motor.rotate(ANGLE, immediateReturn);
     }
 
     public void waitComplete(){
-        motor.get().waitComplete();
+        motor.waitComplete();
     }
 }

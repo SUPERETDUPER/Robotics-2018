@@ -4,10 +4,8 @@
 
 package ev3;
 
-import ev3.navigation.Move;
 import ev3.robot.EV3Robot;
-
-import java.util.Arrays;
+import lejos.utility.Delay;
 
 /**
  * Specifies the sequence of actions the robot should do to win the competition !
@@ -27,7 +25,7 @@ class Brain {
         controller.goToStartIntersection(); //Leave starting area
         robot.getClaw().drop(true); //Lower claw
         controller.goToTempRegGreen();
-        robot.getClaw().raise();
+        robot.getClaw().raise(false);
         controller.goToBoatsWithGreen(); //Go back to line
 
         /*
@@ -55,8 +53,8 @@ class Brain {
     }
 
     void test(){
-        controller.getChassis().startMoves(Arrays.asList(
-                Move.travel(15000)
-        ), false);
+        robot.getClaw().drop(false);
+        Delay.msDelay(1000);
+        robot.getClaw().raise(false);
     }
 }
