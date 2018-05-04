@@ -21,12 +21,14 @@ class ThreadWrapper<T extends MotorSensor> {
     void setup() {
         creatorThread = new Thread() {
             @Override
-            public synchronized void run() {
-                if (motorSensor.isNotCreated()) {
-                    try {
-                        motorSensor.create();
-                    } catch (IllegalArgumentException | DeviceException e) {
-                        Logger.warning(LOG_TAG, "Could not create sensor/motor");
+            public void run() {
+                synchronized (ThreadWrapper.this) {
+                    if (motorSensor.isNotCreated()) {
+                        try {
+                            motorSensor.create();
+                        } catch (IllegalArgumentException | DeviceException e) {
+                            Logger.warning(LOG_TAG, "Could not create sensor/motor");
+                        }
                     }
                 }
             }
